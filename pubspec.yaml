@@ -9,6 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  animated_text_kit: ^4.2.0
   bloc: ^8.0.3
   cached_network_image: ^3.2.0
   cloud_firestore: ^3.1.10
@@ -21,11 +22,11 @@ dependencies:
   fluster: ^1.2.0
   flutter_bloc: ^8.0.1
   flutter_cache_manager: ^3.3.0
+  flutter_launcher_icons: ^0.9.0
   flutter_local_notifications: ^9.4.0
   flutter_picker: ^2.0.3
   flutter_placeholder_textlines: ^1.1.2
-  flutter_signin_button: ^2.0.0
-  font_awesome_flutter: ^9.2.0
+  font_awesome_flutter: ^10.1.0
   formz: ^0.4.1
   geoflutterfire: ^3.0.3
   geolocator: ^8.2.0
@@ -56,3 +57,11 @@ flutter:
     - assets/
     - assets/profile_avatars/
     - assets/social_media_icons/
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path_android: "assets/launcher_icon/vf_android.png"
+  image_path_ios: "assets/launcher_icon/vf_ios.png"
+  adaptive_icon_foreground: "assets/launcher_icon/vf_android.png"
+  adaptive_icon_background: "#000000"

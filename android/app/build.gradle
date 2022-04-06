@@ -43,9 +43,8 @@ android {
 
     defaultConfig {
         applicationId "world.verifi.app"
-        // minSdkVersion flutter.minSdkVersion
         minSdkVersion 24
-        targetSdkVersion flutter.targetSdkVersion
+        targetSdkVersion 31
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
@@ -68,6 +67,6 @@ dependencies {
     implementation 'androidx.work:work-runtime-ktx:2.7.1'
     implementation 'androidx.concurrent:concurrent-futures-ktx:1.1.0'
     // Guava conflicts with ListenableFuture. The line below fixes that conflict...
-    implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
+    implementation 'com.google.guava:guava:29.0-android'
 }
 

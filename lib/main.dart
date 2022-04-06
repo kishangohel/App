@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -24,10 +26,18 @@ import 'firebase_options.dart';
 // [Crashlytics] are all initialized here.
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // disable printing in release mode
+  if (kReleaseMode) {
+    debugPrint = (String? message, {int? wrapWidth}) {};
+  }
   await sharedPrefs.init();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  // Use auth emulator in debug mode
+  if (kDebugMode) {
+    await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+  }
   // Pass all uncaught errors from the framework to Crashlytics.
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
   final storage = await HydratedStorage.build(
@@ -48,12 +58,12 @@ void main() async {
 // is initialized, native background services can talk to our Flutter code, and
 // vice-versa.
 void callbackDispatcher() async {
-  print("callback dispatcher called from Flutter");
+  debugPrint("callback dispatcher called from Flutter");
   const backgroundChannel =
       MethodChannel("world.verifi.app/background_channel");
   WidgetsFlutterBinding.ensureInitialized();
   backgroundChannel.setMethodCallHandler((call) async {
-    print("Received coordinates from platform background channel");
+    debugPrint("Received coordinates from platform background channel");
     final int handle = call.arguments["world.verifi.app.CALLBACK_HANDLE"];
     List fenceIds = call.arguments["world.verifi.app.FENCE_IDS"];
     fenceIds = fenceIds.cast<String>();
