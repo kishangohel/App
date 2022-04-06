@@ -1,0 +1,58 @@
+name: verifi
+description: Bridging the universe with the metaverse
+
+version: 1.0.0
+
+environment:
+  sdk: ">=2.15.1 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  bloc: ^8.0.3
+  cached_network_image: ^3.2.0
+  cloud_firestore: ^3.1.10
+  dots_indicator: ^2.1.0
+  equatable: ^2.0.3
+  firebase_analytics: ^9.1.2
+  firebase_auth: ^3.3.11
+  firebase_core: ^1.13.1
+  firebase_crashlytics: ^2.5.3
+  fluster: ^1.2.0
+  flutter_bloc: ^8.0.1
+  flutter_cache_manager: ^3.3.0
+  flutter_local_notifications: ^9.4.0
+  flutter_picker: ^2.0.3
+  flutter_placeholder_textlines: ^1.1.2
+  flutter_signin_button: ^2.0.0
+  font_awesome_flutter: ^9.2.0
+  formz: ^0.4.1
+  geoflutterfire: ^3.0.3
+  geolocator: ^8.2.0
+  google_fonts: ^2.3.1
+  google_maps_flutter: ^2.1.3
+  google_place: ^0.4.7
+  google_sign_in: ^5.2.4
+  http: ^0.13.4
+  hydrated_bloc: ^8.1.0
+  material_floating_search_bar: ^0.3.7
+  page_transition: ^2.0.5
+  path_provider: ^2.0.9
+  permission_handler: ^9.2.0
+  sembast: ^3.2.0
+  shared_preferences: ^2.0.13
+  spider: ^2.1.0
+  url_launcher: ^6.0.20
+  uuid: ^3.0.6
+  workmanager: ^0.4.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/
+    - assets/profile_avatars/
+    - assets/social_media_icons/
