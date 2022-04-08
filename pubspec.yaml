@@ -40,6 +40,7 @@ dependencies:
   page_transition: ^2.0.5
   path_provider: ^2.0.9
   permission_handler: ^9.2.0
+  phone_form_field: ^5.0.0
   sembast: ^3.2.0
   shared_preferences: ^2.0.13
   spider: ^2.1.0
@@ -55,6 +56,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+    - assets/launcher_icon/
     - assets/profile_avatars/
     - assets/social_media_icons/
 

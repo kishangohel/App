@@ -249,7 +249,7 @@ ThemeData _veriFiAppTheme() {
       primary: Colors.deepOrange[400]!,
       secondary: Colors.blueGrey[400]!,
     ),
-    textTheme: GoogleFonts.robotoTextTheme(),
+    textTheme: GoogleFonts.juraTextTheme(),
   );
 }
 
@@ -260,7 +260,7 @@ ThemeData _veriFiAppDarkTheme() {
       surface: Colors.deepOrange[600]!,
       secondary: Colors.blueGrey[400]!,
     ),
-    textTheme: GoogleFonts.robotoTextTheme().merge(
+    textTheme: GoogleFonts.juraTextTheme(
       ThemeData(brightness: Brightness.dark).textTheme,
     ),
   );
