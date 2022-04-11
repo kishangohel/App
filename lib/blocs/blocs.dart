@@ -6,7 +6,6 @@ export 'login/login.dart';
 export 'map/map.dart';
 export 'map_search/map_search.dart';
 export 'profile/profile.dart';
-export 'register/register.dart';
 export 'tab/tab.dart';
 export 'validators.dart';
 export 'wifi_feed/wifi_feed.dart';

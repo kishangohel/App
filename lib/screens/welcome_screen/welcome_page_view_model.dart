@@ -23,7 +23,7 @@ PageViewModel buildWelcomePageViewModel(
           textAlign: TextAlign.center,
         ),
         Container(
-          margin: EdgeInsets.only(top: 8.0, bottom: 8.0),
+          margin: const EdgeInsets.only(top: 8.0, bottom: 8.0),
           height: 30,
           child: AnimatedText(
             wordList: [

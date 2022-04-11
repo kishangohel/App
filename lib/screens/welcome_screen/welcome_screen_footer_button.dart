@@ -58,7 +58,9 @@ class _WelcomeScreenFooterButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: Theme.of(context).textTheme.button,
+      style: Theme.of(context).textTheme.button!.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
     );
   }
 }

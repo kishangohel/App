@@ -13,7 +13,7 @@ class SocialAuthButtons extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         children: [
           /* _buildFacebookButton(context), */
-          _buildGoogleButton(context),
+          /* _buildGoogleButton(context), */
           /* _buildTwitterButton(context), */
           /* _buildEmailButton(context), */
         ],
@@ -40,43 +40,6 @@ class SocialAuthButtons extends StatelessWidget {
   /*     ), */
   /*   ); */
   /* } */
-
-  Widget _buildGoogleButton(BuildContext context) {
-    return Container(
-      height: 48.0,
-      /* width: MediaQuery.of(context).size.width, */
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          primary: Colors.white,
-          shape: ContinuousRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0),
-          ),
-          padding: EdgeInsets.all(1.0),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Image(
-              image: AssetImage('assets/social_media_icons/google_light.png'),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.0),
-              child: Text(
-                "Sign in with Google",
-                style: Theme.of(context)
-                    .textTheme
-                    .button!
-                    .copyWith(color: Colors.black),
-              ),
-            ),
-          ],
-        ),
-        onPressed: () {
-          context.read<LoginCubit>().logInWithGoogle();
-        },
-      ),
-    );
-  }
 
   Widget _buildTwitterButton(BuildContext context) {
     return Container(

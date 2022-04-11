@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:phone_form_field/phone_form_field.dart';
+import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/widgets/text/app_title.dart';
 
 class AccountCreationScreen extends StatefulWidget {
@@ -55,20 +58,17 @@ class _AccountCreationScreenState extends State<AccountCreationScreen> {
             Column(
               children: [
                 Expanded(
-                  flex: 2,
-                  child: Container(),
-                ),
-                Expanded(
-                  flex: 2,
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Column(
                       children: [
                         Expanded(
                           child: AnimatedOpacity(
                             opacity: opacity,
-                            duration:
-                                const Duration(seconds: 1, milliseconds: 500),
+                            duration: const Duration(
+                              seconds: 1,
+                              milliseconds: 500,
+                            ),
                             child: const FittedBox(
                               alignment: Alignment.bottomCenter,
                               fit: BoxFit.fitWidth,
@@ -89,51 +89,7 @@ class _AccountCreationScreenState extends State<AccountCreationScreen> {
                                 const Duration(seconds: 1, milliseconds: 500),
                             child: Align(
                               alignment: Alignment.topCenter,
-                              child: PhoneFormField(
-                                countryCodeStyle:
-                                    TextStyle(color: Colors.white),
-                                style: TextStyle(color: Colors.white),
-                                decoration: InputDecoration(
-                                  errorStyle: TextStyle(color: Colors.white),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(
-                                      color: Colors.white,
-                                      width: 1.0,
-                                    ),
-                                    borderRadius: BorderRadius.circular(4.0),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(
-                                      color: Colors.white,
-                                      width: 1.0,
-                                    ),
-                                    borderRadius: BorderRadius.circular(4.0),
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderSide: const BorderSide(
-                                      color: Colors.white,
-                                      width: 1.0,
-                                    ),
-                                    borderRadius: BorderRadius.circular(4.0),
-                                  ),
-                                ),
-                                onSaved: (phoneNumber) {
-                                  setState(
-                                    () => progressIndicatorVisibility = true,
-                                  );
-                                  Future.delayed(const Duration(seconds: 1),
-                                      () {
-                                    setState(
-                                      () => progressIndicatorVisibility = false,
-                                    );
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text("Login successful"),
-                                      ),
-                                    );
-                                  });
-                                },
-                              ),
+                              child: _AccountPhoneFormField(),
                             ),
                           ),
                         ),
@@ -141,18 +97,96 @@ class _AccountCreationScreenState extends State<AccountCreationScreen> {
                     ),
                   ),
                 ),
-                Visibility(
-                  visible: progressIndicatorVisibility,
-                  child: const CircularProgressIndicator(
-                    color: Colors.white,
-                    strokeWidth: 8.0,
-                  ),
+                BlocBuilder<AuthenticationCubit, AuthenticationState>(
+                  builder: (context, state) {
+                    return Text("Verifying...");
+                  },
                 ),
-                Expanded(flex: 2, child: Container()),
               ],
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _AccountPhoneFormField extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _AccountPhoneFormFieldState();
+}
+
+class _AccountPhoneFormFieldState extends State<_AccountPhoneFormField> {
+  final formKey = GlobalKey<FormState>();
+  late PhoneController phoneController;
+
+  @override
+  void initState() {
+    super.initState();
+    phoneController = PhoneController(null);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: formKey,
+      child: PhoneFormField(
+        controller: phoneController,
+        flagSize: 18.0,
+        countrySelectorNavigator: CountrySelectorNavigator.modalBottomSheet(
+          height: MediaQuery.of(context).size.height * 0.7,
+        ),
+        countryCodeStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 18.0,
+        ),
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 18.0,
+        ),
+        decoration: InputDecoration(
+          errorStyle: const TextStyle(color: Colors.white),
+          enabledBorder: OutlineInputBorder(
+            borderSide: const BorderSide(
+              color: Colors.white,
+              width: 1.0,
+            ),
+            borderRadius: BorderRadius.circular(4.0),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: const BorderSide(
+              color: Colors.white,
+              width: 1.0,
+            ),
+            borderRadius: BorderRadius.circular(4.0),
+          ),
+          border: OutlineInputBorder(
+            borderSide: const BorderSide(
+              color: Colors.white,
+              width: 1.0,
+            ),
+            borderRadius: BorderRadius.circular(4.0),
+          ),
+        ),
+        validator: PhoneValidator.validMobile(),
+        autovalidateMode: AutovalidateMode.always,
+        onSaved: (phoneNumber) {
+          print(phoneNumber!.nsn);
+          print(phoneNumber.countryCode);
+          BlocProvider.of<AuthenticationCubit>(context).signUpPhoneNumber(
+            /* "+${phoneNumber.countryCode} ${phoneNumber.nsn}", */
+            "+1 555-333-4444",
+            context,
+          );
+        },
+        onSubmitted: (phoneNumber) {
+          if (phoneController.value != null &&
+              phoneController.value!.validate(
+                type: PhoneNumberType.mobile,
+              )) {
+            formKey.currentState!.save();
+          }
+        },
       ),
     );
   }

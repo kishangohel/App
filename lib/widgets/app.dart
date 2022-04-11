@@ -17,7 +17,6 @@ import 'package:verifi/models/wifi.dart';
 import 'package:verifi/repositories/repositories.dart';
 import 'package:verifi/screens/welcome_screen/welcome_screen.dart';
 import 'package:verifi/screens/auth_screen/auth_screen.dart';
-import 'package:verifi/screens/auth_screen/register_screen/register_screen.dart';
 import 'package:verifi/widgets/home_page.dart';
 
 // The top-level [Widget] for the VeriFi application.
@@ -138,11 +137,6 @@ class _VeriFiState extends State<VeriFi> {
               RepositoryProvider.of<UsersRepository>(context),
             ),
           ),
-          BlocProvider<RegisterCubit>(
-            create: (context) => RegisterCubit(
-              RepositoryProvider.of<AuthenticationRepository>(context),
-            ),
-          ),
           BlocProvider<TabBloc>(
             create: (context) => TabBloc(),
           ),
@@ -237,7 +231,6 @@ class VeriFiApp extends StatelessWidget {
         '/welcome': (context) => WelcomeScreen(),
         '/home': (context) => HomePage(),
         '/auth': (context) => AuthScreen(),
-        '/auth/register': (context) => RegisterScreen(),
       },
     );
   }

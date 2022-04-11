@@ -16,15 +16,18 @@ class AppTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FittedBox(
-      fit: BoxFit.fitWidth,
-      child: Text(
-        "VeriFi",
-        style: GoogleFonts.quantico(
-          fontSize: fontSize,
-          color: fontColor ?? Colors.white,
+    return Material(
+      type: MaterialType.transparency,
+      child: FittedBox(
+        fit: BoxFit.fitWidth,
+        child: Text(
+          "VeriFi",
+          style: GoogleFonts.quantico(
+            fontSize: fontSize,
+            color: fontColor ?? Colors.white,
+          ),
+          textAlign: textAlign,
         ),
-        textAlign: textAlign,
       ),
     );
   }

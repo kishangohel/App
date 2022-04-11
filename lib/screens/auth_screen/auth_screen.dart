@@ -45,7 +45,7 @@ class _InitialScreenScaffold extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Column(
                   children: [
                     Expanded(
@@ -57,8 +57,6 @@ class _InitialScreenScaffold extends StatelessWidget {
                       child: Column(
                         children: [
                           GetStartedButton(),
-                          /* SocialAuthDivider(), */
-                          /* SocialAuthButtons(), */
                         ],
                       ),
                     ),

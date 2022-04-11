@@ -35,9 +35,9 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   // Use auth emulator in debug mode
-  if (kDebugMode) {
-    await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
-  }
+  /* if (kDebugMode) { */
+  /*   await FirebaseAuth.instance.useAuthEmulator('localhost', 9099); */
+  /* } */
   // Pass all uncaught errors from the framework to Crashlytics.
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
   final storage = await HydratedStorage.build(
@@ -101,7 +101,7 @@ class Notification {
       FlutterLocalNotificationsPlugin();
 
   Future showNotificationWithoutSound(LatLng location) async {
-    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+    var androidPlatformChannelSpecifics = const AndroidNotificationDetails(
       '1',
       'location-bg',
       channelDescription: 'fetch location in background',
@@ -109,10 +109,10 @@ class Notification {
       importance: Importance.max,
       priority: Priority.high,
     );
-    var iOSPlatformChannelSpecifics = new IOSNotificationDetails(
+    var iOSPlatformChannelSpecifics = const IOSNotificationDetails(
       presentSound: false,
     );
-    var platformChannelSpecifics = new NotificationDetails(
+    var platformChannelSpecifics = NotificationDetails(
       android: androidPlatformChannelSpecifics,
       iOS: iOSPlatformChannelSpecifics,
     );
@@ -127,13 +127,13 @@ class Notification {
 
   Notification() {
     var initializationSettingsAndroid =
-        new AndroidInitializationSettings('@mipmap/ic_launcher');
-    var initializationSettingsIOS = new IOSInitializationSettings();
-    var initializationSettings = new InitializationSettings(
+        const AndroidInitializationSettings('@mipmap/ic_launcher');
+    var initializationSettingsIOS = const IOSInitializationSettings();
+    var initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
       iOS: initializationSettingsIOS,
     );
-    flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
+    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 }
