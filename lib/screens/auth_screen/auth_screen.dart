@@ -3,8 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/screens/auth_screen/get_started_button.dart';
 import 'package:verifi/screens/auth_screen/intro_text_content.dart';
-import 'package:verifi/screens/auth_screen/social_auth_buttons.dart';
-import 'package:verifi/screens/auth_screen/social_auth_divider.dart';
+import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 
 class AuthScreen extends StatelessWidget {
   @override
@@ -30,20 +29,7 @@ class _InitialScreenScaffold extends StatelessWidget {
         child: SafeArea(
           child: Stack(
             children: [
-              Hero(
-                tag: 'enter-the-metaverse',
-                child: Image.asset(
-                  'assets/enter_the_metaverse.gif',
-                  height: MediaQuery.of(context).size.height,
-                  fit: BoxFit.fitHeight,
-                ),
-              ),
-              Hero(
-                tag: 'enter-the-metaverse-filter',
-                child: Container(
-                  color: Colors.black.withOpacity(0.5),
-                ),
-              ),
+              ...onBoardingBackground(context),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Column(

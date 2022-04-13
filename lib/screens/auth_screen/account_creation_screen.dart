@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:phone_form_field/phone_form_field.dart';
 import 'package:verifi/blocs/blocs.dart';
+import 'package:verifi/screens/auth_screen/sms_code_screen.dart';
+import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 import 'package:verifi/widgets/text/app_title.dart';
+import 'package:verifi/widgets/transitions/onboarding_slide_transition.dart';
 
 class AccountCreationScreen extends StatefulWidget {
   @override
@@ -13,6 +16,7 @@ class AccountCreationScreen extends StatefulWidget {
 class _AccountCreationScreenState extends State<AccountCreationScreen> {
   double opacity = 0;
   bool progressIndicatorVisibility = false;
+  final formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -41,20 +45,7 @@ class _AccountCreationScreenState extends State<AccountCreationScreen> {
       body: SafeArea(
         child: Stack(
           children: [
-            Hero(
-              tag: 'enter-the-metaverse',
-              child: Image.asset(
-                'assets/enter_the_metaverse.gif',
-                height: MediaQuery.of(context).size.height,
-                fit: BoxFit.fitHeight,
-              ),
-            ),
-            Hero(
-              tag: 'enter-the-metaverse-filter',
-              child: Container(
-                color: Colors.black.withOpacity(0.5),
-              ),
-            ),
+            ...onBoardingBackground(context),
             Column(
               children: [
                 Expanded(
@@ -89,18 +80,20 @@ class _AccountCreationScreenState extends State<AccountCreationScreen> {
                                 const Duration(seconds: 1, milliseconds: 500),
                             child: Align(
                               alignment: Alignment.topCenter,
-                              child: _AccountPhoneFormField(),
+                              child: _AccountPhoneFormField(formKey),
                             ),
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () => formKey.currentState!.save(),
+                          child: Text(
+                            "Submit",
+                            style: Theme.of(context).textTheme.button,
                           ),
                         ),
                       ],
                     ),
                   ),
-                ),
-                BlocBuilder<AuthenticationCubit, AuthenticationState>(
-                  builder: (context, state) {
-                    return Text("Verifying...");
-                  },
                 ),
               ],
             ),
@@ -112,12 +105,14 @@ class _AccountCreationScreenState extends State<AccountCreationScreen> {
 }
 
 class _AccountPhoneFormField extends StatefulWidget {
+  final GlobalKey<FormState> formKey;
+  const _AccountPhoneFormField(this.formKey);
+
   @override
   State<StatefulWidget> createState() => _AccountPhoneFormFieldState();
 }
 
 class _AccountPhoneFormFieldState extends State<_AccountPhoneFormField> {
-  final formKey = GlobalKey<FormState>();
   late PhoneController phoneController;
 
   @override
@@ -129,7 +124,7 @@ class _AccountPhoneFormFieldState extends State<_AccountPhoneFormField> {
   @override
   Widget build(BuildContext context) {
     return Form(
-      key: formKey,
+      key: widget.formKey,
       child: PhoneFormField(
         controller: phoneController,
         flagSize: 18.0,
@@ -173,10 +168,19 @@ class _AccountPhoneFormFieldState extends State<_AccountPhoneFormField> {
         onSaved: (phoneNumber) {
           print(phoneNumber!.nsn);
           print(phoneNumber.countryCode);
-          BlocProvider.of<AuthenticationCubit>(context).signUpPhoneNumber(
-            /* "+${phoneNumber.countryCode} ${phoneNumber.nsn}", */
-            "+1 555-333-4444",
-            context,
+          /* BlocProvider.of<AuthenticationCubit>(context).signUpPhoneNumber( */
+          /*   /* "+${phoneNumber.countryCode} ${phoneNumber.nsn}", */ */
+          /*   "+1 555-333-4444", */
+          /*   context, */
+          /* ); */
+
+          Navigator.of(context).push(
+            PageRouteBuilder(
+              transitionDuration: Duration(milliseconds: 500),
+              reverseTransitionDuration: Duration(seconds: 1),
+              transitionsBuilder: onboardingSlideTransition,
+              pageBuilder: (BuildContext context, _, __) => SmsCodeScreen(),
+            ),
           );
         },
         onSubmitted: (phoneNumber) {
@@ -184,7 +188,7 @@ class _AccountPhoneFormFieldState extends State<_AccountPhoneFormField> {
               phoneController.value!.validate(
                 type: PhoneNumberType.mobile,
               )) {
-            formKey.currentState!.save();
+            widget.formKey.currentState!.save();
           }
         },
       ),
