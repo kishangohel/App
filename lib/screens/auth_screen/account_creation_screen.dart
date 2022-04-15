@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:phone_form_field/phone_form_field.dart';
@@ -9,14 +8,18 @@ import 'package:verifi/widgets/text/app_title.dart';
 import 'package:verifi/widgets/transitions/onboarding_slide_transition.dart';
 
 class AccountCreationScreen extends StatefulWidget {
+  AccountCreationScreen() : super(key: UniqueKey());
+
   @override
   createState() => _AccountCreationScreenState();
 }
 
 class _AccountCreationScreenState extends State<AccountCreationScreen> {
   double opacity = 0;
+  bool submitVisibility = false;
   bool progressIndicatorVisibility = false;
   final formKey = GlobalKey<FormState>();
+  final phoneController = PhoneController(null);
 
   @override
   void initState() {
@@ -52,16 +55,17 @@ class _AccountCreationScreenState extends State<AccountCreationScreen> {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Expanded(
-                          child: AnimatedOpacity(
-                            opacity: opacity,
-                            duration: const Duration(
-                              seconds: 1,
-                              milliseconds: 500,
-                            ),
+                        AnimatedOpacity(
+                          opacity: opacity,
+                          duration: const Duration(
+                            seconds: 1,
+                            milliseconds: 500,
+                          ),
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width,
                             child: const FittedBox(
-                              alignment: Alignment.bottomCenter,
                               fit: BoxFit.fitWidth,
                               child: Padding(
                                 padding: EdgeInsets.only(bottom: 8.0),
@@ -73,22 +77,57 @@ class _AccountCreationScreenState extends State<AccountCreationScreen> {
                             ),
                           ),
                         ),
-                        Expanded(
-                          child: AnimatedOpacity(
-                            opacity: opacity,
-                            duration:
-                                const Duration(seconds: 1, milliseconds: 500),
-                            child: Align(
-                              alignment: Alignment.topCenter,
-                              child: _AccountPhoneFormField(formKey),
+                        AnimatedOpacity(
+                          opacity: opacity,
+                          duration:
+                              const Duration(seconds: 1, milliseconds: 500),
+                          child: Align(
+                            alignment: Alignment.topCenter,
+                            child: _AccountPhoneFormField(
+                              formKey: formKey,
+                              phoneController: phoneController,
+                              onChanged: (PhoneNumber? number) {
+                                setState(() {
+                                  submitVisibility =
+                                      phoneController.value != null &&
+                                          phoneController.value!.validate(
+                                            type: PhoneNumberType.mobile,
+                                          );
+                                });
+                              },
                             ),
                           ),
                         ),
-                        ElevatedButton(
-                          onPressed: () => formKey.currentState!.save(),
-                          child: Text(
-                            "Submit",
-                            style: Theme.of(context).textTheme.button,
+                        Container(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Visibility(
+                            visible: submitVisibility,
+                            maintainSize: true,
+                            maintainAnimation: true,
+                            maintainState: true,
+                            child: AnimatedOpacity(
+                              opacity: opacity,
+                              duration:
+                                  const Duration(seconds: 1, milliseconds: 500),
+                              child: ElevatedButton(
+                                onPressed: () => formKey.currentState!.save(),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 8.0,
+                                    horizontal: 4.0,
+                                  ),
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.25,
+                                  child: FittedBox(
+                                    fit: BoxFit.fitWidth,
+                                    child: Text(
+                                      "Submit",
+                                      style: Theme.of(context).textTheme.button,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -106,27 +145,24 @@ class _AccountCreationScreenState extends State<AccountCreationScreen> {
 
 class _AccountPhoneFormField extends StatefulWidget {
   final GlobalKey<FormState> formKey;
-  const _AccountPhoneFormField(this.formKey);
-
+  final PhoneController phoneController;
+  final void Function(PhoneNumber? number) onChanged;
+  const _AccountPhoneFormField({
+    required this.formKey,
+    required this.phoneController,
+    required this.onChanged,
+  });
   @override
   State<StatefulWidget> createState() => _AccountPhoneFormFieldState();
 }
 
 class _AccountPhoneFormFieldState extends State<_AccountPhoneFormField> {
-  late PhoneController phoneController;
-
-  @override
-  void initState() {
-    super.initState();
-    phoneController = PhoneController(null);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Form(
       key: widget.formKey,
       child: PhoneFormField(
-        controller: phoneController,
+        controller: widget.phoneController,
         flagSize: 18.0,
         countrySelectorNavigator: CountrySelectorNavigator.modalBottomSheet(
           height: MediaQuery.of(context).size.height * 0.7,
@@ -165,27 +201,25 @@ class _AccountPhoneFormFieldState extends State<_AccountPhoneFormField> {
         ),
         validator: PhoneValidator.validMobile(),
         autovalidateMode: AutovalidateMode.always,
+        onChanged: widget.onChanged,
         onSaved: (phoneNumber) {
-          print(phoneNumber!.nsn);
-          print(phoneNumber.countryCode);
-          /* BlocProvider.of<AuthenticationCubit>(context).signUpPhoneNumber( */
-          /*   /* "+${phoneNumber.countryCode} ${phoneNumber.nsn}", */ */
-          /*   "+1 555-333-4444", */
-          /*   context, */
-          /* ); */
+          BlocProvider.of<AuthenticationCubit>(context).signUpPhoneNumber(
+            /* "+${phoneNumber.countryCode} ${phoneNumber.nsn}", */
+            "+1 555-333-4444",
+          );
 
           Navigator.of(context).push(
             PageRouteBuilder(
-              transitionDuration: Duration(milliseconds: 500),
-              reverseTransitionDuration: Duration(seconds: 1),
+              transitionDuration: const Duration(milliseconds: 500),
+              reverseTransitionDuration: const Duration(seconds: 1),
               transitionsBuilder: onboardingSlideTransition,
               pageBuilder: (BuildContext context, _, __) => SmsCodeScreen(),
             ),
           );
         },
         onSubmitted: (phoneNumber) {
-          if (phoneController.value != null &&
-              phoneController.value!.validate(
+          if (widget.phoneController.value != null &&
+              widget.phoneController.value!.validate(
                 type: PhoneNumberType.mobile,
               )) {
             widget.formKey.currentState!.save();

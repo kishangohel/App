@@ -10,19 +10,21 @@ class MapButtons extends StatelessWidget {
       // 100% right, 70% up
       top: 100,
       right: 0,
-      child: Container(
+      child: SizedBox(
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.all(14),
+            padding: const EdgeInsets.all(14),
             primary: Colors.white,
-            shape: CircleBorder(),
+            shape: const CircleBorder(),
           ),
-          child: Icon(
+          child: const Icon(
             Icons.my_location,
           ),
           onPressed: () {
             if (context.read<LocationCubit>().state != null) {
-              BlocProvider.of<MapCubit>(context).mapController?.animateCamera(CameraUpdate.newLatLngZoom(
+              BlocProvider.of<MapCubit>(context)
+                  .mapController
+                  ?.animateCamera(CameraUpdate.newLatLngZoom(
                     context.read<LocationCubit>().state!,
                     18,
                   ));

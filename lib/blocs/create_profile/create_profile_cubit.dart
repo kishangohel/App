@@ -12,7 +12,7 @@ class CreateProfileCubit extends Cubit<Profile> {
   CreateProfileCubit(
     this._usersRepository,
     this._authenticationRepository,
-  ) : super(Profile());
+  ) : super(const Profile());
 
   void usernameChanged(String value) async {
     final username = Username.dirty(value);
@@ -52,7 +52,7 @@ class CreateProfileCubit extends Cubit<Profile> {
         uid, state.username.value, state.photoPath);
     await _authenticationRepository.updateUsername(state.username.value);
     _authenticationRepository.updateProfilePhoto(state.photoPath!);
-    sleep(Duration(seconds: 1));
+    sleep(const Duration(seconds: 1));
     emit(state.copyWith(status: FormzStatus.submissionSuccess));
   }
 }

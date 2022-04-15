@@ -12,10 +12,10 @@ PageViewModel requestBackgroundLocationPageViewModel(
     title: "Auto Connect to WiFi",
     // bodyWidget has priority over body string.
     // Only build if location access is disabled.
-    body: "VeriFi is trying to revolutionize how you connect to WiFi. " +
-        "When you stop at a store, coffee shop, or other business, VeriFi " +
-        "can automatically connect you to known WiFi access points.\n\n" +
-        "In order to auto-connect to WiFi, VeriFi will need permission " +
+    body: "VeriFi is trying to revolutionize how you connect to WiFi. "
+        "When you stop at a store, coffee shop, or other business, VeriFi "
+        "can automatically connect you to known WiFi access points.\n\n"
+        "In order to auto-connect to WiFi, VeriFi will need permission "
         "to periodically retrieve your location in the background.",
     footer: WelcomeScreenFooterButton(
       initialButtonText: "Setup Background Location Access",
@@ -25,10 +25,10 @@ PageViewModel requestBackgroundLocationPageViewModel(
       completedButtonText: "Complete Setup",
     ),
     decoration: PageDecoration(
-      bodyPadding: EdgeInsets.all(8.0),
+      bodyPadding: const EdgeInsets.all(8.0),
       outerFlex: 1,
       bodyFlex: 2,
-      contentMargin: EdgeInsets.all(12.0),
+      contentMargin: const EdgeInsets.all(12.0),
       fullScreen: true,
       pageColor: Theme.of(context).backgroundColor,
       titleTextStyle: Theme.of(context).textTheme.headline4!.copyWith(
@@ -45,21 +45,21 @@ Future<void> _enableBackgroundLocationServices(BuildContext context) async {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text("Warning!"),
-        content: Text(
-          "VeriFi auto-connect will be disabled. To re-enable, you " +
-              "must set your location permissions to 'Always Allow'",
+        title: const Text("Warning!"),
+        content: const Text(
+          "VeriFi auto-connect will be disabled. To re-enable, you "
+          "must set your location permissions to 'Always Allow'",
         ),
         actions: [
           TextButton(
-            child: Text("Try Again"),
+            child: const Text("Try Again"),
             onPressed: () async {
               Navigator.of(context).pop();
               Permission.locationAlways.request();
             },
           ),
           TextButton(
-            child: Text("Continue without background location access"),
+            child: const Text("Continue without background location access"),
             onPressed: () {
               Navigator.of(context).pop();
             },

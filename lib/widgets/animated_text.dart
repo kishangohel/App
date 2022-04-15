@@ -86,9 +86,9 @@ class _AnimatedTextState extends State<AnimatedText>
   List<List<String>> separatedStrings =
       List<List<String>>.empty(growable: true);
   Map<String, Map<String, _Position>> animateDataMap =
-      Map<String, Map<String, _Position>>();
-  Map<String, List<String>> preProcesedFadeIn = Map<String, List<String>>(),
-      preProcesedFadeOut = Map<String, List<String>>();
+      <String, Map<String, _Position>>{};
+  Map<String, List<String>> preProcesedFadeIn = <String, List<String>>{},
+      preProcesedFadeOut = <String, List<String>>{};
   Timer? _timer;
 
   AnimationController? fadeController;
@@ -183,12 +183,12 @@ class _AnimatedTextState extends State<AnimatedText>
 
   _processWords() {
     words = List<String>.from(widget.wordList);
-    preProcesedFadeIn = Map<String, List<String>>();
-    preProcesedFadeOut = Map<String, List<String>>();
+    preProcesedFadeIn = <String, List<String>>{};
+    preProcesedFadeOut = <String, List<String>>{};
     separatedStrings = List<List<String>>.empty(growable: true);
-    animateDataMap = Map<String, Map<String, _Position>>();
+    animateDataMap = <String, Map<String, _Position>>{};
     length = words.length;
-    words.forEach((element) {
+    for (var element in words) {
       Map<String, int> map = <String, int>{};
       List<String> lis = List<String>.empty(growable: true);
       element.replaceAll(' ', ' ').split('').forEach((element) {
@@ -196,14 +196,14 @@ class _AnimatedTextState extends State<AnimatedText>
         lis.add('$element${map[element]}');
       });
       separatedStrings.add(lis);
-    });
+    }
 
     int len = separatedStrings.length;
     for (int i = 0; i < len; i++) {
-      Map<String, _Position> inner = Map<String, _Position>();
+      Map<String, _Position> inner = <String, _Position>{};
       for (int j = 0; j < separatedStrings[i].length; j++) {
         if (separatedStrings[(i + 1) % len].contains(separatedStrings[i][j])) {
-          inner[separatedStrings[i][j]] = _Position(-1, -1, Size(-1, -1));
+          inner[separatedStrings[i][j]] = _Position(-1, -1, const Size(-1, -1));
         }
       }
 
@@ -256,7 +256,7 @@ class _AnimatedTextState extends State<AnimatedText>
   }
 
   _setKey(GlobalKey key, MapEntry e) {
-    Future.delayed(Duration(milliseconds: 400), () {
+    Future.delayed(const Duration(milliseconds: 400), () {
       if (key.currentContext != null) {
         animateDataMap[words[_prevIndex(index)]]![e.value] =
             _getPositionbyKey(key);
@@ -275,12 +275,12 @@ class _AnimatedTextState extends State<AnimatedText>
     fadeOutAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
         CurvedAnimation(
             parent: fadeController!,
-            curve: Interval(0.2, 0.4, curve: Curves.decelerate)));
+            curve: const Interval(0.2, 0.4, curve: Curves.decelerate)));
 
     fadeInAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
         CurvedAnimation(
             parent: fadeController!,
-            curve: Interval(0.4, 1.0, curve: Curves.decelerate)));
+            curve: const Interval(0.4, 1.0, curve: Curves.decelerate)));
     if (widget.controller == AnimatedTextController.play ||
         widget.controller == AnimatedTextController.restart ||
         widget.controller == AnimatedTextController.loop) {
@@ -325,12 +325,12 @@ class _AnimatedTextState extends State<AnimatedText>
     fadeOutAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
         CurvedAnimation(
             parent: fadeController!,
-            curve: Interval(0.4, 1.0, curve: Curves.decelerate)));
+            curve: const Interval(0.4, 1.0, curve: Curves.decelerate)));
 
     fadeInAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
         CurvedAnimation(
             parent: fadeController!,
-            curve: Interval(0.65, 1.0, curve: Curves.decelerate)))
+            curve: const Interval(0.65, 1.0, curve: Curves.decelerate)))
       ..addStatusListener(_animationEndedListener);
 
     if (widget.controller == AnimatedTextController.play ||
@@ -368,7 +368,7 @@ class _AnimatedTextState extends State<AnimatedText>
     );
     if (animateDataMap[words[_prevIndex(index)]] != null &&
         animateDataMap[words[_prevIndex(index)]]![e.value] != null) {
-      Future.delayed(Duration(milliseconds: 400), () {
+      Future.delayed(const Duration(milliseconds: 400), () {
         if (key.currentContext != null) {
           animateDataMap[words[_prevIndex(index)]]![e.value] =
               _getPositionbyKey(key);
@@ -384,7 +384,7 @@ class _AnimatedTextState extends State<AnimatedText>
   Widget build(BuildContext context) {
     return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
-      return Container(
+      return SizedBox(
         width: constraints.maxWidth,
         height: constraints.maxHeight,
         child: Stack(
@@ -545,9 +545,9 @@ class _FadeOutState extends State<_FadeOut> {
 
   _putLocalRef() {
     localRef = List<double>.empty(growable: true);
-    widget.alphabets.forEach((_) {
+    for (var _ in widget.alphabets) {
       localRef!.add(0.0);
-    });
+    }
     setState(() {});
   }
 
@@ -662,5 +662,5 @@ _Position _getPositionbyKey(GlobalKey key) {
     Offset position = box.localToGlobal(Offset.zero);
     return _Position(position.dx, position.dy, size);
   }
-  return _Position(0, 0, Size(0, 0));
+  return _Position(0, 0, const Size(0, 0));
 }

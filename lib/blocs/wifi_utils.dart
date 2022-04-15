@@ -18,7 +18,6 @@ class WifiUtils {
   ) async {
     List<DocumentSnapshot> docs =
         await wifiRepo.getWifiWithinRadiusStream(location, radius).first;
-    print("DOC LENGTH: ${docs.length}");
     // Set wifis to length of documents. This allows us to async update
     // List<Wifi> and keep the order of the documents returned by
     // distance.
@@ -62,7 +61,7 @@ class WifiUtils {
   ) async {
     List<DocumentSnapshot> docs =
         await repo.getWifiWithinRadiusStream(location, radius).first;
-    print("DOC LENGTH: ${docs.length}");
+
     // Set wifis to length of documents. This allows us to async update
     // List<Wifi> and keep the order of the documents returned by
     // distance.
@@ -78,8 +77,9 @@ class WifiUtils {
       final entity = WifiEntity.fromDocumentSnapshotWithDistance(doc, distance);
       return WifiDetails.fromEntity(entity);
     }).toList();
-    wifiDetailsList.forEach((wifiDetail) =>
-        wifis.add(Wifi(id: wifiDetail.id, wifiDetails: wifiDetail)));
+    for (var wifiDetail in wifiDetailsList) {
+      wifis.add(Wifi(id: wifiDetail.id, wifiDetails: wifiDetail));
+    }
     return wifis;
   }
 

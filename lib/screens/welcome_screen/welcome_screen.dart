@@ -1,20 +1,13 @@
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:formz/formz.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:verifi/blocs/blocs.dart';
-import 'package:verifi/blocs/create_profile/create_profile_cubit.dart';
-import 'package:verifi/blocs/shared_prefs.dart';
-import 'package:verifi/models/profile.dart';
 import 'package:verifi/screens/welcome_screen/request_background_location_page_view_model.dart';
 import 'package:verifi/screens/welcome_screen/request_location_page_view_model.dart';
 import 'package:verifi/screens/welcome_screen/welcome_page_view_model.dart';
-import 'package:verifi/widgets/intro_screen/create_profile_page.dart';
 
 import 'introduction_screen/introduction_screen.dart';
-import 'introduction_screen/model/page_decoration.dart';
-import 'introduction_screen/model/page_view_model.dart';
 
 class WelcomeScreen extends StatelessWidget {
   @override

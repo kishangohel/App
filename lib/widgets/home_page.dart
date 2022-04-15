@@ -15,7 +15,7 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  int _currentIndex = 0; //TODO Set back to zero
+  int _currentIndex = 0;
   late List<Widget> _bodyChildren;
 
   @override
@@ -55,15 +55,15 @@ class HomePageState extends State<HomePage> {
 
   List<BottomNavigationBarItem> buildBottomNavBarItems() {
     return [
-      BottomNavigationBarItem(
+      const BottomNavigationBarItem(
         icon: Icon(Icons.list),
         label: "WiFi Feed",
       ),
-      BottomNavigationBarItem(
+      const BottomNavigationBarItem(
         icon: Icon(Icons.map),
         label: "WiFi Map",
       ),
-      BottomNavigationBarItem(
+      const BottomNavigationBarItem(
         icon: Icon(Icons.person),
         label: "My Profile",
       )

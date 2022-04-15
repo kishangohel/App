@@ -14,8 +14,8 @@ PageViewModel buildRequestLocationPageViewModel(
   return PageViewModel(
     title: "Location Based Connectivity",
     bodyWidget: Text(
-      "In order for VeriFi to intelligently connect you to nearby WiFi, " +
-          "we will periodically need access to your location.",
+      "In order for VeriFi to intelligently connect you to nearby WiFi, "
+      "we will periodically need access to your location.",
       style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 18.0),
       textAlign: TextAlign.center,
     ),
@@ -27,7 +27,7 @@ PageViewModel buildRequestLocationPageViewModel(
         if (granted) {
           pageController.animateToPage(
             2,
-            duration: Duration(milliseconds: 350),
+            duration: const Duration(milliseconds: 350),
             curve: Curves.easeIn,
           );
         } else {
@@ -38,10 +38,10 @@ PageViewModel buildRequestLocationPageViewModel(
     ),
     useScrollView: false,
     decoration: PageDecoration(
-      bodyPadding: EdgeInsets.all(8.0),
+      bodyPadding: const EdgeInsets.all(8.0),
       outerFlex: 1,
       bodyFlex: 4,
-      contentMargin: EdgeInsets.all(12.0),
+      contentMargin: const EdgeInsets.all(12.0),
       fullScreen: true,
       pageColor: Theme.of(context).backgroundColor,
       titleTextStyle: Theme.of(context).textTheme.headline4!.copyWith(
@@ -54,20 +54,19 @@ PageViewModel buildRequestLocationPageViewModel(
 
 Future<void> _enableLocationServices(BuildContext context) async {
   final request = await Permission.locationWhenInUse.request();
-  print(request.toString());
   if (request.isGranted) {
     context.read<LocationCubit>().getLocation();
   } else {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text("Warning!"),
-        content: Text(
+        title: const Text("Warning!"),
+        content: const Text(
           "VeriFi will not function properly without location access.",
         ),
         actions: [
           TextButton(
-            child: Text("Try Again"),
+            child: const Text("Try Again"),
             onPressed: () async {
               Navigator.of(context).pop();
               final request = await Permission.locationWhenInUse.request();
@@ -77,7 +76,7 @@ Future<void> _enableLocationServices(BuildContext context) async {
             },
           ),
           TextButton(
-            child: Text("Continue without location access"),
+            child: const Text("Continue without location access"),
             onPressed: () {
               Navigator.of(context).pop();
             },
@@ -112,8 +111,11 @@ class _SecondPageFooterState extends State<_SecondPageFooter> {
           )
         : ElevatedButton(
             style: ElevatedButton.styleFrom(
-              padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-              shape: RoundedRectangleBorder(
+              padding: const EdgeInsets.symmetric(
+                vertical: 8.0,
+                horizontal: 16.0,
+              ),
+              shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(24.0)),
               ),
             ),
@@ -139,12 +141,13 @@ class _SecondPageFooterState extends State<_SecondPageFooter> {
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          title: Text("Warning!"),
-          content: Text(
-              "VeriFi will not function properly without location access."),
+          title: const Text("Warning!"),
+          content: const Text(
+            "VeriFi will not function properly without location access.",
+          ),
           actions: [
             TextButton(
-              child: Text("Try Again"),
+              child: const Text("Try Again"),
               onPressed: () async {
                 Navigator.of(context).pop();
                 final request = await Permission.locationWhenInUse.request();
@@ -157,7 +160,7 @@ class _SecondPageFooterState extends State<_SecondPageFooter> {
               },
             ),
             TextButton(
-              child: Text("Continue without location access"),
+              child: const Text("Continue without location access"),
               onPressed: () {
                 Navigator.of(context).pop();
                 setState(() {

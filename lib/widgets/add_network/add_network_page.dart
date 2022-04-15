@@ -23,10 +23,10 @@ class AddNetworkPage extends StatelessWidget {
         return BlocBuilder<MapCubit, MapState>(builder: (context, mapState) {
           return Scaffold(
             appBar: AppBar(
-              title: Text("Add Network"),
+              title: const Text("Add Network"),
             ),
             body: Container(
-              margin: EdgeInsets.all(8.0),
+              margin: const EdgeInsets.all(8.0),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[

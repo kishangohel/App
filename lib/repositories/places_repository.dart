@@ -8,7 +8,7 @@ import 'package:uuid/uuid.dart';
 class PlacesRepository {
   final googlePlacesDbFilename = 'places.db';
   final store = stringMapStoreFactory.store();
-  var sessionToken = Uuid().v4();
+  var sessionToken = const Uuid().v4();
   Database? googlePlacesDb;
 
   final _googleMapsPlaces = GooglePlace(
@@ -67,9 +67,7 @@ class PlacesRepository {
       await initLocalDbs();
     }
     DetailsResult? placeDetails = await _getPlaceDetailsCache(placeId);
-    if (placeDetails == null) {
-      placeDetails = await _getPlaceDetailsRemote(placeId, isAutocomplete);
-    }
+    placeDetails ??= await _getPlaceDetailsRemote(placeId, isAutocomplete);
     if (placeDetails != null) addPlaceDetailsToCache(placeDetails);
     return placeDetails;
   }
@@ -80,7 +78,6 @@ class PlacesRepository {
       googlePlacesDb!,
       finder: Finder(filter: Filter.byKey(placeId)),
     );
-    print(result?.value);
     return (result != null) ? DetailsResult.fromJson(result.value) : null;
   }
 
@@ -93,7 +90,7 @@ class PlacesRepository {
     );
     // generate new session token for follow-on autocomplete queries
     if (isAutocomplete) {
-      sessionToken = Uuid().v4();
+      sessionToken = const Uuid().v4();
     }
     return response?.result;
   }

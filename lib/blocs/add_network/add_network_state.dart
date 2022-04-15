@@ -1,6 +1,6 @@
 enum AddNetworkState {
-  AddNetworkEmpty,
-  AddNetworkError,
-  AddNetworkSubmitting,
-  AddNetworkSubmitted,
+  addNetworkEmpty,
+  addNetworkError,
+  addNetworkSubmitting,
+  addNetworkSubmitted,
 }

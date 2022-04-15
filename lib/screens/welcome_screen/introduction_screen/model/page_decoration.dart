@@ -39,6 +39,8 @@ class PageDecoration {
   final EdgeInsets titlePadding;
 
   /// Padding of body
+  ///
+  /// @Default `EdgeInsets.all(0.0)`
   final EdgeInsets? bodyPadding;
 
   /// Padding of footer
@@ -77,7 +79,7 @@ class PageDecoration {
     this.imagePadding = const EdgeInsets.only(bottom: 24.0),
     this.contentMargin = const EdgeInsets.all(16.0),
     this.titlePadding = const EdgeInsets.only(top: 16.0, bottom: 24.0),
-    this.bodyPadding,
+    this.bodyPadding = const EdgeInsets.all(0.0),
     this.footerPadding = const EdgeInsets.symmetric(vertical: 24.0),
     this.bodyAlignment = Alignment.topCenter,
     this.imageAlignment = Alignment.bottomCenter,
@@ -95,6 +97,7 @@ class PageDecoration {
     EdgeInsets? imagePadding,
     EdgeInsets? contentMargin,
     EdgeInsets? titlePadding,
+    EdgeInsets? bodyPadding,
     EdgeInsets? descriptionPadding,
     EdgeInsets? footerPadding,
     Alignment? bodyAlignment,
@@ -116,7 +119,7 @@ class PageDecoration {
       imagePadding: imagePadding ?? this.imagePadding,
       contentMargin: contentMargin ?? this.contentMargin,
       titlePadding: titlePadding ?? this.titlePadding,
-      bodyPadding: descriptionPadding ?? this.bodyPadding,
+      bodyPadding: bodyPadding ?? this.bodyPadding,
       footerPadding: footerPadding ?? this.footerPadding,
       bodyAlignment: bodyAlignment ?? this.bodyAlignment,
       imageAlignment: imageAlignment ?? this.imageAlignment,

@@ -23,19 +23,19 @@ class FeedCard extends StatelessWidget {
     final List<Photo> photos = placeDetails.photos ?? [];
     return GestureDetector(
       child: Card(
-        margin: EdgeInsets.symmetric(vertical: 5),
+        margin: const EdgeInsets.symmetric(vertical: 5),
         elevation: 4.0,
         child: Column(
           children: [
             Container(
-              child: (photos.length > 0)
+              child: (photos.isNotEmpty)
                   ? CachedNetworkImage(
                       imageUrl: _getPhotoReferenceUrl(
                         context,
                         photos[0].photoReference,
                       ),
                       height: 200,
-                      fadeInDuration: Duration(seconds: 0),
+                      fadeInDuration: const Duration(seconds: 0),
                       fit: BoxFit.fitWidth,
                       width: double.infinity,
                       alignment: Alignment.center,
@@ -51,7 +51,7 @@ class FeedCard extends StatelessWidget {
             ),
           ],
         ),
-        shape: RoundedRectangleBorder(),
+        shape: const RoundedRectangleBorder(),
       ),
       onTap: () {},
     );

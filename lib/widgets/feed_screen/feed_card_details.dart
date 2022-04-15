@@ -9,7 +9,8 @@ class FeedCardDetails extends StatelessWidget {
   final num? distance;
   final LatLng myLocation;
   final LatLng wifiLocation;
-  FeedCardDetails({
+
+  const FeedCardDetails({
     required this.name,
     required this.ssid,
     this.distance,
@@ -19,14 +20,14 @@ class FeedCardDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 100,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Expanded(
             child: Padding(
-              padding: EdgeInsets.only(top: 8, left: 8),
+              padding: const EdgeInsets.only(top: 8, left: 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -39,7 +40,7 @@ class FeedCardDetails extends StatelessWidget {
                         ?.copyWith(fontSize: 20),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(top: 4),
+                    padding: const EdgeInsets.only(top: 4),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -51,7 +52,7 @@ class FeedCardDetails extends StatelessWidget {
                             children: [
                               Row(
                                 children: [
-                                  Icon(
+                                  const Icon(
                                     Icons.network_wifi,
                                     size: 14,
                                     color: Colors.green,
@@ -72,13 +73,13 @@ class FeedCardDetails extends StatelessWidget {
                         Expanded(
                           flex: 1,
                           child: Padding(
-                            padding: EdgeInsets.only(right: 16),
+                            padding: const EdgeInsets.only(right: 16),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 IconButton(
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Icons.favorite_border,
                                     color: Colors.red,
                                   ),
@@ -118,7 +119,7 @@ Widget _distanceText(
   }
   actualDistance = double.parse(actualDistance.toStringAsFixed(1));
   return Padding(
-    padding: EdgeInsets.only(top: 4.0),
+    padding: const EdgeInsets.only(top: 4.0),
     child: Text(
       (actualDistance < 0.1) ? "Nearby" : "$actualDistance mi",
       style: GoogleFonts.rubik(

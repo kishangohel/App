@@ -34,11 +34,9 @@ class _IntroPageState extends State<IntroPage>
       children: [
         Positioned.fill(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // apply even flex on either side of body
-              Spacer(),
               content,
-              Spacer(),
             ],
           ),
         ),

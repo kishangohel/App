@@ -14,7 +14,7 @@ class FeedFilterChip extends StatelessWidget {
     return BlocBuilder<FeedFilterBloc, FeedFilter>(
         builder: (context, feedFilter) {
       return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 4.0),
+        padding: const EdgeInsets.symmetric(horizontal: 4.0),
         child: ActionChip(
           onPressed: () {
             if (label == "Distance") {
@@ -22,7 +22,7 @@ class FeedFilterChip extends StatelessWidget {
             }
           },
           elevation: 4.0,
-          labelPadding: EdgeInsets.symmetric(
+          labelPadding: const EdgeInsets.symmetric(
             vertical: 2.0,
             horizontal: 16.0,
           ),
@@ -31,22 +31,20 @@ class FeedFilterChip extends StatelessWidget {
             (label == "Distance")
                 ? "$label: ${feedFilter.distance} miles"
                 : "Type",
-            style: TextStyle(
-              color: Colors.white,
-            ),
+            style: const TextStyle(color: Colors.white),
           ),
         ),
       );
     });
   }
 
-  showPickerNumber(BuildContext context) {
-    new Picker(
+  Future<void> showPickerNumber(BuildContext context) async {
+    Picker(
       adapter: NumberPickerAdapter(data: [
-        NumberPickerColumn(items: [1, 5, 10, 25, 50, 100, 200]),
+        const NumberPickerColumn(items: [1, 5, 10, 25, 50, 100, 200]),
       ]),
       hideHeader: true,
-      title: new Text("Select Maximum Distance"),
+      title: const Text("Select Maximum Distance"),
       onConfirm: (Picker picker, List<int> value) {
         BlocProvider.of<WifiFeedCubit>(context).filter.distance =
             picker.getSelectedValues()[0].toDouble();

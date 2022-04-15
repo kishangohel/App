@@ -1,6 +1,4 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:verifi/widgets/animated_text.dart';
 
 class OnboardingSheet extends StatelessWidget {
@@ -9,13 +7,13 @@ class OnboardingSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
       child: PageView(
         controller: controller,
         children: [
           OnboardingFirstPage(),
-          Text("Two"),
-          Text("Three"),
+          const Text("Two"),
+          const Text("Three"),
         ],
       ),
     );
@@ -23,18 +21,18 @@ class OnboardingSheet extends StatelessWidget {
 }
 
 class OnboardingFirstPage extends StatelessWidget {
-  final _topText = "We are committed to bridging the artificial divide " +
+  final _topText = "We are committed to bridging the artificial divide "
       "between the physical universe and the digital metaverse.";
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
-              padding: EdgeInsets.only(bottom: 16.0),
+              padding: const EdgeInsets.only(bottom: 16.0),
               child: Text(
                 "Welcome to VeriFi",
                 style: Theme.of(context).textTheme.headline4,
@@ -48,7 +46,7 @@ class OnboardingFirstPage extends StatelessWidget {
                   ?.copyWith(fontSize: 18.0),
             ),
             Container(
-              padding: EdgeInsets.only(top: 16.0),
+              padding: const EdgeInsets.only(top: 16.0),
               child: Text(
                 "Everyday, billions of people around the world are",
                 style: Theme.of(context)
@@ -59,10 +57,10 @@ class OnboardingFirstPage extends StatelessWidget {
               ),
             ),
             Container(
-              margin: EdgeInsets.only(bottom: 4.0),
+              margin: const EdgeInsets.only(bottom: 4.0),
               height: 20,
               child: AnimatedText(
-                wordList: [
+                wordList: const [
                   "connecting",
                   "exploring",
                   "researching",
@@ -91,10 +89,10 @@ class OnboardingFirstPage extends StatelessWidget {
                   ?.copyWith(fontSize: 18.0),
             ),
             Container(
-              padding: EdgeInsets.only(bottom: 8.0),
+              padding: const EdgeInsets.only(bottom: 8.0),
               child: Text(
-                "To improve the user experience across these pursuits, " +
-                    "we provide three core services to our community:",
+                "To improve the user experience across these pursuits, "
+                "we provide three core services to our community:",
                 style: Theme.of(context)
                     .textTheme
                     .bodyMedium
@@ -102,8 +100,8 @@ class OnboardingFirstPage extends StatelessWidget {
               ),
             ),
             Text(
-              "1) Connection to the Metaverse\n2) Connection in the Universe\n" +
-                  "3) Bridging the Universe with the Metaverse",
+              "1) Connection to the Metaverse\n2) Connection in the Universe\n"
+              "3) Bridging the Universe with the Metaverse",
               style: Theme.of(context)
                   .textTheme
                   .bodyMedium

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:verifi/screens/auth_screen/account_creation_screen.dart';
-import 'package:verifi/screens/auth_screen/onboarding_sheet.dart';
 
 class GetStartedButton extends StatelessWidget {
+  GetStartedButton() : super(key: UniqueKey());
+
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
@@ -11,7 +12,7 @@ class GetStartedButton extends StatelessWidget {
           shape: ContinuousRectangleBorder(
             borderRadius: BorderRadius.circular(24.0),
           ),
-          padding: EdgeInsets.symmetric(
+          padding: const EdgeInsets.symmetric(
             vertical: 12.0,
             horizontal: 16.0,
           ),
@@ -27,8 +28,8 @@ class GetStartedButton extends StatelessWidget {
         onPressed: () {
           Navigator.of(context).push(
             PageRouteBuilder(
-              transitionDuration: Duration(seconds: 1, milliseconds: 500),
-              reverseTransitionDuration: Duration(seconds: 1),
+              transitionDuration: const Duration(seconds: 1, milliseconds: 500),
+              reverseTransitionDuration: const Duration(seconds: 1),
               transitionsBuilder: _slideTransition,
               pageBuilder: (BuildContext context, _, __) =>
                   AccountCreationScreen(),

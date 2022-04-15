@@ -7,8 +7,8 @@ class AddNetworkFab extends StatelessWidget {
   Widget build(BuildContext context) {
     return FloatingActionButton.extended(
       backgroundColor: Theme.of(context).primaryColor,
-      icon: Icon(Icons.wifi),
-      label: Text("Add Network"),
+      icon: const Icon(Icons.wifi),
+      label: const Text("Add Network"),
       elevation: 6.0,
       onPressed: () {
         Navigator.push(

@@ -12,9 +12,4 @@ class UpdateTab extends TabEvent {
 
   @override
   List<Object> get props => [tab];
-
-  @override
-  String toString() {
-    return super.toString();
-  }
 }

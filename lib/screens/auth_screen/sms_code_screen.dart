@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pinput/pinput.dart';
+import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 
 class SmsCodeScreen extends StatefulWidget {
@@ -22,72 +24,80 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        color: Colors.black,
-        child: SafeArea(
-          child: Stack(
-            children: [
-              ...onBoardingBackground(context),
-              Column(
-                children: [
-                  Expanded(flex: 1, child: Container()),
-                  AnimatedOpacity(
-                    opacity: opacity,
-                    duration: const Duration(seconds: 1),
-                    child: Column(
-                      children: [
-                        Container(
-                          alignment: Alignment.bottomCenter,
-                          padding: EdgeInsets.all(8.0),
-                          child: FittedBox(
-                            fit: BoxFit.fitWidth,
-                            child: Text(
-                              'Enter SMS verification code',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyLarge!
-                                  .copyWith(
-                                    fontSize: 48.0,
-                                    color: Colors.white,
-                                  ),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          alignment: Alignment.topCenter,
-                          padding: EdgeInsets.all(8.0),
-                          child: Pinput(
-                            length: 6,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            defaultPinTheme: PinTheme(
-                              width: MediaQuery.of(context).size.width * 0.12,
-                              height: 56,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8.0,
-                                vertical: 8.0,
-                              ),
-                              textStyle: TextStyle(
-                                fontSize: 20,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.white,
-                                ),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Expanded(flex: 1, child: Container()),
-                ],
+      body: BlocListener<AuthenticationCubit, AuthenticationState>(
+        listener: (context, state) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                state.exception?.message.toString() ?? "Failed to authenticate",
               ),
-            ],
+            ),
+          );
+        },
+        listenWhen: (previous, current) {
+          return current.exception != null;
+        },
+        child: Container(
+          color: Colors.black,
+          child: SafeArea(
+            child: Stack(
+              children: [
+                ...onBoardingBackground(context),
+                AnimatedOpacity(
+                  opacity: opacity,
+                  duration: const Duration(seconds: 1),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(16.0),
+                        child: FittedBox(
+                          fit: BoxFit.fitWidth,
+                          child: Text(
+                            'Enter SMS verification code',
+                            style:
+                                Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                      fontSize: 48.0,
+                                      color: Colors.white,
+                                    ),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Pinput(
+                          length: 6,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          defaultPinTheme: PinTheme(
+                            width: MediaQuery.of(context).size.width * 0.12,
+                            height: 56,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8.0,
+                              vertical: 8.0,
+                            ),
+                            textStyle: const TextStyle(
+                              fontSize: 20,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.white,
+                              ),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
+                          onCompleted: (String pin) => context
+                              .read<AuthenticationCubit>()
+                              .submitSmsCode(pin),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

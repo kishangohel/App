@@ -10,11 +10,12 @@ import 'package:verifi/models/wifi.dart';
 class MapMarkersHelper {
   static Future<void> initMarker() async {
     // If marker already in cache, do nothing
-    final FileInfo? markerImage = await DefaultCacheManager().getFileFromCache("map-marker.png");
+    final FileInfo? markerImage =
+        await DefaultCacheManager().getFileFromCache("map-marker.png");
     if (markerImage != null) return;
 
     // Transform icon into Uint8List
-    final iconData = Icons.whatshot;
+    const iconData = Icons.whatshot;
     final pictureRecorder = PictureRecorder();
     final canvas = Canvas(pictureRecorder);
     final textPainter = TextPainter(textDirection: TextDirection.ltr);
@@ -28,10 +29,11 @@ class MapMarkersHelper {
       ),
     );
     textPainter.layout();
-    textPainter.paint(canvas, Offset(0.0, 0.0));
+    textPainter.paint(canvas, const Offset(0.0, 0.0));
     final Picture pic = pictureRecorder.endRecording();
     final img = await pic.toImage(120, 120);
-    final ByteData? byteData = await img.toByteData(format: ImageByteFormat.png);
+    final ByteData? byteData =
+        await img.toByteData(format: ImageByteFormat.png);
     if (null != byteData) {
       DefaultCacheManager().putFile(
         "map-marker.png",
@@ -42,7 +44,8 @@ class MapMarkersHelper {
   }
 
   static Future<BitmapDescriptor> getMarker() async {
-    final FileInfo? markerImage = await DefaultCacheManager().getFileFromCache("map-marker.png");
+    final FileInfo? markerImage =
+        await DefaultCacheManager().getFileFromCache("map-marker.png");
     if (markerImage == null) {
       await initMarker();
       return getMarker();
@@ -89,7 +92,8 @@ class MapMarkersHelper {
     Color clusterTextColor,
     int clusterWidth,
   ) {
-    return Future.wait(clusterManager.clusters([-180, -85, 180, 85], currentZoom.toInt()).map((mapMarker) async {
+    return Future.wait(clusterManager.clusters(
+        [-180, -85, 180, 85], currentZoom.toInt()).map((mapMarker) async {
       final isCluster = mapMarker.isCluster;
       if (isCluster != null && isCluster) {
         mapMarker.icon = await _getClusterMarkerImage(
@@ -141,9 +145,13 @@ class MapMarkersHelper {
       Offset(radius - textPainter.width / 2, radius - textPainter.height / 2),
     );
 
-    final image = await pictureRecorder.endRecording().toImage(radius.toInt() * 2, radius.toInt() * 2);
+    final image = await pictureRecorder
+        .endRecording()
+        .toImage(radius.toInt() * 2, radius.toInt() * 2);
 
     final ByteData? data = await image.toByteData(format: ImageByteFormat.png);
-    return (data != null) ? BitmapDescriptor.fromBytes(data.buffer.asUint8List()) : BitmapDescriptor.defaultMarker;
+    return (data != null)
+        ? BitmapDescriptor.fromBytes(data.buffer.asUint8List())
+        : BitmapDescriptor.defaultMarker;
   }
 }

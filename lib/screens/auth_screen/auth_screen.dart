@@ -6,6 +6,8 @@ import 'package:verifi/screens/auth_screen/intro_text_content.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 
 class AuthScreen extends StatelessWidget {
+  AuthScreen() : super(key: UniqueKey());
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthenticationCubit, AuthenticationState>(

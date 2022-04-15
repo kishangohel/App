@@ -5,9 +5,7 @@ class SharedPrefs {
   static SharedPreferences? _sharedPrefs;
 
   init() async {
-    if (_sharedPrefs == null) {
-      _sharedPrefs = await SharedPreferences.getInstance();
-    }
+    _sharedPrefs ??= await SharedPreferences.getInstance();
   }
 
   /// Returns [false] if [keyFirstLaunch] exists, [true] if key does not exist.

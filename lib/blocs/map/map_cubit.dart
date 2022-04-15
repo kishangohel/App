@@ -23,7 +23,7 @@ class MapCubit extends Cubit<MapState> {
   MapCubit(
     this._remoteRepository,
     this._placesRepository,
-  ) : super(MapState());
+  ) : super(const MapState());
 
   void initialize(
     GoogleMapController controller,
@@ -53,7 +53,6 @@ class MapCubit extends Cubit<MapState> {
       currentGeoPoint,
       radius,
     );
-    print("WIFIS: ${wifis.length}");
     wifis = await WifiUtils.transformToClusters(
       wifis,
       zoom,

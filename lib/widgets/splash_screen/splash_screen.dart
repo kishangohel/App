@@ -5,8 +5,8 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: ConstrainedBox(
-        constraints: BoxConstraints.expand(),
-        child: FlutterLogo(
+        constraints: const BoxConstraints.expand(),
+        child: const FlutterLogo(
           size: 48,
           style: FlutterLogoStyle.horizontal,
           textColor: Colors.white,

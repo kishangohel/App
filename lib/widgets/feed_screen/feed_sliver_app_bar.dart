@@ -15,7 +15,7 @@ class FeedSliverAppBar extends StatelessWidget {
           alignment: Alignment.bottomCenter,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
+            children: const [
               FeedFilterChip("Distance"),
               FeedFilterChip("Type")
             ],
@@ -25,7 +25,7 @@ class FeedSliverAppBar extends StatelessWidget {
       snap: true,
       floating: true,
       pinned: true,
-      title: Text(
+      title: const Text(
         'Nearby WiFi',
         style: TextStyle(
           color: Colors.black,

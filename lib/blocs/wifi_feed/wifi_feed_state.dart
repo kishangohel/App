@@ -3,7 +3,7 @@ import 'package:verifi/models/wifi.dart';
 
 class WifiFeedState extends Equatable {
   final List<Wifi>? wifis;
-  WifiFeedState({this.wifis});
+  const WifiFeedState({this.wifis});
 
   @override
   List<Object> get props => wifis ?? [];

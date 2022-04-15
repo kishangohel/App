@@ -61,7 +61,6 @@ class _VeriFiState extends State<VeriFi> {
   }
 
   static Future<bool> callback(List<String?> ids, LatLng l) async {
-    print("Received geofence location: $l");
     // main.Notification().showNotificationWithoutSound(l);
     return Future.value(true);
   }
@@ -115,11 +114,6 @@ class _VeriFiState extends State<VeriFi> {
           BlocProvider<LocationCubit>(
             create: (context) => LocationCubit(),
           ),
-          BlocProvider<LoginCubit>(
-            create: (context) => LoginCubit(
-              RepositoryProvider.of<AuthenticationRepository>(context),
-            ),
-          ),
           BlocProvider<MapCubit>(
             create: (context) => MapCubit(
               RepositoryProvider.of<WifiRepository>(context),
@@ -161,13 +155,11 @@ class _VeriFiState extends State<VeriFi> {
 
   Future<void> registerNearbyGeofences() async {
     Position position = await Geolocator.getCurrentPosition();
-    print("Position: $position");
     List<Wifi> wifis = await WifiUtils.getNearbyWifi(
       WifiRepository(),
       GeoFirePoint(position.latitude, position.longitude),
       1.0, // get everything within 1km
     );
-    print("Wifis: $wifis");
     if (wifis.length > 1024) {
       wifis = wifis.sublist(0, 1024);
     }
@@ -185,32 +177,6 @@ class _VeriFiState extends State<VeriFi> {
         PluginUtilities.getCallbackHandle(callback)!.toRawHandle(),
         geofenceData,
       ],
-    );
-  }
-}
-
-class DummyPage extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => _DummyPageState();
-}
-
-class _DummyPageState extends State<DummyPage> {
-  static const platform = MethodChannel("world.verifi.app/channel");
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text("Dummy Page"),
-        ],
-      ),
     );
   }
 }

@@ -27,7 +27,7 @@ class UsersRepository {
   Future<bool> checkIfUsernameExists(String username) async {
     QuerySnapshot qs =
         await usersCollection.where('username', isEqualTo: username).get();
-    return qs.docs.length != 0;
+    return qs.docs.isNotEmpty;
   }
 
   /// Creates new user in Firestore users collection.

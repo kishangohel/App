@@ -3,7 +3,7 @@ import 'package:verifi/blocs/intro_pages/intro_pages_state.dart';
 
 class IntroPagesCubit extends HydratedCubit<IntroPagesState> {
   IntroPagesCubit()
-      : super(IntroPagesState(
+      : super(const IntroPagesState(
           onboarded: false,
         ));
 

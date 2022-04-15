@@ -17,10 +17,10 @@ class User extends Equatable {
   List<Object> get props => [id];
 
   Map<String, String?> toJson() => {
-        "username": this.username,
-        "id": this.id,
-        "email": this.email,
-        "photo": this.photo,
+        "username": username,
+        "id": id,
+        "email": email,
+        "photo": photo,
       };
 
   factory User.fromJson(Map<String, String?> json) {
@@ -34,6 +34,6 @@ class User extends Equatable {
 
   static const empty = User(email: '', id: '', username: '');
 
-  String toString() =>
-      "${this.id}, ${this.email}, ${this.username}, ${this.photo}";
+  @override
+  String toString() => "$id, $email, $username, $photo";
 }

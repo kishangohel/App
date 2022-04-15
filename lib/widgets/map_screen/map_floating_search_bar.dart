@@ -21,16 +21,16 @@ class MapFloatingSearchBarState extends State<MapFloatingSearchBar> {
         builder: (context, mapSearchState) {
       return FloatingSearchBar(
         progress: mapSearchState.loading,
-        scrollPadding: EdgeInsets.symmetric(vertical: 8.0),
+        scrollPadding: const EdgeInsets.symmetric(vertical: 8.0),
         controller: controller,
-        transitionDuration: Duration(milliseconds: 300),
+        transitionDuration: const Duration(milliseconds: 300),
         hint: "Search a new place",
         hintStyle: Theme.of(context).textTheme.bodyText2?.copyWith(
               color: Colors.grey[700],
               fontSize: 18,
             ),
-        physics: BouncingScrollPhysics(),
-        debounceDelay: Duration(milliseconds: 300),
+        physics: const BouncingScrollPhysics(),
+        debounceDelay: const Duration(milliseconds: 300),
         transition: SlideFadeFloatingSearchBarTransition(),
         onQueryChanged: (query) => context.read<MapSearchCubit>().updateQuery(
               LatLon(
@@ -48,7 +48,7 @@ class MapFloatingSearchBarState extends State<MapFloatingSearchBar> {
   List<FloatingSearchBarAction> _buildActions() => [
         FloatingSearchBarAction.searchToClear(
           showIfClosed: false,
-          duration: Duration(milliseconds: 600),
+          duration: const Duration(milliseconds: 600),
         ),
       ];
 
@@ -56,7 +56,7 @@ class MapFloatingSearchBarState extends State<MapFloatingSearchBar> {
     return BlocBuilder<MapSearchCubit, MapSearchState>(
         builder: (context, state) {
       if (state.predictions != null) {
-        return Container(
+        return SizedBox(
           child: ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: Material(
@@ -81,7 +81,7 @@ class MapFloatingSearchBarState extends State<MapFloatingSearchBar> {
       } else {
         return ClipRRect(
           borderRadius: BorderRadius.circular(8),
-          child: Text("No results..."),
+          child: const Text("No results..."),
         );
       }
     });
@@ -92,14 +92,14 @@ class MapFloatingSearchBarState extends State<MapFloatingSearchBar> {
     final description =
         prediction.terms?.sublist(1).map((term) => term.value).join(", ");
     return GestureDetector(
-      child: Container(
+      child: SizedBox(
         height: 70,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.location_on),
+            const Icon(Icons.location_on),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,

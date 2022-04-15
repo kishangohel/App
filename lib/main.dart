@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:ui';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
@@ -74,7 +73,6 @@ void callbackDispatcher() async {
     );
     assert(callback != null);
     if (callback == null) {
-      print('Failed to get callback handle from background channel');
       return false;
     }
     await Firebase.initializeApp(
@@ -88,7 +86,6 @@ void callbackDispatcher() async {
         .map((wifi) =>
             [wifi.wifiDetails?.ssid ?? "", wifi.wifiDetails?.password])
         .toList();
-    print("WiFi nearby: $wifis");
     backgroundChannel.invokeMethod("add_suggestions", wifis);
     callback(fenceIds as List<String?>, LatLng(lat, lng));
     return true;

@@ -16,10 +16,10 @@ class MapSearchCubit extends Cubit<MapSearchState> {
   MapSearchCubit(
     this._placesRepository,
     this._wifiRepository,
-  ) : super(MapSearchState());
+  ) : super(const MapSearchState());
 
   Future<void> updateQuery(LatLon location, String query) async {
-    if (query.length == 0) {
+    if (query.isEmpty) {
       emit(state.copyWith(predictions: null));
     }
     final predictions = await _placesRepository.searchNearbyPlaces(

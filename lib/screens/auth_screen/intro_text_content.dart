@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:verifi/widgets/text/app_title.dart';
 
 class IntroTextContent extends StatelessWidget {
+  IntroTextContent() : super(key: UniqueKey());
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -12,7 +12,7 @@ class IntroTextContent extends StatelessWidget {
           flex: 5,
           child: Container(
             alignment: Alignment.bottomCenter,
-            child: Container(
+            child: SizedBox(
               width: MediaQuery.of(context).size.width,
               child: const Hero(
                 tag: 'verifi-title',
@@ -29,7 +29,7 @@ class IntroTextContent extends StatelessWidget {
           flex: 1,
           child: Container(
             alignment: Alignment.topCenter,
-            child: Container(
+            child: SizedBox(
               child: Text(
                 "Bridging the Universe with the Metaverse",
                 textAlign: TextAlign.center,

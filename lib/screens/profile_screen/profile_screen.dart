@@ -43,7 +43,7 @@ class ProfileScreen extends StatelessWidget {
             fit: BoxFit.contain,
             imageUrl: photoUrl,
             imageBuilder: (context, imageProvider) => Padding(
-              padding: EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0),
               child: CircleAvatar(
                 radius: 50,
                 backgroundImage: imageProvider,

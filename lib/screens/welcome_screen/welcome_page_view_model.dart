@@ -26,7 +26,7 @@ PageViewModel buildWelcomePageViewModel(
           margin: const EdgeInsets.only(top: 8.0, bottom: 8.0),
           height: 30,
           child: AnimatedText(
-            wordList: [
+            wordList: const [
               "connecting",
               "exploring",
               "researching",
@@ -55,7 +55,7 @@ PageViewModel buildWelcomePageViewModel(
         RichText(
           text: TextSpan(
             children: <TextSpan>[
-              TextSpan(
+              const TextSpan(
                 text: "We believe free, public Internet is a ",
               ),
               TextSpan(
@@ -64,14 +64,14 @@ PageViewModel buildWelcomePageViewModel(
                       color: Colors.blue,
                       fontSize: 18.0,
                     ),
-                recognizer: new TapGestureRecognizer()
+                recognizer: TapGestureRecognizer()
                   ..onTap = () => launch(
                         'https://www.article19.org/data/files/Internet_Statement_Adopted.pdf',
                       ),
               ),
-              TextSpan(
-                text:
-                    "Our mission is to provide all persons public Internet access from anywhere, at any time, for free.",
+              const TextSpan(
+                text: "Our mission is to provide all persons public Internet "
+                    "access from anywhere, at any time, for free.",
               ),
             ],
             style: Theme.of(context)
@@ -84,10 +84,10 @@ PageViewModel buildWelcomePageViewModel(
       ],
     ),
     decoration: PageDecoration(
-      bodyPadding: EdgeInsets.all(8.0),
+      bodyPadding: const EdgeInsets.all(8.0),
       outerFlex: 1,
       bodyFlex: 4,
-      contentMargin: EdgeInsets.all(12.0),
+      contentMargin: const EdgeInsets.all(12.0),
       fullScreen: true,
       pageColor: Theme.of(context).backgroundColor,
       titleTextStyle: Theme.of(context).textTheme.headline4!.copyWith(
@@ -98,7 +98,7 @@ PageViewModel buildWelcomePageViewModel(
     footer: WelcomeScreenFooterButton(
       completedAction: () => pageController.animateToPage(
         1,
-        duration: Duration(milliseconds: 350),
+        duration: const Duration(milliseconds: 350),
         curve: Curves.easeIn,
       ),
       completedButtonText: "Continue",

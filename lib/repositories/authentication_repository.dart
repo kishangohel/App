@@ -1,15 +1,8 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:verifi/models/user.dart' as modelUser;
-
-enum PhoneAuthStatus {
-  REQUESTED,
-  CODE_RECEIVED,
-  CODE_SUBMITTED,
-}
+import 'package:verifi/models/user.dart' as model_user;
 
 /// Handles all authentication logic with Firebase, Google, etc.
 class AuthenticationRepository {
@@ -21,10 +14,10 @@ class AuthenticationRepository {
       : _fbAuth = firebaseAuth ?? FirebaseAuth.instance;
 
   /// Streams [firebase_auth.User] changes, mapping to [models.User].
-  Stream<modelUser.User?> requestUserChanges() {
+  Stream<model_user.User?> requestUserChanges() {
     return _fbAuth.userChanges().map(
           (user) => (user != null)
-              ? modelUser.User(
+              ? model_user.User(
                   id: user.uid,
                   email: user.email,
                   username: user.displayName,
@@ -33,8 +26,6 @@ class AuthenticationRepository {
               : null,
         );
   }
-
-  final phoneAuthStatus = StreamController<PhoneAuthStatus>();
 
   User? get currentUser => _fbAuth.currentUser;
 
@@ -59,8 +50,8 @@ class AuthenticationRepository {
         email: email,
         password: password,
       );
-    } on FirebaseAuthException catch (error) {
-      throw error;
+    } on FirebaseAuthException catch (_) {
+      rethrow;
     }
   }
 
@@ -76,36 +67,43 @@ class AuthenticationRepository {
         email: email,
         password: password,
       );
-    } on FirebaseAuthException catch (error) {
-      throw error;
+    } on FirebaseAuthException catch (_) {
+      rethrow;
     }
   }
 
-  Future<void> authenticateWithPhoneNumber(
+  /// Authenticate using Firebase phone auth.
+  ///
+  /// [codeSent] is a callback to a function that should store
+  /// the verification ID for future authentication logic w/ an SMS code.
+  Future<void> authWithPhoneNumber(
     String phoneNumber,
-    BuildContext context,
+    Function(String verificationId, int? forceResendingToken) codeSent,
   ) {
     return _fbAuth.verifyPhoneNumber(
       phoneNumber: phoneNumber,
-      autoRetrievedSmsCodeForTesting: "941555",
       verificationCompleted: (PhoneAuthCredential credentials) {
         _fbAuth.signInWithCredential(credentials);
       },
-      verificationFailed: (FirebaseAuthException e) {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text(
-                "Access Denied",
-              ),
-            );
-          },
-        );
-      },
-      codeSent: (String verificationId, int? resendToken) {},
+      verificationFailed: (FirebaseAuthException e) {},
+      codeSent: codeSent,
       codeAutoRetrievalTimeout: (String verificationId) {},
     );
+  }
+
+  /// Attempt to sign in from sms code.
+  ///
+  /// Throws a [FirebaseAuthException] if anything goes wrong.
+  Future<void> submitSmsCode(String verificationId, String smsCode) async {
+    try {
+      final creds = PhoneAuthProvider.credential(
+        verificationId: verificationId,
+        smsCode: smsCode,
+      );
+      await _fbAuth.signInWithCredential(creds);
+    } on FirebaseAuthException catch (_) {
+      rethrow;
+    }
   }
 
   /// Signs the user out, calling both the [FirebaseAuth] and [GoogleSignIn]

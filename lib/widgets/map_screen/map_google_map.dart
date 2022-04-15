@@ -39,7 +39,6 @@ class MapGoogleMap extends StatelessWidget {
             } else {
               context.read<MapCubit>().clear();
             }
-            print("Zoom level: $zoom");
           }
         },
         onMapCreated: (controller) {

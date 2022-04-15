@@ -11,7 +11,8 @@ class WifiFeedCubit extends HydratedCubit<WifiFeedState> {
   final PlacesRepository _placesRepository;
   final filter = FeedFilter();
 
-  WifiFeedCubit(this._wifiRepository, this._placesRepository) : super(WifiFeedState());
+  WifiFeedCubit(this._wifiRepository, this._placesRepository)
+      : super(const WifiFeedState());
 
   void loadFeed(LatLng location) async {
     final GeoFirePoint point = _wifiRepository.geo.point(
@@ -26,10 +27,11 @@ class WifiFeedCubit extends HydratedCubit<WifiFeedState> {
   @override
   WifiFeedState fromJson(Map<String, dynamic> json) {
     if (json.containsKey('wifis')) {
-      final List<Wifi> wifis = (json['wifis'] as List).map((wifi) => Wifi.fromJson(wifi)).toList();
+      final List<Wifi> wifis =
+          (json['wifis'] as List).map((wifi) => Wifi.fromJson(wifi)).toList();
       return WifiFeedState(wifis: wifis);
     }
-    return WifiFeedState(wifis: []);
+    return const WifiFeedState(wifis: []);
   }
 
   @override

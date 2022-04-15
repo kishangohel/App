@@ -18,8 +18,10 @@ class FeedScreenState extends State<FeedScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LocationCubit, LatLng?>(builder: (context, locationState) {
-      return BlocBuilder<WifiFeedCubit, WifiFeedState>(builder: (context, wifiFeedState) {
+    return BlocBuilder<LocationCubit, LatLng?>(
+        builder: (context, locationState) {
+      return BlocBuilder<WifiFeedCubit, WifiFeedState>(
+          builder: (context, wifiFeedState) {
         if (wifiFeedState.wifis != null) {
           _refreshCompleter.complete();
           _refreshCompleter = Completer<void>();
@@ -29,7 +31,8 @@ class FeedScreenState extends State<FeedScreen> {
         return Container(
           color: Colors.white,
           child: NestedScrollView(
-            headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            headerSliverBuilder:
+                (BuildContext context, bool innerBoxIsScrolled) {
               return <Widget>[
                 FeedSliverAppBar(),
               ];
@@ -52,9 +55,9 @@ class FeedScreenState extends State<FeedScreen> {
   }
 
   Widget _buildWifiFeed(List<Wifi>? wifis, LatLng myLocation) {
-    if (wifis != null && wifis.length > 0) {
+    if (wifis != null && wifis.isNotEmpty) {
       return ListView.builder(
-        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
         addAutomaticKeepAlives: true,
         itemBuilder: (BuildContext context, int index) {
           return FeedCard(
@@ -65,13 +68,13 @@ class FeedScreenState extends State<FeedScreen> {
         itemCount: wifis.length,
       );
     } else if (wifis == null) {
-      return LinearProgressIndicator();
+      return const LinearProgressIndicator();
     } else {
-      return Center(child: Text("No wifis nearby"));
+      return const Center(child: Text("No wifis nearby"));
     }
   }
 
   Widget _buildLocationAccessNotice(BuildContext context) {
-    return Center(child: Text("Location disabled..."));
+    return const Center(child: Text("Location disabled..."));
   }
 }

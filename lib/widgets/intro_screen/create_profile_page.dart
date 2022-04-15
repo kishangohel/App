@@ -13,7 +13,6 @@ class CreateProfilePageState extends State<CreateProfilePage> {
 
   void _updateSelectedAvatar(int index) {
     setState(() => _selectedAvatar = index);
-    print("SELECTED AVATAR: $_selectedAvatar");
   }
 
   @override
@@ -29,7 +28,7 @@ class CreateProfilePageState extends State<CreateProfilePage> {
   }
 
   Widget _stepOneSubtitle() {
-    return Container(
+    return SizedBox(
       child: Text(
         "Step 1 - Select your Avatar",
         style: Theme.of(context).textTheme.headline6,
@@ -38,7 +37,7 @@ class CreateProfilePageState extends State<CreateProfilePage> {
   }
 
   Widget _stepTwoSubtitle() {
-    return Container(
+    return SizedBox(
       child: Text(
         "Step 2 - Create your Username",
         style: Theme.of(context).textTheme.headline6,
@@ -64,8 +63,8 @@ class CreateProfilePageState extends State<CreateProfilePage> {
                   context.read<CreateProfileCubit>().photoChanged(assetPath);
                 },
                 child: Container(
-                  margin: EdgeInsets.symmetric(vertical: 8),
-                  padding: EdgeInsets.symmetric(horizontal: 12.0),
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
                   child: CircleAvatar(
                     radius: MediaQuery.of(context).size.width * 0.12,
                     backgroundImage: AssetImage(assetPath),
@@ -74,7 +73,7 @@ class CreateProfilePageState extends State<CreateProfilePage> {
               ),
               Visibility(
                 visible: _selectedAvatar == int.parse(avatarIndex),
-                child: Icon(Icons.check),
+                child: const Icon(Icons.check),
               ),
             ],
           );
@@ -88,7 +87,7 @@ class CreateProfilePageState extends State<CreateProfilePage> {
       buildWhen: (previous, current) => previous.username != current.username,
       builder: (context, createProfileState) {
         return Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: TextFormField(
             initialValue: createProfileState.username.value,
             onChanged: (username) {
@@ -97,13 +96,13 @@ class CreateProfilePageState extends State<CreateProfilePage> {
             decoration: InputDecoration(
               labelText: 'Username',
               labelStyle: Theme.of(context).textTheme.caption,
-              focusedBorder: OutlineInputBorder(
+              focusedBorder: const OutlineInputBorder(
                 borderSide: BorderSide(
                   color: Colors.black,
                   width: 2.0,
                 ),
               ),
-              border: OutlineInputBorder(
+              border: const OutlineInputBorder(
                 borderSide: BorderSide(
                   width: 1.0,
                 ),

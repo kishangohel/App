@@ -54,13 +54,13 @@ class WifiRepository {
         .where("SubmittedBy", isEqualTo: userId)
         .get()
         .then((querySnapshot) {
-      querySnapshot.docs.forEach((networkDoc) {
+      for (var networkDoc in querySnapshot.docs) {
         networks.add(
           WifiDetails.fromEntity(
             WifiEntity.fromDocumentSnapshot(networkDoc),
           ),
         );
-      });
+      }
     });
     return networks;
   }

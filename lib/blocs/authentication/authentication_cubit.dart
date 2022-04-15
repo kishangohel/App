@@ -1,9 +1,8 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verifi/blocs/blocs.dart';
-import 'package:verifi/models/user.dart' as modelUser;
+import 'package:verifi/models/user.dart' as model_user;
 import 'package:verifi/repositories/authentication_repository.dart';
 import 'package:verifi/blocs/authentication/authentication.dart';
 
@@ -11,37 +10,56 @@ import 'package:verifi/blocs/authentication/authentication.dart';
 ///
 class AuthenticationCubit extends Cubit<AuthenticationState> {
   final AuthenticationRepository _authRepository;
-  late StreamSubscription<modelUser.User?> _userSubscription;
+  late StreamSubscription<model_user.User?> _userSubscription;
+  String? _verificationId;
 
-  AuthenticationCubit(this._authRepository) : super(AuthenticationState()) {
+  AuthenticationCubit(this._authRepository)
+      : super(const AuthenticationState()) {
     _userSubscription = _authRepository.requestUserChanges().listen(
-          (userChange) => emit(
-            AuthenticationState(user: userChange),
-          ),
+          (userChange) => emit(AuthenticationState(user: userChange)),
         );
   }
 
-  Future<void> signUpPhoneNumber(
-    String phoneNumber,
-    BuildContext context,
-  ) async {
-    _authRepository.authenticateWithPhoneNumber(phoneNumber, context);
+  Future<void> signUpPhoneNumber(String phoneNumber) async {
+    return _authRepository.authWithPhoneNumber(phoneNumber, _onCodeSent);
+  }
+
+  void submitSmsCode(String smsCode) async {
+    try {
+      if (null != _verificationId) {
+        await _authRepository.submitSmsCode(_verificationId!, smsCode);
+      } else {
+        emit(state.copyWith(
+          exception: FirebaseAuthException(
+            code: "invalid-argument",
+            message: "Unable to authenticate. Please re-enter your phone "
+                "number and try again",
+          ),
+        ));
+      }
+    } on FirebaseAuthException catch (e) {
+      emit(state.copyWith(exception: e));
+    }
   }
 
   Future<void> refresh() async {
     final user = state.user;
-    emit(AuthenticationState(user: null));
+    emit(const AuthenticationState(user: null));
     emit(AuthenticationState(user: user));
   }
 
   Future<void> logout() async {
     await _authRepository.signOut();
-    emit(AuthenticationState(user: null));
+    emit(const AuthenticationState(user: null));
   }
 
   @override
   Future<void> close() async {
     await _userSubscription.cancel();
     super.close();
+  }
+
+  void _onCodeSent(String verificationId, int? forceResendingToken) {
+    _verificationId = verificationId;
   }
 }
