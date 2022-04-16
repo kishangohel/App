@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/screens/auth_screen/account_creation_screen.dart';
-import 'package:verifi/screens/auth_screen/get_started_button.dart';
-import 'package:verifi/screens/auth_screen/intro_text_content.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 import 'package:verifi/widgets/text/app_title.dart';
 
