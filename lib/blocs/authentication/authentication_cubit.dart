@@ -16,7 +16,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
   AuthenticationCubit(this._authRepository)
       : super(const AuthenticationState()) {
     _userSubscription = _authRepository.requestUserChanges().listen(
-          (userChange) => emit(AuthenticationState(user: userChange)),
+          (user) => emit(state.copyWith(user: user)),
         );
   }
 

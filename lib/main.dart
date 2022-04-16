@@ -19,10 +19,10 @@ import 'package:verifi/widgets/app.dart';
 
 import 'firebase_options.dart';
 
-// The entrypoint of application.
-//
-// [Firebase], [HydratedBloc], [HydratedStorage], [BlocObserver], and
-// [Crashlytics] are all initialized here.
+/// The entrypoint of application.
+///
+/// [Firebase], [HydratedBloc], [HydratedStorage], [BlocObserver], and
+/// [Crashlytics] are all initialized here.
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // disable printing in release mode
@@ -37,6 +37,7 @@ void main() async {
   /* if (kDebugMode) { */
   /*   await FirebaseAuth.instance.useAuthEmulator('localhost', 9099); */
   /* } */
+
   // Pass all uncaught errors from the framework to Crashlytics.
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
   final storage = await HydratedStorage.build(
