@@ -16,7 +16,7 @@ import 'package:verifi/main.dart' as main;
 import 'package:verifi/models/wifi.dart';
 import 'package:verifi/repositories/repositories.dart';
 import 'package:verifi/screens/welcome_screen/welcome_screen.dart';
-import 'package:verifi/screens/auth_screen/auth_screen.dart';
+import 'package:verifi/screens/auth_screen/intro_screen.dart';
 import 'package:verifi/widgets/home_page.dart';
 
 // The top-level [Widget] for the VeriFi application.
@@ -89,8 +89,8 @@ class _VeriFiState extends State<VeriFi> {
       ],
       child: MultiBlocProvider(
         providers: [
-          BlocProvider<AddNetworkBloc>(
-            create: (context) => AddNetworkBloc(
+          BlocProvider<AddNetworkCubit>(
+            create: (context) => AddNetworkCubit(
               RepositoryProvider.of<WifiRepository>(context),
             ),
           ),
@@ -196,7 +196,7 @@ class VeriFiApp extends StatelessWidget {
       routes: {
         '/welcome': (context) => WelcomeScreen(),
         '/home': (context) => HomePage(),
-        '/auth': (context) => AuthScreen(),
+        '/auth': (context) => IntroScreen(),
       },
     );
   }
