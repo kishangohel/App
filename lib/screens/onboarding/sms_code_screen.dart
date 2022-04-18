@@ -28,8 +28,11 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
         listener: (context, state) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
+              backgroundColor: Colors.red,
               content: Text(
-                state.exception?.message.toString() ?? "Failed to authenticate",
+                state.exception?.message.toString() ??
+                    "Failed to verify phone number",
+                style: Theme.of(context).textTheme.bodyText2,
               ),
             ),
           );

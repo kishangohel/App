@@ -21,7 +21,11 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
   }
 
   Future<void> signUpPhoneNumber(String phoneNumber) async {
-    return _authRepository.authWithPhoneNumber(phoneNumber, _onCodeSent);
+    return _authRepository.authWithPhoneNumber(
+      phoneNumber,
+      _onCodeSent,
+      _onTimeoutReached,
+    );
   }
 
   void submitSmsCode(String smsCode) async {
@@ -61,5 +65,14 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
 
   void _onCodeSent(String verificationId, int? forceResendingToken) {
     _verificationId = verificationId;
+  }
+
+  void _onTimeoutReached(String? verificationId) {
+    state.copyWith(
+        exception: FirebaseAuthException(
+      code: "sms-timeout",
+      message: "Did you receive a text message? If not, please go back and "
+          "try again",
+    ));
   }
 }

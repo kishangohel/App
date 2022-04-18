@@ -79,6 +79,7 @@ class AuthenticationRepository {
   Future<void> authWithPhoneNumber(
     String phoneNumber,
     Function(String verificationId, int? forceResendingToken) codeSent,
+    Function(String verificationId) timeOutReached,
   ) {
     return _fbAuth.verifyPhoneNumber(
       phoneNumber: phoneNumber,
@@ -87,7 +88,7 @@ class AuthenticationRepository {
       },
       verificationFailed: (FirebaseAuthException e) {},
       codeSent: codeSent,
-      codeAutoRetrievalTimeout: (String verificationId) {},
+      codeAutoRetrievalTimeout: timeOutReached,
     );
   }
 

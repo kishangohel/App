@@ -16,7 +16,7 @@ import 'package:verifi/main.dart' as main;
 import 'package:verifi/models/wifi.dart';
 import 'package:verifi/repositories/repositories.dart';
 import 'package:verifi/screens/welcome_screen/welcome_screen.dart';
-import 'package:verifi/screens/auth_screen/intro_screen.dart';
+import 'package:verifi/screens/onboarding/intro_screen.dart';
 import 'package:verifi/widgets/home_page.dart';
 
 // The top-level [Widget] for the VeriFi application.

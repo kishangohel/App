@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:phone_form_field/phone_form_field.dart';
 import 'package:verifi/blocs/blocs.dart';
-import 'package:verifi/screens/auth_screen/sms_code_screen.dart';
+import 'package:verifi/screens/onboarding/sms_code_screen.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 import 'package:verifi/widgets/text/app_title.dart';
 import 'package:verifi/widgets/transitions/onboarding_slide_transition.dart';
@@ -203,9 +203,10 @@ class _AccountPhoneFormFieldState extends State<_AccountPhoneFormField> {
         autovalidateMode: AutovalidateMode.always,
         onChanged: widget.onChanged,
         onSaved: (phoneNumber) {
+          assert(phoneNumber != null);
           BlocProvider.of<AuthenticationCubit>(context).signUpPhoneNumber(
-            /* "+${phoneNumber.countryCode} ${phoneNumber.nsn}", */
-            "+1 555-333-4444",
+            "+${phoneNumber!.countryCode} ${phoneNumber.nsn}",
+            /* "+1 555-333-4444", */
           );
 
           Navigator.of(context).push(
