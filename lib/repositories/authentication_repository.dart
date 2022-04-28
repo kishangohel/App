@@ -79,16 +79,17 @@ class AuthenticationRepository {
   Future<void> authWithPhoneNumber(
     String phoneNumber,
     Function(String verificationId, int? forceResendingToken) codeSent,
-    Function(String verificationId) timeOutReached,
+    Function(String verificationId) timeoutReached,
+    Function(FirebaseAuthException) verificationFailed,
   ) {
     return _fbAuth.verifyPhoneNumber(
       phoneNumber: phoneNumber,
       verificationCompleted: (PhoneAuthCredential credentials) {
         _fbAuth.signInWithCredential(credentials);
       },
-      verificationFailed: (FirebaseAuthException e) {},
+      verificationFailed: verificationFailed,
       codeSent: codeSent,
-      codeAutoRetrievalTimeout: timeOutReached,
+      codeAutoRetrievalTimeout: timeoutReached,
     );
   }
 

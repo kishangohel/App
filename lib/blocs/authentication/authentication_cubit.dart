@@ -21,23 +21,27 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
   }
 
   Future<void> signUpPhoneNumber(String phoneNumber) async {
+    return; //TODO: Remove
     return _authRepository.authWithPhoneNumber(
       phoneNumber,
       _onCodeSent,
       _onTimeoutReached,
+      _onVerificationFailed,
     );
   }
 
   void submitSmsCode(String smsCode) async {
     try {
+      _verificationId = null; //TODO: Remove
       if (null != _verificationId) {
         await _authRepository.submitSmsCode(_verificationId!, smsCode);
       } else {
         emit(state.copyWith(
           exception: FirebaseAuthException(
             code: "invalid-argument",
-            message: "Unable to authenticate. Please re-enter your phone "
-                "number and try again",
+            message:
+                "Unable to authenticate with code $smsCode. Please re-enter "
+                "your phone number and try again",
           ),
         ));
       }
@@ -69,10 +73,20 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
 
   void _onTimeoutReached(String? verificationId) {
     state.copyWith(
-        exception: FirebaseAuthException(
-      code: "sms-timeout",
-      message: "Did you receive a text message? If not, please go back and "
-          "try again",
-    ));
+      exception: FirebaseAuthException(
+        code: "sms-timeout",
+        message: "Did you receive a text message? If not, please go back and "
+            "try again",
+      ),
+    );
+  }
+
+  void _onVerificationFailed(FirebaseAuthException exception) {
+    state.copyWith(
+      exception: FirebaseAuthException(
+        code: 'verification-failed',
+        message: "Incorrect verification code",
+      ),
+    );
   }
 }

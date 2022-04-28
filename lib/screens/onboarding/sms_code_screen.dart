@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:pinput/pinput.dart';
 import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
@@ -26,19 +27,25 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
     return Scaffold(
       body: BlocListener<AuthenticationCubit, AuthenticationState>(
         listener: (context, state) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: Colors.red,
-              content: Text(
-                state.exception?.message.toString() ??
-                    "Failed to verify phone number",
-                style: Theme.of(context).textTheme.bodyText2,
-              ),
-            ),
+          showModalBottomSheet(
+            context: context,
+            builder: (context) {
+              return SizedBox(
+                height: 180.0,
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: AutoSizeText(
+                        state.exception!.message.toString(),
+                        minFontSize: 0,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+            backgroundColor: Theme.of(context).backgroundColor,
           );
-        },
-        listenWhen: (previous, current) {
-          return current.exception != null;
         },
         child: Container(
           color: Colors.black,

@@ -47,6 +47,7 @@ void main() async {
   HydratedBlocOverrides.runZoned(
     () => runApp(VeriFi()),
     blocObserver: LoggingBlocDelegate(),
+
     storage: storage,
   );
 }
