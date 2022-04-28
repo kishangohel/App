@@ -29,25 +29,15 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
         listener: (context, state) {
           showModalBottomSheet(
             context: context,
-            builder: (context) {
-              return SizedBox(
-                height: 180.0,
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: AutoSizeText(
-                        state.exception!.message.toString(),
-                        minFontSize: 0,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-            backgroundColor: Theme.of(context).backgroundColor,
+            builder: (context) => _modalSheetError(context, state),
+            shape: ContinuousRectangleBorder(
+              borderRadius: BorderRadius.circular(12.0),
+            ),
           );
         },
+        listenWhen: (previous, current) => current.exception != null,
         child: Container(
+          padding: const EdgeInsets.all(16.0),
           color: Colors.black,
           child: SafeArea(
             child: Stack(
@@ -59,22 +49,19 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(
-                        padding: const EdgeInsets.all(16.0),
-                        child: FittedBox(
-                          fit: BoxFit.fitWidth,
-                          child: Text(
-                            'Enter SMS verification code',
-                            style:
-                                Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                      fontSize: 48.0,
-                                      color: Colors.white,
-                                    ),
-                          ),
+                      FittedBox(
+                        fit: BoxFit.fitWidth,
+                        child: AutoSizeText(
+                          'Enter SMS verification code',
+                          style:
+                              Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                    fontSize: 48.0,
+                                    color: Colors.white,
+                                  ),
                         ),
                       ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
                         child: Pinput(
                           length: 6,
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -109,6 +96,25 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _modalSheetError(BuildContext context, AuthenticationState state) {
+    return Container(
+      height: 80.0,
+      padding: const EdgeInsets.symmetric(
+        horizontal: 16.0,
+        vertical: 8.0,
+      ),
+      child: Center(
+        child: AutoSizeText(
+          state.exception?.message.toString() ?? 'Failed to authenticate',
+          style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                fontSize: 18,
+              ),
+          textAlign: TextAlign.center,
         ),
       ),
     );

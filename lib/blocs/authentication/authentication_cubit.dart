@@ -21,7 +21,6 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
   }
 
   Future<void> signUpPhoneNumber(String phoneNumber) async {
-    return; //TODO: Remove
     return _authRepository.authWithPhoneNumber(
       phoneNumber,
       _onCodeSent,
@@ -32,7 +31,6 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
 
   void submitSmsCode(String smsCode) async {
     try {
-      _verificationId = null; //TODO: Remove
       if (null != _verificationId) {
         await _authRepository.submitSmsCode(_verificationId!, smsCode);
       } else {
@@ -40,8 +38,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
           exception: FirebaseAuthException(
             code: "invalid-argument",
             message:
-                "Unable to authenticate with code $smsCode. Please re-enter "
-                "your phone number and try again",
+                "Unable to authenticate with code $smsCode. Please try again.",
           ),
         ));
       }
