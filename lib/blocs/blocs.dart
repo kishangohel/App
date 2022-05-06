@@ -7,5 +7,6 @@ export 'map_search/map_search.dart';
 export 'profile/profile.dart';
 export 'tab/tab.dart';
 export 'validators.dart';
+export 'wallet_connect/wallet_connect_cubit.dart';
 export 'wifi_feed/wifi_feed.dart';
 export 'wifi_utils.dart';

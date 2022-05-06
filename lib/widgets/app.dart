@@ -134,6 +134,9 @@ class _VeriFiState extends State<VeriFi> {
           BlocProvider<TabBloc>(
             create: (context) => TabBloc(),
           ),
+          BlocProvider<WalletConnectCubit>(
+            create: (context) => WalletConnectCubit(),
+          ),
           BlocProvider<WifiFeedCubit>(
             create: (context) => WifiFeedCubit(
               RepositoryProvider.of<WifiRepository>(context),
@@ -184,6 +187,7 @@ class _VeriFiState extends State<VeriFi> {
 class VeriFiApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    context.watch<WalletConnectCubit>().connectToMetamask();
     return MaterialApp(
       theme: _veriFiAppTheme(),
       darkTheme: _veriFiAppDarkTheme(),
