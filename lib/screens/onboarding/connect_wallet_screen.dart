@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 
 class ConnectWalletScreen extends StatefulWidget {
@@ -27,98 +28,26 @@ class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
           child: Stack(
             children: [
               ...onBoardingBackground(context),
-              Column(
-                children: [
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          AnimatedOpacity(
-                            opacity: opacity,
-                            duration: const Duration(
-                              seconds: 1,
-                              milliseconds: 500,
-                            ),
-                            child: SizedBox(
-                              width: MediaQuery.of(context).size.width,
-                              child: const FittedBox(
-                                fit: BoxFit.fitWidth,
-                                child: Padding(
-                                  padding: EdgeInsets.only(bottom: 8.0),
-                                  child: Text(
-                                    "Enter your phone number",
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          AnimatedOpacity(
-                            opacity: opacity,
-                            duration:
-                                const Duration(seconds: 1, milliseconds: 500),
-                            child: Align(
-                              alignment: Alignment.topCenter,
-                              child: _AccountPhoneFormField(
-                                formKey: formKey,
-                                phoneController: phoneController,
-                                onChanged: (PhoneNumber? number) {
-                                  setState(() {
-                                    submitVisibility =
-                                        phoneController.value != null &&
-                                            phoneController.value!.validate(
-                                              type: PhoneNumberType.mobile,
-                                            );
-                                  });
-                                },
-                              ),
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Visibility(
-                              visible: submitVisibility,
-                              maintainSize: true,
-                              maintainAnimation: true,
-                              maintainState: true,
-                              child: AnimatedOpacity(
-                                opacity: opacity,
-                                duration: const Duration(
-                                    seconds: 1, milliseconds: 500),
-                                child: ElevatedButton(
-                                  onPressed: () => formKey.currentState!.save(),
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 8.0,
-                                      horizontal: 4.0,
-                                    ),
-                                    width: MediaQuery.of(context).size.width *
-                                        0.25,
-                                    child: FittedBox(
-                                      fit: BoxFit.fitWidth,
-                                      child: Text(
-                                        "Submit",
-                                        style:
-                                            Theme.of(context).textTheme.button,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              _WalletsScrollSnapList(),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class _WalletsScrollSnapList extends StatelessWidget {
+  final _wallets = [];
+  @override
+  Widget build(BuildContext context) {
+    return ScrollSnapList(
+      itemBuilder: (context, index) {
+        return Image.asset(_wallets[index]);
+      },
+      itemCount: _wallets.length,
+      itemSize: 35,
+      onItemFocus: (index) {},
     );
   }
 }
