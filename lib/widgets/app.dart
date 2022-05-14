@@ -15,6 +15,7 @@ import 'package:verifi/blocs/intro_pages/intro_pages_cubit.dart';
 import 'package:verifi/main.dart' as main;
 import 'package:verifi/models/wifi.dart';
 import 'package:verifi/repositories/repositories.dart';
+import 'package:verifi/screens/onboarding/connect_wallet_screen.dart';
 import 'package:verifi/screens/welcome_screen/welcome_screen.dart';
 import 'package:verifi/screens/onboarding/intro_screen.dart';
 import 'package:verifi/widgets/home_page.dart';
@@ -187,20 +188,21 @@ class _VeriFiState extends State<VeriFi> {
 class VeriFiApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    context.watch<WalletConnectCubit>().connectToMetamask();
     return MaterialApp(
       theme: _veriFiAppTheme(),
       darkTheme: _veriFiAppDarkTheme(),
       themeMode: ThemeMode.system,
-      initialRoute: (context.watch<AuthenticationCubit>().state.user != null)
-          ? (context.watch<IntroPagesCubit>().state.onboarded
-              ? '/home'
-              : '/welcome')
-          : '/auth',
+      initialRoute: '/test',
+      /* initialRoute: (context.watch<AuthenticationCubit>().state.user != null) */
+      /*     ? (context.watch<IntroPagesCubit>().state.onboarded */
+      /*         ? '/home' */
+      /*         : '/welcome') */
+      /*     : '/auth', */
       routes: {
         '/welcome': (context) => WelcomeScreen(),
         '/home': (context) => HomePage(),
         '/auth': (context) => IntroScreen(),
+        '/test': (context) => ConnectWalletScreen(),
       },
     );
   }

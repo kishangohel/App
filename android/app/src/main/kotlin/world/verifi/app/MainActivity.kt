@@ -102,15 +102,25 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler {
   }
 
   override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
-    val args = call.arguments() as ArrayList<*>
+    val args = call.arguments() as ArrayList<*>?
     when (call.method) {
       "initialize" -> {
+        if (args.isNullOrEmpty()) {
+          result.error("no-args", "Invalid arguments to initialize", null)
+          return
+        }
         val dispatcherHandle = args[0] as Long
         initializeCallbackHandle(this, dispatcherHandle)
         Notifications.createNotificationChannel(this)
         result.success(true)
       }
-      "registerGeofence" -> registerGeofence(this, geofencingClient, args, result)
+      "registerGeofence" -> {
+        if (args.isNullOrEmpty()) {
+          result.error("no-args", "Invalid arguments to registerGeofence", null)
+          return
+        }
+        registerGeofence(this, geofencingClient, args, result)
+      }
       else -> result.notImplemented()
     }
   }

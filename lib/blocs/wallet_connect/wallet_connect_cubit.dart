@@ -1,10 +1,15 @@
+import 'dart:io';
+
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:walletconnect_dart/walletconnect_dart.dart';
 
 class WalletConnectCubit extends Cubit<SessionStatus?> {
   late WalletConnect connector;
   late EthereumWalletConnectProvider provider;
+  String? sessionUri;
+
   WalletConnectCubit() : super(null) {
     connector = WalletConnect(
       bridge: 'https://bridge.walletconnect.org',
@@ -25,11 +30,18 @@ class WalletConnectCubit extends Cubit<SessionStatus?> {
     provider = EthereumWalletConnectProvider(connector);
   }
 
-  Future<void> connectToMetamask() async {
+  Future<void> connect(String? domain) async {
     final status = await connector.createSession(
       chainId: 1,
       onDisplayUri: (uri) async {
-        uri = "metamask://wc?uri=" + uri;
+        // Make sure we pass app-specific deep link if on iOS
+        if (Platform.isIOS) assert(domain != null);
+        if (domain != null) {
+          uri = "https://$domain/wc?uri=$uri";
+        }
+        final exp = RegExp(r'(wc:.*)\?');
+        final match = exp.firstMatch(uri);
+        sessionUri = match?.group(1);
         if (await canLaunchUrl(Uri.parse(uri))) {
           launchUrl(
             Uri.parse(uri),
@@ -56,5 +68,16 @@ class WalletConnectCubit extends Cubit<SessionStatus?> {
 
   void _onDisconnect() {
     emit(null);
+  }
+
+  Future<void> sign() async {
+    connector.sendCustomRequest(
+      method: "personal_sign",
+      params: [
+        connector.session.accounts[0],
+        "test",
+      ],
+    );
+    if (sessionUri != null) launchUrlString(sessionUri!);
   }
 }

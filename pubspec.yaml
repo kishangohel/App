@@ -4,7 +4,7 @@ description: Bridging the universe with the metaverse
 version: 1.0.0+1
 
 environment:
-  sdk: '>=2.17.0 <3.0.0'
+  sdk: '>=2.15.1 <3.0.0'
 
 dependencies:
   flutter:
@@ -13,13 +13,13 @@ dependencies:
   auto_size_text: ^3.0.0
   bloc: ^8.0.3
   cached_network_image: ^3.2.0
-  cloud_firestore: ^3.1.10
+  cloud_firestore: ^3.1.9
   dots_indicator: ^2.1.0
   equatable: ^2.0.3
-  firebase_analytics: ^9.1.2
-  firebase_auth: ^3.3.11
-  firebase_core: ^1.13.1
-  firebase_crashlytics: ^2.5.3
+  firebase_analytics: ^9.1.1
+  firebase_auth: ^3.3.8
+  firebase_core: ^1.12.0
+  firebase_crashlytics: ^2.5.2
   fluster: ^1.2.0
   flutter_bloc: ^8.0.1
   flutter_cache_manager: ^3.3.0
@@ -31,7 +31,7 @@ dependencies:
   formz: ^0.4.1
   geoflutterfire: ^3.0.3
   geolocator: ^8.2.0
-  google_fonts: ^2.3.1
+  google_fonts: ^2.2.0
   google_maps_flutter: ^2.1.3
   google_place: ^0.4.7
   google_sign_in: ^5.2.4
@@ -43,19 +43,18 @@ dependencies:
   permission_handler: ^9.2.0
   pinput: ^2.2.0
   phone_form_field: ^5.0.0
-  sembast: ^3.2.0
+  sembast: ^3.1.0
   scroll_snap_list: ^0.8.0
   shared_preferences: ^2.0.13
   spider: ^2.1.0
   url_launcher: ^6.1.0
   uuid: ^3.0.6
   walletconnect_dart: ^0.0.1
-  workmanager: ^0.4.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
+  flutter_lints: ^1.0.4
 
 flutter:
   uses-material-design: true
@@ -64,7 +63,7 @@ flutter:
     - assets/launcher_icon/
     - assets/profile_avatars/
     - assets/social_media_icons/
-    - assets/wallet_logos
+    - assets/wallet_logos/
 
 flutter_icons:
   android: true
