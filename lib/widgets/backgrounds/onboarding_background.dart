@@ -13,7 +13,7 @@ List<Widget> onBoardingBackground(BuildContext context) {
     Hero(
       tag: 'enter-the-metaverse-filter',
       child: Container(
-        color: Colors.black.withOpacity(0.5),
+        color: Colors.black.withOpacity(0.8),
       ),
     ),
   ];

@@ -74,8 +74,8 @@ class WalletConnectCubit extends Cubit<SessionStatus?> {
     connector.sendCustomRequest(
       method: "personal_sign",
       params: [
+        "Login to VeriFi",
         connector.session.accounts[0],
-        "test",
       ],
     );
     if (sessionUri != null) launchUrlString(sessionUri!);

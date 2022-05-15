@@ -192,7 +192,7 @@ class VeriFiApp extends StatelessWidget {
       theme: _veriFiAppTheme(),
       darkTheme: _veriFiAppDarkTheme(),
       themeMode: ThemeMode.system,
-      initialRoute: '/test',
+      initialRoute: '/auth',
       /* initialRoute: (context.watch<AuthenticationCubit>().state.user != null) */
       /*     ? (context.watch<IntroPagesCubit>().state.onboarded */
       /*         ? '/home' */

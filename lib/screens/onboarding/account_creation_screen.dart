@@ -109,7 +109,7 @@ class _AccountCreationScreenState extends State<AccountCreationScreen> {
                               opacity: opacity,
                               duration:
                                   const Duration(seconds: 1, milliseconds: 500),
-                              child: ElevatedButton(
+                              child: OutlinedButton(
                                 onPressed: () => formKey.currentState!.save(),
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(
@@ -125,6 +125,13 @@ class _AccountCreationScreenState extends State<AccountCreationScreen> {
                                       style: Theme.of(context).textTheme.button,
                                     ),
                                   ),
+                                ),
+                                style: OutlinedButton.styleFrom(
+                                  side: const BorderSide(
+                                    width: 1.0,
+                                    color: Colors.white,
+                                  ),
+                                  primary: Colors.white,
                                 ),
                               ),
                             ),
