@@ -1,6 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:verifi/widgets/animated_text.dart';
 import 'package:verifi/screens/welcome_screen/welcome_screen_footer_button.dart';
 
@@ -65,7 +65,7 @@ PageViewModel buildWelcomePageViewModel(
                       fontSize: 18.0,
                     ),
                 recognizer: TapGestureRecognizer()
-                  ..onTap = () => launch(
+                  ..onTap = () => launchUrlString(
                         'https://www.article19.org/data/files/Internet_Statement_Adopted.pdf',
                       ),
               ),

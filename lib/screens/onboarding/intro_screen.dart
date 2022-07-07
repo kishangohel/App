@@ -1,22 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verifi/blocs/blocs.dart';
-import 'package:verifi/screens/onboarding/account_creation_screen.dart';
+import 'package:verifi/screens/onboarding/phone_number_screen.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 import 'package:verifi/widgets/text/app_title.dart';
 
 class IntroScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthenticationCubit, AuthenticationState>(
-      listenWhen: (previous, current) {
-        return previous.user == null && current.user != null;
-      },
-      listener: (context, state) {
-        Navigator.of(context).pushReplacementNamed('/welcome');
-      },
-      child: _IntroScreenScaffold(),
-    );
+    return _IntroScreenScaffold();
   }
 }
 
@@ -30,7 +22,7 @@ class _IntroScreenScaffold extends StatelessWidget {
           child: Stack(
             children: [
               ...onBoardingBackground(context),
-              Container(
+              Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Column(
                   children: [
@@ -125,11 +117,12 @@ class _GetStartedButton extends StatelessWidget {
         onPressed: () {
           Navigator.of(context).push(
             PageRouteBuilder(
-              transitionDuration: const Duration(seconds: 1, milliseconds: 500),
+              transitionDuration:
+                  const Duration(seconds: 1, milliseconds: 500),
               reverseTransitionDuration: const Duration(seconds: 1),
               transitionsBuilder: _slideTransition,
               pageBuilder: (BuildContext context, _, __) =>
-                  AccountCreationScreen(),
+                  PhoneNumberScreen(),
             ),
           );
         }

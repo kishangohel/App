@@ -53,11 +53,11 @@ class _WalletConnectButton extends StatelessWidget {
         children: [
           ElevatedButton(
             onPressed: () => context.read<WalletConnectCubit>().connect(null),
-            child: Text("Connect Ethereum wallet"),
+            child: const Text("Connect Ethereum wallet"),
           ),
           ElevatedButton(
             onPressed: () => context.read<WalletConnectCubit>().sign(),
-            child: Text("Sign transaction"),
+            child: const Text("Sign transaction"),
           ),
         ],
       ),

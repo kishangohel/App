@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:verifi/models/user.dart' as model_user;
 
@@ -14,18 +15,16 @@ class AuthenticationRepository {
       : _fbAuth = firebaseAuth ?? FirebaseAuth.instance;
 
   /// Streams [firebase_auth.User] changes, mapping to [models.User].
-  Stream<model_user.User?> requestUserChanges() {
-    return _fbAuth.userChanges().map(
-          (user) => (user != null)
-              ? model_user.User(
-                  id: user.uid,
-                  email: user.email,
-                  username: user.displayName,
-                  photo: user.photoURL,
-                )
-              : null,
-        );
-  }
+  Stream<model_user.User?> requestUserChanges() => _fbAuth.userChanges().map(
+        (User? user) => (user != null)
+            ? model_user.User(
+                id: user.uid,
+                email: user.email,
+                username: user.displayName,
+                photo: user.photoURL,
+              )
+            : null,
+      );
 
   User? get currentUser => _fbAuth.currentUser;
 
@@ -76,22 +75,20 @@ class AuthenticationRepository {
   ///
   /// [codeSent] is a callback to a function that should store
   /// the verification ID for future authentication logic w/ an SMS code.
-  Future<void> authWithPhoneNumber(
+  Future<void> requestSmsCode(
     String phoneNumber,
     Function(String verificationId, int? forceResendingToken) codeSent,
     Function(String verificationId) timeoutReached,
     Function(FirebaseAuthException) verificationFailed,
-  ) {
-    return _fbAuth.verifyPhoneNumber(
-      phoneNumber: phoneNumber,
-      verificationCompleted: (PhoneAuthCredential credentials) {
-        _fbAuth.signInWithCredential(credentials);
-      },
-      verificationFailed: verificationFailed,
-      codeSent: codeSent,
-      codeAutoRetrievalTimeout: timeoutReached,
-    );
-  }
+    Function(PhoneAuthCredential credentials) verificationCompleted,
+  ) =>
+      _fbAuth.verifyPhoneNumber(
+        phoneNumber: phoneNumber,
+        verificationCompleted: verificationCompleted,
+        verificationFailed: verificationFailed,
+        codeSent: codeSent,
+        codeAutoRetrievalTimeout: timeoutReached,
+      );
 
   /// Attempt to sign in from sms code.
   ///
@@ -108,14 +105,12 @@ class AuthenticationRepository {
     }
   }
 
-  /// Signs the user out, calling both the [FirebaseAuth] and [GoogleSignIn]
-  Future<List<void>> signOut() async {
-    return Future.wait([
-      _fbAuth.signOut(),
-    ]);
-  }
+  Future<void> signInWithCredential(AuthCredential credential) =>
+      _fbAuth.signInWithCredential(credential);
 
-  Future<void> sendPasswordResetEmail(String email) async {
-    _fbAuth.sendPasswordResetEmail(email: email);
-  }
+  /// Signs the user out, calling both the [FirebaseAuth] and [GoogleSignIn]
+  Future<void> signOut() => _fbAuth.signOut();
+
+  Future<void> sendPasswordResetEmail(String email) =>
+      _fbAuth.sendPasswordResetEmail(email: email);
 }

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/models/user.dart' as model_user;
@@ -20,12 +21,13 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
         );
   }
 
-  Future<void> signUpPhoneNumber(String phoneNumber) async {
-    return _authRepository.authWithPhoneNumber(
+  Future<void> requestSmsCode(String phoneNumber) async {
+    return _authRepository.requestSmsCode(
       phoneNumber,
       _onCodeSent,
       _onTimeoutReached,
       _onVerificationFailed,
+      _onVerificationCompleted,
     );
   }
 
@@ -85,5 +87,14 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
         message: "Incorrect verification code",
       ),
     );
+  }
+
+  void _onVerificationCompleted(PhoneAuthCredential credential) async {
+    try {
+      // state will auto-update user via requestUserChanges stream
+      await _authRepository.signInWithCredential(credential);
+    } on FirebaseAuthException catch (e) {
+      state.copyWith(exception: e);
+    }
   }
 }

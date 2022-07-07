@@ -37,14 +37,13 @@ dependencies:
   google_sign_in: ^5.2.4
   http: ^0.13.4
   hydrated_bloc: ^8.1.0
-  material_floating_search_bar: ^0.3.7
   page_transition: ^2.0.5
   path_provider: ^2.0.9
   permission_handler: ^9.2.0
   pinput: ^2.2.0
   phone_form_field: ^5.0.0
   sembast: ^3.1.0
-  scroll_snap_list: ^0.8.0
+  scroll_snap_list: ^0.9.0
   shared_preferences: ^2.0.13
   spider: ^2.1.0
   url_launcher: ^6.1.0
@@ -55,6 +54,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^1.0.4
+  test: ^1.21.0
 
 flutter:
   uses-material-design: true
