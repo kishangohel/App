@@ -17,6 +17,7 @@ class PhoneNumberScreen extends StatefulWidget {
 
 class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
   double opacity = 0;
+  final textColor = Colors.black;
   bool submitVisibility = false;
   bool progressIndicatorVisibility = false;
   final formKey = GlobalKey<FormState>();
@@ -36,7 +37,10 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        leading: Image.asset('assets/launcher_icon/vf_ios.png'),
+        leading: Hero(
+          tag: 'verifi-logo',
+          child: Image.asset('assets/launcher_icon/vf_ios.png'),
+        ),
         title: const Hero(
           tag: 'verifi-title',
           child: AppTitle(
@@ -58,15 +62,38 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
   }
 
   Widget _onboardingContent() {
-    return Center(
+    return AnimatedOpacity(
+      opacity: opacity,
+      duration: const Duration(seconds: 1),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16.0,
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _phoneNumberText(),
-            _accountPhoneFormField(),
-            _submitButton(),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _phoneNumberText(),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 24.0),
+                child: Column(
+                  mainAxisAlignment: (submitVisibility)
+                      ? MainAxisAlignment.end
+                      : MainAxisAlignment.center,
+                  children: [
+                    _accountPhoneFormField(),
+                    _submitButton(),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -74,22 +101,19 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
   }
 
   Widget _phoneNumberText() {
-    return AnimatedOpacity(
-      opacity: opacity,
-      duration: const Duration(
-        seconds: 1,
-        milliseconds: 500,
-      ),
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width,
-        child: const FittedBox(
-          fit: BoxFit.fitWidth,
-          child: Padding(
-            padding: EdgeInsets.only(bottom: 8.0),
-            child: Text(
-              "Enter your phone number",
-              style: TextStyle(color: Colors.white),
-            ),
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      child: FittedBox(
+        fit: BoxFit.fitWidth,
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: Text(
+            "Enter your phone number\nto authenticate",
+            style: Theme.of(context).textTheme.headline4?.copyWith(
+                  color: textColor,
+                  fontWeight: FontWeight.w600,
+                ),
+            textAlign: TextAlign.center,
           ),
         ),
       ),
@@ -97,38 +121,35 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
   }
 
   Widget _accountPhoneFormField() {
-    return AnimatedOpacity(
-      opacity: opacity,
-      duration: const Duration(seconds: 1, milliseconds: 500),
-      child: Align(
-        alignment: Alignment.topCenter,
-        child: AccountPhoneFormField(
-          formKey: formKey,
-          phoneController: phoneController,
-          onChanged: (PhoneNumber? number) {
-            setState(() {
-              submitVisibility = phoneController.value != null &&
-                  phoneController.value!.validate(
-                    type: PhoneNumberType.mobile,
-                  );
-            });
-          },
-          onSaved: (phoneNumber) {
-            BlocProvider.of<AuthenticationCubit>(context).requestSmsCode(
-              /* "+${phoneNumber.countryCode} ${phoneNumber.nsn}", */
-              "+1 555-333-4444",
-            );
+    return Align(
+      alignment: Alignment.topCenter,
+      child: AccountPhoneFormField(
+        formKey: formKey,
+        phoneController: phoneController,
+        textColor: textColor,
+        onChanged: (PhoneNumber? number) {
+          setState(() {
+            submitVisibility = phoneController.value != null &&
+                phoneController.value!.validate(
+                  type: PhoneNumberType.mobile,
+                );
+          });
+        },
+        onSaved: (phoneNumber) {
+          BlocProvider.of<AuthenticationCubit>(context).requestSmsCode(
+            /* "+${phoneNumber.countryCode} ${phoneNumber.nsn}", */
+            "+1 555-333-4444",
+          );
 
-            Navigator.of(context).push(
-              PageRouteBuilder(
-                transitionDuration: const Duration(milliseconds: 500),
-                reverseTransitionDuration: const Duration(seconds: 1),
-                transitionsBuilder: onboardingSlideTransition,
-                pageBuilder: (BuildContext context, _, __) => SmsCodeScreen(),
-              ),
-            );
-          },
-        ),
+          Navigator.of(context).push(
+            PageRouteBuilder(
+              transitionDuration: const Duration(milliseconds: 500),
+              reverseTransitionDuration: const Duration(seconds: 1),
+              transitionsBuilder: onboardingSlideTransition,
+              pageBuilder: (BuildContext context, _, __) => SmsCodeScreen(),
+            ),
+          );
+        },
       ),
     );
   }
@@ -138,37 +159,30 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
       padding: const EdgeInsets.all(16.0),
       child: Visibility(
         visible: submitVisibility,
-        maintainSize: true,
+        maintainSize: false,
         maintainAnimation: true,
         maintainState: true,
-        child: AnimatedOpacity(
-          opacity: opacity,
-          duration: const Duration(seconds: 1, milliseconds: 500),
-          child: OutlinedButton(
-            onPressed: () => formKey.currentState!.save(),
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                vertical: 8.0,
-                horizontal: 4.0,
-              ),
-              width: MediaQuery.of(context).size.width * 0.25,
-              child: FittedBox(
-                fit: BoxFit.fitWidth,
-                child: Text(
-                  "Submit",
-                  style: Theme.of(context).textTheme.button?.copyWith(
-                        color: Colors.white,
-                      ),
-                ),
+        child: OutlinedButton(
+          onPressed: () => formKey.currentState!.save(),
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              vertical: 8.0,
+              horizontal: 4.0,
+            ),
+            width: MediaQuery.of(context).size.width * 0.25,
+            child: FittedBox(
+              fit: BoxFit.fitWidth,
+              child: Text(
+                "Submit",
+                style: Theme.of(context).textTheme.headline5?.copyWith(
+                      color: textColor,
+                      fontWeight: FontWeight.w600,
+                    ),
               ),
             ),
-            style: OutlinedButton.styleFrom(
-              side: const BorderSide(
-                width: 1.0,
-                color: Colors.white,
-              ),
-              primary: Colors.white,
-            ),
+          ),
+          style: OutlinedButton.styleFrom(
+            side: const BorderSide(width: 2.0),
           ),
         ),
       ),

@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:walletconnect_dart/walletconnect_dart.dart';
 
@@ -42,9 +41,13 @@ class WalletConnectCubit extends Cubit<SessionStatus?> {
         final exp = RegExp(r'(wc:.*)\?');
         final match = exp.firstMatch(uri);
         sessionUri = match?.group(1);
-        if (await canLaunchUrl(Uri.parse(uri))) {
-          launchUrl(
-            Uri.parse(uri),
+        if (await canLaunchUrlString(uri)) {
+          launchUrlString(
+            uri,
+            mode: LaunchMode.externalApplication,
+          );
+          launchUrlString(
+            uri,
             mode: LaunchMode.externalApplication,
           );
         }

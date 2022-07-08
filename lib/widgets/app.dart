@@ -16,6 +16,9 @@ import 'package:verifi/main.dart' as main;
 import 'package:verifi/models/wifi.dart';
 import 'package:verifi/repositories/repositories.dart';
 import 'package:verifi/screens/onboarding/connect_wallet_screen.dart';
+import 'package:verifi/screens/onboarding/phone_number_screen.dart';
+import 'package:verifi/screens/onboarding/sign_wallet_screen.dart';
+import 'package:verifi/screens/onboarding/sms_code_screen.dart';
 import 'package:verifi/screens/welcome_screen/welcome_screen.dart';
 import 'package:verifi/screens/onboarding/intro_screen.dart';
 import 'package:verifi/widgets/home_page.dart';
@@ -98,7 +101,7 @@ class _VeriFiState extends State<VeriFi> {
           BlocProvider<AuthenticationCubit>(
             create: (context) => AuthenticationCubit(
               RepositoryProvider.of<AuthenticationRepository>(context),
-            ),
+            )..logout(),
           ),
           BlocProvider<CreateProfileCubit>(
             create: (context) => CreateProfileCubit(
@@ -192,7 +195,7 @@ class VeriFiApp extends StatelessWidget {
       theme: _veriFiAppTheme(),
       darkTheme: _veriFiAppDarkTheme(),
       themeMode: ThemeMode.system,
-      initialRoute: '/auth',
+      initialRoute: '/test',
       /* initialRoute: (context.watch<AuthenticationCubit>().state.user != null) */
       /*     ? (context.watch<IntroPagesCubit>().state.onboarded */
       /*         ? '/home' */
@@ -201,8 +204,12 @@ class VeriFiApp extends StatelessWidget {
       routes: {
         '/welcome': (context) => WelcomeScreen(),
         '/home': (context) => HomePage(),
-        '/auth': (context) => IntroScreen(),
-        '/test': (context) => ConnectWalletScreen(),
+        '/onboarding': (context) => IntroScreen(),
+        '/onboarding/phone': (context) => PhoneNumberScreen(),
+        '/onboarding/sms': (context) => SmsCodeScreen(),
+        '/onboarding/wallet': (context) => ConnectWalletScreen(),
+        '/onboarding/wallet/sign': (context) => SignWalletScreen(),
+        '/test': (context) => IntroScreen(),
       },
     );
   }
@@ -224,6 +231,7 @@ ThemeData _veriFiAppDarkTheme() {
       primary: Colors.deepOrange[400]!,
       surface: Colors.deepOrange[600]!,
       secondary: Colors.blueGrey[400]!,
+      outline: Colors.white,
     ),
     textTheme: GoogleFonts.juraTextTheme(
       ThemeData(brightness: Brightness.dark).textTheme,

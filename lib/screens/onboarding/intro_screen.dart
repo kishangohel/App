@@ -1,18 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/screens/onboarding/phone_number_screen.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 import 'package:verifi/widgets/text/app_title.dart';
 
-class IntroScreen extends StatelessWidget {
+class IntroScreen extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return _IntroScreenScaffold();
-  }
+  State<StatefulWidget> createState() => _IntroScreenState();
 }
 
-class _IntroScreenScaffold extends StatelessWidget {
+class _IntroScreenState extends State<IntroScreen> {
+  double opacity = 0;
+  final textColor = Colors.black;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(
+      const Duration(seconds: 1, milliseconds: 500),
+      () => setState(() => opacity = 1),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,96 +30,105 @@ class _IntroScreenScaffold extends StatelessWidget {
           child: Stack(
             children: [
               ...onBoardingBackground(context),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Column(
-                  children: [
-                    Expanded(
-                      flex: 6,
-                      child: _IntroTextContent(),
-                    ),
-                    Expanded(
-                      flex: 3,
-                      child: Column(
-                        children: [
-                          _GetStartedButton(),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              _newIntroContent(),
             ],
           ),
         ),
       ),
     );
   }
-}
 
-class _IntroTextContent extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          flex: 5,
-          child: Container(
-            alignment: Alignment.bottomCenter,
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: const Hero(
-                tag: 'verifi-title',
-                child: AppTitle(
-                  fontSize: 72,
-                  fontColor: Colors.white,
-                  textAlign: TextAlign.center,
+  Widget _newIntroContent() {
+    return AnimatedOpacity(
+      opacity: opacity,
+      duration: const Duration(seconds: 1),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _verifiTitle(),
+                  _verifiSubtitle(),
+                ],
+              ),
+            ),
+          ),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _getStartedButton(),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _verifiTitle() {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width,
+        child: const Hero(
+          tag: 'verifi-title',
+          child: AppTitle(
+            fontSize: 72,
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _verifiSubtitle() {
+    return Container(
+      alignment: Alignment.topCenter,
+      child: SizedBox(
+        child: Text(
+          "Bridging the Universe with the Metaverse",
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.bodyText2?.copyWith(
+                fontSize: 22.0,
+                fontWeight: FontWeight.w600,
+              ),
+        ),
+      ),
+    );
+  }
+
+  Widget _getStartedButton() {
+    return OutlinedButton(
+        style: Theme.of(context).outlinedButtonTheme.style?.copyWith(
+              side: MaterialStateProperty.all<BorderSide>(
+                BorderSide(
+                  width: 2.0,
+                  color: (MediaQuery.of(context).platformBrightness ==
+                          Brightness.light)
+                      ? Colors.black
+                      : Colors.white,
                 ),
               ),
             ),
-          ),
-        ),
-        Expanded(
-          flex: 1,
-          child: Container(
-            alignment: Alignment.topCenter,
-            child: SizedBox(
-              child: Text(
-                "Bridging the Universe with the Metaverse",
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyText2?.copyWith(
-                      fontSize: 22.0,
-                      color: Colors.white,
-                    ),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _GetStartedButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          primary: Colors.white,
-          shape: ContinuousRectangleBorder(
-            borderRadius: BorderRadius.circular(24.0),
-          ),
-          padding: const EdgeInsets.symmetric(
-            vertical: 12.0,
-            horizontal: 16.0,
-          ),
-        ),
+        /* style: OutlinedButton.styleFrom( */
+        /*   shape: ContinuousRectangleBorder( */
+        /*     borderRadius: BorderRadius.circular(24.0), */
+        /*   ), */
+        /*   side: const BorderSide(width: 2.0), */
+        /*   padding: const EdgeInsets.symmetric( */
+        /*     vertical: 12.0, */
+        /*     horizontal: 16.0, */
+        /*   ), */
+        /* ), */
         child: Text(
           "Begin the journey",
-          style: Theme.of(context).textTheme.button?.copyWith(
-                color: Colors.black,
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
+          style: Theme.of(context).textTheme.headline5?.copyWith(
+                fontWeight: FontWeight.w600,
               ),
         ),
         onPressed: () {
@@ -125,19 +142,7 @@ class _GetStartedButton extends StatelessWidget {
                   PhoneNumberScreen(),
             ),
           );
-        }
-        /* onPressed: () => showBottomSheet( */
-        /*   context: context, */
-        /*   builder: (BuildContext context) { */
-        /*     return OnboardingSheet(); */
-        /*   }, */
-        /*   backgroundColor: Theme.of(context).backgroundColor, */
-        /*   shape: RoundedRectangleBorder( */
-        /*     borderRadius: BorderRadius.circular(12.0), */
-        /*   ), */
-        /*   enableDrag: false, */
-        /* ), */
-        );
+        });
   }
 
   SlideTransition _slideTransition(

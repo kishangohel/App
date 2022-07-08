@@ -10,20 +10,21 @@ import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 import 'package:verifi/widgets/text/app_title.dart';
 import 'package:walletconnect_dart/walletconnect_dart.dart';
 
-class ConnectWalletScreen extends StatefulWidget {
+class SignWalletScreen extends StatefulWidget {
   @override
-  State<ConnectWalletScreen> createState() => _ConnectWalletScreenState();
+  State<SignWalletScreen> createState() => _SignWalletScreenState();
 }
 
-class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
+class _SignWalletScreenState extends State<SignWalletScreen> {
   double opacity = 0;
   final textColor = Colors.black;
+  bool isChecked = false;
 
   @override
   void initState() {
     super.initState();
     Future.delayed(
-      const Duration(seconds: 1),
+      const Duration(seconds: 1, milliseconds: 500),
       () => setState(() => opacity = 1),
     );
   }
@@ -34,38 +35,32 @@ class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
       listener: (context, state) {
         Navigator.of(context).pushNamed('/onboarding/wallet/sign');
       },
-      listenWhen: (previous, current) {
-        return (previous == null) && (current != null);
-      },
-      child: WillPopScope(
-        onWillPop: () async => false,
-        child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.black,
-            leading: Hero(
-              tag: 'verifi-logo',
-              child: Image.asset('assets/launcher_icon/vf_ios.png'),
-            ),
-            title: const Hero(
-              tag: 'verifi-title',
-              child: AppTitle(
-                fontSize: 48.0,
-                textAlign: TextAlign.center,
-              ),
-            ),
-            centerTitle: true,
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          leading: Hero(
+            tag: 'verifi-logo',
+            child: Image.asset('assets/launcher_icon/vf_ios.png'),
           ),
-          body: Container(
-            color: Colors.black,
-            child: SafeArea(
-              child: Stack(
-                children: [
-                  ...onBoardingBackground(context),
-                  (Platform.isIOS)
-                      ? _iosConnectWallet()
-                      : _androidConnectWallet(),
-                ],
-              ),
+          title: const Hero(
+            tag: 'verifi-title',
+            child: AppTitle(
+              fontSize: 48.0,
+              textAlign: TextAlign.center,
+            ),
+          ),
+          centerTitle: true,
+        ),
+        body: Container(
+          color: Colors.black,
+          child: SafeArea(
+            child: Stack(
+              children: [
+                ...onBoardingBackground(context),
+                (Platform.isIOS)
+                    ? _iosConnectWallet()
+                    : _androidConnectWallet(),
+              ],
             ),
           ),
         ),
@@ -93,7 +88,8 @@ class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 _bottomTextTitle(),
-                _bottomTextContent(),
+                _bottomTermsText(),
+                _bottomAgreeText(),
                 _bottomConnectButton(),
               ],
             ),
@@ -110,7 +106,7 @@ class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
         vertical: 16.0,
       ),
       child: AutoSizeText(
-        "Connect your Ethereum wallet",
+        "Agree to Terms & Conditions",
         style: Theme.of(context).textTheme.headline4?.copyWith(
               color: textColor,
               fontWeight: FontWeight.w600,
@@ -122,9 +118,12 @@ class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
 
   Widget _bottomTextTitle() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 12.0,
+        vertical: 8.0,
+      ),
       child: AutoSizeText(
-        "Your wallet will be used to",
+        "Please read the following:",
         style: Theme.of(context).textTheme.headline5?.copyWith(
               color: textColor,
               fontWeight: FontWeight.w600,
@@ -134,33 +133,43 @@ class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
     );
   }
 
-  Widget _bottomTextContent() {
+  Widget _bottomTermsText() {
     return Padding(
-      padding: const EdgeInsets.only(
-        bottom: 24.0,
-        left: 24.0,
-        right: 12.0,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
       child: AutoSizeText(
-        "- Select an NFT as your profile photo\n"
-        "- Receive \$VERIFI tokens for making contributions to the "
-        "network",
+        "Terms of Use\n"
+        "Privacy Policy",
         style: Theme.of(context).textTheme.headline6?.copyWith(
               color: textColor,
               fontWeight: FontWeight.w600,
             ),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
+  Widget _bottomAgreeText() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+      child: Text(
+        "If you agree to these terms, please sign below",
+        style: Theme.of(context).textTheme.headline6?.copyWith(
+              color: textColor,
+              fontWeight: FontWeight.w600,
+            ),
+        textAlign: TextAlign.center,
       ),
     );
   }
 
   Widget _bottomConnectButton() {
     return OutlinedButton(
-      onPressed: () => context.read<WalletConnectCubit>().connect(null),
-      child: Padding(
+      onPressed: () => context.read<WalletConnectCubit>().sign(),
+      child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: Text(
-          "Connect",
-          style: Theme.of(context).textTheme.headline4?.copyWith(
+          "Sign",
+          style: Theme.of(context).textTheme.headline5?.copyWith(
                 color: textColor,
                 fontWeight: FontWeight.w600,
               ),

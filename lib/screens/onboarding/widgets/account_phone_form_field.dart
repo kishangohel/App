@@ -4,11 +4,13 @@ import 'package:phone_form_field/phone_form_field.dart';
 class AccountPhoneFormField extends StatefulWidget {
   final GlobalKey<FormState> formKey;
   final PhoneController phoneController;
+  final Color textColor;
   final void Function(PhoneNumber? number) onChanged;
   final void Function(PhoneNumber number) onSaved;
   const AccountPhoneFormField({
     required this.formKey,
     required this.phoneController,
+    required this.textColor,
     required this.onChanged,
     required this.onSaved,
   });
@@ -27,33 +29,52 @@ class _AccountPhoneFormFieldState extends State<AccountPhoneFormField> {
         countrySelectorNavigator: CountrySelectorNavigator.modalBottomSheet(
           height: MediaQuery.of(context).size.height * 0.7,
         ),
-        countryCodeStyle: const TextStyle(
-          color: Colors.white,
+        countryCodeStyle: TextStyle(
+          color: widget.textColor,
           fontSize: 18.0,
+          fontWeight: FontWeight.w600,
         ),
-        style: const TextStyle(
-          color: Colors.white,
+        style: TextStyle(
+          color: widget.textColor,
           fontSize: 18.0,
+          fontWeight: FontWeight.w600,
         ),
         decoration: InputDecoration(
-          errorStyle: const TextStyle(color: Colors.white),
+          errorStyle: Theme.of(context).textTheme.headline6?.copyWith(
+                color: widget.textColor,
+                fontWeight: FontWeight.w600,
+              ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: widget.textColor,
+              width: 2.0,
+            ),
+            borderRadius: BorderRadius.circular(4.0),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: widget.textColor,
+              width: 2.0,
+            ),
+            borderRadius: BorderRadius.circular(4.0),
+          ),
           enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(
-              color: Colors.white,
-              width: 1.0,
+            borderSide: BorderSide(
+              color: widget.textColor,
+              width: 2.0,
             ),
             borderRadius: BorderRadius.circular(4.0),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(
-              color: Colors.white,
-              width: 1.0,
+            borderSide: BorderSide(
+              color: widget.textColor,
+              width: 2.0,
             ),
             borderRadius: BorderRadius.circular(4.0),
           ),
           border: OutlineInputBorder(
-            borderSide: const BorderSide(
-              color: Colors.white,
+            borderSide: BorderSide(
+              color: widget.textColor,
               width: 1.0,
             ),
             borderRadius: BorderRadius.circular(4.0),

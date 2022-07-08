@@ -24,7 +24,6 @@ class AppTitle extends StatelessWidget {
           "VeriFi",
           style: GoogleFonts.quantico(
             fontSize: fontSize,
-            color: fontColor ?? Colors.white,
           ),
           textAlign: textAlign,
         ),

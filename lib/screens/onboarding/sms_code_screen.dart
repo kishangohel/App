@@ -5,6 +5,8 @@ import 'package:pinput/pinput.dart';
 import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/screens/onboarding/connect_wallet_screen.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
+import 'package:verifi/widgets/text/app_title.dart';
+import 'package:verifi/widgets/transitions/onboarding_slide_transition.dart';
 
 class SmsCodeScreen extends StatefulWidget {
   @override
@@ -13,6 +15,7 @@ class SmsCodeScreen extends StatefulWidget {
 
 class _SmsCodeScreenState extends State<SmsCodeScreen> {
   double opacity = 0;
+  final textColor = Colors.black;
 
   @override
   void initState() {
@@ -26,6 +29,21 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        leading: Hero(
+          tag: 'verifi-logo',
+          child: Image.asset('assets/launcher_icon/vf_ios.png'),
+        ),
+        title: const Hero(
+          tag: 'verifi-title',
+          child: AppTitle(
+            fontSize: 48.0,
+            textAlign: TextAlign.center,
+          ),
+        ),
+        centerTitle: true,
+      ),
       body: BlocListener<AuthenticationCubit, AuthenticationState>(
         listener: (context, state) {
           if (state.exception != null) {
@@ -40,10 +58,12 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
           if (state.user != null) {
             Navigator.of(context).pushReplacement(
               PageRouteBuilder(
-                transitionDuration:
-                    const Duration(seconds: 1, milliseconds: 500),
+                transitionDuration: const Duration(
+                  seconds: 1,
+                  milliseconds: 500,
+                ),
                 reverseTransitionDuration: const Duration(seconds: 1),
-                transitionsBuilder: _slideTransition,
+                transitionsBuilder: onboardingSlideTransition,
                 pageBuilder: (BuildContext context, _, __) =>
                     ConnectWalletScreen(),
               ),
@@ -51,7 +71,6 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
           }
         },
         child: Container(
-          padding: const EdgeInsets.all(16.0),
           color: Colors.black,
           child: SafeArea(
             child: Stack(
@@ -70,51 +89,82 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
     return AnimatedOpacity(
       opacity: opacity,
       duration: const Duration(seconds: 1),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          FittedBox(
-            fit: BoxFit.fitWidth,
-            child: AutoSizeText(
-              'Enter SMS verification code',
-              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                    fontSize: 48.0,
-                    color: Colors.white,
-                  ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16.0,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _smsInstructionsText(),
+                ],
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Pinput(
-              length: 6,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              defaultPinTheme: PinTheme(
-                width: MediaQuery.of(context).size.width * 0.12,
-                height: 56,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8.0,
-                  vertical: 8.0,
-                ),
-                textStyle: const TextStyle(
-                  fontSize: 20,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                ),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.white,
-                  ),
-                  borderRadius: BorderRadius.circular(4),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 24.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _smsPinput(),
+                  ],
                 ),
               ),
-              onCompleted: (String pin) {
-                /* context.read<AuthenticationCubit>().submitSmsCode(pin); */
-                context.read<AuthenticationCubit>().submitSmsCode("941555");
-              },
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _smsInstructionsText() {
+    return FittedBox(
+      fit: BoxFit.fitWidth,
+      child: AutoSizeText(
+        'Enter SMS verification code',
+        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+              fontSize: 48.0,
+              color: textColor,
+              fontWeight: FontWeight.w600,
+            ),
+      ),
+    );
+  }
+
+  Widget _smsPinput() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8.0),
+      child: Pinput(
+        length: 6,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        defaultPinTheme: PinTheme(
+          width: MediaQuery.of(context).size.width * 0.12,
+          height: 56,
+          padding: const EdgeInsets.symmetric(
+            horizontal: 8.0,
+            vertical: 8.0,
           ),
-        ],
+          textStyle: TextStyle(
+            fontSize: 20,
+            color: textColor,
+            fontWeight: FontWeight.w600,
+          ),
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: textColor,
+            ),
+            borderRadius: BorderRadius.circular(4),
+          ),
+        ),
+        onCompleted: (String pin) {
+          /* context.read<AuthenticationCubit>().submitSmsCode(pin); */
+          context.read<AuthenticationCubit>().submitSmsCode("941555");
+        },
       ),
     );
   }
