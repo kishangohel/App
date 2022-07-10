@@ -7,10 +7,8 @@ import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:verifi/blocs/wallet_connect/wallet_connect_cubit.dart';
 import 'package:verifi/blocs/wallet_connect/wallet_connect_state.dart';
 import 'package:verifi/resources/resources.dart';
-import 'package:verifi/screens/onboarding/profile_picture_select_screen.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 import 'package:verifi/widgets/text/app_title.dart';
-import 'package:verifi/widgets/transitions/onboarding_slide_transition.dart';
 
 class SignWalletScreen extends StatefulWidget {
   @override
@@ -62,18 +60,7 @@ class _SignWalletScreenState extends State<SignWalletScreen> {
             context.read<WalletConnectCubit>().clearError();
           }
           if (state.agreementSigned == true) {
-            Navigator.of(context).pushReplacement(
-              PageRouteBuilder(
-                transitionDuration: const Duration(
-                  seconds: 1,
-                  milliseconds: 500,
-                ),
-                reverseTransitionDuration: const Duration(seconds: 1),
-                transitionsBuilder: onboardingSlideTransition,
-                pageBuilder: (BuildContext context, _, __) =>
-                    ProfilePictureSelectScreen(),
-              ),
-            );
+            Navigator.of(context).pushNamed('/onboarding/pfp');
           }
         },
         child: Container(

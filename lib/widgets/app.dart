@@ -17,6 +17,7 @@ import 'package:verifi/models/wifi.dart';
 import 'package:verifi/repositories/repositories.dart';
 import 'package:verifi/screens/onboarding/connect_wallet_screen.dart';
 import 'package:verifi/screens/onboarding/phone_number_screen.dart';
+import 'package:verifi/screens/onboarding/profile_picture_select_screen.dart';
 import 'package:verifi/screens/onboarding/sign_wallet_screen.dart';
 import 'package:verifi/screens/onboarding/sms_code_screen.dart';
 import 'package:verifi/screens/welcome_screen/welcome_screen.dart';
@@ -209,6 +210,7 @@ class VeriFiApp extends StatelessWidget {
         '/onboarding/sms': (context) => SmsCodeScreen(),
         '/onboarding/wallet': (context) => ConnectWalletScreen(),
         '/onboarding/wallet/sign': (context) => SignWalletScreen(),
+        '/onboarding/pfp': (context) => ProfilePictureSelectScreen(),
       },
     );
   }

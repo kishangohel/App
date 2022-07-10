@@ -36,11 +36,10 @@ class _ProfilePictureSelectState extends State<ProfilePictureSelectScreen> {
         ),
         centerTitle: true,
       ),
-      body: SafeArea(
-        child: Stack(
-          children: [
-            _profilePictureScreenContents(),
-          ],
+      body: Container(
+        color: Colors.black,
+        child: SafeArea(
+          child: _profilePictureScreenContents(),
         ),
       ),
     );
@@ -50,7 +49,16 @@ class _ProfilePictureSelectState extends State<ProfilePictureSelectScreen> {
     return AnimatedOpacity(
       opacity: opacity,
       duration: const Duration(seconds: 1),
-      child: Container(color: Colors.white),
+      child: Container(
+        color: Colors.white,
+        child: Center(
+          child: Container(
+            height: 600,
+            width: 600,
+            color: Colors.black,
+          ),
+        ),
+      ),
     );
   }
 }
