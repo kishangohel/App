@@ -10,7 +10,7 @@ class AppTitle extends StatelessWidget {
   ///
   const AppTitle({
     required this.fontSize,
-    this.fontColor,
+    this.fontColor = Colors.white,
     required this.textAlign,
   });
 

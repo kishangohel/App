@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:verifi/blocs/wallet_connect/wallet_connect_cubit.dart';
+import 'package:verifi/blocs/wallet_connect/wallet_connect_state.dart';
 import 'package:verifi/resources/resources.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 import 'package:verifi/widgets/text/app_title.dart';
-import 'package:walletconnect_dart/walletconnect_dart.dart';
 
 class ConnectWalletScreen extends StatefulWidget {
   @override
@@ -30,12 +30,12 @@ class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<WalletConnectCubit, SessionStatus?>(
+    return BlocListener<WalletConnectCubit, WalletConnectState>(
       listener: (context, state) {
         Navigator.of(context).pushNamed('/onboarding/wallet/sign');
       },
       listenWhen: (previous, current) {
-        return (previous == null) && (current != null);
+        return (previous.status == null) && (current.status != null);
       },
       child: WillPopScope(
         onWillPop: () async => false,

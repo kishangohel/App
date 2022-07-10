@@ -76,7 +76,7 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
             child: Stack(
               children: [
                 ...onBoardingBackground(context),
-                _smsCodeScreenContents(context),
+                _smsCodeScreenContents(),
               ],
             ),
           ),
@@ -85,7 +85,7 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
     );
   }
 
-  Widget _smsCodeScreenContents(BuildContext context) {
+  Widget _smsCodeScreenContents() {
     return AnimatedOpacity(
       opacity: opacity,
       duration: const Duration(seconds: 1),
@@ -185,25 +185,6 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
           textAlign: TextAlign.center,
         ),
       ),
-    );
-  }
-
-  SlideTransition _slideTransition(
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-    Widget child,
-  ) {
-    const begin = Offset(0.0, 1.0);
-    const end = Offset.zero;
-    const curve = Curves.ease;
-
-    final tween = Tween(begin: begin, end: end);
-    final curvedAnimation = CurvedAnimation(parent: animation, curve: curve);
-
-    return SlideTransition(
-      position: tween.animate(curvedAnimation),
-      child: child,
     );
   }
 }

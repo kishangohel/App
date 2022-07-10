@@ -5,10 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:verifi/blocs/wallet_connect/wallet_connect_cubit.dart';
+import 'package:verifi/blocs/wallet_connect/wallet_connect_state.dart';
 import 'package:verifi/resources/resources.dart';
+import 'package:verifi/screens/onboarding/profile_picture_select_screen.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 import 'package:verifi/widgets/text/app_title.dart';
-import 'package:walletconnect_dart/walletconnect_dart.dart';
+import 'package:verifi/widgets/transitions/onboarding_slide_transition.dart';
 
 class SignWalletScreen extends StatefulWidget {
   @override
@@ -31,35 +33,58 @@ class _SignWalletScreenState extends State<SignWalletScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<WalletConnectCubit, SessionStatus?>(
-      listener: (context, state) {
-        Navigator.of(context).pushNamed('/onboarding/wallet/sign');
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.black,
-          leading: Hero(
-            tag: 'verifi-logo',
-            child: Image.asset('assets/launcher_icon/vf_ios.png'),
-          ),
-          title: const Hero(
-            tag: 'verifi-title',
-            child: AppTitle(
-              fontSize: 48.0,
-              textAlign: TextAlign.center,
-            ),
-          ),
-          centerTitle: true,
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        leading: Hero(
+          tag: 'verifi-logo',
+          child: Image.asset('assets/launcher_icon/vf_ios.png'),
         ),
-        body: Container(
+        title: const Hero(
+          tag: 'verifi-title',
+          child: AppTitle(
+            fontSize: 48.0,
+            textAlign: TextAlign.center,
+          ),
+        ),
+        centerTitle: true,
+      ),
+      body: BlocListener<WalletConnectCubit, WalletConnectState>(
+        listener: (context, state) {
+          if (state.exception != null) {
+            showModalBottomSheet(
+              context: context,
+              builder: (context) => _modalSheetError(context, state),
+              shape: ContinuousRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+            );
+            context.read<WalletConnectCubit>().clearError();
+          }
+          if (state.agreementSigned == true) {
+            Navigator.of(context).pushReplacement(
+              PageRouteBuilder(
+                transitionDuration: const Duration(
+                  seconds: 1,
+                  milliseconds: 500,
+                ),
+                reverseTransitionDuration: const Duration(seconds: 1),
+                transitionsBuilder: onboardingSlideTransition,
+                pageBuilder: (BuildContext context, _, __) =>
+                    ProfilePictureSelectScreen(),
+              ),
+            );
+          }
+        },
+        child: Container(
           color: Colors.black,
           child: SafeArea(
             child: Stack(
               children: [
                 ...onBoardingBackground(context),
-                (Platform.isIOS)
-                    ? _iosConnectWallet()
-                    : _androidConnectWallet(),
+                (Platform.isAndroid)
+                    ? _androidConnectWallet()
+                    : _iosConnectWallet(),
               ],
             ),
           ),
@@ -211,8 +236,9 @@ class _SignWalletScreenState extends State<SignWalletScreen> {
                 ],
               ),
             ),
-            onTap: () =>
-                context.read<WalletConnectCubit>().connect(_wallets[index][2]),
+            onTap: () {
+              context.read<WalletConnectCubit>().connect(_wallets[index][2]);
+            },
           ),
         );
       },
@@ -220,6 +246,25 @@ class _SignWalletScreenState extends State<SignWalletScreen> {
       itemSize: MediaQuery.of(context).size.width * 0.4,
       onItemFocus: (index) {},
       dynamicItemSize: true,
+    );
+  }
+
+  Widget _modalSheetError(BuildContext context, WalletConnectState state) {
+    return Container(
+      height: 80.0,
+      padding: const EdgeInsets.symmetric(
+        horizontal: 16.0,
+        vertical: 8.0,
+      ),
+      child: Center(
+        child: AutoSizeText(
+          state.exception?.message.toString() ?? 'Failed to sign',
+          style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                fontSize: 18,
+              ),
+          textAlign: TextAlign.center,
+        ),
+      ),
     );
   }
 }

@@ -1,15 +1,16 @@
 import 'dart:io';
 
 import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:url_launcher/url_launcher_string.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:verifi/blocs/wallet_connect/wallet_connect_state.dart';
 import 'package:walletconnect_dart/walletconnect_dart.dart';
 
-class WalletConnectCubit extends Cubit<SessionStatus?> {
+class WalletConnectCubit extends Cubit<WalletConnectState> {
   late WalletConnect connector;
   late EthereumWalletConnectProvider provider;
   String? sessionUri;
 
-  WalletConnectCubit() : super(null) {
+  WalletConnectCubit() : super(const WalletConnectState()) {
     connector = WalletConnect(
       bridge: 'https://bridge.walletconnect.org',
       clientMeta: const PeerMeta(
@@ -41,46 +42,61 @@ class WalletConnectCubit extends Cubit<SessionStatus?> {
         final exp = RegExp(r'(wc:.*)\?');
         final match = exp.firstMatch(uri);
         sessionUri = match?.group(1);
-        if (await canLaunchUrlString(uri)) {
-          launchUrlString(
-            uri,
+        if (await canLaunchUrl(Uri.parse(uri))) {
+          launchUrl(
+            Uri.parse(uri),
             mode: LaunchMode.externalApplication,
           );
-          launchUrlString(
-            uri,
+          launchUrl(
+            Uri.parse(uri),
             mode: LaunchMode.externalApplication,
           );
         }
       },
     );
-    emit(status);
+    emit(state.copyWith(status: status));
   }
 
   void _onConnect(SessionStatus status) {
-    emit(status);
+    emit(state.copyWith(status: status));
   }
 
   void _onSessionUpdate(WCSessionUpdateResponse response) {
-    emit(SessionStatus(
-      chainId: response.chainId,
-      accounts: response.accounts,
-      networkId: response.networkId,
-      rpcUrl: response.rpcUrl,
-    ));
+    emit(
+      state.copyWith(
+        status: SessionStatus(
+          chainId: response.chainId,
+          accounts: response.accounts,
+          networkId: response.networkId,
+          rpcUrl: response.rpcUrl,
+        ),
+      ),
+    );
   }
 
   void _onDisconnect() {
-    emit(null);
+    emit(state.copyWith(status: null));
   }
 
   Future<void> sign() async {
-    connector.sendCustomRequest(
-      method: "personal_sign",
-      params: [
-        "Login to VeriFi",
-        connector.session.accounts[0],
-      ],
-    );
-    if (sessionUri != null) launchUrlString(sessionUri!);
+    if (sessionUri != null) launchUrl(Uri.parse(sessionUri!));
+    try {
+      await connector.sendCustomRequest(
+        method: "personal_sign",
+        params: [
+          "I agree to VeriFi's terms and conditions",
+          connector.session.accounts[0],
+        ],
+      );
+      emit(state.copyWith(agreementSigned: true));
+      return;
+    } on WalletConnectException catch (e) {
+      emit(state.copyWith(exception: e));
+      return;
+    } catch (e) {
+      return;
+    }
   }
+
+  void clearError() => emit(state.copyWith(exception: null));
 }

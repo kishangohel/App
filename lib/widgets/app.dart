@@ -195,7 +195,7 @@ class VeriFiApp extends StatelessWidget {
       theme: _veriFiAppTheme(),
       darkTheme: _veriFiAppDarkTheme(),
       themeMode: ThemeMode.system,
-      initialRoute: '/test',
+      initialRoute: '/onboarding/wallet',
       /* initialRoute: (context.watch<AuthenticationCubit>().state.user != null) */
       /*     ? (context.watch<IntroPagesCubit>().state.onboarded */
       /*         ? '/home' */
@@ -209,7 +209,6 @@ class VeriFiApp extends StatelessWidget {
         '/onboarding/sms': (context) => SmsCodeScreen(),
         '/onboarding/wallet': (context) => ConnectWalletScreen(),
         '/onboarding/wallet/sign': (context) => SignWalletScreen(),
-        '/test': (context) => IntroScreen(),
       },
     );
   }
