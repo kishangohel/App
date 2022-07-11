@@ -30,7 +30,7 @@ class WelcomeScreen extends StatelessWidget {
           freeze: true,
           pageController: pageController,
           globalHeader: Image.asset(
-            'assets/wifi_city_4.gif',
+            'assets/enter_the_metaverse.gif',
             height: MediaQuery.of(context).size.height,
             fit: BoxFit.fitHeight,
           ),
