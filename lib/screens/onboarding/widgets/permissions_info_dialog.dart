@@ -4,15 +4,15 @@ import 'package:flutter/material.dart';
 class PermissionsInfoDialog extends StatelessWidget {
   final String title;
   final String contents;
-  Color fontColor = Colors.black;
-  Color backgroundColor = Colors.white;
-  PermissionsInfoDialog({
+  const PermissionsInfoDialog({
     required this.title,
     required this.contents,
   });
 
   @override
   Widget build(BuildContext context) {
+    Color fontColor = Colors.black;
+    Color backgroundColor = Colors.white;
     final brightness = MediaQuery.of(context).platformBrightness;
     if (brightness == Brightness.dark) {
       fontColor = Colors.white;
@@ -56,8 +56,8 @@ class PermissionsInfoDialog extends StatelessWidget {
                   onPressed: () => Navigator.pop(context, null),
                   style: OutlinedButton.styleFrom(
                     primary: Colors.grey,
-                    side: const BorderSide(
-                      color: Colors.black,
+                    side: BorderSide(
+                      color: fontColor,
                     ),
                   ),
                   child: Text(

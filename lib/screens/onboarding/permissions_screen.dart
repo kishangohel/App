@@ -91,7 +91,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
                     onChanged: (_backgroundLocationSelected == false)
                         ? _requestBackgroundLocation
                         : null,
-                    moreInfoDialog: PermissionsInfoDialog(
+                    moreInfoDialog: const PermissionsInfoDialog(
                       title: "Why does VeriFi need my location?",
                       contents: '''\u2022 Identify nearby WiFi access points
 \u2022 Show your location on the VeriFi Map
@@ -104,7 +104,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
                     onChanged: (_locationAlwaysSelected == false)
                         ? _requestLocationAlways
                         : null,
-                    moreInfoDialog: PermissionsInfoDialog(
+                    moreInfoDialog: const PermissionsInfoDialog(
                       title: "Why does VeriFi need my location all the time?",
                       contents:
                           '''\u2022 Automatically connect you to nearby WiFi at all times 
@@ -116,7 +116,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
                     onChanged: (_activityRecognitionSelected == false)
                         ? _requestActivityRecognition
                         : null,
-                    moreInfoDialog: PermissionsInfoDialog(
+                    moreInfoDialog: const PermissionsInfoDialog(
                       title: "Why does VeriFi need to recognize my activity?",
                       contents:
                           '''\u2022 Conserve your battery (e.g. disable auto-connect while driving)

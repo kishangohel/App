@@ -21,7 +21,6 @@ import 'package:verifi/screens/onboarding/phone_number_screen.dart';
 import 'package:verifi/screens/onboarding/profile_picture_select_screen.dart';
 import 'package:verifi/screens/onboarding/sign_wallet_screen.dart';
 import 'package:verifi/screens/onboarding/sms_code_screen.dart';
-import 'package:verifi/screens/welcome_screen/welcome_screen.dart';
 import 'package:verifi/screens/onboarding/intro_screen.dart';
 import 'package:verifi/widgets/home_page.dart';
 
