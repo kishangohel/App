@@ -3,19 +3,18 @@ import 'package:google_fonts/google_fonts.dart';
 
 class AppTitle extends StatelessWidget {
   final double fontSize;
-  final Color? fontColor;
   final TextAlign textAlign;
 
   /// Displays VeriFi title w/ Quantico font
   ///
   const AppTitle({
     required this.fontSize,
-    this.fontColor = Colors.white,
     required this.textAlign,
   });
 
   @override
   Widget build(BuildContext context) {
+    final brightness = MediaQuery.of(context).platformBrightness;
     return Material(
       type: MaterialType.transparency,
       child: FittedBox(
@@ -24,7 +23,7 @@ class AppTitle extends StatelessWidget {
           "VeriFi",
           style: GoogleFonts.quantico(
             fontSize: fontSize,
-            color: fontColor,
+            color: brightness == Brightness.dark ? Colors.white : Colors.black,
           ),
           textAlign: textAlign,
         ),

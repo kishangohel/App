@@ -17,7 +17,7 @@ class SignWalletScreen extends StatefulWidget {
 
 class _SignWalletScreenState extends State<SignWalletScreen> {
   double opacity = 0;
-  final textColor = Colors.black;
+  Color textColor = Colors.black;
   bool isChecked = false;
 
   @override
@@ -31,6 +31,8 @@ class _SignWalletScreenState extends State<SignWalletScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final brightness = MediaQuery.of(context).platformBrightness;
+    if (brightness == Brightness.dark) textColor = Colors.white;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
@@ -60,7 +62,7 @@ class _SignWalletScreenState extends State<SignWalletScreen> {
             context.read<WalletConnectCubit>().clearError();
           }
           if (state.agreementSigned == true) {
-            Navigator.of(context).pushNamed('/onboarding/pfp');
+            Navigator.of(context).pushNamed('/onboarding/permissions');
           }
         },
         child: Container(
@@ -96,14 +98,17 @@ class _SignWalletScreenState extends State<SignWalletScreen> {
             ),
           ),
           Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _bottomTextTitle(),
-                _bottomTermsText(),
-                _bottomAgreeText(),
-                _bottomConnectButton(),
-              ],
+            child: Padding(
+              padding: EdgeInsets.only(bottom: 24),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  _bottomTextTitle(),
+                  _bottomTermsText(),
+                  _bottomAgreeText(),
+                  _bottomConnectButton(),
+                ],
+              ),
             ),
           ),
         ],

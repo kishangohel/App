@@ -17,7 +17,7 @@ class PhoneNumberScreen extends StatefulWidget {
 
 class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
   double opacity = 0;
-  final textColor = Colors.black;
+  Color textColor = Colors.black;
   bool submitVisibility = false;
   bool progressIndicatorVisibility = false;
   final formKey = GlobalKey<FormState>();
@@ -34,6 +34,8 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final brightness = MediaQuery.of(context).platformBrightness;
+    if (brightness == Brightness.dark) textColor = Colors.white;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
@@ -182,7 +184,10 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
             ),
           ),
           style: OutlinedButton.styleFrom(
-            side: const BorderSide(width: 2.0),
+            side: BorderSide(
+              color: textColor,
+              width: 2.0,
+            ),
           ),
         ),
       ),

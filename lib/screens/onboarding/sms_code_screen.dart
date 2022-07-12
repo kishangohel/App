@@ -15,7 +15,7 @@ class SmsCodeScreen extends StatefulWidget {
 
 class _SmsCodeScreenState extends State<SmsCodeScreen> {
   double opacity = 0;
-  final textColor = Colors.black;
+  Color textColor = Colors.black;
 
   @override
   void initState() {
@@ -28,6 +28,8 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final brightness = MediaQuery.of(context).platformBrightness;
+    if (brightness == Brightness.dark) textColor = Colors.white;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
@@ -56,18 +58,7 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
             );
           }
           if (state.user != null) {
-            Navigator.of(context).pushReplacement(
-              PageRouteBuilder(
-                transitionDuration: const Duration(
-                  seconds: 1,
-                  milliseconds: 500,
-                ),
-                reverseTransitionDuration: const Duration(seconds: 1),
-                transitionsBuilder: onboardingSlideTransition,
-                pageBuilder: (BuildContext context, _, __) =>
-                    ConnectWalletScreen(),
-              ),
-            );
+            Navigator.of(context).pushNamed('/onboarding/wallet');
           }
         },
         child: Container(

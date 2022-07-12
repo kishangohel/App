@@ -16,6 +16,7 @@ import 'package:verifi/main.dart' as main;
 import 'package:verifi/models/wifi.dart';
 import 'package:verifi/repositories/repositories.dart';
 import 'package:verifi/screens/onboarding/connect_wallet_screen.dart';
+import 'package:verifi/screens/onboarding/permissions_screen.dart';
 import 'package:verifi/screens/onboarding/phone_number_screen.dart';
 import 'package:verifi/screens/onboarding/profile_picture_select_screen.dart';
 import 'package:verifi/screens/onboarding/sign_wallet_screen.dart';
@@ -196,14 +197,8 @@ class VeriFiApp extends StatelessWidget {
       theme: _veriFiAppTheme(),
       darkTheme: _veriFiAppDarkTheme(),
       themeMode: ThemeMode.system,
-      initialRoute: '/onboarding/wallet',
-      /* initialRoute: (context.watch<AuthenticationCubit>().state.user != null) */
-      /*     ? (context.watch<IntroPagesCubit>().state.onboarded */
-      /*         ? '/home' */
-      /*         : '/welcome') */
-      /*     : '/auth', */
+      initialRoute: '/onboarding',
       routes: {
-        '/welcome': (context) => WelcomeScreen(),
         '/home': (context) => HomePage(),
         '/onboarding': (context) => IntroScreen(),
         '/onboarding/phone': (context) => PhoneNumberScreen(),
@@ -211,6 +206,7 @@ class VeriFiApp extends StatelessWidget {
         '/onboarding/wallet': (context) => ConnectWalletScreen(),
         '/onboarding/wallet/sign': (context) => SignWalletScreen(),
         '/onboarding/pfp': (context) => ProfilePictureSelectScreen(),
+        '/onboarding/permissions': (context) => PermissionsScreen(),
       },
     );
   }

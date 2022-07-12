@@ -17,7 +17,7 @@ class ConnectWalletScreen extends StatefulWidget {
 
 class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
   double opacity = 0;
-  final textColor = Colors.black;
+  Color textColor = Colors.black;
 
   @override
   void initState() {
@@ -30,6 +30,8 @@ class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final brightness = MediaQuery.of(context).platformBrightness;
+    if (brightness == Brightness.dark) textColor = Colors.white;
     return BlocListener<WalletConnectCubit, WalletConnectState>(
       listener: (context, state) {
         Navigator.of(context).pushNamed('/onboarding/wallet/sign');
@@ -142,9 +144,8 @@ class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
         right: 12.0,
       ),
       child: AutoSizeText(
-        "- Select an NFT as your profile photo\n"
-        "- Receive \$VERIFI tokens for making contributions to the "
-        "network",
+        '''\u2022 Select an NFT as your profile photo
+\u2022 Receive \$VERIFI tokens for making contributions to the network''',
         style: Theme.of(context).textTheme.headline6?.copyWith(
               color: textColor,
               fontWeight: FontWeight.w600,
