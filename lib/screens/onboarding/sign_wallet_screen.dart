@@ -99,7 +99,7 @@ class _SignWalletScreenState extends State<SignWalletScreen> {
           ),
           Expanded(
             child: Padding(
-              padding: EdgeInsets.only(bottom: 24),
+              padding: const EdgeInsets.only(bottom: 24),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [

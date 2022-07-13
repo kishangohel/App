@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/models/app_tab.dart';
 import 'package:verifi/models/models.dart';
+import 'package:verifi/screens/profile_screen/profile_screen.dart';
 import 'package:verifi/widgets/feed_screen/feed_screen.dart';
 import 'package:verifi/widgets/map_screen/add_network_fab.dart';
 import 'package:verifi/widgets/map_screen/map_screen.dart';
@@ -22,6 +23,7 @@ class HomePageState extends State<HomePage> {
     _bodyChildren = [
       FeedScreen(),
       MapScreen(),
+      ProfileScreen(),
     ];
   }
 
@@ -60,6 +62,10 @@ class HomePageState extends State<HomePage> {
         icon: Icon(Icons.map),
         label: "WiFi Map",
       ),
+      const BottomNavigationBarItem(
+        icon: Icon(Icons.person_rounded),
+        label: "My Profile",
+      ),
     ];
   }
 
@@ -69,6 +75,8 @@ class HomePageState extends State<HomePage> {
         return null;
       case 1:
         return null;
+      case 2: 
+        return null; 
       default:
         return null;
     }

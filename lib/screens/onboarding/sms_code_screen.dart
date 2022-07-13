@@ -3,10 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:pinput/pinput.dart';
 import 'package:verifi/blocs/blocs.dart';
-import 'package:verifi/screens/onboarding/connect_wallet_screen.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 import 'package:verifi/widgets/text/app_title.dart';
-import 'package:verifi/widgets/transitions/onboarding_slide_transition.dart';
 
 class SmsCodeScreen extends StatefulWidget {
   @override

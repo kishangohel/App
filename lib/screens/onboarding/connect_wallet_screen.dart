@@ -4,6 +4,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
+import 'package:verifi/blocs/nfts/nfts.dart';
 import 'package:verifi/blocs/wallet_connect/wallet_connect_cubit.dart';
 import 'package:verifi/blocs/wallet_connect/wallet_connect_state.dart';
 import 'package:verifi/resources/resources.dart';
@@ -34,6 +35,11 @@ class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
     if (brightness == Brightness.dark) textColor = Colors.white;
     return BlocListener<WalletConnectCubit, WalletConnectState>(
       listener: (context, state) {
+        // listenWhen ensures status is not null
+        context.read<NftsCubit>().loadNftsOwnedbyAddress(
+              /* state.status!.accounts[0], */
+              "0x062D6D315e6C8AA196b9072d749E3f3F3579fDD0",
+            );
         Navigator.of(context).pushNamed('/onboarding/wallet/sign');
       },
       listenWhen: (previous, current) {

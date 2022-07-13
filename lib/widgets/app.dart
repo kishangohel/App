@@ -12,8 +12,10 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/blocs/create_profile/create_profile_cubit.dart';
 import 'package:verifi/blocs/intro_pages/intro_pages_cubit.dart';
+import 'package:verifi/blocs/nfts/nfts.dart';
 import 'package:verifi/main.dart' as main;
 import 'package:verifi/models/wifi.dart';
+import 'package:verifi/repositories/opensea_repository.dart';
 import 'package:verifi/repositories/repositories.dart';
 import 'package:verifi/screens/onboarding/connect_wallet_screen.dart';
 import 'package:verifi/screens/onboarding/permissions_screen.dart';
@@ -22,6 +24,7 @@ import 'package:verifi/screens/onboarding/profile_picture_select_screen.dart';
 import 'package:verifi/screens/onboarding/sign_wallet_screen.dart';
 import 'package:verifi/screens/onboarding/sms_code_screen.dart';
 import 'package:verifi/screens/onboarding/intro_screen.dart';
+import 'package:verifi/screens/profile_screen/profile_screen.dart';
 import 'package:verifi/widgets/home_page.dart';
 
 // The top-level [Widget] for the VeriFi application.
@@ -82,11 +85,14 @@ class _VeriFiState extends State<VeriFi> {
         RepositoryProvider<AuthenticationRepository>(
           create: (context) => AuthenticationRepository(),
         ),
-        RepositoryProvider<UsersRepository>(
-          create: (context) => UsersRepository(),
+        RepositoryProvider<OpenSeaRepository>(
+          create: (context) => OpenSeaRepository(useTestNet: true),
         ),
         RepositoryProvider<PlacesRepository>(
           create: (context) => PlacesRepository(),
+        ),
+        RepositoryProvider<UsersRepository>(
+          create: (context) => UsersRepository(),
         ),
         RepositoryProvider<WifiRepository>(
           create: (context) => WifiRepository(),
@@ -125,6 +131,11 @@ class _VeriFiState extends State<VeriFi> {
               RepositoryProvider.of<PlacesRepository>(context),
             ),
           ),
+          BlocProvider<NftsCubit>(
+            create: (context) => NftsCubit(
+              RepositoryProvider.of<OpenSeaRepository>(context),
+            ),
+          ),
           BlocProvider<MapSearchCubit>(
             create: (context) => MapSearchCubit(
               RepositoryProvider.of<PlacesRepository>(context),
@@ -133,6 +144,7 @@ class _VeriFiState extends State<VeriFi> {
           ),
           BlocProvider<ProfileCubit>(
             create: (context) => ProfileCubit(
+              RepositoryProvider.of<AuthenticationRepository>(context),
               RepositoryProvider.of<UsersRepository>(context),
             ),
           ),
@@ -196,7 +208,7 @@ class VeriFiApp extends StatelessWidget {
       theme: _veriFiAppTheme(),
       darkTheme: _veriFiAppDarkTheme(),
       themeMode: ThemeMode.system,
-      initialRoute: '/onboarding',
+      initialRoute: '/onboarding/wallet',
       routes: {
         '/home': (context) => HomePage(),
         '/onboarding': (context) => IntroScreen(),
@@ -206,6 +218,7 @@ class VeriFiApp extends StatelessWidget {
         '/onboarding/wallet/sign': (context) => SignWalletScreen(),
         '/onboarding/pfp': (context) => ProfilePictureSelectScreen(),
         '/onboarding/permissions': (context) => PermissionsScreen(),
+        '/profile': (context) => ProfileScreen(),
       },
     );
   }

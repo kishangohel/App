@@ -104,27 +104,18 @@ class _IntroScreenState extends State<IntroScreen> {
 
   Widget _getStartedButton() {
     return OutlinedButton(
-        style: Theme.of(context).outlinedButtonTheme.style?.copyWith(
-              side: MaterialStateProperty.all<BorderSide>(
-                BorderSide(
-                  width: 2.0,
-                  color: (MediaQuery.of(context).platformBrightness ==
-                          Brightness.light)
-                      ? Colors.black
-                      : Colors.white,
-                ),
-              ),
-            ),
-        /* style: OutlinedButton.styleFrom( */
-        /*   shape: ContinuousRectangleBorder( */
-        /*     borderRadius: BorderRadius.circular(24.0), */
-        /*   ), */
-        /*   side: const BorderSide(width: 2.0), */
-        /*   padding: const EdgeInsets.symmetric( */
-        /*     vertical: 12.0, */
-        /*     horizontal: 16.0, */
-        /*   ), */
-        /* ), */
+        style: OutlinedButton.styleFrom(
+          shape: ContinuousRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          side: BorderSide(
+            width: 2.0,
+            color:
+                (MediaQuery.of(context).platformBrightness == Brightness.light)
+                    ? Colors.black
+                    : Colors.white,
+          ),
+        ),
         child: Text(
           "Begin the journey",
           style: Theme.of(context).textTheme.headline5?.copyWith(

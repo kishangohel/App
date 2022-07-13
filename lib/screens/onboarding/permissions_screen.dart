@@ -123,11 +123,26 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
 \u2022 More intelligently connect to nearby WiFi''',
                     ),
                   ),
+                  _finishPermissionsButton(),
                 ],
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _finishPermissionsButton() {
+    return OutlinedButton(
+      onPressed: () {
+        Navigator.of(context).pushReplacementNamed('/onboarding/pfp');
+      },
+      child: Text(
+        "Finish",
+        style: Theme.of(context).textTheme.headline6?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
       ),
     );
   }
