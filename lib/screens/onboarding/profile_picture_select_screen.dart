@@ -120,13 +120,22 @@ class _ProfilePictureSelectState extends State<ProfilePictureSelectScreen> {
                   margin: const EdgeInsets.symmetric(
                     horizontal: 24.0,
                   ),
-                  color: textColor,
+                  decoration: BoxDecoration(
+                    color: textColor,
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(12),
+                    ),
+                  ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Container(
+                          padding: const EdgeInsets.only(
+                            left: 16,
+                            right: 16,
+                            top: 16.0,
+                          ),
                           child: Image.network(nft.image),
                         ),
                       ),
@@ -148,9 +157,10 @@ class _ProfilePictureSelectState extends State<ProfilePictureSelectScreen> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0,
-                          vertical: 4.0,
+                        padding: const EdgeInsets.only(
+                          left: 16.0,
+                          right: 16.0,
+                          bottom: 16.0,
                         ),
                         child: AutoSizeText(
                           nft.collectionName,
@@ -181,9 +191,10 @@ class _ProfilePictureSelectState extends State<ProfilePictureSelectScreen> {
           ),
           OutlinedButton(
             onPressed: () async {
-              await context
-                  .read<ProfileCubit>()
-                  .updateProfilePhoto(nfts[_controller.page!.toInt()].image);
+              context.read<ProfileCubit>().setProfilePhoto(
+                    nfts[_controller.page!.toInt()].image,
+                  );
+              await context.read<ProfileCubit>().createProfile();
               Navigator.of(context).pushNamed('/home');
             },
             child: Container(

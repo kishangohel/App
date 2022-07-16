@@ -10,7 +10,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:verifi/blocs/blocs.dart';
-import 'package:verifi/blocs/create_profile/create_profile_cubit.dart';
 import 'package:verifi/blocs/intro_pages/intro_pages_cubit.dart';
 import 'package:verifi/blocs/nfts/nfts.dart';
 import 'package:verifi/main.dart' as main;
@@ -21,11 +20,11 @@ import 'package:verifi/screens/onboarding/connect_wallet_screen.dart';
 import 'package:verifi/screens/onboarding/permissions_screen.dart';
 import 'package:verifi/screens/onboarding/phone_number_screen.dart';
 import 'package:verifi/screens/onboarding/profile_picture_select_screen.dart';
+import 'package:verifi/screens/onboarding/setting_things_up_screen.dart';
 import 'package:verifi/screens/onboarding/sign_wallet_screen.dart';
 import 'package:verifi/screens/onboarding/sms_code_screen.dart';
 import 'package:verifi/screens/onboarding/intro_screen.dart';
 import 'package:verifi/screens/profile_screen/profile_screen.dart';
-import 'package:verifi/widgets/home_page.dart';
 
 // The top-level [Widget] for the VeriFi application.
 //
@@ -110,12 +109,6 @@ class _VeriFiState extends State<VeriFi> {
               RepositoryProvider.of<AuthenticationRepository>(context),
             )..logout(),
           ),
-          BlocProvider<CreateProfileCubit>(
-            create: (context) => CreateProfileCubit(
-              RepositoryProvider.of<UsersRepository>(context),
-              RepositoryProvider.of<AuthenticationRepository>(context),
-            ),
-          ),
           BlocProvider<FeedFilterBloc>(
             create: (context) => FeedFilterBloc(),
           ),
@@ -144,7 +137,6 @@ class _VeriFiState extends State<VeriFi> {
           ),
           BlocProvider<ProfileCubit>(
             create: (context) => ProfileCubit(
-              RepositoryProvider.of<AuthenticationRepository>(context),
               RepositoryProvider.of<UsersRepository>(context),
             ),
           ),
@@ -208,9 +200,9 @@ class VeriFiApp extends StatelessWidget {
       theme: _veriFiAppTheme(),
       darkTheme: _veriFiAppDarkTheme(),
       themeMode: ThemeMode.system,
-      initialRoute: '/onboarding/wallet',
+      initialRoute: '/onboarding',
       routes: {
-        '/home': (context) => HomePage(),
+        '/home': (context) => ProfileScreen(),
         '/onboarding': (context) => IntroScreen(),
         '/onboarding/phone': (context) => PhoneNumberScreen(),
         '/onboarding/sms': (context) => SmsCodeScreen(),
@@ -218,6 +210,7 @@ class VeriFiApp extends StatelessWidget {
         '/onboarding/wallet/sign': (context) => SignWalletScreen(),
         '/onboarding/pfp': (context) => ProfilePictureSelectScreen(),
         '/onboarding/permissions': (context) => PermissionsScreen(),
+        '/onboarding/settingThingsUp': (context) => SettingThingsUpScreen(),
         '/profile': (context) => ProfileScreen(),
       },
     );

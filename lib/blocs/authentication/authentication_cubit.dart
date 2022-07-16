@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verifi/blocs/blocs.dart';
-import 'package:verifi/models/user.dart' as model_user;
 import 'package:verifi/repositories/authentication_repository.dart';
 import 'package:verifi/blocs/authentication/authentication.dart';
 
@@ -10,14 +9,14 @@ import 'package:verifi/blocs/authentication/authentication.dart';
 ///
 class AuthenticationCubit extends Cubit<AuthenticationState> {
   final AuthenticationRepository _authRepository;
-  late StreamSubscription<model_user.User?> _userSubscription;
+  late StreamSubscription<User?> _userSubscription;
   String? _verificationId;
 
   AuthenticationCubit(this._authRepository)
       : super(const AuthenticationState()) {
-    _userSubscription = _authRepository.requestUserChanges().listen(
-          (user) => emit(state.copyWith(user: user)),
-        );
+    _userSubscription = _authRepository.requestUserChanges().listen((user) {
+      emit(state.copyWith(user: user));
+    });
   }
 
   Future<void> requestSmsCode(String phoneNumber) async {

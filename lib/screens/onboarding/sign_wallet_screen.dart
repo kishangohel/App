@@ -4,7 +4,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
-import 'package:verifi/blocs/wallet_connect/wallet_connect_cubit.dart';
+import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/blocs/wallet_connect/wallet_connect_state.dart';
 import 'package:verifi/resources/resources.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
@@ -50,18 +50,21 @@ class _SignWalletScreenState extends State<SignWalletScreen> {
         centerTitle: true,
       ),
       body: BlocListener<WalletConnectCubit, WalletConnectState>(
-        listener: (context, state) {
-          if (state.exception != null) {
+        listener: (context, walletState) {
+          if (walletState.exception != null) {
             showModalBottomSheet(
               context: context,
-              builder: (context) => _modalSheetError(context, state),
+              builder: (context) => _modalSheetError(context, walletState),
               shape: ContinuousRectangleBorder(
                 borderRadius: BorderRadius.circular(12.0),
               ),
             );
             context.read<WalletConnectCubit>().clearError();
           }
-          if (state.agreementSigned == true) {
+          if (walletState.agreementSigned == true) {
+            context.read<ProfileCubit>().setEthAddress(
+                  walletState.status!.accounts[0],
+                );
             Navigator.of(context).pushNamed('/onboarding/permissions');
           }
         },
@@ -99,7 +102,7 @@ class _SignWalletScreenState extends State<SignWalletScreen> {
           ),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.only(bottom: 24),
+              padding: const EdgeInsets.only(bottom: 36),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -167,7 +170,7 @@ class _SignWalletScreenState extends State<SignWalletScreen> {
 
   Widget _bottomAgreeText() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+      padding: const EdgeInsets.all(12.0),
       child: Text(
         "If you agree to these terms, please sign below",
         style: Theme.of(context).textTheme.headline6?.copyWith(
@@ -180,24 +183,27 @@ class _SignWalletScreenState extends State<SignWalletScreen> {
   }
 
   Widget _bottomConnectButton() {
-    return OutlinedButton(
-      onPressed: () => context.read<WalletConnectCubit>().sign(),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Text(
-          "Sign",
-          style: Theme.of(context).textTheme.headline5?.copyWith(
-                color: textColor,
-                fontWeight: FontWeight.w600,
-              ),
+    return Padding(
+      padding: const EdgeInsets.only(top: 16.0),
+      child: OutlinedButton(
+        onPressed: () => context.read<WalletConnectCubit>().sign(),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Text(
+            "Sign",
+            style: Theme.of(context).textTheme.headline4?.copyWith(
+                  color: textColor,
+                  fontWeight: FontWeight.w600,
+                ),
+          ),
         ),
-      ),
-      style: OutlinedButton.styleFrom(
-        side: BorderSide(
-          width: 2.0,
-          color: textColor,
+        style: OutlinedButton.styleFrom(
+          side: BorderSide(
+            width: 2.0,
+            color: textColor,
+          ),
+          primary: textColor,
         ),
-        primary: textColor,
       ),
     );
   }

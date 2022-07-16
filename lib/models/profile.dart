@@ -1,28 +1,48 @@
-import 'package:formz/formz.dart';
-import 'package:verifi/models/username.dart';
+import 'package:equatable/equatable.dart';
 
-class Profile {
-  final Username username;
-  final String? photoPath;
-  final FormzStatus status;
+class Profile extends Equatable {
+  final String id;
+  final String? ethAddress;
+  final String? photo;
 
   const Profile({
-    this.username = const Username.pure(),
-    this.photoPath,
-    this.status = FormzStatus.pure,
-    //this.userBounties,
+    required this.id,
+    this.ethAddress,
+    this.photo,
   });
 
-  Profile copyWith({
-    Username? username,
-    String? photoPath,
-    FormzStatus? status,
-    String? error,
-  }) {
+  @override
+  List<Object?> get props => [id, ethAddress, photo];
+
+  factory Profile.empty() => const Profile(id: '');
+
+  Map<String, String?> toJson() {
+    return {
+      "id": id,
+      "ethAddress": ethAddress,
+      "photo": photo,
+    };
+  }
+
+  factory Profile.fromJson(Map<String, String?> json) {
     return Profile(
-      username: username ?? this.username,
-      photoPath: photoPath ?? this.photoPath,
-      status: status ?? this.status,
+      id: json['id'] ?? '',
+      ethAddress: json['ethAddress'],
+      photo: json['photo'],
     );
   }
+
+  Profile copyWith({
+    String? ethAddress,
+    String? photo,
+  }) {
+    return Profile(
+      id: id,
+      ethAddress: ethAddress ?? this.ethAddress,
+      photo: photo ?? this.photo,
+    );
+  }
+
+  @override
+  String toString() => "User: { $id, $ethAddress }";
 }

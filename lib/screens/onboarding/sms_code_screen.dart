@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:pinput/pinput.dart';
 import 'package:verifi/blocs/blocs.dart';
+import 'package:verifi/models/profile.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 import 'package:verifi/widgets/text/app_title.dart';
 
@@ -44,21 +45,38 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
         ),
         centerTitle: true,
       ),
-      body: BlocListener<AuthenticationCubit, AuthenticationState>(
-        listener: (context, state) {
-          if (state.exception != null) {
-            showModalBottomSheet(
-              context: context,
-              builder: (context) => _modalSheetError(context, state),
-              shape: ContinuousRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0),
-              ),
-            );
-          }
-          if (state.user != null) {
-            Navigator.of(context).pushNamed('/onboarding/wallet');
-          }
-        },
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<AuthenticationCubit, AuthenticationState>(
+            listener: (context, authState) {
+              if (authState.exception != null) {
+                showModalBottomSheet(
+                  context: context,
+                  builder: (context) => _modalSheetError(context, authState),
+                  shape: ContinuousRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                );
+              }
+              if (authState.user != null) {
+                // will emit a new Profile state, which is handled by the
+                // ProfileCubit bloc listener
+                context.read<ProfileCubit>().getProfile(authState.user!.uid);
+              }
+            },
+          ),
+          BlocListener<ProfileCubit, Profile>(
+            listener: (context, profile) {
+              if (profile.ethAddress == null) {
+                Navigator.of(context).pushNamed('/onboarding/wallet');
+              } else if (profile.photo == null) {
+                Navigator.of(context).pushNamed('/onboarding/pfp');
+              } else {
+                Navigator.of(context).pushNamed('/onboarding/settingThingsUp');
+              }
+            },
+          ),
+        ],
         child: Container(
           color: Colors.black,
           child: SafeArea(
@@ -151,8 +169,8 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
           ),
         ),
         onCompleted: (String pin) {
-          /* context.read<AuthenticationCubit>().submitSmsCode(pin); */
-          context.read<AuthenticationCubit>().submitSmsCode("941555");
+          context.read<AuthenticationCubit>().submitSmsCode(pin);
+          /* context.read<AuthenticationCubit>().submitSmsCode("941555"); */
         },
       ),
     );
@@ -167,7 +185,7 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
       ),
       child: Center(
         child: AutoSizeText(
-          state.exception?.message.toString() ?? 'Failed to authenticate',
+          state.exception?.code.toString() ?? 'Failed to authenticate',
           style: Theme.of(context).textTheme.bodyText1!.copyWith(
                 fontSize: 18,
               ),
