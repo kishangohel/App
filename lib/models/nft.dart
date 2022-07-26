@@ -27,6 +27,5 @@ class Nft extends Equatable {
   List<Object?> get props => [id];
 
   @override
-  String toString() =>
-      "{ 'id': $id, 'name': $name, 'collection': $collectionName }";
+  String toString() => 'id: $id, name: "$name", collection: "$collectionName"';
 }

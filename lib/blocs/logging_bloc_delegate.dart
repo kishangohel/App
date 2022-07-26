@@ -1,7 +1,15 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 
-class LoggingBlocDelegate extends BlocObserver {
+class LoggingBlocObserver extends BlocObserver {
+  @override
+  void onChange(BlocBase bloc, Change change) {
+    super.onChange(bloc, change);
+    debugPrint("""${bloc.runtimeType}
+Previous: ${change.currentState}
+Current:  ${change.nextState}""");
+  }
+
   @override
   void onEvent(Bloc bloc, Object? event) {
     super.onEvent(bloc, event);

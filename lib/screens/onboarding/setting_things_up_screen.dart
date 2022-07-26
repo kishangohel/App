@@ -1,5 +1,10 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:async/async.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:palette_generator/palette_generator.dart';
+import 'package:verifi/blocs/blocs.dart';
+import 'package:verifi/blocs/theme/theme_cubit.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 
 class SettingThingsUpScreen extends StatefulWidget {
@@ -11,7 +16,8 @@ class _SettingThingsUpScreenState extends State<SettingThingsUpScreen> {
   double opacity = 0;
   Color textColor = Colors.black;
   Duration textSpeed = const Duration(milliseconds: 120);
-  bool justKidding = false;
+  bool _justKidding = false;
+  bool _setupComplete = false;
 
   @override
   void initState() {
@@ -20,6 +26,24 @@ class _SettingThingsUpScreenState extends State<SettingThingsUpScreen> {
       const Duration(seconds: 1, milliseconds: 500),
       () => setState(() => opacity = 1),
     );
+    FutureGroup futureGroup = FutureGroup();
+    // waits for context to be populated
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      futureGroup.add(context.read<ProfileCubit>().createProfile());
+      futureGroup.add(Future(() async {
+        final photo = context.read<ProfileCubit>().profilePhoto;
+        if (photo == null) return;
+        final palette = await PaletteGenerator.fromImageProvider(
+          NetworkImage(photo),
+        );
+        context.read<ThemeCubit>().updateThemeWithPalette(palette);
+      }));
+      futureGroup.future.then(
+        (List<dynamic> values) => setState(() => _setupComplete = true),
+        onError: (error) {},
+      );
+      futureGroup.close();
+    });
   }
 
   @override
@@ -96,41 +120,23 @@ class _SettingThingsUpScreenState extends State<SettingThingsUpScreen> {
         width: MediaQuery.of(context).size.width,
         child: AnimatedTextKit(
           onNextBeforePause: (i, b) {
-            if (b) {
-              setState(
-                () => justKidding = true,
-              );
-            }
+            if (b) setState(() => _justKidding = true);
           },
           isRepeatingAnimation: false,
           animatedTexts: _animatedTexts(),
+          onFinished: () {
+            Navigator.of(context).pushNamedAndRemoveUntil(
+              '/home',
+              (route) => false, // remove all routes on stack
+            );
+          },
         ),
-      ),
-    );
-  }
-
-  Widget _justKiddingText() {
-    return Visibility(
-      visible: justKidding,
-      child: Text(
-        "Just kidding",
-        style: Theme.of(context).textTheme.caption,
       ),
     );
   }
 
   List<AnimatedText> _animatedTexts() {
     return [
-      TypewriterAnimatedText(
-        "Creating new user...",
-        cursor: "",
-        speed: textSpeed,
-        textStyle: Theme.of(context).textTheme.headline4?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: textColor,
-            ),
-        textAlign: TextAlign.center,
-      ),
       TypewriterAnimatedText(
         "Injecting color pallette...",
         cursor: "",
@@ -172,5 +178,15 @@ class _SettingThingsUpScreenState extends State<SettingThingsUpScreen> {
         textAlign: TextAlign.center,
       ),
     ];
+  }
+
+  Widget _justKiddingText() {
+    return Visibility(
+      visible: _justKidding,
+      child: Text(
+        "Just kidding",
+        style: Theme.of(context).textTheme.caption,
+      ),
+    );
   }
 }

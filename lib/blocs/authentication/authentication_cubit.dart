@@ -19,6 +19,8 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     });
   }
 
+  bool get isLoggedIn => _authRepository.currentUser != null;
+
   Future<void> requestSmsCode(String phoneNumber) async {
     return _authRepository.requestSmsCode(
       phoneNumber,
@@ -45,12 +47,6 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     } on FirebaseAuthException catch (e) {
       emit(state.copyWith(exception: e));
     }
-  }
-
-  Future<void> refresh() async {
-    final user = state.user;
-    emit(const AuthenticationState(user: null));
-    emit(AuthenticationState(user: user));
   }
 
   Future<void> logout() async {

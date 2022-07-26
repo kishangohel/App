@@ -1,1 +1,1 @@
-export 'profile_cubit.dart';
+export 'profile_bloc.dart';

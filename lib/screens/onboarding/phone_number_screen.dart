@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:phone_form_field/phone_form_field.dart';
 import 'package:verifi/blocs/blocs.dart';
-import 'package:verifi/screens/onboarding/sms_code_screen.dart';
 import 'package:verifi/screens/onboarding/widgets/account_phone_form_field.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 import 'package:verifi/widgets/text/app_title.dart';
-import 'package:verifi/widgets/transitions/onboarding_slide_transition.dart';
 
 class PhoneNumberScreen extends StatefulWidget {
   PhoneNumberScreen() : super(key: UniqueKey());
@@ -28,7 +26,9 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
     super.initState();
     Future.delayed(
       const Duration(seconds: 1, milliseconds: 500),
-      () => setState(() => opacity = 1),
+      () {
+        if (mounted) setState(() => opacity = 1);
+      },
     );
   }
 
@@ -143,14 +143,14 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
             "+1 555-333-4444",
           );
 
-          Navigator.of(context).push(
-            PageRouteBuilder(
-              transitionDuration: const Duration(milliseconds: 500),
-              reverseTransitionDuration: const Duration(seconds: 1),
-              transitionsBuilder: onboardingSlideTransition,
-              pageBuilder: (BuildContext context, _, __) => SmsCodeScreen(),
-            ),
-          );
+          Navigator.of(context).pushNamed('/onboarding/sms');
+          /*   PageRouteBuilder( */
+          /*     transitionDuration: const Duration(milliseconds: 500), */
+          /*     reverseTransitionDuration: const Duration(seconds: 1), */
+          /*     transitionsBuilder: onboardingSlideTransition, */
+          /*     pageBuilder: (BuildContext context, _, __) => SmsCodeScreen(), */
+          /*   ), */
+          /* ); */
         },
       ),
     );

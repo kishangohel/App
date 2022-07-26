@@ -43,37 +43,36 @@ class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
         Navigator.of(context).pushNamed('/onboarding/wallet/sign');
       },
       listenWhen: (previous, current) {
-        return (previous.status == null) && (current.status != null);
+        return (previous.status == null ||
+                previous.status!.accounts.isEmpty) &&
+            (current.status != null);
       },
-      child: WillPopScope(
-        onWillPop: () async => false,
-        child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.black,
-            leading: Hero(
-              tag: 'verifi-logo',
-              child: Image.asset('assets/launcher_icon/vf_ios.png'),
-            ),
-            title: const Hero(
-              tag: 'verifi-title',
-              child: AppTitle(
-                fontSize: 48.0,
-                textAlign: TextAlign.center,
-              ),
-            ),
-            centerTitle: true,
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          leading: Hero(
+            tag: 'verifi-logo',
+            child: Image.asset('assets/launcher_icon/vf_ios.png'),
           ),
-          body: Container(
-            color: Colors.black,
-            child: SafeArea(
-              child: Stack(
-                children: [
-                  ...onBoardingBackground(context),
-                  (Platform.isIOS)
-                      ? _iosConnectWallet()
-                      : _androidConnectWallet(),
-                ],
-              ),
+          title: const Hero(
+            tag: 'verifi-title',
+            child: AppTitle(
+              fontSize: 48.0,
+              textAlign: TextAlign.center,
+            ),
+          ),
+          centerTitle: true,
+        ),
+        body: Container(
+          color: Colors.black,
+          child: SafeArea(
+            child: Stack(
+              children: [
+                ...onBoardingBackground(context),
+                (Platform.isIOS)
+                    ? _iosConnectWallet()
+                    : _androidConnectWallet(),
+              ],
             ),
           ),
         ),

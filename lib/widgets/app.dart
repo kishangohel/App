@@ -6,17 +6,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:verifi/blocs/blocs.dart';
+import 'package:verifi/blocs/display_name_textfield/display_name_textfield_bloc.dart';
 import 'package:verifi/blocs/intro_pages/intro_pages_cubit.dart';
 import 'package:verifi/blocs/nfts/nfts.dart';
+import 'package:verifi/blocs/theme/theme_cubit.dart';
+import 'package:verifi/blocs/theme/theme_state.dart';
 import 'package:verifi/main.dart' as main;
 import 'package:verifi/models/wifi.dart';
 import 'package:verifi/repositories/opensea_repository.dart';
 import 'package:verifi/repositories/repositories.dart';
 import 'package:verifi/screens/onboarding/connect_wallet_screen.dart';
+import 'package:verifi/screens/onboarding/display_name_screen.dart';
 import 'package:verifi/screens/onboarding/permissions_screen.dart';
 import 'package:verifi/screens/onboarding/phone_number_screen.dart';
 import 'package:verifi/screens/onboarding/profile_picture_select_screen.dart';
@@ -24,7 +27,7 @@ import 'package:verifi/screens/onboarding/setting_things_up_screen.dart';
 import 'package:verifi/screens/onboarding/sign_wallet_screen.dart';
 import 'package:verifi/screens/onboarding/sms_code_screen.dart';
 import 'package:verifi/screens/onboarding/intro_screen.dart';
-import 'package:verifi/screens/profile_screen/profile_screen.dart';
+import 'package:verifi/widgets/home_page.dart';
 
 // The top-level [Widget] for the VeriFi application.
 //
@@ -107,7 +110,12 @@ class _VeriFiState extends State<VeriFi> {
           BlocProvider<AuthenticationCubit>(
             create: (context) => AuthenticationCubit(
               RepositoryProvider.of<AuthenticationRepository>(context),
-            )..logout(),
+            ),
+          ),
+          BlocProvider<DisplayNameTextfieldBloc>(
+            create: (context) => DisplayNameTextfieldBloc(
+              RepositoryProvider.of<UsersRepository>(context),
+            ),
           ),
           BlocProvider<FeedFilterBloc>(
             create: (context) => FeedFilterBloc(),
@@ -142,6 +150,9 @@ class _VeriFiState extends State<VeriFi> {
           ),
           BlocProvider<TabBloc>(
             create: (context) => TabBloc(),
+          ),
+          BlocProvider<ThemeCubit>(
+            create: (context) => ThemeCubit(),
           ),
           BlocProvider<WalletConnectCubit>(
             create: (context) => WalletConnectCubit(),
@@ -193,50 +204,92 @@ class _VeriFiState extends State<VeriFi> {
   }
 }
 
-class VeriFiApp extends StatelessWidget {
+class VeriFiApp extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _VeriFiAppState();
+}
+
+class _VeriFiAppState extends State<VeriFiApp> {
+  late bool _isLoggedIn;
+  late bool _isWalletConnected;
+  late bool _isPfpSelected;
+
+  @override
+  void initState() {
+    super.initState();
+    _isLoggedIn = context.read<AuthenticationCubit>().isLoggedIn;
+    _isWalletConnected = context.read<ProfileCubit>().ethAddress != null;
+    _isPfpSelected = context.read<ProfileCubit>().profilePhoto != null;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: _veriFiAppTheme(),
-      darkTheme: _veriFiAppDarkTheme(),
-      themeMode: ThemeMode.system,
-      initialRoute: '/onboarding',
-      routes: {
-        '/home': (context) => ProfileScreen(),
-        '/onboarding': (context) => IntroScreen(),
-        '/onboarding/phone': (context) => PhoneNumberScreen(),
-        '/onboarding/sms': (context) => SmsCodeScreen(),
-        '/onboarding/wallet': (context) => ConnectWalletScreen(),
-        '/onboarding/wallet/sign': (context) => SignWalletScreen(),
-        '/onboarding/pfp': (context) => ProfilePictureSelectScreen(),
-        '/onboarding/permissions': (context) => PermissionsScreen(),
-        '/onboarding/settingThingsUp': (context) => SettingThingsUpScreen(),
-        '/profile': (context) => ProfileScreen(),
+    return BlocBuilder<ThemeCubit, ThemeState>(
+      builder: (context, themeState) {
+        return MaterialApp(
+          theme: themeState.lightTheme,
+          darkTheme: themeState.darkTheme,
+          themeMode: ThemeMode.system,
+          initialRoute: _initialRoute(),
+          routes: {
+            '/home': (context) => Home(),
+            '/onboarding': (context) => IntroScreen(),
+            '/onboarding/displayName': (context) => DisplayNameScreen(),
+            '/onboarding/phone': (context) => PhoneNumberScreen(),
+            '/onboarding/sms': (context) => SmsCodeScreen(),
+            '/onboarding/permissions': (context) => PermissionsScreen(),
+            '/onboarding/wallet': (context) => ConnectWalletScreen(),
+            '/onboarding/wallet/sign': (context) => SignWalletScreen(),
+            '/onboarding/pfp': (context) => ProfilePictureSelectScreen(),
+            '/onboarding/settingThingsUp': (context) =>
+                SettingThingsUpScreen(),
+          },
+          navigatorObservers: [_VeriFiNavigatorObserver()],
+        );
       },
     );
   }
+
+  String _initialRoute() {
+    if (_isLoggedIn) {
+      if (_isWalletConnected) {
+        if (_isPfpSelected) {
+          return '/home';
+        }
+        return '/onboarding/pfp';
+      }
+      return '/onboarding/wallet';
+    }
+    return '/onboarding';
+  }
 }
 
-ThemeData _veriFiAppTheme() {
-  return ThemeData.from(
-    colorScheme: ColorScheme.light(
-      primary: Colors.deepOrange[400]!,
-      secondary: Colors.blueGrey[400]!,
-    ),
-    textTheme: GoogleFonts.juraTextTheme(),
-  );
-}
+class _VeriFiNavigatorObserver extends NavigatorObserver {
+  @override
+  void didPop(Route poppedRoute, Route? newRoute) {
+    debugPrint("""Route popped
+Popped route: ${poppedRoute.settings.name}
+New route: ${newRoute?.settings.name}""");
+  }
 
-ThemeData _veriFiAppDarkTheme() {
-  return ThemeData.from(
-    colorScheme: ColorScheme.dark(
-      primary: Colors.deepOrange[400]!,
-      surface: Colors.deepOrange[600]!,
-      secondary: Colors.blueGrey[400]!,
-      outline: Colors.white,
-    ),
-    textTheme: GoogleFonts.juraTextTheme(
-      ThemeData(brightness: Brightness.dark).textTheme,
-    ),
-  );
+  @override
+  void didPush(Route route, Route? previousRoute) {
+    debugPrint("""Route pushed
+Previous route: ${previousRoute?.settings.name}
+New route: ${route.settings.name}""");
+  }
+
+  @override
+  void didRemove(Route removedRoute, Route? newRoute) {
+    debugPrint("""Route removed 
+Route removed: ${removedRoute.settings.name}
+New route: ${newRoute?.settings.name}""");
+  }
+
+  @override
+  void didReplace({Route? newRoute, Route? oldRoute}) {
+    debugPrint("""Route replaced
+Old route: ${oldRoute?.settings.name}
+New route: ${newRoute?.settings.name}""");
+  }
 }

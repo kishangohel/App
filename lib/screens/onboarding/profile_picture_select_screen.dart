@@ -105,7 +105,7 @@ class _ProfilePictureSelectState extends State<ProfilePictureSelectScreen> {
   }
 
   Widget _pfpPageView() {
-    final List<Nft> nfts = context.read<NftsCubit>().state;
+    final List<Nft> nfts = context.watch<NftsCubit>().state;
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.4,
       child: Column(
@@ -190,12 +190,14 @@ class _ProfilePictureSelectState extends State<ProfilePictureSelectScreen> {
             ),
           ),
           OutlinedButton(
-            onPressed: () async {
+            onPressed: () {
               context.read<ProfileCubit>().setProfilePhoto(
                     nfts[_controller.page!.toInt()].image,
                   );
-              await context.read<ProfileCubit>().createProfile();
-              Navigator.of(context).pushNamed('/home');
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                '/onboarding/settingThingsUp',
+                ModalRoute.withName('/'),
+              );
             },
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 8.0),

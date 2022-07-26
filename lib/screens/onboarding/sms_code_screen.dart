@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:pinput/pinput.dart';
 import 'package:verifi/blocs/blocs.dart';
+import 'package:verifi/blocs/nfts/nfts.dart';
 import 'package:verifi/models/profile.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 import 'package:verifi/widgets/text/app_title.dart';
@@ -21,7 +22,9 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
     super.initState();
     Future.delayed(
       const Duration(seconds: 1),
-      () => setState(() => opacity = 1),
+      () {
+        if (mounted) setState(() => opacity = 1);
+      },
     );
   }
 
@@ -67,13 +70,34 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
           ),
           BlocListener<ProfileCubit, Profile>(
             listener: (context, profile) {
-              if (profile.ethAddress == null) {
-                Navigator.of(context).pushNamed('/onboarding/wallet');
+              if (profile.displayName == null) {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/onboarding/displayName',
+                  ModalRoute.withName('/onboarding'),
+                );
+              } else if (profile.ethAddress == null) {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/onboarding/wallet',
+                  ModalRoute.withName('/onboarding'),
+                );
               } else if (profile.photo == null) {
-                Navigator.of(context).pushNamed('/onboarding/pfp');
+                context.read<NftsCubit>().loadNftsOwnedbyAddress(
+                      /* profile.ethAddress!, */
+                      "0x062D6D315e6C8AA196b9072d749E3f3F3579fDD0",
+                    );
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/onboarding/pfp',
+                  ModalRoute.withName('/onboarding'),
+                );
               } else {
-                Navigator.of(context).pushNamed('/onboarding/settingThingsUp');
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/onboarding/settingThingsUp',
+                  ModalRoute.withName(''),
+                );
               }
+            },
+            listenWhen: (previous, current) {
+              return (previous == Profile.empty());
             },
           ),
         ],

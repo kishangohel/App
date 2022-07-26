@@ -65,7 +65,10 @@ class _SignWalletScreenState extends State<SignWalletScreen> {
             context.read<ProfileCubit>().setEthAddress(
                   walletState.status!.accounts[0],
                 );
-            Navigator.of(context).pushNamed('/onboarding/permissions');
+            Navigator.of(context).pushNamedAndRemoveUntil(
+              '/onboarding/permissions',
+              ModalRoute.withName('/onboarding/wallet'),
+            );
           }
         },
         child: Container(
@@ -183,27 +186,27 @@ class _SignWalletScreenState extends State<SignWalletScreen> {
   }
 
   Widget _bottomConnectButton() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 16.0),
-      child: OutlinedButton(
-        onPressed: () => context.read<WalletConnectCubit>().sign(),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Text(
-            "Sign",
-            style: Theme.of(context).textTheme.headline4?.copyWith(
-                  color: textColor,
-                  fontWeight: FontWeight.w600,
-                ),
-          ),
+    return OutlinedButton(
+      onPressed: () => context.read<WalletConnectCubit>().sign(),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 4.0),
+        child: Text(
+          "Sign",
+          style: Theme.of(context).textTheme.headline4?.copyWith(
+                color: textColor,
+                fontWeight: FontWeight.w600,
+              ),
         ),
-        style: OutlinedButton.styleFrom(
-          side: BorderSide(
-            width: 2.0,
-            color: textColor,
-          ),
-          primary: textColor,
+      ),
+      style: OutlinedButton.styleFrom(
+        side: BorderSide(
+          width: 2.0,
+          color: textColor,
         ),
+        shape: ContinuousRectangleBorder(
+          borderRadius: BorderRadius.circular(4.0),
+        ),
+        primary: textColor,
       ),
     );
   }

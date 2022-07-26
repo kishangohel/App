@@ -106,7 +106,7 @@ class _IntroScreenState extends State<IntroScreen> {
     return OutlinedButton(
         style: OutlinedButton.styleFrom(
           shape: ContinuousRectangleBorder(
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(4),
           ),
           side: BorderSide(
             width: 2.0,
@@ -116,15 +116,19 @@ class _IntroScreenState extends State<IntroScreen> {
                     : Colors.white,
           ),
         ),
-        child: Text(
-          "Begin the journey",
-          style: Theme.of(context).textTheme.headline5?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Text(
+            "Begin the journey",
+            style: Theme.of(context).textTheme.headline5?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+          ),
         ),
         onPressed: () {
           Navigator.of(context).push(
             PageRouteBuilder(
+              settings: const RouteSettings(name: '/onboarding/phone'),
               transitionDuration:
                   const Duration(seconds: 1, milliseconds: 500),
               reverseTransitionDuration: const Duration(seconds: 1),
