@@ -17,7 +17,6 @@ class _SettingThingsUpScreenState extends State<SettingThingsUpScreen> {
   Color textColor = Colors.black;
   Duration textSpeed = const Duration(milliseconds: 120);
   bool _justKidding = false;
-  bool _setupComplete = false;
 
   @override
   void initState() {
@@ -39,7 +38,7 @@ class _SettingThingsUpScreenState extends State<SettingThingsUpScreen> {
         context.read<ThemeCubit>().updateThemeWithPalette(palette);
       }));
       futureGroup.future.then(
-        (List<dynamic> values) => setState(() => _setupComplete = true),
+        (List<dynamic> values) => setState(() {}),
         onError: (error) {},
       );
       futureGroup.close();

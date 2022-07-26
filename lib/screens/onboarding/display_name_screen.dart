@@ -4,7 +4,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verifi/blocs/display_name_textfield/display_name_textfield_bloc.dart';
-import 'package:verifi/blocs/profile/profile_bloc.dart';
+import 'package:verifi/blocs/profile/profile_cubit.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 import 'package:verifi/widgets/text/app_title.dart';
 
@@ -15,12 +15,10 @@ class DisplayNameScreen extends StatefulWidget {
 
 class _DisplayNameScreenState extends State<DisplayNameScreen> {
   double opacity = 0;
-  bool _lock = true;
 
   @override
   void initState() {
     super.initState();
-    _lock = false;
     Future.delayed(
       const Duration(seconds: 1),
       () => setState(() => opacity = 1),
