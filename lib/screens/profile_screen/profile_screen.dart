@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verifi/blocs/blocs.dart';
+import 'package:verifi/blocs/nfts/nfts.dart';
+import 'package:verifi/models/profile.dart';
 
 class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
@@ -46,6 +48,14 @@ class _ProfileBodyState extends State<ProfileBody> {
 
   Widget _profilePhoto() {
     final photoUrl = context.watch<ProfileCubit>().profilePhoto;
+    ImageProvider<Object>? _backgroundImage;
+    if (photoUrl != null) {
+      if (photoUrl.contains("http")) {
+        _backgroundImage = NetworkImage(photoUrl);
+      } else {
+        _backgroundImage = AssetImage(photoUrl);
+      }
+    }
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -54,8 +64,7 @@ class _ProfileBodyState extends State<ProfileBody> {
           backgroundColor: Theme.of(context).colorScheme.primary,
           child: CircleAvatar(
             radius: 55,
-            backgroundImage:
-                (photoUrl != null) ? NetworkImage(photoUrl) : null,
+            backgroundImage: _backgroundImage,
             backgroundColor: Theme.of(context).colorScheme.background,
           ),
         )
@@ -80,7 +89,14 @@ class _ProfileBodyState extends State<ProfileBody> {
         style: Theme.of(context).textTheme.button,
       ),
       onPressed: () {
-        context.read<AuthenticationCubit>().logout();
+        context.read<ProfileCubit>().clear();
+        context.read<ProfileCubit>().logout();
+        context.read<AuthenticationCubit>().logout().then(
+              (value) => Navigator.of(context).pushNamedAndRemoveUntil(
+                '/onboarding',
+                (route) => false,
+              ),
+            );
       },
     );
   }

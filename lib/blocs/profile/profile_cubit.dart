@@ -38,6 +38,10 @@ class ProfileCubit extends HydratedCubit<Profile> {
 
   void setDisplayName(String name) => emit(state.copyWith(displayName: name));
 
+  void logout() {
+    emit(Profile.empty());
+  }
+
   Future<void> createProfile() {
     assert(state.id != '');
     return _usersRepository.createProfile(state);

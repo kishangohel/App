@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:pinput/pinput.dart';
 import 'package:verifi/blocs/blocs.dart';
-import 'package:verifi/blocs/nfts/nfts.dart';
 import 'package:verifi/models/profile.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 import 'package:verifi/widgets/text/app_title.dart';
@@ -39,9 +38,17 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
           tag: 'verifi-logo',
           child: Image.asset('assets/launcher_icon/vf_ios.png'),
         ),
-        title: const Hero(
+        title: Hero(
           tag: 'verifi-title',
-          child: AppTitle(),
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              vertical: 16.0,
+              horizontal: 16.0,
+            ),
+            height: kToolbarHeight,
+            width: MediaQuery.of(context).size.width * 0.5,
+            child: const AppTitle(appBar: true),
+          ),
         ),
         centerTitle: true,
       ),
@@ -67,25 +74,15 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
           ),
           BlocListener<ProfileCubit, Profile>(
             listener: (context, profile) {
+              // no display name means they are new
+              // proceed w/ onboarding
               if (profile.displayName == null) {
                 Navigator.of(context).pushNamedAndRemoveUntil(
                   '/onboarding/displayName',
                   ModalRoute.withName('/onboarding'),
                 );
-              } else if (profile.ethAddress == null) {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/onboarding/wallet',
-                  ModalRoute.withName('/onboarding'),
-                );
-              } else if (profile.photo == null) {
-                context.read<NftsCubit>().loadNftsOwnedbyAddress(
-                      /* profile.ethAddress!, */
-                      "0x062D6D315e6C8AA196b9072d749E3f3F3579fDD0",
-                    );
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/onboarding/pfp',
-                  ModalRoute.withName('/onboarding'),
-                );
+                // display name means profile already created
+                // set things up and skip onboarding
               } else {
                 Navigator.of(context).pushNamedAndRemoveUntil(
                   '/onboarding/settingThingsUp',

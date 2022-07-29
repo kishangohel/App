@@ -12,22 +12,25 @@ import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/blocs/display_name_textfield/display_name_textfield_bloc.dart';
 import 'package:verifi/blocs/intro_pages/intro_pages_cubit.dart';
 import 'package:verifi/blocs/nfts/nfts.dart';
+import 'package:verifi/blocs/shared_prefs.dart';
 import 'package:verifi/blocs/theme/theme_cubit.dart';
 import 'package:verifi/blocs/theme/theme_state.dart';
 import 'package:verifi/main.dart' as main;
 import 'package:verifi/models/wifi.dart';
 import 'package:verifi/repositories/opensea_repository.dart';
 import 'package:verifi/repositories/repositories.dart';
-import 'package:verifi/screens/onboarding/ask_to_connect_wallet_screen.dart';
+import 'package:verifi/screens/onboarding/pfp_avatar_screen.dart';
+import 'package:verifi/screens/onboarding/pfp_nft_screen.dart';
+import 'package:verifi/screens/onboarding/ready_web3_screen.dart';
 import 'package:verifi/screens/onboarding/connect_wallet_screen.dart';
 import 'package:verifi/screens/onboarding/display_name_screen.dart';
 import 'package:verifi/screens/onboarding/permissions_screen.dart';
 import 'package:verifi/screens/onboarding/phone_number_screen.dart';
-import 'package:verifi/screens/onboarding/profile_picture_select_screen.dart';
 import 'package:verifi/screens/onboarding/setting_things_up_screen.dart';
 import 'package:verifi/screens/onboarding/sign_wallet_screen.dart';
 import 'package:verifi/screens/onboarding/sms_code_screen.dart';
 import 'package:verifi/screens/onboarding/intro_screen.dart';
+import 'package:verifi/screens/onboarding/terms_screen.dart';
 import 'package:verifi/widgets/home_page.dart';
 
 // The top-level [Widget] for the VeriFi application.
@@ -211,58 +214,55 @@ class VeriFiApp extends StatefulWidget {
 }
 
 class _VeriFiAppState extends State<VeriFiApp> {
-  late bool _isLoggedIn;
-  late bool _isWalletConnected;
-  late bool _isPfpSelected;
+  late bool _isOnboardingComplete;
 
   @override
   void initState() {
     super.initState();
-    _isLoggedIn = context.read<AuthenticationCubit>().isLoggedIn;
-    _isWalletConnected = context.read<ProfileCubit>().ethAddress != null;
-    _isPfpSelected = context.read<ProfileCubit>().profilePhoto != null;
+    _isOnboardingComplete = sharedPrefs.onboardingComplete();
   }
 
   @override
   Widget build(BuildContext context) {
+    final _isLoggedIn = context.watch<AuthenticationCubit>().isLoggedIn;
     return BlocBuilder<ThemeCubit, ThemeState>(
       builder: (context, themeState) {
-        return MaterialApp(
-          theme: themeState.lightTheme,
-          darkTheme: themeState.darkTheme,
-          themeMode: ThemeMode.system,
-          /* initialRoute: _initialRoute(), */
-          initialRoute: '/onboarding/askConnectWallet',
-          routes: {
-            '/home': (context) => Home(),
-            '/onboarding': (context) => IntroScreen(),
-            '/onboarding/askConnectWallet': (context) =>
-                AskToConnectWalletScreen(),
-            '/onboarding/displayName': (context) => DisplayNameScreen(),
-            '/onboarding/phone': (context) => PhoneNumberScreen(),
-            '/onboarding/sms': (context) => SmsCodeScreen(),
-            '/onboarding/permissions': (context) => PermissionsScreen(),
-            '/onboarding/wallet': (context) => ConnectWalletScreen(),
-            '/onboarding/wallet/sign': (context) => SignWalletScreen(),
-            '/onboarding/pfp': (context) => ProfilePictureSelectScreen(),
-            '/onboarding/settingThingsUp': (context) =>
-                SettingThingsUpScreen(),
+        return BlocBuilder<AuthenticationCubit, AuthenticationState>(
+          builder: (context, authState) {
+            return MaterialApp(
+              theme: themeState.lightTheme,
+              darkTheme: themeState.darkTheme,
+              themeMode: ThemeMode.system,
+              initialRoute: _initialRoute(_isLoggedIn),
+              routes: {
+                '/home': (context) => Home(),
+                '/onboarding': (context) => IntroScreen(),
+                '/onboarding/readyWeb3': (context) => ReadyWeb3Screen(),
+                '/onboarding/terms': (context) => TermsScreen(),
+                '/onboarding/displayName': (context) => DisplayNameScreen(),
+                '/onboarding/phone': (context) => PhoneNumberScreen(),
+                '/onboarding/sms': (context) => SmsCodeScreen(),
+                '/onboarding/permissions': (context) => PermissionsScreen(),
+                '/onboarding/wallet': (context) => ConnectWalletScreen(),
+                '/onboarding/wallet/sign': (context) => SignWalletScreen(),
+                '/onboarding/pfpNft': (context) => PfpNftScreen(),
+                '/onboarding/pfpAvatar': (context) => PfpAvatarScreen(),
+                '/onboarding/settingThingsUp': (context) =>
+                    SettingThingsUpScreen(),
+              },
+              navigatorObservers: [_VeriFiNavigatorObserver()],
+            );
           },
-          navigatorObservers: [_VeriFiNavigatorObserver()],
         );
       },
     );
   }
 
-  String _initialRoute() {
+  String _initialRoute(bool _isLoggedIn) {
     if (_isLoggedIn) {
-      if (_isWalletConnected) {
-        if (_isPfpSelected) {
-          return '/home';
-        }
-        return '/onboarding/pfp';
+      if (_isOnboardingComplete) {
+        return '/home';
       }
-      return '/onboarding/wallet';
     }
     return '/onboarding';
   }

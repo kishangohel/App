@@ -7,7 +7,7 @@ class AuthenticationState extends Equatable {
   const AuthenticationState({this.user, this.exception});
 
   @override
-  List<Object?> get props => [user?.uid, exception];
+  List<Object?> get props => [user, exception];
 
   AuthenticationState copyWith({
     User? user,

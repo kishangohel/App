@@ -32,9 +32,16 @@ class _SettingThingsUpScreenState extends State<SettingThingsUpScreen> {
       futureGroup.add(Future(() async {
         final photo = context.read<ProfileCubit>().profilePhoto;
         if (photo == null) return;
-        final palette = await PaletteGenerator.fromImageProvider(
-          NetworkImage(photo),
-        );
+        PaletteGenerator palette;
+        if (photo.contains("http")) {
+          palette = await PaletteGenerator.fromImageProvider(
+            NetworkImage(photo),
+          );
+        } else {
+          palette = await PaletteGenerator.fromImageProvider(
+            AssetImage(photo),
+          );
+        }
         context.read<ThemeCubit>().updateThemeWithPalette(palette);
       }));
       futureGroup.future.then(
@@ -146,26 +153,26 @@ class _SettingThingsUpScreenState extends State<SettingThingsUpScreen> {
             ),
         textAlign: TextAlign.center,
       ),
-      TypewriterAnimatedText(
-        "Building bridge...",
-        cursor: "",
-        speed: textSpeed,
-        textStyle: Theme.of(context).textTheme.headline4?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: textColor,
-            ),
-        textAlign: TextAlign.center,
-      ),
-      TypewriterAnimatedText(
-        "Caching nearby WiFi...",
-        cursor: "",
-        speed: textSpeed,
-        textStyle: Theme.of(context).textTheme.headline4?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: textColor,
-            ),
-        textAlign: TextAlign.center,
-      ),
+      /* TypewriterAnimatedText( */
+      /*   "Building bridge...", */
+      /*   cursor: "", */
+      /*   speed: textSpeed, */
+      /*   textStyle: Theme.of(context).textTheme.headline4?.copyWith( */
+      /*         fontWeight: FontWeight.w600, */
+      /*         color: textColor, */
+      /*       ), */
+      /*   textAlign: TextAlign.center, */
+      /* ), */
+      /* TypewriterAnimatedText( */
+      /*   "Caching nearby WiFi...", */
+      /*   cursor: "", */
+      /*   speed: textSpeed, */
+      /*   textStyle: Theme.of(context).textTheme.headline4?.copyWith( */
+      /*         fontWeight: FontWeight.w600, */
+      /*         color: textColor, */
+      /*       ), */
+      /*   textAlign: TextAlign.center, */
+      /* ), */
       TypewriterAnimatedText(
         "Installing bitcoin miner...",
         cursor: "",

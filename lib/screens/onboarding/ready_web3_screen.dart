@@ -7,12 +7,12 @@ import 'package:verifi/screens/onboarding/widgets/onboarding_outline_button.dart
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 import 'package:verifi/widgets/text/app_title.dart';
 
-class AskToConnectWalletScreen extends StatefulWidget {
+class ReadyWeb3Screen extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _AskToConnectWalletScreenState();
+  State<StatefulWidget> createState() => _ReadyWeb3ScreenState();
 }
 
-class _AskToConnectWalletScreenState extends State<AskToConnectWalletScreen> {
+class _ReadyWeb3ScreenState extends State<ReadyWeb3Screen> {
   double opacity = 0;
   Color _textColor = Colors.black;
 
@@ -37,9 +37,17 @@ class _AskToConnectWalletScreenState extends State<AskToConnectWalletScreen> {
           tag: 'verifi-logo',
           child: Image.asset('assets/launcher_icon/vf_ios.png'),
         ),
-        title: const Hero(
+        title: Hero(
           tag: 'verifi-title',
-          child: AppTitle(),
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              vertical: 16.0,
+              horizontal: 16.0,
+            ),
+            height: kToolbarHeight,
+            width: MediaQuery.of(context).size.width * 0.5,
+            child: const AppTitle(appBar: true),
+          ),
         ),
         centerTitle: true,
       ),
@@ -86,11 +94,11 @@ class _AskToConnectWalletScreenState extends State<AskToConnectWalletScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _connectWalletButton(),
-                  Container(
-                    margin: const EdgeInsets.only(top: 16),
-                    child: _skipConnectingWalletButton(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: _connectWalletText(),
                   ),
+                  _proceedButton(),
                 ],
               ),
             ),
@@ -112,43 +120,47 @@ class _AskToConnectWalletScreenState extends State<AskToConnectWalletScreen> {
 
   Widget _headerSubtitle() {
     return AutoSizeText(
-      "VeriFi is a Web3 mobile app. The advent of digital money and "
-      "blockchain technologies enables us to directly incentivize users "
-      "around the world who contribute to the VeriFi network.",
-      maxLines: 4,
+      "VeriFi is bridging the universe with the metaverse, one WiFi hotspot "
+      "at a time.\n\nWith the advent of digital money and blockchain "
+      "technologies, VeriFi can directly incentivize users around the world to "
+      "contribute to the VeriFi network.",
+      maxLines: 7,
       style: Theme.of(context).textTheme.headline6,
       textAlign: TextAlign.center,
     );
   }
 
-  Widget _connectWalletButton() {
-    return BlocBuilder<WalletConnectCubit, WalletConnectState>(
-      builder: (context, state) {
-        return (state.canConnect)
-            ? OnboardingOutlineButton(
-                text: "Connect Ethereum wallet",
-                onPressed: () {
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                    '/onboarding/wallet',
-                    (route) => false,
-                  );
-                },
-              )
-            : AutoSizeText(
-                "No wallets installed",
-                style: Theme.of(context).textTheme.headline6,
-              );
-      },
+  Widget _connectWalletText() {
+    return AutoSizeText.rich(
+      TextSpan(
+        children: [
+          TextSpan(
+            text: "Check out our roadmap\n",
+            style: Theme.of(context).textTheme.headline5?.copyWith(
+                  decoration: TextDecoration.underline,
+                ),
+          ),
+          TextSpan(
+            text: "to see the exciting new features and incentives we plan "
+                "to release!",
+            style: Theme.of(context).textTheme.headline6,
+          ),
+        ],
+      ),
+      textAlign: TextAlign.center,
     );
   }
 
-  Widget _skipConnectingWalletButton() {
-    return OnboardingOutlineButton(
-      text: "Skip connecting wallet",
-      onPressed: () {
-        Navigator.of(context).pushNamedAndRemoveUntil(
-          '/onboarding/terms',
-          (route) => false,
+  Widget _proceedButton() {
+    return BlocBuilder<WalletConnectCubit, WalletConnectState>(
+      builder: (context, state) {
+        return OnboardingOutlineButton(
+          text: "Continue",
+          onPressed: () {
+            (state.canConnect)
+                ? Navigator.of(context).pushNamed('/onboarding/wallet')
+                : Navigator.of(context).pushNamed('/onboarding/terms');
+          },
         );
       },
     );

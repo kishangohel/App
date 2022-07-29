@@ -37,9 +37,17 @@ class _DisplayNameScreenState extends State<DisplayNameScreen> {
           tag: 'verifi-logo',
           child: Image.asset('assets/launcher_icon/vf_ios.png'),
         ),
-        title: const Hero(
+        title: Hero(
           tag: 'verifi-title',
-          child: AppTitle(),
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              vertical: 16.0,
+              horizontal: 16.0,
+            ),
+            height: kToolbarHeight,
+            width: MediaQuery.of(context).size.width * 0.5,
+            child: const AppTitle(appBar: true),
+          ),
         ),
         centerTitle: true,
       ),
@@ -182,7 +190,7 @@ class _DisplayNameScreenState extends State<DisplayNameScreen> {
                         );
 
                     Navigator.of(context).pushNamedAndRemoveUntil(
-                      '/onboarding/wallet',
+                      '/onboarding/readyWeb3',
                       ModalRoute.withName('/onboarding/displayName'),
                     );
                   },

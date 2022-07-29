@@ -1,8 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:verifi/blocs/blocs.dart';
-import 'package:verifi/blocs/wallet_connect/wallet_connect_state.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:verifi/screens/onboarding/widgets/onboarding_outline_button.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 import 'package:verifi/widgets/text/app_title.dart';
@@ -15,6 +14,8 @@ class TermsScreen extends StatefulWidget {
 class _TermsScreenState extends State<TermsScreen> {
   double opacity = 0;
   Color _textColor = Colors.black;
+  bool _termsAccepted = false;
+  bool _privacyPolicyAccepted = false;
 
   @override
   void initState() {
@@ -36,9 +37,17 @@ class _TermsScreenState extends State<TermsScreen> {
           tag: 'verifi-logo',
           child: Image.asset('assets/launcher_icon/vf_ios.png'),
         ),
-        title: const Hero(
+        title: Hero(
           tag: 'verifi-title',
-          child: AppTitle(),
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              vertical: 16.0,
+              horizontal: 16.0,
+            ),
+            height: kToolbarHeight,
+            width: MediaQuery.of(context).size.width * 0.5,
+            child: const AppTitle(appBar: true),
+          ),
         ),
         centerTitle: true,
       ),
@@ -85,11 +94,12 @@ class _TermsScreenState extends State<TermsScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _connectWalletButton(),
-                  Container(
-                    margin: const EdgeInsets.only(top: 16),
-                    child: _skipConnectingWalletButton(),
+                  _termsRow(),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 16),
+                    child: _privacyPolicyRow(),
                   ),
+                  _continueButton(),
                 ],
               ),
             ),
@@ -101,7 +111,7 @@ class _TermsScreenState extends State<TermsScreen> {
 
   Widget _headerTitle() {
     return AutoSizeText(
-      "Ready for Web3?",
+      "Terms and Conditions",
       style: Theme.of(context).textTheme.headline3?.copyWith(
             color: _textColor,
           ),
@@ -111,45 +121,96 @@ class _TermsScreenState extends State<TermsScreen> {
 
   Widget _headerSubtitle() {
     return AutoSizeText(
-      "VeriFi is a Web3 mobile app. The advent of digital money and "
-      "blockchain technologies enables us to directly incentivize users "
-      "around the world who contribute to the VeriFi network.",
-      maxLines: 4,
+      "Please review and accept the following terms and conditions",
       style: Theme.of(context).textTheme.headline6,
       textAlign: TextAlign.center,
     );
   }
 
-  Widget _connectWalletButton() {
-    return BlocBuilder<WalletConnectCubit, WalletConnectState>(
-      builder: (context, state) {
-        return (state.canConnect)
-            ? OnboardingOutlineButton(
-                text: "Connect Ethereum wallet",
-                onPressed: () {
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                    '/onboarding/wallet',
-                    (route) => false,
-                  );
-                },
-              )
-            : AutoSizeText(
-                "No wallets installed",
+  Widget _termsRow() {
+    return Row(
+      children: [
+        Checkbox(
+          activeColor: _textColor,
+          checkColor:
+              (_textColor == Colors.black) ? Colors.white : Colors.black,
+          onChanged: (value) {
+            setState(() => _termsAccepted = !_termsAccepted);
+          },
+          value: _termsAccepted,
+        ),
+        AutoSizeText.rich(
+          TextSpan(
+            children: [
+              TextSpan(
+                text: "I accept the ",
                 style: Theme.of(context).textTheme.headline6,
-              );
-      },
+              ),
+              TextSpan(
+                text: "Terms of Use",
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () {
+                    launchUrl(Uri.parse("https://verifi.world/terms"));
+                  },
+                style: Theme.of(context).textTheme.headline6?.copyWith(
+                      decoration: TextDecoration.underline,
+                    ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
-  Widget _skipConnectingWalletButton() {
-    return OnboardingOutlineButton(
-      text: "Skip connecting wallet",
-      onPressed: () {
-        Navigator.of(context).pushNamedAndRemoveUntil(
-          '/onboarding/terms',
-          (route) => false,
-        );
-      },
+  Widget _privacyPolicyRow() {
+    return Row(
+      children: [
+        Checkbox(
+          activeColor: _textColor,
+          checkColor:
+              (_textColor == Colors.black) ? Colors.white : Colors.black,
+          onChanged: (value) {
+            setState(() => _privacyPolicyAccepted = !_privacyPolicyAccepted);
+          },
+          value: _privacyPolicyAccepted,
+        ),
+        AutoSizeText.rich(
+          TextSpan(
+            children: [
+              TextSpan(
+                text: "I accept the ",
+                style: Theme.of(context).textTheme.headline6,
+              ),
+              TextSpan(
+                text: "Privacy Policy",
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () {
+                    launchUrl(Uri.parse("https://verifi.world/privacy"));
+                  },
+                style: Theme.of(context).textTheme.headline6?.copyWith(
+                      decoration: TextDecoration.underline,
+                    ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _continueButton() {
+    return Visibility(
+      visible: _termsAccepted && _privacyPolicyAccepted,
+      child: OnboardingOutlineButton(
+        text: "Continue",
+        onPressed: () {
+          Navigator.of(context).pushNamedAndRemoveUntil(
+            '/onboarding/pfpAvatar',
+            (route) => false,
+          );
+        },
+      ),
     );
   }
 }

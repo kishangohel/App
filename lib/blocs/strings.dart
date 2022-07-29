@@ -1,1 +1,1 @@
-const String keyFirstLaunch = "first_launch";
+const String isOnboardingComplete = "isOnboardingComplete";
