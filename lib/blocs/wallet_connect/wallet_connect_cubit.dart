@@ -30,7 +30,12 @@ class WalletConnectCubit extends Cubit<WalletConnectState> {
     provider = EthereumWalletConnectProvider(connector);
   }
 
-  void connect(String? domain) {
+  void canConnect() async {
+    final _canConnect = await canLaunchUrl(Uri(scheme: "wc"));
+    emit(state.copyWith(canConnect: _canConnect));
+  }
+
+  void connect(String? domain) async {
     // if session already connected, kill it first
     /* await connector.sendCustomRequest( */
     /*   method: "wc_sessionUpdate", */

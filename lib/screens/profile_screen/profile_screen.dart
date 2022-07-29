@@ -38,6 +38,7 @@ class _ProfileBodyState extends State<ProfileBody> {
         children: [
           _profilePhoto(),
           _profileName(),
+          _logoutButton(),
         ],
       ),
     );
@@ -69,6 +70,18 @@ class _ProfileBodyState extends State<ProfileBody> {
       style: Theme.of(context).textTheme.headline4?.copyWith(
           color: Theme.of(context).colorScheme.primary,
           fontWeight: FontWeight.w600),
+    );
+  }
+
+  Widget _logoutButton() {
+    return ElevatedButton(
+      child: Text(
+        "Logout",
+        style: Theme.of(context).textTheme.button,
+      ),
+      onPressed: () {
+        context.read<AuthenticationCubit>().logout();
+      },
     );
   }
 }

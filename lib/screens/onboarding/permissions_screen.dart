@@ -44,10 +44,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
         ),
         title: const Hero(
           tag: 'verifi-title',
-          child: AppTitle(
-            fontSize: 48.0,
-            textAlign: TextAlign.center,
-          ),
+          child: AppTitle(),
         ),
         centerTitle: true,
       ),

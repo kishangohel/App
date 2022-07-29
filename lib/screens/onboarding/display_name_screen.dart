@@ -15,6 +15,7 @@ class DisplayNameScreen extends StatefulWidget {
 
 class _DisplayNameScreenState extends State<DisplayNameScreen> {
   double opacity = 0;
+  Color _fontColor = Colors.black;
 
   @override
   void initState() {
@@ -27,6 +28,8 @@ class _DisplayNameScreenState extends State<DisplayNameScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final brightness = MediaQuery.of(context).platformBrightness;
+    if (brightness == Brightness.dark) _fontColor = Colors.white;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
@@ -36,10 +39,7 @@ class _DisplayNameScreenState extends State<DisplayNameScreen> {
         ),
         title: const Hero(
           tag: 'verifi-title',
-          child: AppTitle(
-            fontSize: 48.0,
-            textAlign: TextAlign.center,
-          ),
+          child: AppTitle(),
         ),
         centerTitle: true,
       ),
@@ -97,7 +97,7 @@ class _DisplayNameScreenState extends State<DisplayNameScreen> {
           child: AutoSizeText(
             "Enter your display name",
             style: Theme.of(context).textTheme.headline1?.copyWith(
-                  color: Colors.white,
+                  color: _fontColor,
                   fontWeight: FontWeight.w600,
                 ),
             textAlign: TextAlign.center,
@@ -108,9 +108,7 @@ class _DisplayNameScreenState extends State<DisplayNameScreen> {
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: AutoSizeText(
             "Your display name must be unique across all VeriFi users",
-            style: Theme.of(context).textTheme.headline6?.copyWith(
-                  color: Colors.white,
-                ),
+            style: Theme.of(context).textTheme.headline6?.copyWith(),
             textAlign: TextAlign.center,
             maxLines: 2,
           ),
@@ -126,45 +124,44 @@ class _DisplayNameScreenState extends State<DisplayNameScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextField(
-              cursorColor: Colors.white,
+              cursorColor: _fontColor,
               decoration: InputDecoration(
                 border: const OutlineInputBorder(
                   borderSide: BorderSide(
                     color: Colors.white,
                   ),
                 ),
-                errorBorder: const OutlineInputBorder(
+                errorBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: Colors.white,
+                    color: _fontColor,
                   ),
                 ),
                 errorStyle: Theme.of(context).textTheme.caption?.copyWith(
-                      color: Colors.white,
                       fontWeight: FontWeight.w600,
                     ),
                 errorText: (displayNameState.errorText != null)
                     ? displayNameState.errorText
                     : null,
-                focusedBorder: const OutlineInputBorder(
+                focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
                     width: 2.0,
-                    color: Colors.white,
+                    color: _fontColor,
                   ),
                 ),
-                focusedErrorBorder: const OutlineInputBorder(
+                focusedErrorBorder: OutlineInputBorder(
                   borderSide: BorderSide(
                     width: 2.0,
-                    color: Colors.white,
+                    color: _fontColor,
                   ),
                 ),
               ),
               onChanged: (text) {
-                context
-                    .read<DisplayNameTextfieldBloc>()
-                    .add(DisplayNameTextfieldUpdating());
-                context
-                    .read<DisplayNameTextfieldBloc>()
-                    .add(DisplayNameTextfieldUpdated(text));
+                context.read<DisplayNameTextfieldBloc>().add(
+                      DisplayNameTextfieldUpdating(),
+                    );
+                context.read<DisplayNameTextfieldBloc>().add(
+                      DisplayNameTextfieldUpdated(text),
+                    );
               },
             ),
             Visibility(
@@ -190,8 +187,8 @@ class _DisplayNameScreenState extends State<DisplayNameScreen> {
                     );
                   },
                   style: OutlinedButton.styleFrom(
-                    side: const BorderSide(
-                      color: Colors.white,
+                    side: BorderSide(
+                      color: _fontColor,
                     ),
                   ),
                 ),

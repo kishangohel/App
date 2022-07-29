@@ -1,5 +1,8 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:verifi/screens/onboarding/phone_number_screen.dart';
+import 'package:verifi/screens/onboarding/widgets/onboarding_outline_button.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 import 'package:verifi/widgets/text/app_title.dart';
 
@@ -10,7 +13,7 @@ class IntroScreen extends StatefulWidget {
 
 class _IntroScreenState extends State<IntroScreen> {
   double opacity = 0;
-  final textColor = Colors.black;
+  Color _fontColor = Colors.black;
 
   @override
   void initState() {
@@ -23,6 +26,8 @@ class _IntroScreenState extends State<IntroScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final brightness = MediaQuery.of(context).platformBrightness;
+    if (brightness == Brightness.dark) _fontColor = Colors.white;
     return Scaffold(
       body: Container(
         color: Colors.black,
@@ -30,7 +35,7 @@ class _IntroScreenState extends State<IntroScreen> {
           child: Stack(
             children: [
               ...onBoardingBackground(context),
-              _newIntroContent(),
+              _introContent(),
             ],
           ),
         ),
@@ -38,16 +43,19 @@ class _IntroScreenState extends State<IntroScreen> {
     );
   }
 
-  Widget _newIntroContent() {
+  Widget _introContent() {
     return AnimatedOpacity(
       opacity: opacity,
       duration: const Duration(seconds: 1),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          vertical: 8.0,
+          horizontal: 16.0,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -56,16 +64,41 @@ class _IntroScreenState extends State<IntroScreen> {
                 ],
               ),
             ),
-          ),
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _getStartedButton(),
-              ],
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: _verifiDescription(),
+                  ),
+                  OnboardingOutlineButton(
+                    text: "Get Started",
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        PageRouteBuilder(
+                          settings: const RouteSettings(
+                            name: '/onboarding/phone',
+                          ),
+                          transitionDuration: const Duration(
+                            seconds: 1,
+                            milliseconds: 500,
+                          ),
+                          reverseTransitionDuration: const Duration(
+                            seconds: 1,
+                          ),
+                          transitionsBuilder: _slideTransition,
+                          pageBuilder: (BuildContext context, _, __) =>
+                              PhoneNumberScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -77,10 +110,7 @@ class _IntroScreenState extends State<IntroScreen> {
         width: MediaQuery.of(context).size.width,
         child: const Hero(
           tag: 'verifi-title',
-          child: AppTitle(
-            fontSize: 72,
-            textAlign: TextAlign.center,
-          ),
+          child: AppTitle(),
         ),
       ),
     );
@@ -90,54 +120,43 @@ class _IntroScreenState extends State<IntroScreen> {
     return Container(
       alignment: Alignment.topCenter,
       child: SizedBox(
-        child: Text(
+        child: AutoSizeText(
           "Bridging the Universe with the Metaverse",
+          maxLines: 2,
           textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.bodyText2?.copyWith(
-                fontSize: 22.0,
-                fontWeight: FontWeight.w600,
+          style: Theme.of(context).textTheme.headline4?.copyWith(
+                color: _fontColor,
               ),
         ),
       ),
     );
   }
 
-  Widget _getStartedButton() {
-    return OutlinedButton(
-        style: OutlinedButton.styleFrom(
-          shape: ContinuousRectangleBorder(
-            borderRadius: BorderRadius.circular(4),
-          ),
-          side: BorderSide(
-            width: 2.0,
-            color:
-                (MediaQuery.of(context).platformBrightness == Brightness.light)
-                    ? Colors.black
-                    : Colors.white,
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Text(
-            "Begin the journey",
-            style: Theme.of(context).textTheme.headline5?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-          ),
-        ),
-        onPressed: () {
-          Navigator.of(context).push(
-            PageRouteBuilder(
-              settings: const RouteSettings(name: '/onboarding/phone'),
-              transitionDuration:
-                  const Duration(seconds: 1, milliseconds: 500),
-              reverseTransitionDuration: const Duration(seconds: 1),
-              transitionsBuilder: _slideTransition,
-              pageBuilder: (BuildContext context, _, __) =>
-                  PhoneNumberScreen(),
+  Widget _verifiDescription() {
+    return SizedBox(
+      height: 70,
+      child: DefaultTextStyle(
+        style: Theme.of(context).textTheme.headline5!,
+        textAlign: TextAlign.center,
+        child: AnimatedTextKit(
+          animatedTexts: [
+            RotateAnimatedText(
+              "Crowdsourced WiFi",
+              textAlign: TextAlign.center,
             ),
-          );
-        });
+            RotateAnimatedText(
+              "Powered by Web3",
+              textAlign: TextAlign.center,
+            ),
+            RotateAnimatedText(
+              "Internet communities reimagined",
+              textAlign: TextAlign.center,
+            ),
+          ],
+          repeatForever: true,
+        ),
+      ),
+    );
   }
 
   SlideTransition _slideTransition(

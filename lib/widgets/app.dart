@@ -18,6 +18,7 @@ import 'package:verifi/main.dart' as main;
 import 'package:verifi/models/wifi.dart';
 import 'package:verifi/repositories/opensea_repository.dart';
 import 'package:verifi/repositories/repositories.dart';
+import 'package:verifi/screens/onboarding/ask_to_connect_wallet_screen.dart';
 import 'package:verifi/screens/onboarding/connect_wallet_screen.dart';
 import 'package:verifi/screens/onboarding/display_name_screen.dart';
 import 'package:verifi/screens/onboarding/permissions_screen.dart';
@@ -230,10 +231,13 @@ class _VeriFiAppState extends State<VeriFiApp> {
           theme: themeState.lightTheme,
           darkTheme: themeState.darkTheme,
           themeMode: ThemeMode.system,
-          initialRoute: _initialRoute(),
+          /* initialRoute: _initialRoute(), */
+          initialRoute: '/onboarding/askConnectWallet',
           routes: {
             '/home': (context) => Home(),
             '/onboarding': (context) => IntroScreen(),
+            '/onboarding/askConnectWallet': (context) =>
+                AskToConnectWalletScreen(),
             '/onboarding/displayName': (context) => DisplayNameScreen(),
             '/onboarding/phone': (context) => PhoneNumberScreen(),
             '/onboarding/sms': (context) => SmsCodeScreen(),

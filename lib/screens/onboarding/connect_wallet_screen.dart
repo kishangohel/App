@@ -27,6 +27,7 @@ class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
       const Duration(seconds: 1),
       () => setState(() => opacity = 1),
     );
+    context.read<WalletConnectCubit>().canConnect();
   }
 
   @override
@@ -56,10 +57,7 @@ class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
           ),
           title: const Hero(
             tag: 'verifi-title',
-            child: AppTitle(
-              fontSize: 48.0,
-              textAlign: TextAlign.center,
-            ),
+            child: AppTitle(),
           ),
           centerTitle: true,
         ),
@@ -149,7 +147,8 @@ class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
         right: 12.0,
       ),
       child: AutoSizeText(
-        '''\u2022 Select an NFT as your profile photo
+        '''\u2022 Agree to VeriFi terms and conditions
+\u2022 Select an NFT as your profile photo
 \u2022 Receive \$VERIFI tokens for making contributions to the network''',
         style: Theme.of(context).textTheme.headline6?.copyWith(
               color: textColor,
@@ -160,25 +159,35 @@ class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
   }
 
   Widget _bottomConnectButton() {
-    return OutlinedButton(
-      onPressed: () => context.read<WalletConnectCubit>().connect(null),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Text(
-          "Connect",
-          style: Theme.of(context).textTheme.headline4?.copyWith(
-                color: textColor,
-                fontWeight: FontWeight.w600,
-              ),
-        ),
-      ),
-      style: OutlinedButton.styleFrom(
-        side: BorderSide(
-          width: 2.0,
-          color: textColor,
-        ),
-        primary: textColor,
-      ),
+    return BlocBuilder<WalletConnectCubit, WalletConnectState>(
+      builder: (context, wcState) {
+        return (wcState.canConnect)
+            ? OutlinedButton(
+                onPressed: () =>
+                    context.read<WalletConnectCubit>().connect(null),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Text(
+                    "Connect",
+                    style: Theme.of(context).textTheme.headline4?.copyWith(
+                          color: textColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                  ),
+                ),
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(
+                    width: 2.0,
+                    color: textColor,
+                  ),
+                  primary: textColor,
+                ),
+              )
+            : Text(
+                "No wallets installed",
+                style: Theme.of(context).textTheme.headline5,
+              );
+      },
     );
   }
 

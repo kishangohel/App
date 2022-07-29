@@ -41,10 +41,7 @@ class _ProfilePictureSelectState extends State<ProfilePictureSelectScreen> {
         ),
         title: const Hero(
           tag: 'verifi-title',
-          child: AppTitle(
-            fontSize: 48.0,
-            textAlign: TextAlign.center,
-          ),
+          child: AppTitle(),
         ),
         centerTitle: true,
       ),
