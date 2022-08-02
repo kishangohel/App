@@ -60,15 +60,42 @@ class _ProfileBodyState extends State<ProfileBody> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        CircleAvatar(
-          radius: 60,
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          child: CircleAvatar(
-            radius: 55,
-            backgroundImage: _backgroundImage,
-            backgroundColor: Theme.of(context).colorScheme.background,
+        SizedBox(
+          height: 150,
+          width: 150,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              CircleAvatar(
+                radius: 60,
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                child: CircleAvatar(
+                  radius: 55,
+                  backgroundImage: _backgroundImage,
+                  backgroundColor: Theme.of(context).colorScheme.background,
+                ),
+              ),
+              Positioned(
+                bottom: -5,
+                child: RawMaterialButton(
+                  constraints: const BoxConstraints(
+                    minWidth: 32,
+                    minHeight: 32,
+                  ),
+                  fillColor: Theme.of(context).colorScheme.secondary,
+                  elevation: 2.0,
+                  shape: const CircleBorder(),
+                  child: Icon(
+                    Icons.edit,
+                    color: Theme.of(context).colorScheme.onSecondary,
+                    size: 18,
+                  ),
+                  onPressed: () {},
+                ),
+              ),
+            ],
           ),
-        )
+        ),
       ],
     );
   }
