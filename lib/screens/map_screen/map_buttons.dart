@@ -7,14 +7,12 @@ class MapButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      // 100% right, 70% up
       top: 100,
       right: 0,
       child: SizedBox(
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.all(14),
-            primary: Colors.white,
             shape: const CircleBorder(),
           ),
           child: const Icon(

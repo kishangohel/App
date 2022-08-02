@@ -7,6 +7,7 @@ import 'package:verifi/blocs/map_markers_helper.dart';
 import 'package:verifi/blocs/wifi_utils.dart';
 import 'package:verifi/models/wifi.dart';
 import 'package:verifi/repositories/repositories.dart';
+import 'package:verifi/blocs/strings.dart';
 
 // Maintains global state of map position and map controller.
 // Markers are yielded via MapLoaded.
@@ -27,8 +28,13 @@ class MapCubit extends Cubit<MapState> {
 
   void initialize(
     GoogleMapController controller,
+    BuildContext context,
   ) async {
     mapController = controller;
+    mapController?.setMapStyle(
+        (MediaQuery.of(context).platformBrightness == Brightness.light)
+            ? lightMapStyle
+            : darkMapStyle);
     await MapMarkersHelper.initMarker();
     marker = await MapMarkersHelper.getMarker();
   }

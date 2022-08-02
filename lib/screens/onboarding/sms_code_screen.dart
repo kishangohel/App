@@ -21,7 +21,9 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
     super.initState();
     Future.delayed(
       const Duration(seconds: 1),
-      () => setState(() => opacity = 1),
+      () {
+        if (mounted) setState(() => opacity = 1);
+      },
     );
   }
 
@@ -36,11 +38,16 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
           tag: 'verifi-logo',
           child: Image.asset('assets/launcher_icon/vf_ios.png'),
         ),
-        title: const Hero(
+        title: Hero(
           tag: 'verifi-title',
-          child: AppTitle(
-            fontSize: 48.0,
-            textAlign: TextAlign.center,
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              vertical: 16.0,
+              horizontal: 16.0,
+            ),
+            height: kToolbarHeight,
+            width: MediaQuery.of(context).size.width * 0.5,
+            child: const AppTitle(appBar: true),
           ),
         ),
         centerTitle: true,
@@ -67,13 +74,24 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
           ),
           BlocListener<ProfileCubit, Profile>(
             listener: (context, profile) {
-              if (profile.ethAddress == null) {
-                Navigator.of(context).pushNamed('/onboarding/wallet');
-              } else if (profile.photo == null) {
-                Navigator.of(context).pushNamed('/onboarding/pfp');
+              // no display name means they are new
+              // proceed w/ onboarding
+              if (profile.displayName == null) {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/onboarding/permissions',
+                  ModalRoute.withName('/onboarding'),
+                );
+                // display name means profile already created
+                // set things up and skip onboarding
               } else {
-                Navigator.of(context).pushNamed('/onboarding/settingThingsUp');
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/onboarding/finalSetup',
+                  ModalRoute.withName(''),
+                );
               }
+            },
+            listenWhen: (previous, current) {
+              return (previous == Profile.empty());
             },
           ),
         ],

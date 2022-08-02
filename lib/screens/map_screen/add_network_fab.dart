@@ -6,7 +6,6 @@ class AddNetworkFab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton.extended(
-      backgroundColor: Theme.of(context).primaryColor,
       icon: const Icon(Icons.wifi),
       label: const Text("Add Network"),
       elevation: 6.0,

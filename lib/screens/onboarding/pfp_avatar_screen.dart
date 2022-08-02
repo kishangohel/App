@@ -1,20 +1,17 @@
 import 'dart:core';
 
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verifi/blocs/blocs.dart';
-import 'package:verifi/blocs/nfts/nfts.dart';
-import 'package:verifi/models/nft.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 import 'package:verifi/widgets/text/app_title.dart';
 
-class ProfilePictureSelectScreen extends StatefulWidget {
+class PfpAvatarScreen extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _ProfilePictureSelectState();
+  State<StatefulWidget> createState() => _PfpAvatarScreenState();
 }
 
-class _ProfilePictureSelectState extends State<ProfilePictureSelectScreen> {
+class _PfpAvatarScreenState extends State<PfpAvatarScreen> {
   double opacity = 0;
   Color textColor = Colors.black;
   final PageController _controller = PageController();
@@ -39,11 +36,16 @@ class _ProfilePictureSelectState extends State<ProfilePictureSelectScreen> {
           tag: 'verifi-logo',
           child: Image.asset('assets/launcher_icon/vf_ios.png'),
         ),
-        title: const Hero(
+        title: Hero(
           tag: 'verifi-title',
-          child: AppTitle(
-            fontSize: 48.0,
-            textAlign: TextAlign.center,
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              vertical: 16.0,
+              horizontal: 16.0,
+            ),
+            height: kToolbarHeight,
+            width: MediaQuery.of(context).size.width * 0.5,
+            child: const AppTitle(appBar: true),
           ),
         ),
         centerTitle: true,
@@ -95,7 +97,7 @@ class _ProfilePictureSelectState extends State<ProfilePictureSelectScreen> {
 
   Widget _pfpTitle() {
     return Text(
-      "Select an NFT from your wallet as your profile photo",
+      "Select an avatar below for your profile picture",
       style: Theme.of(context).textTheme.headline4?.copyWith(
             fontWeight: FontWeight.w600,
             color: textColor,
@@ -105,7 +107,6 @@ class _ProfilePictureSelectState extends State<ProfilePictureSelectScreen> {
   }
 
   Widget _pfpPageView() {
-    final List<Nft> nfts = context.read<NftsCubit>().state;
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.4,
       child: Column(
@@ -113,68 +114,30 @@ class _ProfilePictureSelectState extends State<ProfilePictureSelectScreen> {
           Expanded(
             child: PageView.builder(
               controller: _controller,
-              itemCount: nfts.length,
+              itemCount: 24,
               itemBuilder: (context, index) {
-                final nft = nfts[index];
+                final strIndex = (index + 1).toString().padLeft(2, "0");
                 return Container(
                   margin: const EdgeInsets.symmetric(
                     horizontal: 24.0,
                   ),
-                  decoration: BoxDecoration(
-                    color: textColor,
-                    borderRadius: const BorderRadius.all(
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(
                       Radius.circular(12),
                     ),
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.only(
-                            left: 16,
-                            right: 16,
-                            top: 16.0,
-                          ),
-                          child: Image.network(nft.image),
-                        ),
+                  child: Container(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      top: 16.0,
+                    ),
+                    child: Image(
+                      image: AssetImage(
+                        'assets/profile_avatars/People-$strIndex.png',
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0,
-                          vertical: 4.0,
-                        ),
-                        child: AutoSizeText(
-                          nft.name,
-                          maxLines: 1,
-                          style:
-                              Theme.of(context).textTheme.headline4?.copyWith(
-                                    color: (textColor == Colors.white)
-                                        ? Colors.black
-                                        : Colors.white,
-                                  ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          left: 16.0,
-                          right: 16.0,
-                          bottom: 16.0,
-                        ),
-                        child: AutoSizeText(
-                          nft.collectionName,
-                          maxLines: 1,
-                          style:
-                              Theme.of(context).textTheme.headline6?.copyWith(
-                                    color: (textColor == Colors.white)
-                                        ? Colors.black
-                                        : Colors.white,
-                                  ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ],
+                      fit: BoxFit.contain,
+                    ),
                   ),
                 );
               },
@@ -190,12 +153,15 @@ class _ProfilePictureSelectState extends State<ProfilePictureSelectScreen> {
             ),
           ),
           OutlinedButton(
-            onPressed: () async {
+            onPressed: () {
+              final strIndex =
+                  (_controller.page! + 1).toInt().toString().padLeft(2, "0");
               context.read<ProfileCubit>().setProfilePhoto(
-                    nfts[_controller.page!.toInt()].image,
+                    'assets/profile_avatars/People-$strIndex.png',
                   );
-              await context.read<ProfileCubit>().createProfile();
-              Navigator.of(context).pushNamed('/home');
+              Navigator.of(context).pushNamed(
+                '/onboarding/displayName',
+              );
             },
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 8.0),

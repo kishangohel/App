@@ -9,7 +9,14 @@ class UsersRepository {
     return usersCollection.doc(profile.id).set({
       "ethAddress": profile.ethAddress,
       "photo": profile.photo,
+      "displayName": profile.displayName,
       "createdOn": Timestamp.now(),
+    });
+  }
+
+  Future<void> updateProfilePicture(String userId, String photo) async {
+    return usersCollection.doc(userId).update({
+      "photo": photo,
     });
   }
 
@@ -19,5 +26,12 @@ class UsersRepository {
   Future<Map<String, dynamic>?> getUserById(String id) async {
     final doc = await usersCollection.doc(id).get();
     return (doc.exists) ? doc.data() : null;
+  }
+
+  Future<bool> checkIfDisplayNameExists(String? displayName) async {
+    final snapshot = await usersCollection
+        .where('displayName', isEqualTo: displayName)
+        .get();
+    return (snapshot.size > 0);
   }
 }

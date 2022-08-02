@@ -7,6 +7,7 @@ import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/blocs/wallet_connect/wallet_connect_state.dart';
 import 'package:verifi/resources/resources.dart';
+import 'package:verifi/screens/onboarding/widgets/onboarding_outline_button.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 import 'package:verifi/widgets/text/app_title.dart';
 
@@ -42,10 +43,7 @@ class _SignWalletScreenState extends State<SignWalletScreen> {
         ),
         title: const Hero(
           tag: 'verifi-title',
-          child: AppTitle(
-            fontSize: 48.0,
-            textAlign: TextAlign.center,
-          ),
+          child: AppTitle(),
         ),
         centerTitle: true,
       ),
@@ -65,7 +63,10 @@ class _SignWalletScreenState extends State<SignWalletScreen> {
             context.read<ProfileCubit>().setEthAddress(
                   walletState.status!.accounts[0],
                 );
-            Navigator.of(context).pushNamed('/onboarding/permissions');
+            Navigator.of(context).pushNamedAndRemoveUntil(
+              '/onboarding/pfpNft',
+              ModalRoute.withName('/onboarding/wallet/sign'),
+            );
           }
         },
         child: Container(
@@ -183,28 +184,9 @@ class _SignWalletScreenState extends State<SignWalletScreen> {
   }
 
   Widget _bottomConnectButton() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 16.0),
-      child: OutlinedButton(
-        onPressed: () => context.read<WalletConnectCubit>().sign(),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Text(
-            "Sign",
-            style: Theme.of(context).textTheme.headline4?.copyWith(
-                  color: textColor,
-                  fontWeight: FontWeight.w600,
-                ),
-          ),
-        ),
-        style: OutlinedButton.styleFrom(
-          side: BorderSide(
-            width: 2.0,
-            color: textColor,
-          ),
-          primary: textColor,
-        ),
-      ),
+    return OnboardingOutlineButton(
+      onPressed: () => context.read<WalletConnectCubit>().sign(),
+      text: "Sign",
     );
   }
 

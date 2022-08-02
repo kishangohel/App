@@ -1,31 +1,29 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTitle extends StatelessWidget {
-  final double fontSize;
-  final TextAlign textAlign;
+  final bool appBar;
 
   /// Displays VeriFi title w/ Quantico font
   ///
-  const AppTitle({
-    required this.fontSize,
-    required this.textAlign,
-  });
+  const AppTitle({this.appBar = false});
 
   @override
   Widget build(BuildContext context) {
+    Color _fontColor = (appBar) ? Colors.white : Colors.black;
     final brightness = MediaQuery.of(context).platformBrightness;
+    if (brightness == Brightness.dark && !appBar) _fontColor = Colors.white;
     return Material(
       type: MaterialType.transparency,
       child: FittedBox(
         fit: BoxFit.fitWidth,
-        child: Text(
+        child: AutoSizeText(
           "VeriFi",
-          style: GoogleFonts.quantico(
-            fontSize: fontSize,
-            color: brightness == Brightness.dark ? Colors.white : Colors.black,
-          ),
-          textAlign: textAlign,
+          style: GoogleFonts.quanticoTextTheme().headline1?.copyWith(
+                color: _fontColor,
+              ),
+          textAlign: TextAlign.center,
         ),
       ),
     );

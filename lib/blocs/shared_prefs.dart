@@ -9,9 +9,10 @@ class SharedPrefs {
   }
 
   /// Returns [false] if [keyFirstLaunch] exists, [true] if key does not exist.
-  bool isFirstLaunch() => !_sharedPrefs!.containsKey(keyFirstLaunch);
+  bool onboardingComplete() => _sharedPrefs!.containsKey(isOnboardingComplete);
 
-  void setFirstLaunch() => _sharedPrefs!.setBool(keyFirstLaunch, true);
+  void setOnboardingComplete() =>
+      _sharedPrefs!.setBool(isOnboardingComplete, true);
 }
 
 final sharedPrefs = SharedPrefs();

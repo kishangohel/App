@@ -44,10 +44,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
         ),
         title: const Hero(
           tag: 'verifi-title',
-          child: AppTitle(
-            fontSize: 48.0,
-            textAlign: TextAlign.center,
-          ),
+          child: AppTitle(),
         ),
         centerTitle: true,
       ),
@@ -136,7 +133,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
   Widget _finishPermissionsButton() {
     return OutlinedButton(
       onPressed: () {
-        Navigator.of(context).pushReplacementNamed('/onboarding/pfp');
+        Navigator.of(context).pushNamed('/onboarding/readyWeb3');
       },
       child: Text(
         "Finish",

@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:phone_form_field/phone_form_field.dart';
 import 'package:verifi/blocs/blocs.dart';
-import 'package:verifi/screens/onboarding/sms_code_screen.dart';
 import 'package:verifi/screens/onboarding/widgets/account_phone_form_field.dart';
+import 'package:verifi/screens/onboarding/widgets/onboarding_outline_button.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 import 'package:verifi/widgets/text/app_title.dart';
-import 'package:verifi/widgets/transitions/onboarding_slide_transition.dart';
 
 class PhoneNumberScreen extends StatefulWidget {
   PhoneNumberScreen() : super(key: UniqueKey());
@@ -28,7 +27,9 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
     super.initState();
     Future.delayed(
       const Duration(seconds: 1, milliseconds: 500),
-      () => setState(() => opacity = 1),
+      () {
+        if (mounted) setState(() => opacity = 1);
+      },
     );
   }
 
@@ -43,11 +44,16 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
           tag: 'verifi-logo',
           child: Image.asset('assets/launcher_icon/vf_ios.png'),
         ),
-        title: const Hero(
+        title: Hero(
           tag: 'verifi-title',
-          child: AppTitle(
-            fontSize: 48.0,
-            textAlign: TextAlign.center,
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              vertical: 16.0,
+              horizontal: 16.0,
+            ),
+            height: kToolbarHeight,
+            width: MediaQuery.of(context).size.width * 0.5,
+            child: const AppTitle(appBar: true),
           ),
         ),
         centerTitle: true,
@@ -139,57 +145,24 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
         },
         onSaved: (phoneNumber) {
           BlocProvider.of<AuthenticationCubit>(context).requestSmsCode(
-            /* "+${phoneNumber.countryCode} ${phoneNumber.nsn}", */
-            "+1 555-333-4444",
+            "+${phoneNumber.countryCode} ${phoneNumber.nsn}",
+            /* "+1 555-333-4444", */
           );
-
-          Navigator.of(context).push(
-            PageRouteBuilder(
-              transitionDuration: const Duration(milliseconds: 500),
-              reverseTransitionDuration: const Duration(seconds: 1),
-              transitionsBuilder: onboardingSlideTransition,
-              pageBuilder: (BuildContext context, _, __) => SmsCodeScreen(),
-            ),
-          );
+          Navigator.of(context).pushNamed('/onboarding/sms');
         },
       ),
     );
   }
 
   Widget _submitButton() {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      child: Visibility(
-        visible: submitVisibility,
-        maintainSize: false,
-        maintainAnimation: true,
-        maintainState: true,
-        child: OutlinedButton(
-          onPressed: () => formKey.currentState!.save(),
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              vertical: 8.0,
-              horizontal: 4.0,
-            ),
-            width: MediaQuery.of(context).size.width * 0.25,
-            child: FittedBox(
-              fit: BoxFit.fitWidth,
-              child: Text(
-                "Submit",
-                style: Theme.of(context).textTheme.headline5?.copyWith(
-                      color: textColor,
-                      fontWeight: FontWeight.w600,
-                    ),
-              ),
-            ),
-          ),
-          style: OutlinedButton.styleFrom(
-            side: BorderSide(
-              color: textColor,
-              width: 2.0,
-            ),
-          ),
-        ),
+    return Visibility(
+      visible: submitVisibility,
+      maintainSize: false,
+      maintainAnimation: true,
+      maintainState: true,
+      child: OnboardingOutlineButton(
+        onPressed: () => formKey.currentState!.save(),
+        text: "Submit",
       ),
     );
   }

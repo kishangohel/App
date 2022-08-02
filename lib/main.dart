@@ -16,10 +16,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/blocs/logging_bloc_delegate.dart';
 import 'package:verifi/blocs/shared_prefs.dart';
+import 'package:verifi/firebase_options.dart';
 import 'package:verifi/repositories/repositories.dart';
 import 'package:verifi/widgets/app.dart';
-
-import 'firebase_options.dart';
 
 /// The entrypoint of application.
 ///
@@ -27,29 +26,31 @@ import 'firebase_options.dart';
 /// [Crashlytics] are all initialized here.
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // disable printing in release mode
-  if (kReleaseMode) {
-    debugPrint = (String? message, {int? wrapWidth}) {};
-  }
-  await sharedPrefs.init();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  // Use auth emulator in debug mode
-  if (kDebugMode) {
-    FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
-    FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
-  }
-
-  // Pass all uncaught errors from the framework to Crashlytics.
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
   final storage = await HydratedStorage.build(
-    storageDirectory: await getTemporaryDirectory(),
+    storageDirectory: await getApplicationSupportDirectory(),
   );
-
   HydratedBlocOverrides.runZoned(
-    () => runApp(VeriFi()),
-    blocObserver: LoggingBlocDelegate(),
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
+      // disable printing in release mode
+      if (kReleaseMode) {
+        debugPrint = (String? message, {int? wrapWidth}) {};
+      }
+      await sharedPrefs.init();
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+      // Use auth emulator in debug mode
+      /* if (kDebugMode) { */
+      /*   FirebaseAuth.instance.useAuthEmulator('localhost', 9099); */
+      /*   FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080); */
+      /* } */
+
+      // Pass all uncaught errors from the framework to Crashlytics.
+      FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+      runApp(VeriFi());
+    },
+    blocObserver: LoggingBlocObserver(),
     storage: storage,
   );
 }

@@ -4,16 +4,15 @@ import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/models/app_tab.dart';
 import 'package:verifi/models/models.dart';
 import 'package:verifi/screens/profile_screen/profile_screen.dart';
-import 'package:verifi/widgets/feed_screen/feed_screen.dart';
-import 'package:verifi/widgets/map_screen/add_network_fab.dart';
-import 'package:verifi/widgets/map_screen/map_screen.dart';
+import 'package:verifi/screens/map_screen/add_network_fab.dart';
+import 'package:verifi/screens/map_screen/map_screen.dart';
 
-class HomePage extends StatefulWidget {
+class Home extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => HomePageState();
+  State<StatefulWidget> createState() => _HomeState();
 }
 
-class HomePageState extends State<HomePage> {
+class _HomeState extends State<Home> {
   int _currentIndex = 0;
   late List<Widget> _bodyChildren;
 
@@ -21,9 +20,8 @@ class HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _bodyChildren = [
-      FeedScreen(),
       MapScreen(),
-      ProfileScreen(),
+      ProfileBody(),
     ];
   }
 
@@ -46,7 +44,7 @@ class HomePageState extends State<HomePage> {
             setState(() => _currentIndex = index);
           },
         ),
-        floatingActionButton: buildFab(),
+        floatingActionButton: _buildFab(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
     );
@@ -54,10 +52,6 @@ class HomePageState extends State<HomePage> {
 
   List<BottomNavigationBarItem> buildBottomNavBarItems() {
     return [
-      const BottomNavigationBarItem(
-        icon: Icon(Icons.list),
-        label: "WiFi Feed",
-      ),
       const BottomNavigationBarItem(
         icon: Icon(Icons.map),
         label: "WiFi Map",
@@ -74,20 +68,18 @@ class HomePageState extends State<HomePage> {
       case 0:
         return null;
       case 1:
-        return null;
-      case 2: 
-        return null; 
+        return ProfileAppBar();
       default:
         return null;
     }
   }
 
-  Widget? buildFab() {
+  Widget? _buildFab() {
     switch (_currentIndex) {
       case 0:
-        return null;
-      case 1:
         return AddNetworkFab();
+      case 1:
+        return null;
       case 2:
         return null;
       default:

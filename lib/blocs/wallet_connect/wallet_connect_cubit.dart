@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:verifi/blocs/wallet_connect/wallet_connect_state.dart';
 import 'package:walletconnect_dart/walletconnect_dart.dart';
@@ -30,8 +30,30 @@ class WalletConnectCubit extends Cubit<WalletConnectState> {
     provider = EthereumWalletConnectProvider(connector);
   }
 
-  Future<void> connect(String? domain) async {
-    final status = await connector.createSession(
+  void canConnect() async {
+    final _canConnect = await canLaunchUrl(Uri(scheme: "wc"));
+    emit(state.copyWith(canConnect: _canConnect));
+  }
+
+  void connect(String? domain) async {
+    // if session already connected, kill it first
+    /* await connector.sendCustomRequest( */
+    /*   method: "wc_sessionUpdate", */
+    /*   params: [ */
+    /*     { */
+    /*       'approved': false, */
+    /*       'chainId': null, */
+    /*       'networkId': null, */
+    /*       'accounts': null, */
+    /*     } */
+    /*   ], */
+    /* ); */
+    /* await connector.close(forceClose: true); */
+    if (connector.session.connected) {
+      connector.session.reset();
+      emit(state.copyWith(status: SessionStatus(chainId: 1, accounts: [])));
+    }
+    connector.connect(
       chainId: 1,
       onDisplayUri: (uri) async {
         // Make sure we pass app-specific deep link if on iOS
@@ -54,7 +76,6 @@ class WalletConnectCubit extends Cubit<WalletConnectState> {
         }
       },
     );
-    emit(state.copyWith(status: status));
   }
 
   void _onConnect(SessionStatus status) {
