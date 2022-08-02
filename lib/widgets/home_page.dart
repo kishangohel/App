@@ -38,14 +38,13 @@ class _HomeState extends State<Home> {
           children: _bodyChildren,
         ),
         bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Theme.of(context).colorScheme.surface,
           currentIndex: _currentIndex,
           items: buildBottomNavBarItems(),
           onTap: (index) {
             setState(() => _currentIndex = index);
           },
         ),
-        floatingActionButton: buildFab(),
+        floatingActionButton: _buildFab(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
     );
@@ -75,7 +74,7 @@ class _HomeState extends State<Home> {
     }
   }
 
-  Widget? buildFab() {
+  Widget? _buildFab() {
     switch (_currentIndex) {
       case 0:
         return AddNetworkFab();

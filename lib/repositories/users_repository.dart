@@ -14,6 +14,12 @@ class UsersRepository {
     });
   }
 
+  Future<void> updateProfilePicture(String userId, String photo) async {
+    return usersCollection.doc(userId).update({
+      "photo": photo,
+    });
+  }
+
   /// Attempts to get Firestore document by user id.
   ///
   /// If it exists, returns data. Otherwise, returns null.

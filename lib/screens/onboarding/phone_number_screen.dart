@@ -145,18 +145,10 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
         },
         onSaved: (phoneNumber) {
           BlocProvider.of<AuthenticationCubit>(context).requestSmsCode(
-            /* "+${phoneNumber.countryCode} ${phoneNumber.nsn}", */
-            "+1 555-333-4444",
+            "+${phoneNumber.countryCode} ${phoneNumber.nsn}",
+            /* "+1 555-333-4444", */
           );
-
           Navigator.of(context).pushNamed('/onboarding/sms');
-          /*   PageRouteBuilder( */
-          /*     transitionDuration: const Duration(milliseconds: 500), */
-          /*     reverseTransitionDuration: const Duration(seconds: 1), */
-          /*     transitionsBuilder: onboardingSlideTransition, */
-          /*     pageBuilder: (BuildContext context, _, __) => SmsCodeScreen(), */
-          /*   ), */
-          /* ); */
         },
       ),
     );

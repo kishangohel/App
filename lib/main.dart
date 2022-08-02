@@ -41,10 +41,10 @@ void main() async {
         options: DefaultFirebaseOptions.currentPlatform,
       );
       // Use auth emulator in debug mode
-      if (kDebugMode) {
-        FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
-        FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
-      }
+      /* if (kDebugMode) { */
+      /*   FirebaseAuth.instance.useAuthEmulator('localhost', 9099); */
+      /*   FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080); */
+      /* } */
 
       // Pass all uncaught errors from the framework to Crashlytics.
       FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;

@@ -47,6 +47,11 @@ class ProfileCubit extends HydratedCubit<Profile> {
     return _usersRepository.createProfile(state);
   }
 
+  Future<void> updateProfilePhoto(String photo) async {
+    await _usersRepository.updateProfilePicture(state.id, photo);
+    setProfilePhoto(photo);
+  }
+
   @override
   Profile? fromJson(Map<String, dynamic> json) => Profile.fromJson(json);
 
