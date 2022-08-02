@@ -24,11 +24,16 @@ class ThemeCubit extends HydratedCubit<ThemeState> {
           darkTheme: _defaultDarkTheme,
         ));
 
-  void updateTheme(
+  void updatePalette(PaletteGenerator palette) {
+    emit(state.copyWith(palette: palette));
+    _updateThemeWithPalette(palette);
+  }
+
+  void _updateTheme(
     ColorScheme lightColorScheme,
     ColorScheme darkColorScheme,
   ) {
-    emit(ThemeState(
+    emit(state.copyWith(
       lightTheme: ThemeData.from(
         colorScheme: lightColorScheme,
         textTheme: GoogleFonts.juraTextTheme(),
@@ -42,21 +47,21 @@ class ThemeCubit extends HydratedCubit<ThemeState> {
     ));
   }
 
-  void updateThemeWithPalette(PaletteGenerator palette) {
+  void _updateThemeWithPalette(PaletteGenerator palette) {
     final lightColorScheme = ColorScheme.fromSeed(
       seedColor: palette.lightVibrantColor?.color ??
-          palette.lightMutedColor?.color ??
+          palette.darkVibrantColor?.color ??
           palette.vibrantColor?.color ??
           Colors.grey[200]!,
     );
     final darkColorScheme = ColorScheme.fromSeed(
       brightness: Brightness.dark,
-      seedColor: palette.darkVibrantColor?.color ??
-          palette.darkMutedColor?.color ??
+      seedColor: palette.lightVibrantColor?.color ??
+          palette.darkVibrantColor?.color ??
           palette.vibrantColor?.color ??
           Colors.grey[800]!,
     );
-    updateTheme(lightColorScheme, darkColorScheme);
+    _updateTheme(lightColorScheme, darkColorScheme);
   }
 
   @override

@@ -4,15 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:verifi/blocs/blocs.dart';
+import 'package:verifi/blocs/shared_prefs.dart';
 import 'package:verifi/blocs/theme/theme_cubit.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 
-class SettingThingsUpScreen extends StatefulWidget {
+class FinalSetupScreen extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _SettingThingsUpScreenState();
+  State<StatefulWidget> createState() => _FinalSetupScreenState();
 }
 
-class _SettingThingsUpScreenState extends State<SettingThingsUpScreen> {
+class _FinalSetupScreenState extends State<FinalSetupScreen> {
   double opacity = 0;
   Color textColor = Colors.black;
   Duration textSpeed = const Duration(milliseconds: 120);
@@ -42,10 +43,13 @@ class _SettingThingsUpScreenState extends State<SettingThingsUpScreen> {
             AssetImage(photo),
           );
         }
-        context.read<ThemeCubit>().updateThemeWithPalette(palette);
+        context.read<ThemeCubit>().updatePalette(palette);
       }));
       futureGroup.future.then(
-        (List<dynamic> values) => setState(() {}),
+        (List<dynamic> values) {
+          sharedPrefs.setOnboardingComplete();
+          setState(() {});
+        },
         onError: (error) {},
       );
       futureGroup.close();
@@ -56,15 +60,18 @@ class _SettingThingsUpScreenState extends State<SettingThingsUpScreen> {
   Widget build(BuildContext context) {
     final brightness = MediaQuery.of(context).platformBrightness;
     if (brightness == Brightness.dark) textColor = Colors.white;
-    return Scaffold(
-      body: Container(
-        color: Colors.black,
-        child: SafeArea(
-          child: Stack(
-            children: [
-              ...onBoardingBackground(context),
-              _newIntroContent(),
-            ],
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        body: Container(
+          color: Colors.black,
+          child: SafeArea(
+            child: Stack(
+              children: [
+                ...onBoardingBackground(context),
+                _newIntroContent(),
+              ],
+            ),
           ),
         ),
       ),

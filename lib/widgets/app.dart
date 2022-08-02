@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,7 +27,7 @@ import 'package:verifi/screens/onboarding/connect_wallet_screen.dart';
 import 'package:verifi/screens/onboarding/display_name_screen.dart';
 import 'package:verifi/screens/onboarding/permissions_screen.dart';
 import 'package:verifi/screens/onboarding/phone_number_screen.dart';
-import 'package:verifi/screens/onboarding/setting_things_up_screen.dart';
+import 'package:verifi/screens/onboarding/final_setup_screen.dart';
 import 'package:verifi/screens/onboarding/sign_wallet_screen.dart';
 import 'package:verifi/screens/onboarding/sms_code_screen.dart';
 import 'package:verifi/screens/onboarding/intro_screen.dart';
@@ -208,23 +209,10 @@ class _VeriFiState extends State<VeriFi> {
   }
 }
 
-class VeriFiApp extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => _VeriFiAppState();
-}
-
-class _VeriFiAppState extends State<VeriFiApp> {
-  late bool _isOnboardingComplete;
-
-  @override
-  void initState() {
-    super.initState();
-    _isOnboardingComplete = sharedPrefs.onboardingComplete();
-  }
-
+class VeriFiApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final _isLoggedIn = context.watch<AuthenticationCubit>().isLoggedIn;
+    final _isOnboardingComplete = sharedPrefs.onboardingComplete();
     return BlocBuilder<ThemeCubit, ThemeState>(
       builder: (context, themeState) {
         return BlocBuilder<AuthenticationCubit, AuthenticationState>(
@@ -233,7 +221,10 @@ class _VeriFiAppState extends State<VeriFiApp> {
               theme: themeState.lightTheme,
               darkTheme: themeState.darkTheme,
               themeMode: ThemeMode.system,
-              initialRoute: _initialRoute(_isLoggedIn),
+              initialRoute: (FirebaseAuth.instance.currentUser != null &&
+                      _isOnboardingComplete)
+                  ? '/home'
+                  : '/onboarding',
               routes: {
                 '/home': (context) => Home(),
                 '/onboarding': (context) => IntroScreen(),
@@ -247,8 +238,7 @@ class _VeriFiAppState extends State<VeriFiApp> {
                 '/onboarding/wallet/sign': (context) => SignWalletScreen(),
                 '/onboarding/pfpNft': (context) => PfpNftScreen(),
                 '/onboarding/pfpAvatar': (context) => PfpAvatarScreen(),
-                '/onboarding/settingThingsUp': (context) =>
-                    SettingThingsUpScreen(),
+                '/onboarding/finalSetup': (context) => FinalSetupScreen(),
               },
               navigatorObservers: [_VeriFiNavigatorObserver()],
             );
@@ -256,15 +246,6 @@ class _VeriFiAppState extends State<VeriFiApp> {
         );
       },
     );
-  }
-
-  String _initialRoute(bool _isLoggedIn) {
-    if (_isLoggedIn) {
-      if (_isOnboardingComplete) {
-        return '/home';
-      }
-    }
-    return '/onboarding';
   }
 }
 

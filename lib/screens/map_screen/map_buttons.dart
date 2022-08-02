@@ -14,11 +14,12 @@ class MapButtons extends StatelessWidget {
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.all(14),
-            primary: Colors.white,
+            primary: Theme.of(context).colorScheme.primary,
             shape: const CircleBorder(),
           ),
-          child: const Icon(
+          child: Icon(
             Icons.my_location,
+            color: Theme.of(context).colorScheme.onPrimary,
           ),
           onPressed: () {
             if (context.read<LocationCubit>().state != null) {

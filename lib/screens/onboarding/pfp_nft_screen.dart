@@ -199,9 +199,8 @@ class _PfpNftScreenState extends State<PfpNftScreen> {
               context.read<ProfileCubit>().setProfilePhoto(
                     nfts[_controller.page!.toInt()].image,
                   );
-              Navigator.of(context).pushNamedAndRemoveUntil(
-                '/onboarding/settingThingsUp',
-                ModalRoute.withName('/'),
+              Navigator.of(context).pushNamed(
+                '/onboarding/displayName',
               );
             },
             child: Container(

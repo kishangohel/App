@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:phone_form_field/phone_form_field.dart';
 import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/screens/onboarding/widgets/account_phone_form_field.dart';
+import 'package:verifi/screens/onboarding/widgets/onboarding_outline_button.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 import 'package:verifi/widgets/text/app_title.dart';
 
@@ -162,39 +163,14 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
   }
 
   Widget _submitButton() {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      child: Visibility(
-        visible: submitVisibility,
-        maintainSize: false,
-        maintainAnimation: true,
-        maintainState: true,
-        child: OutlinedButton(
-          onPressed: () => formKey.currentState!.save(),
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              vertical: 8.0,
-              horizontal: 4.0,
-            ),
-            width: MediaQuery.of(context).size.width * 0.25,
-            child: FittedBox(
-              fit: BoxFit.fitWidth,
-              child: Text(
-                "Submit",
-                style: Theme.of(context).textTheme.headline5?.copyWith(
-                      color: textColor,
-                      fontWeight: FontWeight.w600,
-                    ),
-              ),
-            ),
-          ),
-          style: OutlinedButton.styleFrom(
-            side: BorderSide(
-              color: textColor,
-              width: 2.0,
-            ),
-          ),
-        ),
+    return Visibility(
+      visible: submitVisibility,
+      maintainSize: false,
+      maintainAnimation: true,
+      maintainState: true,
+      child: OnboardingOutlineButton(
+        onPressed: () => formKey.currentState!.save(),
+        text: "Submit",
       ),
     );
   }

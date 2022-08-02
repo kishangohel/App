@@ -19,22 +19,25 @@ class OnboardingOutlineButton extends StatelessWidget {
       _borderTextColor = Colors.black;
     }
 
-    return OutlinedButton(
-      child: AutoSizeText(
-        _text,
-        maxLines: 1,
-        style: Theme.of(context).textTheme.headline5?.copyWith(
-              color: _borderTextColor,
-            ),
-      ),
-      onPressed: () => _onPressed(),
-      style: OutlinedButton.styleFrom(
-        side: BorderSide(
-          color: _borderTextColor,
-          width: 2.0,
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      child: OutlinedButton(
+        child: AutoSizeText(
+          _text,
+          maxLines: 1,
+          style: Theme.of(context).textTheme.headline5?.copyWith(
+                color: _borderTextColor,
+              ),
         ),
-        shape: ContinuousRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
+        onPressed: () => _onPressed(),
+        style: OutlinedButton.styleFrom(
+          side: BorderSide(
+            color: _borderTextColor,
+            width: 2.0,
+          ),
+          shape: ContinuousRectangleBorder(
+            borderRadius: BorderRadius.circular(8.0),
+          ),
         ),
       ),
     );

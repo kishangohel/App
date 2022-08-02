@@ -162,9 +162,8 @@ class _PfpAvatarScreenState extends State<PfpAvatarScreen> {
               context.read<ProfileCubit>().setProfilePhoto(
                     'assets/profile_avatars/People-$strIndex.png',
                   );
-              Navigator.of(context).pushNamedAndRemoveUntil(
-                '/onboarding/settingThingsUp',
-                ModalRoute.withName('/'),
+              Navigator.of(context).pushNamed(
+                '/onboarding/displayName',
               );
             },
             child: Container(

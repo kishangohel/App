@@ -4,8 +4,8 @@ import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/models/app_tab.dart';
 import 'package:verifi/models/models.dart';
 import 'package:verifi/screens/profile_screen/profile_screen.dart';
-import 'package:verifi/widgets/map_screen/add_network_fab.dart';
-import 'package:verifi/widgets/map_screen/map_screen.dart';
+import 'package:verifi/screens/map_screen/add_network_fab.dart';
+import 'package:verifi/screens/map_screen/map_screen.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -38,6 +38,7 @@ class _HomeState extends State<Home> {
           children: _bodyChildren,
         ),
         bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: Theme.of(context).colorScheme.surface,
           currentIndex: _currentIndex,
           items: buildBottomNavBarItems(),
           onTap: (index) {

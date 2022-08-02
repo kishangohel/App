@@ -7,6 +7,7 @@ import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/blocs/wallet_connect/wallet_connect_state.dart';
 import 'package:verifi/resources/resources.dart';
+import 'package:verifi/screens/onboarding/widgets/onboarding_outline_button.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 import 'package:verifi/widgets/text/app_title.dart';
 
@@ -63,8 +64,8 @@ class _SignWalletScreenState extends State<SignWalletScreen> {
                   walletState.status!.accounts[0],
                 );
             Navigator.of(context).pushNamedAndRemoveUntil(
-              '/onboarding/permissions',
-              ModalRoute.withName('/onboarding/wallet'),
+              '/onboarding/pfpNft',
+              ModalRoute.withName('/onboarding/wallet/sign'),
             );
           }
         },
@@ -183,28 +184,9 @@ class _SignWalletScreenState extends State<SignWalletScreen> {
   }
 
   Widget _bottomConnectButton() {
-    return OutlinedButton(
+    return OnboardingOutlineButton(
       onPressed: () => context.read<WalletConnectCubit>().sign(),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 4.0),
-        child: Text(
-          "Sign",
-          style: Theme.of(context).textTheme.headline4?.copyWith(
-                color: textColor,
-                fontWeight: FontWeight.w600,
-              ),
-        ),
-      ),
-      style: OutlinedButton.styleFrom(
-        side: BorderSide(
-          width: 2.0,
-          color: textColor,
-        ),
-        shape: ContinuousRectangleBorder(
-          borderRadius: BorderRadius.circular(4.0),
-        ),
-        primary: textColor,
-      ),
+      text: "Sign",
     );
   }
 

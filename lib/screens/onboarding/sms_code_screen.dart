@@ -78,14 +78,14 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
               // proceed w/ onboarding
               if (profile.displayName == null) {
                 Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/onboarding/displayName',
+                  '/onboarding/permissions',
                   ModalRoute.withName('/onboarding'),
                 );
                 // display name means profile already created
                 // set things up and skip onboarding
               } else {
                 Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/onboarding/settingThingsUp',
+                  '/onboarding/finalSetup',
                   ModalRoute.withName(''),
                 );
               }

@@ -96,7 +96,7 @@ class _TermsScreenState extends State<TermsScreen> {
                 children: [
                   _termsRow(),
                   Padding(
-                    padding: EdgeInsets.only(bottom: 16),
+                    padding: const EdgeInsets.only(bottom: 16),
                     child: _privacyPolicyRow(),
                   ),
                   _continueButton(),

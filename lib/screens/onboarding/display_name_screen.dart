@@ -189,9 +189,8 @@ class _DisplayNameScreenState extends State<DisplayNameScreen> {
                           displayNameState.displayName!,
                         );
 
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      '/onboarding/readyWeb3',
-                      ModalRoute.withName('/onboarding/displayName'),
+                    Navigator.of(context).pushNamed(
+                      '/onboarding/finalSetup',
                     );
                   },
                   style: OutlinedButton.styleFrom(
