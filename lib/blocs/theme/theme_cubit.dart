@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
@@ -24,9 +26,10 @@ class ThemeCubit extends HydratedCubit<ThemeState> {
           darkTheme: _defaultDarkTheme,
         ));
 
-  void updatePalette(PaletteGenerator palette) {
-    emit(state.copyWith(palette: palette));
-    _updateThemeWithPalette(palette);
+  void updateColors(PaletteGenerator palette) {
+    final colors = _getColorsFromPalette(palette);
+    emit(state.copyWith(colors: colors));
+    updateThemeWithColor(colors[0]);
   }
 
   void _updateTheme(
@@ -47,21 +50,36 @@ class ThemeCubit extends HydratedCubit<ThemeState> {
     ));
   }
 
-  void _updateThemeWithPalette(PaletteGenerator palette) {
+  void updateThemeWithColor(Color color) {
     final lightColorScheme = ColorScheme.fromSeed(
-      seedColor: palette.lightVibrantColor?.color ??
-          palette.darkVibrantColor?.color ??
-          palette.vibrantColor?.color ??
-          Colors.grey[200]!,
+      seedColor: color,
     );
     final darkColorScheme = ColorScheme.fromSeed(
       brightness: Brightness.dark,
-      seedColor: palette.lightVibrantColor?.color ??
-          palette.darkVibrantColor?.color ??
-          palette.vibrantColor?.color ??
-          Colors.grey[800]!,
+      seedColor: color,
     );
     _updateTheme(lightColorScheme, darkColorScheme);
+  }
+
+  List<Color> _getColorsFromPalette(PaletteGenerator palette) {
+    final Map<Color, int> colorMap = {};
+    for (PaletteColor color in palette.paletteColors) {
+      final r = color.color.red;
+      final g = color.color.green;
+      final b = color.color.blue;
+
+      final rgDiff = (r - g).abs();
+      final gbDiff = (g - b).abs();
+      final brDiff = (b - r).abs();
+      final diffSum = rgDiff + gbDiff + brDiff;
+      colorMap[color.color] = diffSum;
+    }
+    var sortedKeys = colorMap.keys.toList(growable: false)
+      ..sort((k2, k1) => colorMap[k1]!.compareTo(colorMap[k2]!));
+    final sortedMap = LinkedHashMap<Color, int>.fromIterable(sortedKeys,
+        key: (k) => k, value: (k) => colorMap[k]!);
+
+    return sortedMap.keys.toList(growable: false);
   }
 
   @override

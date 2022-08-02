@@ -1,33 +1,32 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:palette_generator/palette_generator.dart';
 
 class ThemeState extends Equatable {
   final ThemeData lightTheme;
   final ThemeData darkTheme;
-  final PaletteGenerator? palette;
+  final List<Color> colors;
 
   const ThemeState({
     required this.lightTheme,
     required this.darkTheme,
-    this.palette,
+    this.colors = const [],
   });
 
   ThemeState copyWith({
     ThemeData? lightTheme,
     ThemeData? darkTheme,
-    PaletteGenerator? palette,
+    List<Color>? colors,
   }) =>
       ThemeState(
         lightTheme: lightTheme ?? this.lightTheme,
         darkTheme: darkTheme ?? this.darkTheme,
-        palette: palette ?? this.palette,
+        colors: colors ?? this.colors,
       );
 
   @override
   List<Object?> get props => [
         lightTheme.toString(),
         darkTheme.toString(),
-        palette.toString(),
+        colors.toString(),
       ];
 }

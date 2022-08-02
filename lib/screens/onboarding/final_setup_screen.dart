@@ -43,7 +43,7 @@ class _FinalSetupScreenState extends State<FinalSetupScreen> {
             AssetImage(photo),
           );
         }
-        context.read<ThemeCubit>().updatePalette(palette);
+        context.read<ThemeCubit>().updateColors(palette);
       }));
       futureGroup.future.then(
         (List<dynamic> values) {

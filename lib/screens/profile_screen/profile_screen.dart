@@ -2,9 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verifi/blocs/blocs.dart';
-import 'package:verifi/blocs/nfts/nfts.dart';
 import 'package:verifi/blocs/theme/theme_cubit.dart';
-import 'package:verifi/models/profile.dart';
 
 class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
@@ -76,19 +74,17 @@ class _ProfileBodyState extends State<ProfileBody> {
   }
 
   Widget _colorPaletteSelector() {
-    final palettes =
-        context.watch<ThemeCubit>().state.palette?.paletteColors ?? [];
-    print(palettes);
+    final colors = context.read<ThemeCubit>().state.colors;
     return SizedBox(
       height: 100,
       child: Row(
         children: [
           Expanded(
             child: ListView.builder(
-              itemCount: palettes.length,
+              itemCount: colors.length,
               itemBuilder: (context, index) {
                 return CircleAvatar(
-                  backgroundColor: palettes[index].color,
+                  backgroundColor: colors[index],
                 );
               },
               scrollDirection: Axis.horizontal,
