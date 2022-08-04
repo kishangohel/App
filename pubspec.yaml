@@ -13,14 +13,11 @@ dependencies:
   async: ^2.8.0
   auto_size_text: ^3.0.0
   bloc: ^8.0.0
-  bloc_concurrency: ^0.2.0
   cached_network_image: ^3.2.0
   cloud_firestore: ^3.1.0
-  dots_indicator: ^2.1.0
   equatable: ^2.0.0
   firebase_analytics: ^9.1.0
   firebase_auth: ^3.3.0
-  firebase_core: ^1.12.0
   firebase_crashlytics: ^2.5.0
   fluster: ^1.2.0
   flutter_bloc: ^8.0.0
@@ -28,16 +25,12 @@ dependencies:
   flutter_launcher_icons: ^0.9.0
   flutter_local_notifications: ^9.4.0
   flutter_picker: ^2.0.0
-  flutter_placeholder_textlines: ^1.1.0
-  flutter_secure_storage: ^5.0.0
-  font_awesome_flutter: ^10.1.0
   formz: ^0.4.1
   geoflutterfire: ^3.0.3
   geolocator: ^8.2.0
   google_fonts: ^3.0.0
   google_maps_flutter: ^2.1.0
   google_place: ^0.4.7
-  google_sign_in: ^5.2.0
   http: ^0.13.0
   hydrated_bloc: ^8.1.0
   json_theme: ^4.0.0
@@ -55,10 +48,12 @@ dependencies:
   url_launcher: ^6.1.0
   uuid: ^3.0.0
   walletconnect_dart: ^0.0.1
+  firebase_app_check: ^0.0.6+18
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  dependency_validator: ^3.0.0
   flutter_lints: ^1.0.4
   test: ^1.21.0
 

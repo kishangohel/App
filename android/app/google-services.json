@@ -22,6 +22,22 @@
           }
         },
         {
+          "client_id": "120678530892-j2172k1f8trcug3vk3hb1qismu8ipv4d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "world.verifi.app",
+            "certificate_hash": "91054394d3b467fdf903ca6fb0f8d558866f9082"
+          }
+        },
+        {
+          "client_id": "120678530892-sp3fa474r3tbg3eu6pcj9uvg924qrqcq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "world.verifi.app",
+            "certificate_hash": "093fd2caf193470ed364b9564872966a1f57e3fd"
+          }
+        },
+        {
           "client_id": "120678530892-bsiccirvjcu1hq1j2glvstro6e5udo7n.apps.googleusercontent.com",
           "client_type": 3
         }

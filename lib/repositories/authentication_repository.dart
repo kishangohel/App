@@ -1,16 +1,15 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 /// Handles all authentication logic with Firebase, Google, etc.
 class AuthenticationRepository {
   /// Firebase Auth client instance.
   final FirebaseAuth _fbAuth;
 
-  AuthenticationRepository(
-      {FirebaseAuth? firebaseAuth, GoogleSignIn? googleSignIn})
-      : _fbAuth = firebaseAuth ?? FirebaseAuth.instance;
+  AuthenticationRepository({
+    FirebaseAuth? firebaseAuth,
+  }) : _fbAuth = firebaseAuth ?? FirebaseAuth.instance;
 
   /// Streams [User] changes.
   Stream<User?> requestUserChanges() => _fbAuth.userChanges();

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -19,6 +20,8 @@ import 'package:verifi/blocs/shared_prefs.dart';
 import 'package:verifi/firebase_options.dart';
 import 'package:verifi/repositories/repositories.dart';
 import 'package:verifi/widgets/app.dart';
+
+import 'firebase_options.dart';
 
 /// The entrypoint of application.
 ///
@@ -40,6 +43,7 @@ void main() async {
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
+      await FirebaseAppCheck.instance.activate();
       // Use auth emulator in debug mode
       /* if (kDebugMode) { */
       /*   FirebaseAuth.instance.useAuthEmulator('localhost', 9099); */

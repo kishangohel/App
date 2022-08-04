@@ -65,20 +65,21 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
   }
 
   void _onTimeoutReached(String? verificationId) {
-    state.copyWith(
-      exception: FirebaseAuthException(
-        code: "sms-timeout",
-        message: "Did you receive a text message? If not, please go back and "
-            "try again",
+    emit(
+      state.copyWith(
+        exception: FirebaseAuthException(
+          code: "sms-timeout",
+          message: "Did you receive a text message? If not, please go back and "
+              "try again",
+        ),
       ),
     );
   }
 
   void _onVerificationFailed(FirebaseAuthException exception) {
-    state.copyWith(
-      exception: FirebaseAuthException(
-        code: 'verification-failed',
-        message: "Incorrect verification code",
+    emit(
+      state.copyWith(
+        exception: exception,
       ),
     );
   }
@@ -88,7 +89,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       // state will auto-update user via requestUserChanges stream
       await _authRepository.signInWithCredential(credential);
     } on FirebaseAuthException catch (e) {
-      state.copyWith(exception: e);
+      emit(state.copyWith(exception: e));
     }
   }
 }
