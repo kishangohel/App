@@ -74,21 +74,10 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
           ),
           BlocListener<ProfileCubit, Profile>(
             listener: (context, profile) {
-              // no display name means they are new
-              // proceed w/ onboarding
-              if (profile.displayName == null) {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/onboarding/permissions',
-                  ModalRoute.withName('/onboarding'),
-                );
-                // display name means profile already created
-                // set things up and skip onboarding
-              } else {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/onboarding/finalSetup',
-                  ModalRoute.withName(''),
-                );
-              }
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                '/onboarding/permissions',
+                ModalRoute.withName('/onboarding'),
+              );
             },
             listenWhen: (previous, current) {
               return (previous == Profile.empty());

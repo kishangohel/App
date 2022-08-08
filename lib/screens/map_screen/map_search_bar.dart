@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 
-class MapAppBar extends StatelessWidget implements PreferredSizeWidget {
+class MapSearchBar extends StatelessWidget implements PreferredSizeWidget {
   @override
-  Size get preferredSize => const Size.fromHeight(68.0);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.topCenter,
       margin: EdgeInsets.fromLTRB(
-          12, MediaQuery.of(context).padding.top + 8, 12, 10),
+        12,
+        MediaQuery.of(context).padding.top + 8,
+        12,
+        10,
+      ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15.0),
         color: Colors.white,

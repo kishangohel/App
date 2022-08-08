@@ -12,7 +12,7 @@ class PlacesRepository {
   Database? googlePlacesDb;
 
   final _googleMapsPlaces = GooglePlace(
-    'AIzaSyA-VnfoMDM6izc9gsLRVh2lbqPHYft7bbM',
+    'AIzaSyD80yy2qwlljBKXyMcWH0TBGeMgTuI5oRg',
   );
 
   String get apiKey => _googleMapsPlaces.apiKEY;
@@ -82,7 +82,9 @@ class PlacesRepository {
   }
 
   Future<DetailsResult?> _getPlaceDetailsRemote(
-      String placeId, bool isAutocomplete) async {
+    String placeId,
+    bool isAutocomplete,
+  ) async {
     final response = await _googleMapsPlaces.details.get(
       placeId,
       sessionToken: isAutocomplete ? sessionToken : null,

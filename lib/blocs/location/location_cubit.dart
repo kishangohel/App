@@ -7,12 +7,8 @@ import 'package:permission_handler/permission_handler.dart';
 class LocationCubit extends HydratedCubit<LatLng?> {
   LocationCubit() : super(null);
 
-  void getLocation() async {
-    var locationAllowed = await Permission.locationWhenInUse.isGranted;
-    if (false == locationAllowed) {
-      await Permission.locationWhenInUse.request();
-    }
-    locationAllowed = await Permission.locationWhenInUse.isGranted;
+  Future<void> getLocation() async {
+    final locationAllowed = await Permission.locationWhenInUse.isGranted;
     if (locationAllowed) {
       Position position = await Geolocator.getCurrentPosition();
       emit(LatLng(position.latitude, position.longitude));

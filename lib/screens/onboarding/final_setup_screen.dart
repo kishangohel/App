@@ -45,6 +45,7 @@ class _FinalSetupScreenState extends State<FinalSetupScreen> {
         }
         context.read<ThemeCubit>().updateColors(palette);
       }));
+      futureGroup.add(context.read<LocationCubit>().getLocation());
       futureGroup.future.then(
         (List<dynamic> values) {
           sharedPrefs.setOnboardingComplete();

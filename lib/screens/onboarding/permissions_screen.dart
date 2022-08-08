@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/screens/onboarding/widgets/permission_request_row.dart';
 import 'package:verifi/screens/onboarding/widgets/permissions_info_dialog.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
@@ -133,7 +135,12 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
   Widget _finishPermissionsButton() {
     return OutlinedButton(
       onPressed: () {
-        Navigator.of(context).pushNamed('/onboarding/readyWeb3');
+        final displayName = context.read<ProfileCubit>().displayName;
+        if (displayName == null) {
+          Navigator.of(context).pushNamed('/onboarding/readyWeb3');
+        } else {
+          Navigator.of(context).pushNamed('/onboarding/finalSetup');
+        }
       },
       child: Text(
         "Finish",

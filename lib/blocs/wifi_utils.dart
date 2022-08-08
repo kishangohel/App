@@ -30,20 +30,21 @@ class WifiUtils {
             .toStringAsFixed(1),
       );
 
-      final entity = WifiEntity.fromDocumentSnapshotWithDistance(doc, distance);
+      final entity =
+          WifiEntity.fromDocumentSnapshotWithDistance(doc, distance);
       return WifiDetails.fromEntity(entity);
     }).toList();
 
     // Execute placeDetails lookups in parallel and wait for all to complete
     // before returning wifis.
-    //
     await Future.wait(
       wifiDetailsList.asMap().entries.map((entry) async {
-        DetailsResult? placeDetails =
-            await placesRepo.getPlaceDetails(entry.value.placeId, false);
-
+        DetailsResult? placeDetails = await placesRepo.getPlaceDetails(
+          entry.value.placeId,
+          false,
+        );
+        if (placeDetails != null) {}
         // Add new Wifi object to list. Keep Firestore order of documents.
-        //
         wifis.add(Wifi(
           id: entry.value.id,
           wifiDetails: entry.value,
@@ -74,7 +75,8 @@ class WifiUtils {
             .toStringAsFixed(1),
       );
 
-      final entity = WifiEntity.fromDocumentSnapshotWithDistance(doc, distance);
+      final entity =
+          WifiEntity.fromDocumentSnapshotWithDistance(doc, distance);
       return WifiDetails.fromEntity(entity);
     }).toList();
     for (var wifiDetail in wifiDetailsList) {

@@ -7,7 +7,6 @@ import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/models/wifi_details.dart';
 
 // Main class to be passed to the UI
-//
 class Wifi extends Clusterable {
   final String id;
   final DetailsResult? placeDetails;
@@ -43,11 +42,11 @@ class Wifi extends Clusterable {
 
   factory Wifi.fromJson(Map<String, dynamic> json) {
     return Wifi(
-        id: json['id'],
-        placeDetails: DetailsResult.fromJson(json['placeDetails']),
-        wifiDetails: WifiDetails.fromJson(json['wifiDetails']),
-      );
-    }
+      id: json['id'],
+      placeDetails: DetailsResult.fromJson(json['placeDetails']),
+      wifiDetails: WifiDetails.fromJson(json['wifiDetails']),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         'id': id,
@@ -63,7 +62,8 @@ class Wifi extends Clusterable {
               placeDetails?.geometry?.location?.lat ?? -1.0,
               placeDetails?.geometry?.location?.lng ?? -1.0,
             )
-          : LatLng(clusterLocation?.latitude ?? -1.0, clusterLocation?.longitude ?? -1.0),
+          : LatLng(clusterLocation?.latitude ?? -1.0,
+              clusterLocation?.longitude ?? -1.0),
       icon: icon ?? BitmapDescriptor.defaultMarker,
       onTap: () {
         if (isCluster == false) {

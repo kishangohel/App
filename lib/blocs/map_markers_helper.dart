@@ -91,8 +91,8 @@ class MapMarkersHelper {
     Color clusterColor,
     Color clusterTextColor,
     int clusterWidth,
-  ) {
-    return Future.wait(clusterManager.clusters(
+  ) async {
+    final wifis = await Future.wait<Wifi>(clusterManager.clusters(
         [-180, -85, 180, 85], currentZoom.toInt()).map((mapMarker) async {
       final isCluster = mapMarker.isCluster;
       if (isCluster != null && isCluster) {
@@ -106,7 +106,8 @@ class MapMarkersHelper {
       }
 
       return mapMarker;
-    }).toList());
+    }));
+    return wifis;
   }
 
   static Future<BitmapDescriptor?> _getClusterMarkerImage(
