@@ -8,6 +8,7 @@ class ProfileCubit extends HydratedCubit<Profile> {
   ProfileCubit(
     this._usersRepository,
   ) : super(Profile.empty());
+  // ) : super(_testProfile());
 
   /// Get the profile information for a user by uid.
   ///
@@ -20,12 +21,12 @@ class ProfileCubit extends HydratedCubit<Profile> {
         : emit(Profile(
             id: userId,
             ethAddress: userData["ethAddress"],
-            photo: userData["photo"],
+            pfp: userData["pfp"],
             displayName: userData["displayName"],
           ));
   }
 
-  String? get profilePhoto => state.photo;
+  String? get pfp => state.pfp;
 
   String? get ethAddress => state.ethAddress;
 
@@ -34,7 +35,7 @@ class ProfileCubit extends HydratedCubit<Profile> {
   void setEthAddress(String address) =>
       emit(state.copyWith(ethAddress: address));
 
-  void setProfilePhoto(String photo) => emit(state.copyWith(photo: photo));
+  void setPfp(String pfp) => emit(state.copyWith(pfp: pfp));
 
   void setDisplayName(String name) => emit(state.copyWith(displayName: name));
 
@@ -47,9 +48,9 @@ class ProfileCubit extends HydratedCubit<Profile> {
     return _usersRepository.createProfile(state);
   }
 
-  Future<void> updateProfilePhoto(String photo) async {
-    await _usersRepository.updateProfilePicture(state.id, photo);
-    setProfilePhoto(photo);
+  Future<void> updatePfp(String pfp) async {
+    await _usersRepository.updatePfp(state.id, pfp);
+    setPfp(pfp);
   }
 
   @override
@@ -57,4 +58,13 @@ class ProfileCubit extends HydratedCubit<Profile> {
 
   @override
   Map<String, dynamic>? toJson(Profile state) => state.toJson();
+}
+
+Profile _testProfile() {
+  return const Profile(
+    id: "test_id",
+    ethAddress: "0x0101010101010101010101010101010101010101",
+    pfp: 'assets/profile_avatars/People-11.png',
+    displayName: 'test user',
+  );
 }

@@ -4,8 +4,8 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:pinput/pinput.dart';
 import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/models/profile.dart';
+import 'package:verifi/screens/onboarding/widgets/hero_verifi_title.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
-import 'package:verifi/widgets/text/app_title.dart';
 
 class SmsCodeScreen extends StatefulWidget {
   @override
@@ -38,18 +38,7 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
           tag: 'verifi-logo',
           child: Image.asset('assets/launcher_icon/vf_ios.png'),
         ),
-        title: Hero(
-          tag: 'verifi-title',
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              vertical: 16.0,
-              horizontal: 16.0,
-            ),
-            height: kToolbarHeight,
-            width: MediaQuery.of(context).size.width * 0.5,
-            child: const AppTitle(appBar: true),
-          ),
-        ),
+        title: HeroVerifiTitle(),
         centerTitle: true,
       ),
       body: MultiBlocListener(
@@ -78,9 +67,6 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
                 '/onboarding/permissions',
                 ModalRoute.withName('/onboarding'),
               );
-            },
-            listenWhen: (previous, current) {
-              return (previous == Profile.empty());
             },
           ),
         ],
@@ -177,7 +163,7 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
         ),
         onCompleted: (String pin) {
           context.read<AuthenticationCubit>().submitSmsCode(pin);
-          /* context.read<AuthenticationCubit>().submitSmsCode("941555"); */
+          // context.read<AuthenticationCubit>().submitSmsCode("941555");
         },
       ),
     );

@@ -8,7 +8,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:verifi/models/wifi.dart';
 
 class MapMarkersHelper {
-  static Future<void> initMarker() async {
+  static Future<void> initMarker(BuildContext context) async {
     // If marker already in cache, do nothing
     final FileInfo? markerImage =
         await DefaultCacheManager().getFileFromCache("map-marker.png");
@@ -25,7 +25,7 @@ class MapMarkersHelper {
         letterSpacing: 0.0,
         fontSize: 120.0,
         fontFamily: iconData.fontFamily,
-        color: Colors.green,
+        color: Theme.of(context).colorScheme.primary,
       ),
     );
     textPainter.layout();
@@ -35,7 +35,7 @@ class MapMarkersHelper {
     final ByteData? byteData =
         await img.toByteData(format: ImageByteFormat.png);
     if (null != byteData) {
-      DefaultCacheManager().putFile(
+      await DefaultCacheManager().putFile(
         "map-marker.png",
         byteData.buffer.asUint8List(),
         fileExtension: "png",
@@ -46,11 +46,8 @@ class MapMarkersHelper {
   static Future<BitmapDescriptor> getMarker() async {
     final FileInfo? markerImage =
         await DefaultCacheManager().getFileFromCache("map-marker.png");
-    if (markerImage == null) {
-      await initMarker();
-      return getMarker();
-    }
-    final Uint8List markerImageBytes = await markerImage.file.readAsBytes();
+    assert(markerImage != null);
+    final Uint8List markerImageBytes = await markerImage!.file.readAsBytes();
     return BitmapDescriptor.fromBytes(markerImageBytes);
   }
 

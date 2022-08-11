@@ -3,8 +3,8 @@ import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verifi/blocs/blocs.dart';
+import 'package:verifi/screens/onboarding/widgets/hero_verifi_title.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
-import 'package:verifi/widgets/text/app_title.dart';
 
 class PfpAvatarScreen extends StatefulWidget {
   @override
@@ -36,18 +36,7 @@ class _PfpAvatarScreenState extends State<PfpAvatarScreen> {
           tag: 'verifi-logo',
           child: Image.asset('assets/launcher_icon/vf_ios.png'),
         ),
-        title: Hero(
-          tag: 'verifi-title',
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              vertical: 16.0,
-              horizontal: 16.0,
-            ),
-            height: kToolbarHeight,
-            width: MediaQuery.of(context).size.width * 0.5,
-            child: const AppTitle(appBar: true),
-          ),
-        ),
+        title: HeroVerifiTitle(),
         centerTitle: true,
       ),
       body: Container(
@@ -156,7 +145,7 @@ class _PfpAvatarScreenState extends State<PfpAvatarScreen> {
             onPressed: () {
               final strIndex =
                   (_controller.page! + 1).toInt().toString().padLeft(2, "0");
-              context.read<ProfileCubit>().setProfilePhoto(
+              context.read<ProfileCubit>().setPfp(
                     'assets/profile_avatars/People-$strIndex.png',
                   );
               Navigator.of(context).pushNamed(
@@ -178,7 +167,7 @@ class _PfpAvatarScreenState extends State<PfpAvatarScreen> {
                 width: 2.0,
                 color: textColor,
               ),
-              primary: textColor,
+              foregroundColor: textColor,
             ),
           ),
         ],

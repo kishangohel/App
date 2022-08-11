@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:verifi/blocs/blocs.dart';
+import 'package:verifi/screens/onboarding/widgets/hero_verifi_title.dart';
+import 'package:verifi/screens/onboarding/widgets/onboarding_outline_button.dart';
 import 'package:verifi/screens/onboarding/widgets/permission_request_row.dart';
 import 'package:verifi/screens/onboarding/widgets/permissions_info_dialog.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
-import 'package:verifi/widgets/text/app_title.dart';
 
 class PermissionsScreen extends StatefulWidget {
   @override
@@ -44,10 +45,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
           tag: 'verifi-logo',
           child: Image.asset('assets/launcher_icon/vf_ios.png'),
         ),
-        title: const Hero(
-          tag: 'verifi-title',
-          child: AppTitle(),
-        ),
+        title: HeroVerifiTitle(),
         centerTitle: true,
       ),
       body: Container(
@@ -133,7 +131,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
   }
 
   Widget _finishPermissionsButton() {
-    return OutlinedButton(
+    return OnboardingOutlineButton(
       onPressed: () {
         final displayName = context.read<ProfileCubit>().displayName;
         if (displayName == null) {
@@ -142,12 +140,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
           Navigator.of(context).pushNamed('/onboarding/finalSetup');
         }
       },
-      child: Text(
-        "Finish",
-        style: Theme.of(context).textTheme.headline6?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-      ),
+      text: "Finish",
     );
   }
 

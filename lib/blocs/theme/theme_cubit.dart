@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -86,11 +87,17 @@ class ThemeCubit extends HydratedCubit<ThemeState> {
   ThemeState? fromJson(Map<String, dynamic> json) => ThemeState(
         lightTheme: ThemeDecoder.decodeThemeData(json["light_theme"])!,
         darkTheme: ThemeDecoder.decodeThemeData(json["dark_theme"])!,
+        colors: (json["colors"] as List<int>?)
+                ?.map((value) => Color(value))
+                .toList(growable: false) ??
+            [],
       );
 
   @override
   Map<String, dynamic>? toJson(ThemeState state) => {
         "light_theme": ThemeEncoder.encodeThemeData(state.lightTheme),
         "dark_theme": ThemeEncoder.encodeThemeData(state.darkTheme),
+        "colors":
+            state.colors.map((color) => color.value).toList(growable: false),
       };
 }

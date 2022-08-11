@@ -4,12 +4,13 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
-import 'package:verifi/blocs/nfts/nfts.dart';
+import 'package:verifi/blocs/nfts/nfts_cubit.dart';
 import 'package:verifi/blocs/wallet_connect/wallet_connect_cubit.dart';
 import 'package:verifi/blocs/wallet_connect/wallet_connect_state.dart';
 import 'package:verifi/resources/resources.dart';
+import 'package:verifi/screens/onboarding/widgets/hero_verifi_title.dart';
+import 'package:verifi/screens/onboarding/widgets/onboarding_outline_button.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
-import 'package:verifi/widgets/text/app_title.dart';
 
 class ConnectWalletScreen extends StatefulWidget {
   @override
@@ -55,10 +56,7 @@ class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
             tag: 'verifi-logo',
             child: Image.asset('assets/launcher_icon/vf_ios.png'),
           ),
-          title: const Hero(
-            tag: 'verifi-title',
-            child: AppTitle(),
-          ),
+          title: HeroVerifiTitle(),
           centerTitle: true,
         ),
         body: Container(
@@ -162,26 +160,10 @@ class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
     return BlocBuilder<WalletConnectCubit, WalletConnectState>(
       builder: (context, wcState) {
         return (wcState.canConnect)
-            ? OutlinedButton(
+            ? OnboardingOutlineButton(
                 onPressed: () =>
                     context.read<WalletConnectCubit>().connect(null),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text(
-                    "Connect",
-                    style: Theme.of(context).textTheme.headline4?.copyWith(
-                          color: textColor,
-                          fontWeight: FontWeight.w600,
-                        ),
-                  ),
-                ),
-                style: OutlinedButton.styleFrom(
-                  side: BorderSide(
-                    width: 2.0,
-                    color: textColor,
-                  ),
-                  primary: textColor,
-                ),
+                text: "Connect",
               )
             : Text(
                 "No wallets installed",
@@ -193,9 +175,9 @@ class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
 
   Widget _iosConnectWallet() {
     final _wallets = [
-      [WalletLogos.metamask, "MetaMask", "metamask.io"],
-      [WalletLogos.ledgerLive, "Ledger Live", "ledger.com"],
-      [WalletLogos.cryptoCom, "Crypto.com DeFi Wallet", "crypto.com"],
+      [Assets.metamask, "MetaMask", "metamask.io"],
+      [Assets.ledgerLive, "Ledger Live", "ledger.com"],
+      [Assets.cryptoCom, "Crypto.com DeFi Wallet", "crypto.com"],
     ];
 
     return ScrollSnapList(

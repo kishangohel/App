@@ -5,8 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verifi/blocs/display_name_textfield/display_name_textfield_bloc.dart';
 import 'package:verifi/blocs/profile/profile_cubit.dart';
+import 'package:verifi/screens/onboarding/widgets/hero_verifi_title.dart';
+import 'package:verifi/screens/onboarding/widgets/onboarding_outline_button.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
-import 'package:verifi/widgets/text/app_title.dart';
 
 class DisplayNameScreen extends StatefulWidget {
   @override
@@ -37,18 +38,7 @@ class _DisplayNameScreenState extends State<DisplayNameScreen> {
           tag: 'verifi-logo',
           child: Image.asset('assets/launcher_icon/vf_ios.png'),
         ),
-        title: Hero(
-          tag: 'verifi-title',
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              vertical: 16.0,
-              horizontal: 16.0,
-            ),
-            height: kToolbarHeight,
-            width: MediaQuery.of(context).size.width * 0.5,
-            child: const AppTitle(appBar: true),
-          ),
-        ),
+        title: HeroVerifiTitle(),
         centerTitle: true,
       ),
       body: Container(
@@ -178,11 +168,7 @@ class _DisplayNameScreenState extends State<DisplayNameScreen> {
                   displayNameState.errorText == null,
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: OutlinedButton(
-                  child: Text(
-                    "Claim display name",
-                    style: Theme.of(context).textTheme.headline6,
-                  ),
+                child: OnboardingOutlineButton(
                   onPressed: () {
                     assert(displayNameState.displayName != null);
                     context.read<ProfileCubit>().setDisplayName(
@@ -193,11 +179,7 @@ class _DisplayNameScreenState extends State<DisplayNameScreen> {
                       '/onboarding/finalSetup',
                     );
                   },
-                  style: OutlinedButton.styleFrom(
-                    side: BorderSide(
-                      color: _fontColor,
-                    ),
-                  ),
+                  text: "Claim display name",
                 ),
               ),
             ),

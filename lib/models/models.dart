@@ -2,7 +2,7 @@ export 'app_tab.dart';
 export 'bounty.dart';
 export 'email.dart';
 export 'feed_filter.dart';
-export 'nft.dart';
+export 'pfp.dart';
 export 'password.dart';
 export 'profile.dart';
 export 'user_location.dart';

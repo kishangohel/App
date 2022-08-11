@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
@@ -43,10 +45,19 @@ void main() async {
       );
       await FirebaseAppCheck.instance.activate();
       // Use auth emulator in debug mode
-      /* if (kDebugMode) { */
-      /*   FirebaseAuth.instance.useAuthEmulator('localhost', 9099); */
-      /*   FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080); */
-      /* } */
+      if (kDebugMode) {
+        FirebaseAuth.instance.setSettings(
+          appVerificationDisabledForTesting: true,
+        );
+        FirebaseAuth.instance.useAuthEmulator(
+          '192.168.12.216',
+          9099,
+        );
+        FirebaseFirestore.instance.useFirestoreEmulator(
+          '192.168.12.216',
+          8080,
+        );
+      }
 
       // Pass all uncaught errors from the framework to Crashlytics.
       FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;

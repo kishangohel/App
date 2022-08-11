@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,8 +11,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/blocs/display_name_textfield/display_name_textfield_bloc.dart';
 import 'package:verifi/blocs/intro_pages/intro_pages_cubit.dart';
-import 'package:verifi/blocs/nfts/nfts.dart';
-import 'package:verifi/blocs/shared_prefs.dart';
+import 'package:verifi/blocs/nfts/nfts_cubit.dart';
 import 'package:verifi/blocs/theme/theme_cubit.dart';
 import 'package:verifi/blocs/theme/theme_state.dart';
 import 'package:verifi/main.dart' as main;
@@ -212,7 +210,6 @@ class _VeriFiState extends State<VeriFi> {
 class VeriFiApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final _isOnboardingComplete = sharedPrefs.onboardingComplete();
     return BlocBuilder<ThemeCubit, ThemeState>(
       builder: (context, themeState) {
         return BlocBuilder<AuthenticationCubit, AuthenticationState>(
@@ -221,10 +218,8 @@ class VeriFiApp extends StatelessWidget {
               theme: themeState.lightTheme,
               darkTheme: themeState.darkTheme,
               themeMode: ThemeMode.system,
-              initialRoute: (FirebaseAuth.instance.currentUser != null &&
-                      _isOnboardingComplete)
-                  ? '/home'
-                  : '/onboarding',
+              // initialRoute: '/home',
+              home: _initialRoute(authState, context),
               routes: {
                 '/home': (context) => Home(),
                 '/onboarding': (context) => IntroScreen(),
@@ -246,6 +241,13 @@ class VeriFiApp extends StatelessWidget {
         );
       },
     );
+  }
+
+  Widget _initialRoute(AuthenticationState authState, BuildContext context) {
+    if (authState.user == null) {
+      return IntroScreen();
+    }
+    return Home();
   }
 }
 

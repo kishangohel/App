@@ -65,7 +65,7 @@ class _PermissionRequestRowState extends State<PermissionRequestRow> {
                 builder: (BuildContext context) => widget.moreInfoDialog,
               ),
               style: OutlinedButton.styleFrom(
-                primary: Colors.grey,
+                foregroundColor: Colors.grey,
                 side: BorderSide(
                   color: borderColor,
                 ),

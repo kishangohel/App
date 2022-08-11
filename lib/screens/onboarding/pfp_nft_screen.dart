@@ -4,10 +4,11 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verifi/blocs/blocs.dart';
-import 'package:verifi/blocs/nfts/nfts.dart';
-import 'package:verifi/models/nft.dart';
+import 'package:verifi/blocs/nfts/nfts_cubit.dart';
+import 'package:verifi/models/models.dart';
+import 'package:verifi/screens/onboarding/widgets/hero_verifi_title.dart';
+import 'package:verifi/screens/onboarding/widgets/onboarding_outline_button.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
-import 'package:verifi/widgets/text/app_title.dart';
 
 class PfpNftScreen extends StatefulWidget {
   @override
@@ -39,18 +40,7 @@ class _PfpNftScreenState extends State<PfpNftScreen> {
           tag: 'verifi-logo',
           child: Image.asset('assets/launcher_icon/vf_ios.png'),
         ),
-        title: Hero(
-          tag: 'verifi-title',
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              vertical: 16.0,
-              horizontal: 16.0,
-            ),
-            height: kToolbarHeight,
-            width: MediaQuery.of(context).size.width * 0.5,
-            child: const AppTitle(appBar: true),
-          ),
-        ),
+        title: HeroVerifiTitle(),
         centerTitle: true,
       ),
       body: Container(
@@ -110,7 +100,7 @@ class _PfpNftScreenState extends State<PfpNftScreen> {
   }
 
   Widget _pfpPageView() {
-    final List<Nft> nfts = context.watch<NftsCubit>().state;
+    final List<Pfp> nfts = context.watch<NftsCubit>().state;
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.4,
       child: Column(
@@ -150,7 +140,7 @@ class _PfpNftScreenState extends State<PfpNftScreen> {
                           vertical: 4.0,
                         ),
                         child: AutoSizeText(
-                          nft.name,
+                          nft.name ?? '',
                           maxLines: 1,
                           style:
                               Theme.of(context).textTheme.headline4?.copyWith(
@@ -168,7 +158,7 @@ class _PfpNftScreenState extends State<PfpNftScreen> {
                           bottom: 16.0,
                         ),
                         child: AutoSizeText(
-                          nft.collectionName,
+                          nft.collectionName ?? '',
                           maxLines: 1,
                           style:
                               Theme.of(context).textTheme.headline6?.copyWith(
@@ -194,32 +184,16 @@ class _PfpNftScreenState extends State<PfpNftScreen> {
                   ),
             ),
           ),
-          OutlinedButton(
+          OnboardingOutlineButton(
             onPressed: () {
-              context.read<ProfileCubit>().setProfilePhoto(
+              context.read<ProfileCubit>().setPfp(
                     nfts[_controller.page!.toInt()].image,
                   );
               Navigator.of(context).pushNamed(
                 '/onboarding/displayName',
               );
             },
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Text(
-                "Complete Setup",
-                style: Theme.of(context).textTheme.headline5?.copyWith(
-                      color: textColor,
-                      fontWeight: FontWeight.w600,
-                    ),
-              ),
-            ),
-            style: OutlinedButton.styleFrom(
-              side: BorderSide(
-                width: 2.0,
-                color: textColor,
-              ),
-              primary: textColor,
-            ),
+            text: "Complete Setup",
           ),
         ],
       ),

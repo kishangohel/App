@@ -2,9 +2,9 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:verifi/screens/onboarding/widgets/hero_verifi_title.dart';
 import 'package:verifi/screens/onboarding/widgets/onboarding_outline_button.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
-import 'package:verifi/widgets/text/app_title.dart';
 
 class TermsScreen extends StatefulWidget {
   @override
@@ -37,18 +37,7 @@ class _TermsScreenState extends State<TermsScreen> {
           tag: 'verifi-logo',
           child: Image.asset('assets/launcher_icon/vf_ios.png'),
         ),
-        title: Hero(
-          tag: 'verifi-title',
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              vertical: 16.0,
-              horizontal: 16.0,
-            ),
-            height: kToolbarHeight,
-            width: MediaQuery.of(context).size.width * 0.5,
-            child: const AppTitle(appBar: true),
-          ),
-        ),
+        title: HeroVerifiTitle(),
         centerTitle: true,
       ),
       body: Container(

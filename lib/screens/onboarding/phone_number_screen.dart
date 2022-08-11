@@ -3,9 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:phone_form_field/phone_form_field.dart';
 import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/screens/onboarding/widgets/account_phone_form_field.dart';
+import 'package:verifi/screens/onboarding/widgets/hero_verifi_title.dart';
 import 'package:verifi/screens/onboarding/widgets/onboarding_outline_button.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
-import 'package:verifi/widgets/text/app_title.dart';
 
 class PhoneNumberScreen extends StatefulWidget {
   PhoneNumberScreen() : super(key: UniqueKey());
@@ -44,18 +44,7 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
           tag: 'verifi-logo',
           child: Image.asset('assets/launcher_icon/vf_ios.png'),
         ),
-        title: Hero(
-          tag: 'verifi-title',
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              vertical: 16.0,
-              horizontal: 16.0,
-            ),
-            height: kToolbarHeight,
-            width: MediaQuery.of(context).size.width * 0.5,
-            child: const AppTitle(appBar: true),
-          ),
-        ),
+        title: HeroVerifiTitle(),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -146,7 +135,7 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
         onSaved: (phoneNumber) {
           BlocProvider.of<AuthenticationCubit>(context).requestSmsCode(
             "+${phoneNumber.countryCode} ${phoneNumber.nsn}",
-            /* "+1 555-333-4444", */
+            // "+1 555-333-4444",
           );
           Navigator.of(context).pushNamed('/onboarding/sms');
         },

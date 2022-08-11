@@ -7,9 +7,9 @@ import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/blocs/wallet_connect/wallet_connect_state.dart';
 import 'package:verifi/resources/resources.dart';
+import 'package:verifi/screens/onboarding/widgets/hero_verifi_title.dart';
 import 'package:verifi/screens/onboarding/widgets/onboarding_outline_button.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
-import 'package:verifi/widgets/text/app_title.dart';
 
 class SignWalletScreen extends StatefulWidget {
   @override
@@ -41,10 +41,7 @@ class _SignWalletScreenState extends State<SignWalletScreen> {
           tag: 'verifi-logo',
           child: Image.asset('assets/launcher_icon/vf_ios.png'),
         ),
-        title: const Hero(
-          tag: 'verifi-title',
-          child: AppTitle(),
-        ),
+        title: HeroVerifiTitle(),
         centerTitle: true,
       ),
       body: BlocListener<WalletConnectCubit, WalletConnectState>(
@@ -192,9 +189,9 @@ class _SignWalletScreenState extends State<SignWalletScreen> {
 
   Widget _iosConnectWallet() {
     final _wallets = [
-      [WalletLogos.metamask, "MetaMask", "metamask.io"],
-      [WalletLogos.ledgerLive, "Ledger Live", "ledger.com"],
-      [WalletLogos.cryptoCom, "Crypto.com DeFi Wallet", "crypto.com"],
+      [Assets.metamask, "MetaMask", "metamask.io"],
+      [Assets.ledgerLive, "Ledger Live", "ledger.com"],
+      [Assets.cryptoCom, "Crypto.com DeFi Wallet", "crypto.com"],
     ];
 
     return ScrollSnapList(

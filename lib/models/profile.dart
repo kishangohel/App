@@ -3,18 +3,18 @@ import 'package:equatable/equatable.dart';
 class Profile extends Equatable {
   final String id;
   final String? ethAddress;
-  final String? photo;
+  final String? pfp;
   final String? displayName;
 
   const Profile({
     required this.id,
     this.ethAddress,
-    this.photo,
+    this.pfp,
     this.displayName,
   });
 
   @override
-  List<Object?> get props => [id, ethAddress, photo, displayName];
+  List<Object?> get props => [id, ethAddress, pfp, displayName];
 
   factory Profile.empty() => const Profile(id: '');
 
@@ -22,7 +22,7 @@ class Profile extends Equatable {
     return {
       "id": id,
       "ethAddress": ethAddress,
-      "photo": photo,
+      "pfp": pfp,
       "displayName": displayName,
     };
   }
@@ -31,7 +31,7 @@ class Profile extends Equatable {
     return Profile(
       id: json['id'] ?? '',
       ethAddress: json['ethAddress'],
-      photo: json['photo'],
+      pfp: json['pfp'],
       displayName: json['displayName'],
     );
   }
@@ -39,17 +39,17 @@ class Profile extends Equatable {
   Profile copyWith({
     String? id,
     String? ethAddress,
-    String? photo,
+    String? pfp,
     String? displayName,
   }) {
     return Profile(
       id: id ?? this.id,
       ethAddress: ethAddress ?? this.ethAddress,
-      photo: photo ?? this.photo,
+      pfp: pfp ?? this.pfp,
       displayName: displayName ?? this.displayName,
     );
   }
 
   @override
-  String toString() => "User: { $id, $ethAddress, $displayName }";
+  String toString() => "User: { $id, $ethAddress, $pfp, $displayName }";
 }

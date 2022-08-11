@@ -35,7 +35,7 @@ class MapCubit extends Cubit<MapState> {
         (MediaQuery.of(context).platformBrightness == Brightness.light)
             ? lightMapStyle
             : darkMapStyle);
-    await MapMarkersHelper.initMarker();
+    await MapMarkersHelper.initMarker(context);
     marker = await MapMarkersHelper.getMarker();
   }
 

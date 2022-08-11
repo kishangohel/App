@@ -1,21 +1,21 @@
 import 'package:equatable/equatable.dart';
 
-class Nft extends Equatable {
+class Pfp extends Equatable {
   final int id;
   final String image;
-  final String name;
-  final String collectionName;
+  final String? name;
+  final String? collectionName;
 
-  const Nft({
+  const Pfp({
     required this.id,
     required this.image,
-    required this.name,
-    required this.collectionName,
+    this.name,
+    this.collectionName,
   });
 
-  static Nft? fromJson(Map<String, dynamic> json) {
+  static Pfp? fromOpenSeaResponse(Map<String, dynamic> json) {
     if (json['image_url'] == null) return null;
-    return Nft(
+    return Pfp(
       id: json['id'],
       image: json['image_url'],
       name: json['name'],
@@ -27,5 +27,6 @@ class Nft extends Equatable {
   List<Object?> get props => [id];
 
   @override
-  String toString() => 'id: $id, name: "$name", collection: "$collectionName"';
+  String toString() =>
+      'id: $id, image: "$image", name: "$name", collection: "$collectionName"';
 }

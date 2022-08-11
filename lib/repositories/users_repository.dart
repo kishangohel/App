@@ -8,15 +8,15 @@ class UsersRepository {
   Future<void> createProfile(Profile profile) async {
     return usersCollection.doc(profile.id).set({
       "ethAddress": profile.ethAddress,
-      "photo": profile.photo,
+      "pfp": profile.pfp,
       "displayName": profile.displayName,
       "createdOn": Timestamp.now(),
     });
   }
 
-  Future<void> updateProfilePicture(String userId, String photo) async {
+  Future<void> updatePfp(String userId, String pfp) async {
     return usersCollection.doc(userId).update({
-      "photo": photo,
+      "pfp": pfp,
     });
   }
 

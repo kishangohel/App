@@ -8,6 +8,8 @@ import 'package:verifi/blocs/shared_prefs.dart';
 import 'package:verifi/blocs/theme/theme_cubit.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 
+import 'widgets/hero_verifi_title.dart';
+
 class FinalSetupScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _FinalSetupScreenState();
@@ -31,7 +33,7 @@ class _FinalSetupScreenState extends State<FinalSetupScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       futureGroup.add(context.read<ProfileCubit>().createProfile());
       futureGroup.add(Future(() async {
-        final photo = context.read<ProfileCubit>().profilePhoto;
+        final photo = context.read<ProfileCubit>().pfp;
         if (photo == null) return;
         PaletteGenerator palette;
         if (photo.contains("http")) {
@@ -64,6 +66,15 @@ class _FinalSetupScreenState extends State<FinalSetupScreen> {
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          leading: Hero(
+            tag: 'verifi-logo',
+            child: Image.asset('assets/launcher_icon/vf_ios.png'),
+          ),
+          title: HeroVerifiTitle(),
+          centerTitle: true,
+        ),
         body: Container(
           color: Colors.black,
           child: SafeArea(

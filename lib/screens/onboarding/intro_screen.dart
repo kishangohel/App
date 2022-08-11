@@ -20,7 +20,9 @@ class _IntroScreenState extends State<IntroScreen> {
     super.initState();
     Future.delayed(
       const Duration(seconds: 1, milliseconds: 500),
-      () => setState(() => opacity = 1),
+      () {
+        if (mounted) setState(() => opacity = 1);
+      },
     );
   }
 
@@ -141,15 +143,15 @@ class _IntroScreenState extends State<IntroScreen> {
         child: AnimatedTextKit(
           animatedTexts: [
             RotateAnimatedText(
-              "Crowdsourced WiFi",
+              "Fully automated WiFi access",
               textAlign: TextAlign.center,
             ),
             RotateAnimatedText(
-              "Powered by Web3",
+              "Powered by Web3 incentives",
               textAlign: TextAlign.center,
             ),
             RotateAnimatedText(
-              "Internet communities reimagined",
+              "Digital communities reimagined",
               textAlign: TextAlign.center,
             ),
           ],

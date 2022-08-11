@@ -15,7 +15,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
   AuthenticationCubit(this._authRepository)
       : super(const AuthenticationState()) {
     _userSubscription = _authRepository.requestUserChanges().listen((user) {
-      emit(state.copyWith(user: user));
+      emit(state.copyWith(user: user, exception: null));
     });
   }
 
@@ -69,7 +69,8 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       state.copyWith(
         exception: FirebaseAuthException(
           code: "sms-timeout",
-          message: "Did you receive a text message? If not, please go back and "
+          message:
+              "Did you receive a text message? If not, please go back and "
               "try again",
         ),
       ),
@@ -84,7 +85,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     );
   }
 
-  void _onVerificationCompleted(PhoneAuthCredential credential) async {
+  Future<void> _onVerificationCompleted(PhoneAuthCredential credential) async {
     try {
       // state will auto-update user via requestUserChanges stream
       await _authRepository.signInWithCredential(credential);

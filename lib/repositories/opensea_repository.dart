@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:verifi/models/nft.dart';
+import 'package:verifi/models/models.dart';
 import 'package:http/http.dart' as http;
 
 class OpenSeaRepository {
@@ -17,12 +17,12 @@ class OpenSeaRepository {
           path: 'api/v1',
         );
 
-  Future<List<Nft>> getAssetsOwnedByAddress(String address) async {
-    List<Nft> nfts = [];
+  Future<List<Pfp>> getAssetsOwnedByAddress(String address) async {
+    List<Pfp> nfts = [];
     Uri uri = _openSeaUri.replace(path: 'api/v1/assets');
     final queryParams = {
       "owner": address,
-      // most expensive NFTs listed first
+      // most valuable NFTs listed first
       "order_by": "sale_price",
       "order_direction": "desc",
       "include_orders": "false",
@@ -31,7 +31,7 @@ class OpenSeaRepository {
     final response = await http.get(uri);
     final assets = jsonDecode(response.body)["assets"];
     for (Map<String, dynamic> asset in assets) {
-      Nft? nft = Nft.fromJson(asset);
+      Pfp? nft = Pfp.fromOpenSeaResponse(asset);
       if (nft != null) nfts.add(nft);
     }
     return nfts;
