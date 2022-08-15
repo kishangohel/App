@@ -25,7 +25,6 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler {
     const val DISPATCHER_CALLBACK_HANDLE_KEY = "dispatcherCallbackHandle"
     const val CALLBACK_HANDLE_KEY = "callbackHandleKey"
 
-    @SuppressLint("MissingPermission")
     @JvmStatic
     fun registerGeofence(
         ctx: Context,

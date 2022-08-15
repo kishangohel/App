@@ -139,28 +139,30 @@ class GeofenceWorker(private val ctx: Context, private val workerParameters: Wor
           return
         }
         val suggestions = mutableListOf<WifiNetworkSuggestion>()
-        val wifiSuggestions = transformWifisToSuggestions(args)
-        suggestions.addAll(wifiSuggestions)
-        if (ActivityCompat.checkSelfPermission(
-            ctx,
-            Manifest.permission.ACCESS_FINE_LOCATION,
-          ) != PackageManager.PERMISSION_GRANTED
-        ) {
-          return
-        }
-        wifiManager.addSuggestionConnectionStatusListener(
-          executor,
-          connectionStatusListener
-        )
-        val status = wifiManager.addNetworkSuggestions(suggestions)
-        if (status != WifiManager.STATUS_NETWORK_SUGGESTIONS_SUCCESS) {
-          Log.e(TAG, "Failed to add network suggestions: $status")
-          futureCallback.error(
-            status.toString(),
-            "Failed to add network suggestion",
-            null
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+          val wifiSuggestions = transformWifisToSuggestions(args)
+          suggestions.addAll(wifiSuggestions)
+          if (ActivityCompat.checkSelfPermission(
+              ctx,
+              Manifest.permission.ACCESS_FINE_LOCATION,
+            ) != PackageManager.PERMISSION_GRANTED
+          ) {
+            return
+          }
+          wifiManager.addSuggestionConnectionStatusListener(
+            executor,
+            connectionStatusListener
           )
-          return
+          val status = wifiManager.addNetworkSuggestions(suggestions)
+          if (status != WifiManager.STATUS_NETWORK_SUGGESTIONS_SUCCESS) {
+            Log.e(TAG, "Failed to add network suggestions: $status")
+            futureCallback.error(
+              status.toString(),
+              "Failed to add network suggestion",
+              null
+            )
+            return
+          }
         }
         futureCallback.success(true)
       }
@@ -234,12 +236,12 @@ class GeofenceWorker(private val ctx: Context, private val workerParameters: Wor
   private fun setUpConnectionReceiver() {
     // Optional (Wait for post connection broadcast to one of your suggestions)
     val intentFilter =
-      IntentFilter(WifiManager.ACTION_WIFI_NETWORK_SUGGESTION_POST_CONNECTION);
+      IntentFilter(WifiManager.ACTION_WIFI_NETWORK_SUGGESTION_POST_CONNECTION)
 
     val broadcastReceiver = object : BroadcastReceiver() {
       override fun onReceive(context: Context, intent: Intent) {
         if (!intent.action.equals(WifiManager.ACTION_WIFI_NETWORK_SUGGESTION_POST_CONNECTION)) {
-          return;
+          return
         }
       }
     };
