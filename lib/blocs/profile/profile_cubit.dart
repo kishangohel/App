@@ -7,8 +7,8 @@ class ProfileCubit extends HydratedCubit<Profile> {
 
   ProfileCubit(
     this._usersRepository,
-  ) : super(Profile.empty());
-  // ) : super(_testProfile());
+    // ) : super(Profile.empty());
+  ) : super(_testProfile());
 
   /// Get the profile information for a user by uid.
   ///

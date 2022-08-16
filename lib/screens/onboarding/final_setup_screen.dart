@@ -3,7 +3,9 @@ import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:palette_generator/palette_generator.dart';
+import 'package:verifi/blocs/activity_recognition/activity_recognition_cubit.dart';
 import 'package:verifi/blocs/blocs.dart';
+import 'package:verifi/blocs/geofencing/geofencing_cubit.dart';
 import 'package:verifi/blocs/shared_prefs.dart';
 import 'package:verifi/blocs/theme/theme_cubit.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
@@ -48,6 +50,10 @@ class _FinalSetupScreenState extends State<FinalSetupScreen> {
         context.read<ThemeCubit>().updateColors(palette);
       }));
       futureGroup.add(context.read<LocationCubit>().getLocation());
+      futureGroup.add(GeofencingCubit.registerNearbyGeofences());
+      futureGroup.add(
+        ActivityRecognitionCubit.requestActivityTransitionUpdates(),
+      );
       futureGroup.future.then(
         (List<dynamic> values) {
           sharedPrefs.setOnboardingComplete();

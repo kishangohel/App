@@ -162,8 +162,8 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
           ),
         ),
         onCompleted: (String pin) {
-          context.read<AuthenticationCubit>().submitSmsCode(pin);
-          // context.read<AuthenticationCubit>().submitSmsCode("941555");
+          // context.read<AuthenticationCubit>().submitSmsCode(pin);
+          context.read<AuthenticationCubit>().submitSmsCode("941555");
         },
       ),
     );

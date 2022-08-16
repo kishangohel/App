@@ -6,14 +6,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
-import android.net.wifi.WifiNetworkSuggestion
-import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.concurrent.futures.CallbackToFutureAdapter
 import androidx.core.app.ActivityCompat
 import androidx.work.Data
@@ -21,29 +17,29 @@ import androidx.work.ForegroundInfo
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import com.google.common.util.concurrent.ListenableFuture
-import world.verifi.app.VeriFiWifiSuggestions.Companion.createWifiSuggestion
-import world.verifi.app.VeriFiWifiSuggestions.Companion.transformWifisToSuggestions
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.dart.DartExecutor
 import io.flutter.embedding.engine.loader.FlutterLoader
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.view.FlutterCallbackInformation
+import world.verifi.app.VeriFiWifiSuggestions.Companion.transformWifisToSuggestions
 import java.util.concurrent.Executors
 
 
-class GeofenceWorker(private val ctx: Context, private val workerParameters: WorkerParameters) :
+class BackgroundWorker(
+  private val ctx: Context,
+  private val workerParameters: WorkerParameters
+) :
   ListenableWorker(ctx, workerParameters), MethodChannel.MethodCallHandler {
-  private lateinit var backgroundChannel: MethodChannel
-  private val executor = Executors.newSingleThreadExecutor()
 
   companion object {
     private const val TAG = "GeofenceWorker"
 
     const val CALLBACK_HANDLE = "world.verifi.app.CALLBACK_HANDLE"
-    const val FENCE_IDS = "world.verifi.app.FENCE_IDS"
-    const val LAT = "world.verifi.app.LAT"
-    const val LNG = "world.verifi.app.LNG"
+    const val GF_FENCE_IDS = "world.verifi.app.GF_FENCE_IDS"
+    const val GF_LAT = "world.verifi.app.GF_LAT"
+    const val GF_LNG = "world.verifi.app.GF_LNG"
     const val BACKGROUND_CHANNEL_NAME = "world.verifi.app/background_channel"
     const val BACKGROUND_CHANNEL_INITIALIZED = "initialized"
     const val BACKGROUND_CHANNEL_ADD_SUGGESTIONS = "add_suggestions"
@@ -51,24 +47,31 @@ class GeofenceWorker(private val ctx: Context, private val workerParameters: Wor
     private val flutterLoader = FlutterLoader()
   }
 
+  private lateinit var backgroundChannel: MethodChannel
+  private val executor = Executors.newSingleThreadExecutor()
+
   private var engine: FlutterEngine? = null
   private val callbackHandle
     get() = workerParameters.inputData.getLong(CALLBACK_HANDLE, -1L)
   private val fenceIds
-    get() = workerParameters.inputData.getStringArray(FENCE_IDS)
+    get() = workerParameters.inputData.getStringArray(GF_FENCE_IDS)
   private val lat
-    get() = workerParameters.inputData.getDouble(LAT, -1.0)
+    get() = workerParameters.inputData.getDouble(GF_LAT, -1.0)
   private val lng
-    get() = workerParameters.inputData.getDouble(LNG, -1.0)
+    get() = workerParameters.inputData.getDouble(GF_LNG, -1.0)
 
   private val wifiManager =
     applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
 
   private lateinit var futureCompleter: CallbackToFutureAdapter.Completer<Result>
+
   private val futureCallback = object : MethodChannel.Result {
-    override fun notImplemented() {
+    override fun success(result: Any?) {
+      val isSuccess = result?.let { it as Boolean? } == true
+      if (isSuccess) futureCompleter.set(Result.success()) else futureCompleter.set(
+        Result.retry()
+      )
       stopEngine()
-      futureCompleter.set(Result.failure())
     }
 
     override fun error(
@@ -86,11 +89,9 @@ class GeofenceWorker(private val ctx: Context, private val workerParameters: Wor
       )
     }
 
-    override fun success(result: Any?) {
-      val isSuccess = result?.let { it as Boolean? } == true
-      if (isSuccess) futureCompleter.set(Result.success()) else futureCompleter.set(Result.retry())
+    override fun notImplemented() {
       stopEngine()
-
+      futureCompleter.set(Result.failure())
     }
   }
 
@@ -112,57 +113,52 @@ class GeofenceWorker(private val ctx: Context, private val workerParameters: Wor
     when (call.method) {
       BACKGROUND_CHANNEL_INITIALIZED -> {
         Log.d(TAG, "Background channel initialized called")
-        Log.d(
-          TAG,
-          "Max num of net suggestions: ${wifiManager.maxNumberOfNetworkSuggestionsPerApp}"
-        )
+        Log.d(TAG, "Input param lat: $lat")
+        Log.d(TAG, "Input param lng: $lng")
         backgroundChannel.invokeMethod(
           "sendCoordinates", // this can be whatever
           mapOf(
             CALLBACK_HANDLE to callbackHandle,
-            FENCE_IDS to fenceIds!!.toList(),
-            LAT to lat,
-            LNG to lng
+            GF_LAT to lat,
+            GF_LNG to lng,
           ),
-          futureCallback
+          futureCallback,
         )
+        Log.d(TAG, "We made it here")
       }
       BACKGROUND_CHANNEL_ADD_SUGGESTIONS -> {
         Log.d(TAG, "Add suggestions called")
         Log.d(TAG, "Add suggestions args: ${call.arguments}")
-        val args = call.arguments<List<List<String>>>()
+        val args = call.arguments<List<List<String>>?>()
         if (args.isNullOrEmpty()) {
-          futureCallback.error("no-args",
+          futureCallback.error(
+            "no-args",
             "No arguments passed to add suggestions",
-          null,
+            null,
           )
           return
         }
-        val suggestions = mutableListOf<WifiNetworkSuggestion>()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-          val wifiSuggestions = transformWifisToSuggestions(args)
-          suggestions.addAll(wifiSuggestions)
-          if (ActivityCompat.checkSelfPermission(
-              ctx,
-              Manifest.permission.ACCESS_FINE_LOCATION,
-            ) != PackageManager.PERMISSION_GRANTED
-          ) {
-            return
-          }
-          wifiManager.addSuggestionConnectionStatusListener(
-            executor,
-            connectionStatusListener
+        val suggestions = transformWifisToSuggestions(args)
+        if (ActivityCompat.checkSelfPermission(
+            ctx,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+          ) != PackageManager.PERMISSION_GRANTED
+        ) {
+          return
+        }
+        wifiManager.addSuggestionConnectionStatusListener(
+          executor,
+          connectionStatusListener
+        )
+        val status = wifiManager.addNetworkSuggestions(suggestions)
+        if (status != WifiManager.STATUS_NETWORK_SUGGESTIONS_SUCCESS) {
+          Log.e(TAG, "Failed to add network suggestions: $status")
+          futureCallback.error(
+            status.toString(),
+            "Failed to add network suggestion",
+            null
           )
-          val status = wifiManager.addNetworkSuggestions(suggestions)
-          if (status != WifiManager.STATUS_NETWORK_SUGGESTIONS_SUCCESS) {
-            Log.e(TAG, "Failed to add network suggestions: $status")
-            futureCallback.error(
-              status.toString(),
-              "Failed to add network suggestion",
-              null
-            )
-            return
-          }
+          return
         }
         futureCallback.success(true)
       }
@@ -232,7 +228,6 @@ class GeofenceWorker(private val ctx: Context, private val workerParameters: Wor
     }
   }
 
-  @RequiresApi(Build.VERSION_CODES.Q)
   private fun setUpConnectionReceiver() {
     // Optional (Wait for post connection broadcast to one of your suggestions)
     val intentFilter =
@@ -244,8 +239,8 @@ class GeofenceWorker(private val ctx: Context, private val workerParameters: Wor
           return
         }
       }
-    };
-    ctx.registerReceiver(broadcastReceiver, intentFilter);
+    }
+    ctx.registerReceiver(broadcastReceiver, intentFilter)
 
   }
 }

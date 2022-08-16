@@ -134,8 +134,8 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
         },
         onSaved: (phoneNumber) {
           BlocProvider.of<AuthenticationCubit>(context).requestSmsCode(
-            "+${phoneNumber.countryCode} ${phoneNumber.nsn}",
-            // "+1 555-333-4444",
+            // "+${phoneNumber.countryCode} ${phoneNumber.nsn}",
+            "+1 555-333-4444",
           );
           Navigator.of(context).pushNamed('/onboarding/sms');
         },

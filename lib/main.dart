@@ -1,15 +1,11 @@
-import 'dart:async';
 import 'dart:ui';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
@@ -21,54 +17,46 @@ import 'package:verifi/firebase_options.dart';
 import 'package:verifi/repositories/repositories.dart';
 import 'package:verifi/widgets/app.dart';
 
-import 'firebase_options.dart';
-
 /// The entrypoint of application.
 ///
 /// [Firebase], [HydratedBloc], [HydratedStorage], [BlocObserver], and
 /// [Crashlytics] are all initialized here.
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final storage = await HydratedStorage.build(
+  HydratedBloc.storage = await HydratedStorage.build(
     storageDirectory: await getApplicationSupportDirectory(),
   );
-  HydratedBlocOverrides.runZoned(
-    () async {
-      WidgetsFlutterBinding.ensureInitialized();
-      // disable printing in release mode
-      if (kReleaseMode) {
-        debugPrint = (String? message, {int? wrapWidth}) {};
-      }
-      await sharedPrefs.init();
-      await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      );
-      await FirebaseAppCheck.instance.activate();
-      // Use auth emulator in debug mode
-      if (kDebugMode) {
-        FirebaseAuth.instance.setSettings(
-          appVerificationDisabledForTesting: true,
-        );
-        FirebaseAuth.instance.useAuthEmulator(
-          '192.168.12.216',
-          9099,
-        );
-        FirebaseFirestore.instance.useFirestoreEmulator(
-          '192.168.12.216',
-          8080,
-        );
-      }
-
-      // Pass all uncaught errors from the framework to Crashlytics.
-      FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
-      if (defaultTargetPlatform == TargetPlatform.android) {
-        AndroidGoogleMapsFlutter.useAndroidViewSurface = true;
-      }
-      runApp(VeriFi());
-    },
-    blocObserver: LoggingBlocObserver(),
-    storage: storage,
+  Bloc.observer = LoggingBlocObserver();
+  // disable printing in release mode
+  if (kReleaseMode) {
+    debugPrint = (String? message, {int? wrapWidth}) {};
+  }
+  await sharedPrefs.init();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
   );
+  await FirebaseAppCheck.instance.activate();
+  // Use auth emulator in debug mode
+  // if (kDebugMode) {
+  //   FirebaseAuth.instance.setSettings(
+  //     appVerificationDisabledForTesting: true,
+  //   );
+  //   FirebaseAuth.instance.useAuthEmulator(
+  //     '/192.168.12.216',
+  //     9099,
+  //   );
+  //   FirebaseFirestore.instance.useFirestoreEmulator(
+  //     '192.168.12.216',
+  //     8080,
+  //   );
+  // }
+
+  // Pass all uncaught errors from the framework to Crashlytics.
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+  if (defaultTargetPlatform == TargetPlatform.android) {
+    AndroidGoogleMapsFlutter.useAndroidViewSurface = true;
+  }
+  runApp(VeriFi());
 }
 
 // Root-level callback dispatcher for VeriFi background channel.
@@ -85,10 +73,8 @@ void callbackDispatcher() async {
   backgroundChannel.setMethodCallHandler((call) async {
     debugPrint("Received coordinates from platform background channel");
     final int handle = call.arguments["world.verifi.app.CALLBACK_HANDLE"];
-    List fenceIds = call.arguments["world.verifi.app.FENCE_IDS"];
-    fenceIds = fenceIds.cast<String>();
-    final double lat = call.arguments["world.verifi.app.LAT"];
-    final double lng = call.arguments["world.verifi.app.LNG"];
+    final double lat = call.arguments["world.verifi.app.GF_LAT"];
+    final double lng = call.arguments["world.verifi.app.GF_LNG"];
     final Function? callback = PluginUtilities.getCallbackFromHandle(
       CallbackHandle.fromRawHandle(handle),
     );
@@ -107,51 +93,10 @@ void callbackDispatcher() async {
         .map((wifi) =>
             [wifi.wifiDetails?.ssid ?? "", wifi.wifiDetails?.password])
         .toList();
+    debugPrint("Adding WiFi suggestions");
     backgroundChannel.invokeMethod("add_suggestions", wifis);
-    callback(fenceIds as List<String?>, LatLng(lat, lng));
+    callback(LatLng(lat, lng));
     return true;
   });
   backgroundChannel.invokeMethod("initialized");
-}
-
-class Notification {
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
-
-  Future showNotificationWithoutSound(LatLng location) async {
-    var androidPlatformChannelSpecifics = const AndroidNotificationDetails(
-      '1',
-      'location-bg',
-      channelDescription: 'fetch location in background',
-      playSound: false,
-      importance: Importance.max,
-      priority: Priority.high,
-    );
-    var iOSPlatformChannelSpecifics = const IOSNotificationDetails(
-      presentSound: false,
-    );
-    var platformChannelSpecifics = NotificationDetails(
-      android: androidPlatformChannelSpecifics,
-      iOS: iOSPlatformChannelSpecifics,
-    );
-    await flutterLocalNotificationsPlugin.show(
-      0,
-      'Location fetched',
-      location.toString(),
-      platformChannelSpecifics,
-      payload: '',
-    );
-  }
-
-  Notification() {
-    var initializationSettingsAndroid =
-        const AndroidInitializationSettings('@mipmap/ic_launcher');
-    var initializationSettingsIOS = const IOSInitializationSettings();
-    var initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsIOS,
-    );
-    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-    flutterLocalNotificationsPlugin.initialize(initializationSettings);
-  }
 }

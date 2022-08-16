@@ -3,19 +3,15 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:geoflutterfire/geoflutterfire.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:verifi/blocs/activity_recognition/activity_recognition_cubit.dart';
 import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/blocs/display_name_textfield/display_name_textfield_bloc.dart';
+import 'package:verifi/blocs/geofencing/geofencing_cubit.dart';
 import 'package:verifi/blocs/intro_pages/intro_pages_cubit.dart';
 import 'package:verifi/blocs/nfts/nfts_cubit.dart';
 import 'package:verifi/blocs/theme/theme_cubit.dart';
 import 'package:verifi/blocs/theme/theme_state.dart';
 import 'package:verifi/main.dart' as main;
-import 'package:verifi/models/wifi.dart';
 import 'package:verifi/repositories/opensea_repository.dart';
 import 'package:verifi/repositories/repositories.dart';
 import 'package:verifi/screens/onboarding/pfp_avatar_screen.dart';
@@ -51,31 +47,14 @@ class VeriFi extends StatefulWidget {
 
 class _VeriFiState extends State<VeriFi> {
   static const platform = MethodChannel("world.verifi.app/channel");
-  String userUid = "";
-  FlutterLocalNotificationsPlugin notificationPlugin =
-      FlutterLocalNotificationsPlugin();
 
   @override
   void initState() {
     super.initState();
-    // initPlatformState();
-  }
-
-  // Initializes platform-specific code and starts activity recognition service.
-  //
-  // Asks for [Permission.locationAlways]
-  void initPlatformState() async {
     final int? dispatcherHandle =
         PluginUtilities.getCallbackHandle(main.callbackDispatcher)
             ?.toRawHandle();
-    await platform.invokeMethod("initialize", <dynamic>[dispatcherHandle]);
-    await getLocationAlwaysPermission();
-    registerNearbyGeofences();
-  }
-
-  static Future<bool> callback(List<String?> ids, LatLng l) async {
-    // main.Notification().showNotificationWithoutSound(l);
-    return Future.value(true);
+    platform.invokeMethod("initialize", <dynamic>[dispatcherHandle]);
   }
 
   @override
@@ -105,6 +84,9 @@ class _VeriFiState extends State<VeriFi> {
       ],
       child: MultiBlocProvider(
         providers: [
+          BlocProvider(
+            create: (context) => ActivityRecognitionCubit(),
+          ),
           BlocProvider<AddNetworkCubit>(
             create: (context) => AddNetworkCubit(
               RepositoryProvider.of<WifiRepository>(context),
@@ -122,6 +104,9 @@ class _VeriFiState extends State<VeriFi> {
           ),
           BlocProvider<FeedFilterBloc>(
             create: (context) => FeedFilterBloc(),
+          ),
+          BlocProvider(
+            create: (context) => GeofencingCubit(),
           ),
           BlocProvider<IntroPagesCubit>(
             create: (context) => IntroPagesCubit(),
@@ -171,40 +156,6 @@ class _VeriFiState extends State<VeriFi> {
       ),
     );
   }
-
-  Future<void> getLocationAlwaysPermission() async {
-    final granted = await Permission.locationAlways.isGranted;
-    if (granted) return;
-    await Permission.locationWhenInUse.request();
-    Permission.locationAlways.request();
-  }
-
-  Future<void> registerNearbyGeofences() async {
-    Position position = await Geolocator.getCurrentPosition();
-    List<Wifi> wifis = await WifiUtils.getNearbyWifi(
-      WifiRepository(),
-      GeoFirePoint(position.latitude, position.longitude),
-      1.0, // get everything within 1km
-    );
-    if (wifis.length > 1024) {
-      wifis = wifis.sublist(0, 1024);
-    }
-    final List<List<dynamic>> geofenceData = wifis
-        .map((wifi) => [
-              wifi.wifiDetails!.placeId,
-              wifi.wifiDetails!.location.latitude,
-              wifi.wifiDetails!.location.longitude,
-            ])
-        .toList();
-
-    platform.invokeMethod(
-      "registerGeofence",
-      [
-        PluginUtilities.getCallbackHandle(callback)!.toRawHandle(),
-        geofenceData,
-      ],
-    );
-  }
 }
 
 class VeriFiApp extends StatelessWidget {
@@ -218,8 +169,8 @@ class VeriFiApp extends StatelessWidget {
               theme: themeState.lightTheme,
               darkTheme: themeState.darkTheme,
               themeMode: ThemeMode.system,
-              // initialRoute: '/home',
-              home: _initialRoute(authState, context),
+              initialRoute: '/onboarding/permissions',
+              // home: _initialRoute(authState, context),
               routes: {
                 '/home': (context) => Home(),
                 '/onboarding': (context) => IntroScreen(),
