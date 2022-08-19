@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:verifi/widgets/text/app_title.dart';
+import 'package:verifi/screens/onboarding/widgets/app_title.dart';
 
 class HeroVerifiTitle extends StatelessWidget {
   @override
