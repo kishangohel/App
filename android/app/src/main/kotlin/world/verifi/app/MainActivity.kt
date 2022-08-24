@@ -5,7 +5,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Bundle
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
@@ -48,7 +47,8 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler {
             .setRequestId(id)
             .setCircularRegion(lat, lng, radius)
             .setTransitionTypes(
-              Geofence.GEOFENCE_TRANSITION_DWELL or Geofence.GEOFENCE_TRANSITION_ENTER
+              Geofence.GEOFENCE_TRANSITION_DWELL
+                  or Geofence.GEOFENCE_TRANSITION_ENTER
             )
             // 20 seconds
             .setLoiteringDelay(20000)
@@ -62,7 +62,10 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler {
           Manifest.permission.ACCESS_FINE_LOCATION,
         ) != PackageManager.PERMISSION_GRANTED
       ) {
-        Log.d(TAG, "Unable to register geofence due to lack of permissions.")
+        Log.d(
+          TAG,
+          "Unable to register geofence due to lack of permissions.",
+        )
         return
       }
       // Add the geofences
@@ -117,6 +120,17 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler {
       val request = buildActivityRecognitionRequest()
       val pendingIntent =
         getActivityRecognitionPendingIntent(ctx, callbackHandle)
+      if (ActivityCompat.checkSelfPermission(
+          ctx,
+          Manifest.permission.ACTIVITY_RECOGNITION,
+        ) != PackageManager.PERMISSION_GRANTED
+      ) {
+        Log.d(
+          TAG,
+          "Unable to register activity transition receiver due to lack of permission",
+        )
+        return
+      }
       arClient.requestActivityTransitionUpdates(request, pendingIntent).run {
         addOnSuccessListener {
           Log.d(TAG, "Activity recognition initialized successfully")
@@ -167,11 +181,6 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler {
   /**
    * Initialize geofencing client and activity recognition client
    */
-  override fun onCreate(savedInstanceState: Bundle?) {
-    geofencingClient = GeofencingClient(this)
-    activityRecognitionClient = ActivityRecognitionClient(this)
-    super.onCreate(savedInstanceState)
-  }
 
   /**
    * Initialize geofencing client, activity recognition client, and method channel

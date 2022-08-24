@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/blocs/wallet_connect/wallet_connect_state.dart';
-import 'package:verifi/resources/resources.dart';
 import 'package:verifi/screens/onboarding/widgets/hero_verifi_title.dart';
 import 'package:verifi/screens/onboarding/widgets/onboarding_outline_button.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
@@ -189,9 +188,13 @@ class _SignWalletScreenState extends State<SignWalletScreen> {
 
   Widget _iosConnectWallet() {
     final _wallets = [
-      [Assets.metamask, "MetaMask", "metamask.io"],
-      [Assets.ledgerLive, "Ledger Live", "ledger.com"],
-      [Assets.cryptoCom, "Crypto.com DeFi Wallet", "crypto.com"],
+      ["assets/wallet_logos/metamask.png", "MetaMask", "metamask.io"],
+      ["assets/wallet_logos/ledger_live.png", "Ledger Live", "ledger.com"],
+      [
+        "assets/wallet_logos/crypto_com.png",
+        "Crypto.com DeFi Wallet",
+        "crypto.com",
+      ],
     ];
 
     return ScrollSnapList(

@@ -167,7 +167,7 @@ class _PfpAvatarScreenState extends State<PfpAvatarScreen> {
                 width: 2.0,
                 color: textColor,
               ),
-              foregroundColor: textColor,
+              primary: textColor,
             ),
           ),
         ],
