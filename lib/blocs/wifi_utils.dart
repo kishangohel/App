@@ -89,6 +89,8 @@ class WifiUtils {
     List<Wifi> wifiMarkers,
     double zoom,
     BitmapDescriptor wifiMarker,
+    Color clusterColor,
+    Color clusterTextColor,
   ) async {
     for (Wifi marker in wifiMarkers) {
       marker.icon = wifiMarker;
@@ -101,8 +103,8 @@ class WifiUtils {
     final updatedMarkers = await MapMarkersHelper.getClusterMarkers(
       clusterManager,
       zoom,
-      Colors.green,
-      Colors.white,
+      clusterColor,
+      clusterTextColor,
       120,
     );
     return updatedMarkers;

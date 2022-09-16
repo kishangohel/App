@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:verifi/blocs/map/map.dart';
@@ -30,16 +31,20 @@ class MapCubit extends Cubit<MapState> {
     GoogleMapController controller,
     BuildContext context,
   ) async {
+    debugPrint("Map initialize called");
     mapController = controller;
     mapController?.setMapStyle(
         (MediaQuery.of(context).platformBrightness == Brightness.light)
             ? lightMapStyle
             : darkMapStyle);
+    await MapMarkersHelper.resetMarker(context);
     await MapMarkersHelper.initMarker(context);
     marker = await MapMarkersHelper.getMarker();
   }
 
-  void update() async {
+  void update(BuildContext context) async {
+    final clusterColor = Theme.of(context).colorScheme.primary;
+    final clusterTextColor = Theme.of(context).colorScheme.onPrimary;
     if (currentPosition == null) {
       return;
     }
@@ -63,6 +68,8 @@ class MapCubit extends Cubit<MapState> {
       wifis,
       zoom,
       marker!,
+      clusterColor,
+      clusterTextColor,
     );
     emit(state.copyWith(wifis: wifis));
   }

@@ -236,8 +236,7 @@ class _ProfileBodyState extends State<ProfileBody> {
     return (web3Enabled)
         ? FutureBuilder(
             future: context.read<NftsCubit>().loadNftsOwnedbyAddress(
-                  /* context.read<ProfileCubit>().ethAddress!, */
-                  "0x062D6D315e6C8AA196b9072d749E3f3F3579fDD0",
+                  context.read<ProfileCubit>().ethAddress!,
                 ),
             builder: (context, snapshot) {
               if (snapshot.connectionState != ConnectionState.done) {
@@ -288,14 +287,11 @@ class _ProfileBodyState extends State<ProfileBody> {
                     ),
                   ),
                   Visibility(
-                    visible: pfp.collectionName != null,
+                    visible: pfp.description != null,
                     child: Expanded(
                       flex: 1,
                       child: AutoSizeText(
-                        context
-                                .read<NftsCubit>()
-                                .state[index]
-                                .collectionName ??
+                        context.read<NftsCubit>().state[index].description ??
                             "",
                         maxLines: 1,
                         style: Theme.of(context).textTheme.headline6,
@@ -358,11 +354,11 @@ class _ProfileBodyState extends State<ProfileBody> {
               ),
             ),
             Visibility(
-              visible: pfp.collectionName != null,
+              visible: pfp.description != null,
               child: Expanded(
                 flex: 1,
                 child: AutoSizeText(
-                  context.read<NftsCubit>().state[index].collectionName ?? "",
+                  context.read<NftsCubit>().state[index].description ?? "",
                   maxLines: 1,
                   style: Theme.of(context).textTheme.headline5,
                 ),

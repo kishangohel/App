@@ -1,7 +1,7 @@
 name: verifi
 description: Bridging the universe with the metaverse
-
 version: 1.0.0+1
+publish_to: none
 
 environment:
   sdk: '>=2.15.1 <3.0.0'
@@ -26,6 +26,7 @@ dependencies:
   flutter_launcher_icons: ^0.10.0
   flutter_local_notifications: ^9.8.0
   flutter_picker: ^2.0.0
+  flutter_svg: ^1.1.0
   formz: ^0.4.1
   geoflutterfire: ^3.0.3
   geolocator: ^9.0.0
@@ -48,6 +49,9 @@ dependencies:
   url_launcher: ^6.1.0
   uuid: ^3.0.0
   walletconnect_dart: ^0.0.1
+
+  auto_connect:
+    path: ../auto_connect
 
 dev_dependencies:
   flutter_test:

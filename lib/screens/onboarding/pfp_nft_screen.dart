@@ -100,103 +100,108 @@ class _PfpNftScreenState extends State<PfpNftScreen> {
   }
 
   Widget _pfpPageView() {
-    final List<Pfp> nfts = context.watch<NftsCubit>().state;
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.4,
-      child: Column(
-        children: [
-          Expanded(
-            child: PageView.builder(
-              controller: _controller,
-              itemCount: nfts.length,
-              itemBuilder: (context, index) {
-                final nft = nfts[index];
-                return Container(
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 24.0,
-                  ),
-                  decoration: BoxDecoration(
-                    color: textColor,
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(12),
+    return BlocBuilder<NftsCubit, List<Pfp>>(builder: (context, nfts) {
+      return SizedBox(
+        height: MediaQuery.of(context).size.height * 0.4,
+        child: Column(
+          children: [
+            Expanded(
+              child: PageView.builder(
+                controller: _controller,
+                itemCount: nfts.length,
+                itemBuilder: (context, index) {
+                  final nft = nfts[index];
+                  return Container(
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 24.0,
                     ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.only(
-                            left: 16,
-                            right: 16,
-                            top: 16.0,
+                    decoration: BoxDecoration(
+                      color: textColor,
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(12),
+                      ),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.only(
+                              left: 16,
+                              right: 16,
+                              top: 16.0,
+                            ),
+                            child: Image.network(nft.image),
                           ),
-                          child: Image.network(nft.image),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0,
-                          vertical: 4.0,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16.0,
+                            vertical: 4.0,
+                          ),
+                          child: AutoSizeText(
+                            nft.name ?? '',
+                            maxLines: 1,
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline4
+                                ?.copyWith(
+                                  color: (textColor == Colors.white)
+                                      ? Colors.black
+                                      : Colors.white,
+                                ),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
-                        child: AutoSizeText(
-                          nft.name ?? '',
-                          maxLines: 1,
-                          style:
-                              Theme.of(context).textTheme.headline4?.copyWith(
-                                    color: (textColor == Colors.white)
-                                        ? Colors.black
-                                        : Colors.white,
-                                  ),
-                          textAlign: TextAlign.center,
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 16.0,
+                            right: 16.0,
+                            bottom: 16.0,
+                          ),
+                          child: AutoSizeText(
+                            nft.description ?? '',
+                            maxLines: 1,
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline6
+                                ?.copyWith(
+                                  color: (textColor == Colors.white)
+                                      ? Colors.black
+                                      : Colors.white,
+                                ),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          left: 16.0,
-                          right: 16.0,
-                          bottom: 16.0,
-                        ),
-                        child: AutoSizeText(
-                          nft.collectionName ?? '',
-                          maxLines: 1,
-                          style:
-                              Theme.of(context).textTheme.headline6?.copyWith(
-                                    color: (textColor == Colors.white)
-                                        ? Colors.black
-                                        : Colors.white,
-                                  ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Text(
+                "Swipe left/right to select",
+                style: Theme.of(context).textTheme.caption?.copyWith(
+                      color: textColor,
+                    ),
+              ),
+            ),
+            OnboardingOutlineButton(
+              onPressed: () {
+                context.read<ProfileCubit>().setPfp(
+                      nfts[_controller.page!.toInt()].image,
+                    );
+                Navigator.of(context).pushNamed(
+                  '/onboarding/displayName',
                 );
               },
+              text: "Complete Setup",
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: Text(
-              "Swipe left/right to select",
-              style: Theme.of(context).textTheme.caption?.copyWith(
-                    color: textColor,
-                  ),
-            ),
-          ),
-          OnboardingOutlineButton(
-            onPressed: () {
-              context.read<ProfileCubit>().setPfp(
-                    nfts[_controller.page!.toInt()].image,
-                  );
-              Navigator.of(context).pushNamed(
-                '/onboarding/displayName',
-              );
-            },
-            text: "Complete Setup",
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    });
   }
 }

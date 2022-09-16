@@ -14,7 +14,7 @@ String lightMapStyle = """
     "featureType": "administrative.land_parcel",
     "stylers": [
       {
-        "visibility": "off"
+        "visibility": "on"
       }
     ]
   },
@@ -22,7 +22,7 @@ String lightMapStyle = """
     "featureType": "administrative.neighborhood",
     "stylers": [
       {
-        "visibility": "off"
+        "visibility": "on"
       }
     ]
   },
@@ -31,7 +31,7 @@ String lightMapStyle = """
     "elementType": "labels",
     "stylers": [
       {
-        "visibility": "off"
+        "visibility": "on"
       }
     ]
   },
@@ -40,7 +40,7 @@ String lightMapStyle = """
     "elementType": "labels",
     "stylers": [
       {
-        "visibility": "off"
+        "visibility": "on"
       }
     ]
   },
@@ -48,7 +48,7 @@ String lightMapStyle = """
     "featureType": "road.local",
     "stylers": [
       {
-        "visibility": "off"
+        "visibility": "on"
       }
     ]
   }
@@ -110,7 +110,7 @@ String darkMapStyle = """
     "featureType": "administrative.neighborhood",
     "stylers": [
       {
-        "visibility": "off"
+        "visibility": "on"
       }
     ]
   },
@@ -200,7 +200,7 @@ String darkMapStyle = """
     "elementType": "labels",
     "stylers": [
       {
-        "visibility": "off"
+        "visibility": "on"
       }
     ]
   },
@@ -217,7 +217,7 @@ String darkMapStyle = """
     "featureType": "road.local",
     "stylers": [
       {
-        "visibility": "off"
+        "visibility": "on"
       }
     ]
   },

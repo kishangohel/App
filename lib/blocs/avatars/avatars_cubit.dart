@@ -8,9 +8,9 @@ class AvatarCubit extends Cubit<List<Pfp>> {
   void loadAvatars() {
     final avatars = <Pfp>[];
     for (var i = 1; i <= 24; i++) {
-      final asset =
-          "asset/profile_avatars/People-${i.toString().padLeft(2, '0')}";
-      final pfp = Pfp(id: i, image: asset);
+      final id = i.toString().padLeft(2, '0');
+      final asset = "asset/profile_avatars/People-$id";
+      final pfp = Pfp(id: "avatar-$id", image: asset);
       avatars.add(pfp);
     }
     emit(avatars);

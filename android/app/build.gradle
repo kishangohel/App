@@ -30,7 +30,7 @@ apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    compileSdkVersion flutter.compileSdkVersion
+    compileSdkVersion 33
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -68,10 +68,5 @@ flutter {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "com.google.android.gms:play-services-location:20.0.0"
-    implementation 'androidx.work:work-runtime-ktx:2.7.1'
-    implementation 'androidx.concurrent:concurrent-futures-ktx:1.1.0'
-    // Guava conflicts with ListenableFuture. The line below fixes that conflict...
-    implementation 'com.google.guava:guava:29.0-android'
 }
 

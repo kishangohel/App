@@ -38,8 +38,7 @@ class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
       listener: (context, state) {
         // listenWhen ensures status is not null
         context.read<NftsCubit>().loadNftsOwnedbyAddress(
-              /* state.status!.accounts[0], */
-              "0x062D6D315e6C8AA196b9072d749E3f3F3579fDD0",
+              state.status!.accounts[0],
             );
         Navigator.of(context).pushNamed('/onboarding/wallet/sign');
       },

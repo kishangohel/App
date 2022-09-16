@@ -1,6 +1,6 @@
 ```mermaid
   sequenceDiagram
-    participant R as WiFi Access Point (WAP) Database
+    participant R as Remote Database
     participant A as Application
     participant L as Location API
     participant G as Geofencing API
@@ -15,8 +15,8 @@
     loop User enters geofence
       par Update geofences
         A->>R: Update user location
-        A->>R: Request nearby waps
-        R->>A: Return nearby waps
+        A->>R: Request nearby WAPs
+        R->>A: Return nearby WAPs
         A->>G: Update geofences
       and Request user activity
         A->>C: Request user activity

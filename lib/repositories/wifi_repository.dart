@@ -5,7 +5,7 @@ import 'package:verifi/models/models.dart';
 
 class WifiRepository {
   final wifiMarkersCollection =
-      FirebaseFirestore.instance.collection('access_points_test');
+      FirebaseFirestore.instance.collection('access_points');
   final geo = Geoflutterfire();
 
   Future<WifiDetails?> getWifiMarkerAtPlaceId(String placeId) {

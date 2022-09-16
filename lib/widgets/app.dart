@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,8 +9,7 @@ import 'package:verifi/blocs/intro_pages/intro_pages_cubit.dart';
 import 'package:verifi/blocs/nfts/nfts_cubit.dart';
 import 'package:verifi/blocs/theme/theme_cubit.dart';
 import 'package:verifi/blocs/theme/theme_state.dart';
-import 'package:verifi/main.dart' as main;
-import 'package:verifi/repositories/opensea_repository.dart';
+import 'package:verifi/repositories/nftport_repository.dart';
 import 'package:verifi/repositories/repositories.dart';
 import 'package:verifi/screens/onboarding/pfp_avatar_screen.dart';
 import 'package:verifi/screens/onboarding/pfp_nft_screen.dart';
@@ -46,15 +43,9 @@ class VeriFi extends StatefulWidget {
 }
 
 class _VeriFiState extends State<VeriFi> {
-  static const platform = MethodChannel("world.verifi.app/channel");
-
   @override
   void initState() {
     super.initState();
-    final int? dispatcherHandle =
-        PluginUtilities.getCallbackHandle(main.callbackDispatcher)
-            ?.toRawHandle();
-    platform.invokeMethod("initialize", <dynamic>[dispatcherHandle]);
   }
 
   @override
@@ -69,8 +60,8 @@ class _VeriFiState extends State<VeriFi> {
         RepositoryProvider<AuthenticationRepository>(
           create: (context) => AuthenticationRepository(),
         ),
-        RepositoryProvider<OpenSeaRepository>(
-          create: (context) => OpenSeaRepository(useTestNet: true),
+        RepositoryProvider<NftPortRepository>(
+          create: (context) => NftPortRepository(),
         ),
         RepositoryProvider<PlacesRepository>(
           create: (context) => PlacesRepository(),
@@ -122,7 +113,7 @@ class _VeriFiState extends State<VeriFi> {
           ),
           BlocProvider<NftsCubit>(
             create: (context) => NftsCubit(
-              RepositoryProvider.of<OpenSeaRepository>(context),
+              RepositoryProvider.of<NftPortRepository>(context),
             ),
           ),
           BlocProvider<MapSearchCubit>(
@@ -169,7 +160,7 @@ class VeriFiApp extends StatelessWidget {
               theme: themeState.lightTheme,
               darkTheme: themeState.darkTheme,
               themeMode: ThemeMode.system,
-              initialRoute: '/onboarding/permissions',
+              initialRoute: '/onboarding/pfpNft',
               // home: _initialRoute(authState, context),
               routes: {
                 '/home': (context) => Home(),

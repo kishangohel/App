@@ -45,7 +45,7 @@ class _MapGoogleMapState extends State<MapGoogleMap>
                 await context.read<MapCubit>().mapController?.getZoomLevel();
             if (zoom != null) {
               if (zoom > 12.0) {
-                context.read<MapCubit>().update();
+                context.read<MapCubit>().update(context);
               } else {
                 context.read<MapCubit>().clear();
               }
