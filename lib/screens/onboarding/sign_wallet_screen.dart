@@ -17,7 +17,6 @@ class SignWalletScreen extends StatefulWidget {
 
 class _SignWalletScreenState extends State<SignWalletScreen> {
   double opacity = 0;
-  Color textColor = Colors.black;
   bool isChecked = false;
 
   @override
@@ -31,8 +30,6 @@ class _SignWalletScreenState extends State<SignWalletScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final brightness = MediaQuery.of(context).platformBrightness;
-    if (brightness == Brightness.dark) textColor = Colors.white;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
@@ -98,17 +95,14 @@ class _SignWalletScreenState extends State<SignWalletScreen> {
             ),
           ),
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 36),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  _bottomTextTitle(),
-                  _bottomTermsText(),
-                  _bottomAgreeText(),
-                  _bottomConnectButton(),
-                ],
-              ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                _bottomTextTitle(),
+                _bottomTermsText(),
+                _bottomAgreeText(),
+                _bottomConnectButton(),
+              ],
             ),
           ),
         ],
@@ -125,7 +119,6 @@ class _SignWalletScreenState extends State<SignWalletScreen> {
       child: AutoSizeText(
         "Agree to Terms & Conditions",
         style: Theme.of(context).textTheme.headline4?.copyWith(
-              color: textColor,
               fontWeight: FontWeight.w600,
             ),
         textAlign: TextAlign.center,
@@ -142,7 +135,6 @@ class _SignWalletScreenState extends State<SignWalletScreen> {
       child: AutoSizeText(
         "Please read the following:",
         style: Theme.of(context).textTheme.headline5?.copyWith(
-              color: textColor,
               fontWeight: FontWeight.w600,
             ),
         textAlign: TextAlign.center,
@@ -157,7 +149,6 @@ class _SignWalletScreenState extends State<SignWalletScreen> {
         "Terms of Use\n"
         "Privacy Policy",
         style: Theme.of(context).textTheme.headline6?.copyWith(
-              color: textColor,
               fontWeight: FontWeight.w600,
             ),
         textAlign: TextAlign.center,
@@ -171,7 +162,6 @@ class _SignWalletScreenState extends State<SignWalletScreen> {
       child: Text(
         "If you agree to these terms, please sign below",
         style: Theme.of(context).textTheme.headline6?.copyWith(
-              color: textColor,
               fontWeight: FontWeight.w600,
             ),
         textAlign: TextAlign.center,

@@ -15,10 +15,12 @@ class _PfpAvatarScreenState extends State<PfpAvatarScreen> {
   double opacity = 0;
   Color textColor = Colors.black;
   final PageController _controller = PageController();
-
+  // Randomized order that avatars appear
+  List<int> _randomizedAvatarIndices = [];
   @override
   void initState() {
     super.initState();
+    _randomizedAvatarIndices = _randomizeAvatarIndices();
     Future.delayed(
       const Duration(seconds: 1),
       () => setState(() => opacity = 1),
@@ -27,8 +29,6 @@ class _PfpAvatarScreenState extends State<PfpAvatarScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final brightness = MediaQuery.of(context).platformBrightness;
-    if (brightness == Brightness.dark) textColor = Colors.white;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
@@ -105,7 +105,9 @@ class _PfpAvatarScreenState extends State<PfpAvatarScreen> {
               controller: _controller,
               itemCount: 24,
               itemBuilder: (context, index) {
-                final strIndex = (index + 1).toString().padLeft(2, "0");
+                final strIndex = (_randomizedAvatarIndices[index] + 1)
+                    .toString()
+                    .padLeft(2, "0");
                 return Container(
                   margin: const EdgeInsets.symmetric(
                     horizontal: 24.0,
@@ -144,7 +146,9 @@ class _PfpAvatarScreenState extends State<PfpAvatarScreen> {
           OutlinedButton(
             onPressed: () {
               final strIndex =
-                  (_controller.page! + 1).toInt().toString().padLeft(2, "0");
+                  (_randomizedAvatarIndices[_controller.page!.toInt()] + 1)
+                      .toString()
+                      .padLeft(2, "0");
               context.read<ProfileCubit>().setPfp(
                     'assets/profile_avatars/People-$strIndex.png',
                   );
@@ -155,7 +159,7 @@ class _PfpAvatarScreenState extends State<PfpAvatarScreen> {
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Text(
-                "Complete Setup",
+                "Select Avatar",
                 style: Theme.of(context).textTheme.headline5?.copyWith(
                       color: textColor,
                       fontWeight: FontWeight.w600,
@@ -173,5 +177,11 @@ class _PfpAvatarScreenState extends State<PfpAvatarScreen> {
         ],
       ),
     );
+  }
+
+  List<int> _randomizeAvatarIndices() {
+    final intList = List<int>.generate(24, (i) => i);
+    intList.shuffle();
+    return intList;
   }
 }

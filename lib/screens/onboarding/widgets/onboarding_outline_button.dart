@@ -20,13 +20,14 @@ class OnboardingOutlineButton extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(8.0),
       child: OutlinedButton(
         child: AutoSizeText(
           _text,
           maxLines: 1,
-          style: Theme.of(context).textTheme.headline4?.copyWith(
+          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                 color: _borderTextColor,
+                height: 1.2,
               ),
         ),
         onPressed: () => _onPressed(),

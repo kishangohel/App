@@ -27,6 +27,7 @@
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
+flutter_jank_metrics*
 .packages
 .pub-cache/
 .pub/

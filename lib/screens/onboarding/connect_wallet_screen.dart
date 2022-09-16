@@ -18,7 +18,6 @@ class ConnectWalletScreen extends StatefulWidget {
 
 class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
   double opacity = 0;
-  Color textColor = Colors.black;
 
   @override
   void initState() {
@@ -32,20 +31,18 @@ class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final brightness = MediaQuery.of(context).platformBrightness;
-    if (brightness == Brightness.dark) textColor = Colors.white;
     return BlocListener<WalletConnectCubit, WalletConnectState>(
-      listener: (context, state) {
-        // listenWhen ensures status is not null
-        context.read<NftsCubit>().loadNftsOwnedbyAddress(
-              state.status!.accounts[0],
-            );
-        Navigator.of(context).pushNamed('/onboarding/wallet/sign');
-      },
+      // listenWhen ensures status is not null
       listenWhen: (previous, current) {
         return (previous.status == null ||
                 previous.status!.accounts.isEmpty) &&
             (current.status != null);
+      },
+      listener: (context, state) {
+        context.read<NftsCubit>().loadNftsOwnedbyAddress(
+              state.status!.accounts[0],
+            );
+        Navigator.of(context).pushNamed('/onboarding/wallet/sign');
       },
       child: Scaffold(
         appBar: AppBar(
@@ -112,8 +109,7 @@ class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
       ),
       child: AutoSizeText(
         "Connect your Ethereum wallet",
-        style: Theme.of(context).textTheme.headline4?.copyWith(
-              color: textColor,
+        style: Theme.of(context).textTheme.displaySmall?.copyWith(
               fontWeight: FontWeight.w600,
             ),
         textAlign: TextAlign.center,
@@ -127,7 +123,6 @@ class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
       child: AutoSizeText(
         "Your wallet will be used to",
         style: Theme.of(context).textTheme.headline5?.copyWith(
-              color: textColor,
               fontWeight: FontWeight.w600,
             ),
         textAlign: TextAlign.center,
@@ -147,8 +142,8 @@ class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
 \u2022 Select an NFT as your profile photo
 \u2022 Receive \$VERIFI tokens for making contributions to the network''',
         style: Theme.of(context).textTheme.headline6?.copyWith(
-              color: textColor,
               fontWeight: FontWeight.w600,
+              height: 1.2,
             ),
       ),
     );

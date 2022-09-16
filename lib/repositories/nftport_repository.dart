@@ -29,7 +29,10 @@ class NftPortRepository {
       queryParameters: queryParams,
     );
     final response = await http.get(_uri, headers: _headers);
-    final assets = jsonDecode(response.body)['nfts'];
+    final assets = jsonDecode(response.body)['nfts'] as List<dynamic>?;
+    if (assets == null) {
+      return <Pfp>[];
+    }
     for (Map<String, dynamic> asset in assets) {
       Pfp? nft = Pfp.fromNftPortResponse(asset);
       // Only support images for now (not vectors or videos)

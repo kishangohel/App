@@ -160,8 +160,7 @@ class VeriFiApp extends StatelessWidget {
               theme: themeState.lightTheme,
               darkTheme: themeState.darkTheme,
               themeMode: ThemeMode.system,
-              initialRoute: '/onboarding/pfpNft',
-              // home: _initialRoute(authState, context),
+              home: _initialRoute(authState, context),
               routes: {
                 '/home': (context) => Home(),
                 '/onboarding': (context) => IntroScreen(),

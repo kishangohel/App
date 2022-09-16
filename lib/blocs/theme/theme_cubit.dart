@@ -9,14 +9,14 @@ import 'package:verifi/blocs/theme/theme_state.dart';
 
 final _defaultLightTheme = ThemeData.from(
   colorScheme: const ColorScheme.light(primary: Colors.black),
-  textTheme: GoogleFonts.juraTextTheme(),
+  textTheme: GoogleFonts.juraTextTheme().apply(displayColor: Colors.black),
 );
 
 final _defaultDarkTheme = ThemeData.from(
   colorScheme: const ColorScheme.dark(primary: Colors.white),
   textTheme: GoogleFonts.juraTextTheme(
     ThemeData(brightness: Brightness.dark).textTheme,
-  ),
+  ).apply(displayColor: Colors.white),
 );
 
 class ThemeCubit extends HydratedCubit<ThemeState> {
@@ -39,12 +39,16 @@ class ThemeCubit extends HydratedCubit<ThemeState> {
     emit(state.copyWith(
       lightTheme: ThemeData.from(
         colorScheme: lightColorScheme,
-        textTheme: GoogleFonts.juraTextTheme(),
+        textTheme: GoogleFonts.juraTextTheme().apply(
+          displayColor: Colors.black,
+        ),
       ),
       darkTheme: ThemeData.from(
         colorScheme: darkColorScheme,
         textTheme: GoogleFonts.juraTextTheme(
           ThemeData(brightness: Brightness.dark).textTheme,
+        ).apply(
+          displayColor: Colors.white,
         ),
       ),
     ));
