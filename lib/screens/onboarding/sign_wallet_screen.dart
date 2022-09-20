@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/blocs/wallet_connect/wallet_connect_state.dart';
-import 'package:verifi/screens/onboarding/widgets/hero_verifi_title.dart';
+import 'package:verifi/screens/onboarding/widgets/onboarding_app_bar.dart';
 import 'package:verifi/screens/onboarding/widgets/onboarding_outline_button.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 
@@ -31,15 +31,7 @@ class _SignWalletScreenState extends State<SignWalletScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        leading: Hero(
-          tag: 'verifi-logo',
-          child: Image.asset('assets/launcher_icon/vf_ios.png'),
-        ),
-        title: HeroVerifiTitle(),
-        centerTitle: true,
-      ),
+      appBar: OnboardingAppBar(),
       body: BlocListener<WalletConnectCubit, WalletConnectState>(
         listener: (context, walletState) {
           if (walletState.exception != null) {
@@ -96,7 +88,7 @@ class _SignWalletScreenState extends State<SignWalletScreen> {
           ),
           Expanded(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 _bottomTextTitle(),
                 _bottomTermsText(),

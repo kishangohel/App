@@ -20,7 +20,7 @@ class AppTitle extends StatelessWidget {
         fit: BoxFit.fitWidth,
         child: AutoSizeText(
           "VeriFi",
-          style: GoogleFonts.quanticoTextTheme().headline1?.copyWith(
+          style: GoogleFonts.quanticoTextTheme().titleLarge?.copyWith(
                 color: _fontColor,
               ),
           textAlign: TextAlign.center,

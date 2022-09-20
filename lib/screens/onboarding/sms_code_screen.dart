@@ -3,8 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:pinput/pinput.dart';
 import 'package:verifi/blocs/blocs.dart';
+import 'package:verifi/blocs/shared_prefs.dart';
 import 'package:verifi/models/profile.dart';
-import 'package:verifi/screens/onboarding/widgets/hero_verifi_title.dart';
+import 'package:verifi/screens/onboarding/widgets/onboarding_app_bar.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 
 class SmsCodeScreen extends StatefulWidget {
@@ -32,15 +33,7 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
     final brightness = MediaQuery.of(context).platformBrightness;
     if (brightness == Brightness.dark) textColor = Colors.white;
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        leading: Hero(
-          tag: 'verifi-logo',
-          child: Image.asset('assets/launcher_icon/vf_ios.png'),
-        ),
-        title: HeroVerifiTitle(),
-        centerTitle: true,
-      ),
+      appBar: OnboardingAppBar(),
       body: MultiBlocListener(
         listeners: [
           BlocListener<AuthenticationCubit, AuthenticationState>(
@@ -63,10 +56,27 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
           ),
           BlocListener<ProfileCubit, Profile>(
             listener: (context, profile) {
-              Navigator.of(context).pushNamedAndRemoveUntil(
-                '/onboarding/permissions',
-                ModalRoute.withName('/onboarding'),
-              );
+              // if user already visited permissions page before, skip
+              if (sharedPrefs.permissionsComplete) {
+                // if account already exists, finish setup
+                // Otherwise, skip permissions and complete onboarding
+                if (profile.displayName == null) {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/onboarding/readyWeb3',
+                    ModalRoute.withName('/onboarding'),
+                  );
+                } else {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/onboarding/finalSetup',
+                    ModalRoute.withName('/onboarding'),
+                  );
+                }
+              } else {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/onboarding/permissions',
+                  ModalRoute.withName('/onboarding'),
+                );
+              }
             },
           ),
         ],
@@ -162,8 +172,7 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
           ),
         ),
         onCompleted: (String pin) {
-          // context.read<AuthenticationCubit>().submitSmsCode(pin);
-          context.read<AuthenticationCubit>().submitSmsCode("941555");
+          context.read<AuthenticationCubit>().submitSmsCode(pin);
         },
       ),
     );

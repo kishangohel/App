@@ -2,15 +2,13 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:palette_generator/palette_generator.dart';
 import 'package:verifi/blocs/activity_recognition/activity_recognition_cubit.dart';
 import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/blocs/geofencing/geofencing_cubit.dart';
 import 'package:verifi/blocs/shared_prefs.dart';
 import 'package:verifi/blocs/theme/theme_cubit.dart';
+import 'package:verifi/screens/onboarding/widgets/onboarding_app_bar.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
-
-import 'widgets/hero_verifi_title.dart';
 
 class FinalSetupScreen extends StatefulWidget {
   @override
@@ -35,18 +33,8 @@ class _FinalSetupScreenState extends State<FinalSetupScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       futureGroup.add(context.read<ProfileCubit>().createProfile());
       futureGroup.add(Future(() async {
-        final photo = context.read<ProfileCubit>().pfp;
-        if (photo == null) return;
-        PaletteGenerator palette;
-        if (photo.contains("http")) {
-          palette = await PaletteGenerator.fromImageProvider(
-            NetworkImage(photo),
-          );
-        } else {
-          palette = await PaletteGenerator.fromImageProvider(
-            AssetImage(photo),
-          );
-        }
+        final palette =
+            await context.read<ProfileCubit>().createPaletteFromPfp();
         context.read<ThemeCubit>().updateColors(palette);
       }));
       futureGroup.add(context.read<LocationCubit>().getLocation());
@@ -72,15 +60,7 @@ class _FinalSetupScreenState extends State<FinalSetupScreen> {
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.black,
-          leading: Hero(
-            tag: 'verifi-logo',
-            child: Image.asset('assets/launcher_icon/vf_ios.png'),
-          ),
-          title: HeroVerifiTitle(),
-          centerTitle: true,
-        ),
+        appBar: OnboardingAppBar(),
         body: Container(
           color: Colors.black,
           child: SafeArea(
@@ -135,10 +115,7 @@ class _FinalSetupScreenState extends State<FinalSetupScreen> {
         child: Text(
           "Finishing Setup",
           textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.headline3?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: textColor,
-              ),
+          style: Theme.of(context).textTheme.headlineMedium,
         ),
       ),
     );
@@ -172,22 +149,9 @@ class _FinalSetupScreenState extends State<FinalSetupScreen> {
         "Injecting color pallette...",
         cursor: "",
         speed: textSpeed,
-        textStyle: Theme.of(context).textTheme.headline4?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: textColor,
-            ),
+        textStyle: Theme.of(context).textTheme.headlineSmall,
         textAlign: TextAlign.center,
       ),
-      /* TypewriterAnimatedText( */
-      /*   "Building bridge...", */
-      /*   cursor: "", */
-      /*   speed: textSpeed, */
-      /*   textStyle: Theme.of(context).textTheme.headline4?.copyWith( */
-      /*         fontWeight: FontWeight.w600, */
-      /*         color: textColor, */
-      /*       ), */
-      /*   textAlign: TextAlign.center, */
-      /* ), */
       /* TypewriterAnimatedText( */
       /*   "Caching nearby WiFi...", */
       /*   cursor: "", */
@@ -202,10 +166,7 @@ class _FinalSetupScreenState extends State<FinalSetupScreen> {
         "Installing bitcoin miner...",
         cursor: "",
         speed: textSpeed,
-        textStyle: Theme.of(context).textTheme.headline4?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: textColor,
-            ),
+        textStyle: Theme.of(context).textTheme.headlineSmall,
         textAlign: TextAlign.center,
       ),
     ];
@@ -216,7 +177,7 @@ class _FinalSetupScreenState extends State<FinalSetupScreen> {
       visible: _justKidding,
       child: Text(
         "Just kidding",
-        style: Theme.of(context).textTheme.caption,
+        style: Theme.of(context).textTheme.labelLarge,
       ),
     );
   }

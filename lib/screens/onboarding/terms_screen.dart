@@ -2,7 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:verifi/screens/onboarding/widgets/hero_verifi_title.dart';
+import 'package:verifi/screens/onboarding/widgets/onboarding_app_bar.dart';
 import 'package:verifi/screens/onboarding/widgets/onboarding_outline_button.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 
@@ -31,15 +31,7 @@ class _TermsScreenState extends State<TermsScreen> {
     final brightness = MediaQuery.of(context).platformBrightness;
     if (brightness == Brightness.dark) _textColor = Colors.white;
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        leading: Hero(
-          tag: 'verifi-logo',
-          child: Image.asset('assets/launcher_icon/vf_ios.png'),
-        ),
-        title: HeroVerifiTitle(),
-        centerTitle: true,
-      ),
+      appBar: OnboardingAppBar(),
       body: Container(
         color: Colors.white,
         child: SafeArea(
@@ -101,9 +93,7 @@ class _TermsScreenState extends State<TermsScreen> {
   Widget _headerTitle() {
     return AutoSizeText(
       "Terms and Conditions",
-      style: Theme.of(context).textTheme.headline3?.copyWith(
-            color: _textColor,
-          ),
+      style: Theme.of(context).textTheme.headlineMedium,
       textAlign: TextAlign.center,
     );
   }
@@ -111,7 +101,7 @@ class _TermsScreenState extends State<TermsScreen> {
   Widget _headerSubtitle() {
     return AutoSizeText(
       "Please review and accept the following terms and conditions",
-      style: Theme.of(context).textTheme.headline6,
+      style: Theme.of(context).textTheme.titleSmall,
       textAlign: TextAlign.center,
     );
   }
@@ -133,7 +123,7 @@ class _TermsScreenState extends State<TermsScreen> {
             children: [
               TextSpan(
                 text: "I accept the ",
-                style: Theme.of(context).textTheme.headline6,
+                style: Theme.of(context).textTheme.titleSmall,
               ),
               TextSpan(
                 text: "Terms of Use",
@@ -141,7 +131,7 @@ class _TermsScreenState extends State<TermsScreen> {
                   ..onTap = () {
                     launchUrl(Uri.parse("https://verifi.world/terms"));
                   },
-                style: Theme.of(context).textTheme.headline6?.copyWith(
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       decoration: TextDecoration.underline,
                     ),
               ),
@@ -169,7 +159,7 @@ class _TermsScreenState extends State<TermsScreen> {
             children: [
               TextSpan(
                 text: "I accept the ",
-                style: Theme.of(context).textTheme.headline6,
+                style: Theme.of(context).textTheme.titleSmall,
               ),
               TextSpan(
                 text: "Privacy Policy",
@@ -177,8 +167,9 @@ class _TermsScreenState extends State<TermsScreen> {
                   ..onTap = () {
                     launchUrl(Uri.parse("https://verifi.world/privacy"));
                   },
-                style: Theme.of(context).textTheme.headline6?.copyWith(
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       decoration: TextDecoration.underline,
+                      decorationColor: Theme.of(context).colorScheme.onSurface,
                     ),
               ),
             ],
@@ -193,8 +184,8 @@ class _TermsScreenState extends State<TermsScreen> {
       visible: _termsAccepted && _privacyPolicyAccepted,
       child: OnboardingOutlineButton(
         text: "Continue",
-        onPressed: () {
-          Navigator.of(context).pushNamedAndRemoveUntil(
+        onPressed: () async {
+          await Navigator.of(context).pushNamedAndRemoveUntil(
             '/onboarding/pfpAvatar',
             (route) => false,
           );

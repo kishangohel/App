@@ -16,7 +16,7 @@ class AuthenticationRepository {
 
   User? get currentUser => _fbAuth.currentUser;
 
-  /// Set [displayName] in Firebase for [currentUser]
+  /// Set [displayName] in Firebase Auth for [currentUser]
   Future<void>? updateUsername(String username) =>
       _fbAuth.currentUser?.updateDisplayName(username);
 

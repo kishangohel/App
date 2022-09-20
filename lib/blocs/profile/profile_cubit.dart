@@ -1,4 +1,6 @@
+import 'package:flutter/widgets.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:palette_generator/palette_generator.dart';
 import 'package:verifi/models/profile.dart';
 import 'package:verifi/repositories/users_repository.dart';
 
@@ -7,8 +9,7 @@ class ProfileCubit extends HydratedCubit<Profile> {
 
   ProfileCubit(
     this._usersRepository,
-    // ) : super(Profile.empty());
-  ) : super(_testProfile());
+  ) : super(Profile.empty());
 
   /// Get the profile information for a user by uid.
   ///
@@ -53,18 +54,25 @@ class ProfileCubit extends HydratedCubit<Profile> {
     setPfp(pfp);
   }
 
+  Future<PaletteGenerator> createPaletteFromPfp() async {
+    final photo = state.pfp;
+    assert(photo != null);
+    PaletteGenerator palette;
+    if (photo!.contains("http")) {
+      palette = await PaletteGenerator.fromImageProvider(
+        NetworkImage(photo),
+      );
+    } else {
+      palette = await PaletteGenerator.fromImageProvider(
+        AssetImage(photo),
+      );
+    }
+    return palette;
+  }
+
   @override
   Profile? fromJson(Map<String, dynamic> json) => Profile.fromJson(json);
 
   @override
   Map<String, dynamic>? toJson(Profile state) => state.toJson();
-}
-
-Profile _testProfile() {
-  return const Profile(
-    id: "test_id",
-    ethAddress: "0x0101010101010101010101010101010101010101",
-    pfp: 'assets/profile_avatars/People-11.png',
-    displayName: 'test user',
-  );
 }

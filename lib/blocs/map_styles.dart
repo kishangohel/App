@@ -1,5 +1,3 @@
-const String isOnboardingComplete = "isOnboardingComplete";
-
 String lightMapStyle = """
 [
   {

@@ -3,7 +3,7 @@
     subgraph Onboarding
       s1(IntroScreen)-- Continue -->s2(PhoneNumberScreen)
       s2-- Submit phone number -->s3(SmsCodeScreen);
-      s4--Back-->s2
+      s3--Back-->s2
       s3--Submit SMS code-->s4(PermissionsScreen)
       s4--Approve / deny permissions-->s5(ReadyWeb3Screen)
 

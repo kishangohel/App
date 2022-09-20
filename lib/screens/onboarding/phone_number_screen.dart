@@ -3,12 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:phone_form_field/phone_form_field.dart';
 import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/screens/onboarding/widgets/account_phone_form_field.dart';
-import 'package:verifi/screens/onboarding/widgets/hero_verifi_title.dart';
+import 'package:verifi/screens/onboarding/widgets/onboarding_app_bar.dart';
 import 'package:verifi/screens/onboarding/widgets/onboarding_outline_button.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 
 class PhoneNumberScreen extends StatefulWidget {
-  PhoneNumberScreen() : super(key: UniqueKey());
+  const PhoneNumberScreen({super.key});
 
   @override
   createState() => _PhoneNumberScreenState();
@@ -16,7 +16,6 @@ class PhoneNumberScreen extends StatefulWidget {
 
 class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
   double opacity = 0;
-  Color textColor = Colors.black;
   bool submitVisibility = false;
   bool progressIndicatorVisibility = false;
   final formKey = GlobalKey<FormState>();
@@ -35,18 +34,8 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final brightness = MediaQuery.of(context).platformBrightness;
-    if (brightness == Brightness.dark) textColor = Colors.white;
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        leading: Hero(
-          tag: 'verifi-logo',
-          child: Image.asset('assets/launcher_icon/vf_ios.png'),
-        ),
-        title: HeroVerifiTitle(),
-        centerTitle: true,
-      ),
+      appBar: OnboardingAppBar(),
       body: SafeArea(
         child: Stack(
           children: [
@@ -79,7 +68,7 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
             ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.only(bottom: 24.0),
+                padding: const EdgeInsets.only(bottom: 16.0),
                 child: Column(
                   mainAxisAlignment: (submitVisibility)
                       ? MainAxisAlignment.end
@@ -106,10 +95,7 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
           padding: const EdgeInsets.only(bottom: 8.0),
           child: Text(
             "Enter your phone number\nto authenticate",
-            style: Theme.of(context).textTheme.headline4?.copyWith(
-                  color: textColor,
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(context).textTheme.titleMedium,
             textAlign: TextAlign.center,
           ),
         ),
@@ -123,7 +109,6 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
       child: AccountPhoneFormField(
         formKey: formKey,
         phoneController: phoneController,
-        textColor: textColor,
         onChanged: (PhoneNumber? number) {
           setState(() {
             submitVisibility = phoneController.value != null &&
@@ -132,12 +117,11 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
                 );
           });
         },
-        onSaved: (phoneNumber) {
+        onSaved: (phoneNumber) async {
           BlocProvider.of<AuthenticationCubit>(context).requestSmsCode(
-            // "+${phoneNumber.countryCode} ${phoneNumber.nsn}",
-            "+1 555-333-4444",
+            "+${phoneNumber.countryCode} ${phoneNumber.nsn}",
           );
-          Navigator.of(context).pushNamed('/onboarding/sms');
+          await Navigator.of(context).pushNamed('/onboarding/sms');
         },
       ),
     );
@@ -146,12 +130,15 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
   Widget _submitButton() {
     return Visibility(
       visible: submitVisibility,
-      maintainSize: false,
       maintainAnimation: true,
       maintainState: true,
-      child: OnboardingOutlineButton(
-        onPressed: () => formKey.currentState!.save(),
-        text: "Submit",
+      maintainSize: false,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 8.0),
+        child: OnboardingOutlineButton(
+          onPressed: () async => formKey.currentState!.save(),
+          text: "Submit",
+        ),
       ),
     );
   }

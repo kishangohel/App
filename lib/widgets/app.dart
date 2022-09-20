@@ -44,11 +44,6 @@ class VeriFi extends StatefulWidget {
 
 class _VeriFiState extends State<VeriFi> {
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     // Only allow app to be used in portrait mode.
     SystemChrome.setPreferredOrientations([
@@ -160,14 +155,14 @@ class VeriFiApp extends StatelessWidget {
               theme: themeState.lightTheme,
               darkTheme: themeState.darkTheme,
               themeMode: ThemeMode.system,
-              home: _initialRoute(authState, context),
+              initialRoute: _initialRoute(authState, context),
               routes: {
                 '/home': (context) => Home(),
-                '/onboarding': (context) => IntroScreen(),
+                '/onboarding': (context) => const IntroScreen(),
                 '/onboarding/readyWeb3': (context) => ReadyWeb3Screen(),
                 '/onboarding/terms': (context) => TermsScreen(),
                 '/onboarding/displayName': (context) => DisplayNameScreen(),
-                '/onboarding/phone': (context) => PhoneNumberScreen(),
+                '/onboarding/phone': (context) => const PhoneNumberScreen(),
                 '/onboarding/sms': (context) => SmsCodeScreen(),
                 '/onboarding/permissions': (context) => PermissionsScreen(),
                 '/onboarding/wallet': (context) => ConnectWalletScreen(),
@@ -184,11 +179,12 @@ class VeriFiApp extends StatelessWidget {
     );
   }
 
-  Widget _initialRoute(AuthenticationState authState, BuildContext context) {
+  String? _initialRoute(AuthenticationState authState, BuildContext context) {
     if (authState.user == null) {
-      return IntroScreen();
+      return '/onboarding';
+    } else {
+      return '/home';
     }
-    return Home();
   }
 }
 

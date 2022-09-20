@@ -7,7 +7,7 @@ import 'package:scroll_snap_list/scroll_snap_list.dart';
 import 'package:verifi/blocs/nfts/nfts_cubit.dart';
 import 'package:verifi/blocs/wallet_connect/wallet_connect_cubit.dart';
 import 'package:verifi/blocs/wallet_connect/wallet_connect_state.dart';
-import 'package:verifi/screens/onboarding/widgets/hero_verifi_title.dart';
+import 'package:verifi/screens/onboarding/widgets/onboarding_app_bar.dart';
 import 'package:verifi/screens/onboarding/widgets/onboarding_outline_button.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 
@@ -45,15 +45,7 @@ class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
         Navigator.of(context).pushNamed('/onboarding/wallet/sign');
       },
       child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.black,
-          leading: Hero(
-            tag: 'verifi-logo',
-            child: Image.asset('assets/launcher_icon/vf_ios.png'),
-          ),
-          title: HeroVerifiTitle(),
-          centerTitle: true,
-        ),
+        appBar: OnboardingAppBar(),
         body: Container(
           color: Colors.black,
           child: SafeArea(
@@ -109,9 +101,7 @@ class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
       ),
       child: AutoSizeText(
         "Connect your Ethereum wallet",
-        style: Theme.of(context).textTheme.displaySmall?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
+        style: Theme.of(context).textTheme.headlineSmall,
         textAlign: TextAlign.center,
       ),
     );
@@ -139,12 +129,9 @@ class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
       ),
       child: AutoSizeText(
         '''\u2022 Agree to VeriFi terms and conditions
-\u2022 Select an NFT as your profile photo
-\u2022 Receive \$VERIFI tokens for making contributions to the network''',
-        style: Theme.of(context).textTheme.headline6?.copyWith(
-              fontWeight: FontWeight.w600,
-              height: 1.2,
-            ),
+\u2022 Select an NFT as your PFP 
+\u2022 Receive web3 incentives (tokens, airdrops, NFTs, etc.)''',
+        style: Theme.of(context).textTheme.titleMedium,
       ),
     );
   }
@@ -154,13 +141,13 @@ class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
       builder: (context, wcState) {
         return (wcState.canConnect)
             ? OnboardingOutlineButton(
-                onPressed: () =>
+                onPressed: () async =>
                     context.read<WalletConnectCubit>().connect(null),
                 text: "Connect",
               )
             : Text(
                 "No wallets installed",
-                style: Theme.of(context).textTheme.headline5,
+                style: Theme.of(context).textTheme.titleLarge,
               );
       },
     );
@@ -198,7 +185,7 @@ class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
                   Image.asset(_wallets[index][0]),
                   Text(
                     _wallets[index][1],
-                    style: Theme.of(context).textTheme.headline5,
+                    style: Theme.of(context).textTheme.titleLarge,
                     textAlign: TextAlign.center,
                   ),
                 ],

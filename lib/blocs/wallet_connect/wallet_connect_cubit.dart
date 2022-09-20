@@ -17,9 +17,7 @@ class WalletConnectCubit extends Cubit<WalletConnectState> {
         name: 'VeriFi',
         description: 'Bridging the universe with the metaverse',
         url: 'https://verifi.world',
-        icons: [
-          'https://gblobscdn.gitbook.com/spaces%2F-LJJeCjcLrr53DcT1Ml7%2Favatar.png?alt=media'
-        ],
+        icons: ['https://verifi.world/images/logo_white_on_black.png'],
       ),
     );
     connector.registerListeners(
@@ -35,7 +33,7 @@ class WalletConnectCubit extends Cubit<WalletConnectState> {
     emit(state.copyWith(canConnect: _canConnect));
   }
 
-  void connect(String? domain) async {
+  void connect(String? domain) {
     // if session already connected, kill it first
     /* await connector.sendCustomRequest( */
     /*   method: "wc_sessionUpdate", */
@@ -51,7 +49,9 @@ class WalletConnectCubit extends Cubit<WalletConnectState> {
     /* await connector.close(forceClose: true); */
     if (connector.session.connected) {
       connector.session.reset();
-      emit(state.copyWith(status: SessionStatus(chainId: 1, accounts: [])));
+      emit(state.copyWith(
+        status: SessionStatus(chainId: 1, accounts: []),
+      ));
     }
     connector.connect(
       chainId: 1,

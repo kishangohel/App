@@ -1,9 +1,11 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/blocs/wallet_connect/wallet_connect_state.dart';
-import 'package:verifi/screens/onboarding/widgets/hero_verifi_title.dart';
+import 'package:verifi/screens/onboarding/widgets/onboarding_app_bar.dart';
 import 'package:verifi/screens/onboarding/widgets/onboarding_outline_button.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 
@@ -14,7 +16,6 @@ class ReadyWeb3Screen extends StatefulWidget {
 
 class _ReadyWeb3ScreenState extends State<ReadyWeb3Screen> {
   double opacity = 0;
-  Color _textColor = Colors.black;
 
   @override
   void initState() {
@@ -28,18 +29,8 @@ class _ReadyWeb3ScreenState extends State<ReadyWeb3Screen> {
 
   @override
   Widget build(BuildContext context) {
-    final brightness = MediaQuery.of(context).platformBrightness;
-    if (brightness == Brightness.dark) _textColor = Colors.white;
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        leading: Hero(
-          tag: 'verifi-logo',
-          child: Image.asset('assets/launcher_icon/vf_ios.png'),
-        ),
-        title: HeroVerifiTitle(),
-        centerTitle: true,
-      ),
+      appBar: OnboardingAppBar(),
       body: Container(
         color: Colors.white,
         child: SafeArea(
@@ -69,10 +60,10 @@ class _ReadyWeb3ScreenState extends State<ReadyWeb3Screen> {
           children: [
             Expanded(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 16.0),
+                    padding: const EdgeInsets.only(top: 32.0, bottom: 16.0),
                     child: _headerTitle(),
                   ),
                   _headerSubtitle(),
@@ -100,21 +91,21 @@ class _ReadyWeb3ScreenState extends State<ReadyWeb3Screen> {
   Widget _headerTitle() {
     return AutoSizeText(
       "Ready for Web3?",
-      style: Theme.of(context).textTheme.headline3?.copyWith(
-            color: _textColor,
-          ),
+      style: Theme.of(context).textTheme.headlineLarge,
       textAlign: TextAlign.center,
     );
   }
 
   Widget _headerSubtitle() {
     return AutoSizeText(
-      "VeriFi is bridging the universe with the metaverse, one WiFi hotspot "
-      "at a time.\n\nWith the advent of digital money and blockchain "
-      "technologies, VeriFi can directly incentivize users around the world to "
-      "contribute to the VeriFi network.",
-      maxLines: 7,
-      style: Theme.of(context).textTheme.headline6,
+      "Our vision is to create the most accessible, impactful web3 project in "
+      "the world.\n\n"
+      "VeriFi directly incentivize users around the world to contribute to and "
+      "maintain VeriNet: the world's first WiFi crowdsourcing project powered "
+      "by web3. This lays the foundation for a plethora of future initiatives "
+      "on our roadmap.",
+      maxLines: 9,
+      style: Theme.of(context).textTheme.headlineSmall,
       textAlign: TextAlign.center,
     );
   }
@@ -124,19 +115,27 @@ class _ReadyWeb3ScreenState extends State<ReadyWeb3Screen> {
       TextSpan(
         children: [
           TextSpan(
-            text: "Check out our roadmap\n",
-            style: Theme.of(context).textTheme.headline5?.copyWith(
-                  decoration: TextDecoration.underline,
-                ),
-          ),
+              text: "Join our Discord\n",
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    decoration: TextDecoration.underline,
+                  ),
+              recognizer: TapGestureRecognizer()
+                ..onTap = () async {
+                  launchUrl(Uri(
+                    scheme: 'https',
+                    host: 'discord.gg',
+                    path: 'XbNreXVcCv',
+                  ));
+                }),
           TextSpan(
             text: "to see the exciting new features and incentives we plan "
                 "to release!",
-            style: Theme.of(context).textTheme.headline6,
+            style: Theme.of(context).textTheme.headlineSmall,
           ),
         ],
       ),
       textAlign: TextAlign.center,
+      maxLines: 3,
     );
   }
 
@@ -145,10 +144,10 @@ class _ReadyWeb3ScreenState extends State<ReadyWeb3Screen> {
       builder: (context, state) {
         return OnboardingOutlineButton(
           text: "Continue",
-          onPressed: () {
+          onPressed: () async {
             (state.canConnect)
-                ? Navigator.of(context).pushNamed('/onboarding/wallet')
-                : Navigator.of(context).pushNamed('/onboarding/terms');
+                ? await Navigator.of(context).pushNamed('/onboarding/wallet')
+                : await Navigator.of(context).pushNamed('/onboarding/terms');
           },
         );
       },

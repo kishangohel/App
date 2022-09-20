@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:verifi/blocs/blocs.dart';
-import 'package:verifi/screens/onboarding/widgets/hero_verifi_title.dart';
+import 'package:verifi/blocs/shared_prefs.dart';
+import 'package:verifi/screens/onboarding/widgets/onboarding_app_bar.dart';
 import 'package:verifi/screens/onboarding/widgets/onboarding_outline_button.dart';
 import 'package:verifi/screens/onboarding/widgets/permission_request_row.dart';
 import 'package:verifi/screens/onboarding/widgets/permissions_info_dialog.dart';
@@ -38,27 +39,26 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
   Widget build(BuildContext context) {
     final brightness = MediaQuery.of(context).platformBrightness;
     if (brightness == Brightness.dark) textColor = Colors.white;
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        leading: Hero(
-          tag: 'verifi-logo',
-          child: Image.asset('assets/launcher_icon/vf_ios.png'),
-        ),
-        title: HeroVerifiTitle(),
-        centerTitle: true,
-      ),
-      body: Container(
-        color: Colors.white,
-        child: SafeArea(
-          child: Stack(
-            children: [
-              ...onBoardingBackground(context),
-              _permissionsScreenContents(),
-            ],
+    return WillPopScope(
+      child: Scaffold(
+        appBar: OnboardingAppBar(),
+        body: Container(
+          color: Colors.white,
+          child: SafeArea(
+            child: Stack(
+              children: [
+                ...onBoardingBackground(context),
+                _permissionsScreenContents(),
+              ],
+            ),
           ),
         ),
       ),
+      onWillPop: () async {
+        await context.read<AuthenticationCubit>().logout();
+        context.read<ProfileCubit>().logout();
+        return true;
+      },
     );
   }
 
@@ -132,12 +132,13 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
 
   Widget _finishPermissionsButton() {
     return OnboardingOutlineButton(
-      onPressed: () {
+      onPressed: () async {
+        sharedPrefs.setPermissionsComplete();
         final displayName = context.read<ProfileCubit>().displayName;
         if (displayName == null) {
-          Navigator.of(context).pushNamed('/onboarding/readyWeb3');
+          await Navigator.of(context).pushNamed('/onboarding/readyWeb3');
         } else {
-          Navigator.of(context).pushNamed('/onboarding/finalSetup');
+          await Navigator.of(context).pushNamed('/onboarding/finalSetup');
         }
       },
       text: "Finish",

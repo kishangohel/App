@@ -1,19 +1,21 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/material.dart';
 import 'package:verifi/screens/onboarding/phone_number_screen.dart';
 import 'package:verifi/screens/onboarding/widgets/app_title.dart';
+import 'package:verifi/screens/onboarding/widgets/double_back_warning_snackbar.dart';
 import 'package:verifi/screens/onboarding/widgets/onboarding_outline_button.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 
 class IntroScreen extends StatefulWidget {
+  const IntroScreen({super.key});
   @override
   State<StatefulWidget> createState() => _IntroScreenState();
 }
 
 class _IntroScreenState extends State<IntroScreen> {
   double opacity = 0;
-  Color _fontColor = Colors.black;
 
   @override
   void initState() {
@@ -28,11 +30,8 @@ class _IntroScreenState extends State<IntroScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final brightness = MediaQuery.of(context).platformBrightness;
-    if (brightness == Brightness.dark) _fontColor = Colors.white;
     return Scaffold(
-      body: Container(
-        color: Colors.black,
+      body: DoubleBackToCloseApp(
         child: SafeArea(
           child: Stack(
             children: [
@@ -41,6 +40,7 @@ class _IntroScreenState extends State<IntroScreen> {
             ],
           ),
         ),
+        snackBar: doubleBackWarningSnackBar(context),
       ),
     );
   }
@@ -76,25 +76,23 @@ class _IntroScreenState extends State<IntroScreen> {
                   ),
                   OnboardingOutlineButton(
                     text: "Get Started",
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        PageRouteBuilder(
-                          settings: const RouteSettings(
-                            name: '/onboarding/phone',
-                          ),
-                          transitionDuration: const Duration(
-                            seconds: 1,
-                            milliseconds: 500,
-                          ),
-                          reverseTransitionDuration: const Duration(
-                            seconds: 1,
-                          ),
-                          transitionsBuilder: _slideTransition,
-                          pageBuilder: (BuildContext context, _, __) =>
-                              PhoneNumberScreen(),
+                    onPressed: () async => await Navigator.of(context).push(
+                      PageRouteBuilder(
+                        settings: const RouteSettings(
+                          name: '/onboarding/phone',
                         ),
-                      );
-                    },
+                        transitionDuration: const Duration(
+                          seconds: 1,
+                          milliseconds: 500,
+                        ),
+                        reverseTransitionDuration: const Duration(
+                          seconds: 1,
+                        ),
+                        transitionsBuilder: _slideTransition,
+                        pageBuilder: (BuildContext context, _, __) =>
+                            const PhoneNumberScreen(),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -123,12 +121,10 @@ class _IntroScreenState extends State<IntroScreen> {
       alignment: Alignment.topCenter,
       child: SizedBox(
         child: AutoSizeText(
-          "Bridging the Universe with the Metaverse",
+          "Connect Without Limits",
           maxLines: 2,
           textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.headline4?.copyWith(
-                color: _fontColor,
-              ),
+          style: Theme.of(context).textTheme.headlineSmall,
         ),
       ),
     );
@@ -138,7 +134,7 @@ class _IntroScreenState extends State<IntroScreen> {
     return SizedBox(
       height: 70,
       child: DefaultTextStyle(
-        style: Theme.of(context).textTheme.headline5!,
+        style: Theme.of(context).textTheme.titleLarge!,
         textAlign: TextAlign.center,
         child: AnimatedTextKit(
           animatedTexts: [

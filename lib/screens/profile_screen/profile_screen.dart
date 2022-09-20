@@ -97,9 +97,7 @@ class _ProfileBodyState extends State<ProfileBody> {
     final displayName = context.watch<ProfileCubit>().displayName;
     return Text(
       displayName ?? '',
-      style: Theme.of(context).textTheme.headline4?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
+      style: Theme.of(context).textTheme.headlineSmall,
     );
   }
 

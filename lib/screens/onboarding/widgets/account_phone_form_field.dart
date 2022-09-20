@@ -4,13 +4,11 @@ import 'package:phone_form_field/phone_form_field.dart';
 class AccountPhoneFormField extends StatefulWidget {
   final GlobalKey<FormState> formKey;
   final PhoneController phoneController;
-  final Color textColor;
   final void Function(PhoneNumber? number) onChanged;
   final void Function(PhoneNumber number) onSaved;
   const AccountPhoneFormField({
     required this.formKey,
     required this.phoneController,
-    required this.textColor,
     required this.onChanged,
     required this.onSaved,
   });
@@ -25,57 +23,46 @@ class _AccountPhoneFormFieldState extends State<AccountPhoneFormField> {
       key: widget.formKey,
       child: PhoneFormField(
         controller: widget.phoneController,
-        flagSize: 18.0,
+        flagSize: 16.0,
         countrySelectorNavigator: CountrySelectorNavigator.modalBottomSheet(
           height: MediaQuery.of(context).size.height * 0.7,
         ),
-        countryCodeStyle: TextStyle(
-          color: widget.textColor,
-          fontSize: 18.0,
-          fontWeight: FontWeight.w600,
-        ),
-        style: TextStyle(
-          color: widget.textColor,
-          fontSize: 18.0,
-          fontWeight: FontWeight.w600,
-        ),
+        countryCodeStyle: Theme.of(context).textTheme.titleMedium,
+        style: Theme.of(context).textTheme.titleMedium,
         decoration: InputDecoration(
-          errorStyle: Theme.of(context).textTheme.headline6?.copyWith(
-                color: widget.textColor,
-                fontWeight: FontWeight.w600,
-              ),
+          errorStyle: Theme.of(context).textTheme.titleSmall,
           errorBorder: OutlineInputBorder(
             borderSide: BorderSide(
-              color: widget.textColor,
               width: 2.0,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
             borderRadius: BorderRadius.circular(4.0),
           ),
           focusedErrorBorder: OutlineInputBorder(
             borderSide: BorderSide(
-              color: widget.textColor,
               width: 2.0,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
             borderRadius: BorderRadius.circular(4.0),
           ),
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(
-              color: widget.textColor,
               width: 2.0,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
             borderRadius: BorderRadius.circular(4.0),
           ),
           focusedBorder: OutlineInputBorder(
             borderSide: BorderSide(
-              color: widget.textColor,
               width: 2.0,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
             borderRadius: BorderRadius.circular(4.0),
           ),
           border: OutlineInputBorder(
             borderSide: BorderSide(
-              color: widget.textColor,
               width: 1.0,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
             borderRadius: BorderRadius.circular(4.0),
           ),

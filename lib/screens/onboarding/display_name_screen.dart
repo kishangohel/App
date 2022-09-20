@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verifi/blocs/display_name_textfield/display_name_textfield_bloc.dart';
 import 'package:verifi/blocs/profile/profile_cubit.dart';
-import 'package:verifi/screens/onboarding/widgets/hero_verifi_title.dart';
+import 'package:verifi/screens/onboarding/widgets/onboarding_app_bar.dart';
 import 'package:verifi/screens/onboarding/widgets/onboarding_outline_button.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 
@@ -32,15 +32,7 @@ class _DisplayNameScreenState extends State<DisplayNameScreen> {
     final brightness = MediaQuery.of(context).platformBrightness;
     if (brightness == Brightness.dark) _fontColor = Colors.white;
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        leading: Hero(
-          tag: 'verifi-logo',
-          child: Image.asset('assets/launcher_icon/vf_ios.png'),
-        ),
-        title: HeroVerifiTitle(),
-        centerTitle: true,
-      ),
+      appBar: OnboardingAppBar(),
       body: Container(
         color: Colors.black,
         child: SafeArea(
@@ -169,7 +161,7 @@ class _DisplayNameScreenState extends State<DisplayNameScreen> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: OnboardingOutlineButton(
-                  onPressed: () {
+                  onPressed: () async {
                     assert(displayNameState.displayName != null);
                     context.read<ProfileCubit>().setDisplayName(
                           displayNameState.displayName!,

@@ -1,36 +1,33 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
-class OnboardingOutlineButton extends StatelessWidget {
-  final String _text;
-  final Function _onPressed;
+class OnboardingOutlineButton extends StatefulWidget {
+  final String text;
+  final Future<void> Function() onPressed;
 
   const OnboardingOutlineButton({
-    required String text,
-    required Function onPressed,
-  })  : _text = text,
-        _onPressed = onPressed;
+    required this.text,
+    required this.onPressed,
+  });
 
   @override
-  Widget build(BuildContext context) {
-    Color _borderTextColor = Colors.white;
-    final brightness = MediaQuery.of(context).platformBrightness;
-    if (brightness == Brightness.light) {
-      _borderTextColor = Colors.black;
-    }
+  State<StatefulWidget> createState() => _OnboardingOutlineButtonState();
+}
 
+class _OnboardingOutlineButtonState extends State<OnboardingOutlineButton> {
+  @override
+  Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(8.0),
       child: OutlinedButton(
         child: AutoSizeText(
-          _text,
+          widget.text,
           maxLines: 1,
-          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                color: _borderTextColor,
-                height: 1.2,
-              ),
+          style: Theme.of(context).textTheme.headlineMedium,
         ),
-        onPressed: () => _onPressed(),
+        onPressed: () async {
+          if (mounted) await widget.onPressed();
+        },
         style: OutlinedButton.styleFrom(
           alignment: Alignment.center,
           padding: const EdgeInsets.symmetric(
@@ -38,7 +35,7 @@ class OnboardingOutlineButton extends StatelessWidget {
             horizontal: 8.0,
           ),
           side: BorderSide(
-            color: _borderTextColor,
+            color: Theme.of(context).colorScheme.onSurface,
             width: 2.0,
           ),
           shape: ContinuousRectangleBorder(

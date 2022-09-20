@@ -192,7 +192,7 @@ class _EditProfileModalBottomSheetState
                 child: AutoSizeText(
                   nfts[index].name ?? '',
                   maxLines: 1,
-                  style: Theme.of(context).textTheme.headline2,
+                  style: Theme.of(context).textTheme.headlineLarge,
                 ),
               ),
             ),
@@ -203,7 +203,7 @@ class _EditProfileModalBottomSheetState
                 child: AutoSizeText(
                   nfts[index].description ?? "",
                   maxLines: 1,
-                  style: Theme.of(context).textTheme.headline5,
+                  style: Theme.of(context).textTheme.headlineSmall,
                 ),
               ),
             ),

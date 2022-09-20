@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/blocs/nfts/nfts_cubit.dart';
 import 'package:verifi/models/models.dart';
-import 'package:verifi/screens/onboarding/widgets/hero_verifi_title.dart';
+import 'package:verifi/screens/onboarding/widgets/onboarding_app_bar.dart';
 import 'package:verifi/screens/onboarding/widgets/onboarding_outline_button.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 
@@ -31,15 +31,7 @@ class _PfpNftScreenState extends State<PfpNftScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        leading: Hero(
-          tag: 'verifi-logo',
-          child: Image.asset('assets/launcher_icon/vf_ios.png'),
-        ),
-        title: HeroVerifiTitle(),
-        centerTitle: true,
-      ),
+      appBar: OnboardingAppBar(),
       body: Container(
         color: Colors.black,
         child: SafeArea(
@@ -202,7 +194,7 @@ class _PfpNftScreenState extends State<PfpNftScreen> {
   Widget _noNftsFoundText() {
     return Center(
       child: AutoSizeText(
-        "No NFTs found in wallet.",
+        "No NFTs found in your wallet",
         style: Theme.of(context).textTheme.headline5,
         textAlign: TextAlign.center,
       ),
@@ -211,11 +203,11 @@ class _PfpNftScreenState extends State<PfpNftScreen> {
 
   Widget _completeSetupButton(List<Pfp> nfts) {
     return OnboardingOutlineButton(
-      onPressed: () {
+      onPressed: () async {
         context.read<ProfileCubit>().setPfp(
               nfts[_controller.page!.toInt()].image,
             );
-        Navigator.of(context).pushNamed(
+        await Navigator.of(context).pushNamed(
           '/onboarding/displayName',
         );
       },
@@ -226,8 +218,8 @@ class _PfpNftScreenState extends State<PfpNftScreen> {
   Widget _selectAvatarButton() {
     return OnboardingOutlineButton(
       text: "Continue",
-      onPressed: () {
-        Navigator.of(context).pushNamed('/onboarding/pfpAvatar');
+      onPressed: () async {
+        await Navigator.of(context).pushNamed('/onboarding/pfpAvatar');
       },
     );
   }

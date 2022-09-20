@@ -20,5 +20,5 @@ class AuthenticationState extends Equatable {
   }
 
   @override
-  String toString() => 'User: $user, Exception: $exception';
+  String toString() => 'User: ${user?.uid}, Exception: ${exception?.code}';
 }

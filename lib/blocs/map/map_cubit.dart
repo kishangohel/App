@@ -5,10 +5,10 @@ import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:verifi/blocs/map/map.dart';
 import 'package:verifi/blocs/map_markers_helper.dart';
+import 'package:verifi/blocs/map_styles.dart';
 import 'package:verifi/blocs/wifi_utils.dart';
 import 'package:verifi/models/wifi.dart';
 import 'package:verifi/repositories/repositories.dart';
-import 'package:verifi/blocs/strings.dart';
 
 // Maintains global state of map position and map controller.
 // Markers are yielded via MapLoaded.

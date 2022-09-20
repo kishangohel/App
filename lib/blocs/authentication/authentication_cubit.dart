@@ -21,7 +21,13 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
 
   bool get isLoggedIn => _authRepository.currentUser != null;
 
+  Future<void> updateDisplayName(String displayName) async {
+    _authRepository.updateUsername(displayName);
+  }
+
   Future<void> requestSmsCode(String phoneNumber) async {
+    // clear out exception if re-submitting
+    emit(state.copyWith(exception: null));
     return _authRepository.requestSmsCode(
       phoneNumber,
       _onCodeSent,
@@ -32,6 +38,8 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
   }
 
   void submitSmsCode(String smsCode) async {
+    // clear out any previous exception
+    emit(state.copyWith(exception: null));
     try {
       if (null != _verificationId) {
         await _authRepository.submitSmsCode(_verificationId!, smsCode);
@@ -65,16 +73,16 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
   }
 
   void _onTimeoutReached(String? verificationId) {
-    emit(
-      state.copyWith(
+    if (!isLoggedIn) {
+      emit(state.copyWith(
         exception: FirebaseAuthException(
           code: "sms-timeout",
           message:
               "Did you receive a text message? If not, please go back and "
               "try again",
         ),
-      ),
-    );
+      ));
+    }
   }
 
   void _onVerificationFailed(FirebaseAuthException exception) {

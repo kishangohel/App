@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:verifi/blocs/blocs.dart';
-import 'package:verifi/blocs/strings.dart';
+import 'package:verifi/blocs/map_styles.dart';
 
 class MapGoogleMap extends StatefulWidget {
   final LatLng initialMapPosition;
