@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,8 +8,10 @@ import 'package:verifi/blocs/display_name_textfield/display_name_textfield_bloc.
 import 'package:verifi/blocs/geofencing/geofencing_cubit.dart';
 import 'package:verifi/blocs/intro_pages/intro_pages_cubit.dart';
 import 'package:verifi/blocs/nfts/nfts_cubit.dart';
+import 'package:verifi/blocs/shared_prefs.dart';
 import 'package:verifi/blocs/theme/theme_cubit.dart';
 import 'package:verifi/blocs/theme/theme_state.dart';
+import 'package:verifi/models/profile.dart';
 import 'package:verifi/repositories/nftport_repository.dart';
 import 'package:verifi/repositories/repositories.dart';
 import 'package:verifi/screens/onboarding/pfp_avatar_screen.dart';
@@ -24,6 +27,7 @@ import 'package:verifi/screens/onboarding/sms_code_screen.dart';
 import 'package:verifi/screens/onboarding/intro_screen.dart';
 import 'package:verifi/screens/onboarding/terms_screen.dart';
 import 'package:verifi/widgets/home_page.dart';
+import 'package:verifi/widgets/splash_screen/splash_screen.dart';
 
 // The top-level [Widget] for the VeriFi application.
 //
@@ -39,10 +43,17 @@ import 'package:verifi/widgets/home_page.dart';
 // This widget provides all of the [Bloc]s and [Repository]s to their children.
 class VeriFi extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _VeriFiState();
+  State<StatefulWidget> createState() => VeriFiState();
 }
 
-class _VeriFiState extends State<VeriFi> {
+class VeriFiState extends State<VeriFi> {
+  DateTime onboardingPreBackPressTime = DateTime.now();
+  @override
+  void initState() {
+    super.initState();
+    onboardingPreBackPressTime = DateTime.now();
+  }
+
   @override
   Widget build(BuildContext context) {
     // Only allow app to be used in portrait mode.
@@ -106,15 +117,15 @@ class _VeriFiState extends State<VeriFi> {
               RepositoryProvider.of<PlacesRepository>(context),
             ),
           ),
-          BlocProvider<NftsCubit>(
-            create: (context) => NftsCubit(
-              RepositoryProvider.of<NftPortRepository>(context),
-            ),
-          ),
           BlocProvider<MapSearchCubit>(
             create: (context) => MapSearchCubit(
               RepositoryProvider.of<PlacesRepository>(context),
               RepositoryProvider.of<WifiRepository>(context),
+            ),
+          ),
+          BlocProvider<NftsCubit>(
+            create: (context) => NftsCubit(
+              RepositoryProvider.of<NftPortRepository>(context),
             ),
           ),
           BlocProvider<ProfileCubit>(
@@ -149,31 +160,30 @@ class VeriFiApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeCubit, ThemeState>(
       builder: (context, themeState) {
-        return BlocBuilder<AuthenticationCubit, AuthenticationState>(
-          builder: (context, authState) {
-            return MaterialApp(
-              theme: themeState.lightTheme,
-              darkTheme: themeState.darkTheme,
-              themeMode: ThemeMode.system,
-              initialRoute: _initialRoute(authState, context),
-              routes: {
-                '/home': (context) => Home(),
-                '/onboarding': (context) => const IntroScreen(),
-                '/onboarding/readyWeb3': (context) => ReadyWeb3Screen(),
-                '/onboarding/terms': (context) => TermsScreen(),
-                '/onboarding/displayName': (context) => DisplayNameScreen(),
-                '/onboarding/phone': (context) => const PhoneNumberScreen(),
-                '/onboarding/sms': (context) => SmsCodeScreen(),
-                '/onboarding/permissions': (context) => PermissionsScreen(),
-                '/onboarding/wallet': (context) => ConnectWalletScreen(),
-                '/onboarding/wallet/sign': (context) => SignWalletScreen(),
-                '/onboarding/pfpNft': (context) => PfpNftScreen(),
-                '/onboarding/pfpAvatar': (context) => PfpAvatarScreen(),
-                '/onboarding/finalSetup': (context) => FinalSetupScreen(),
-              },
-              navigatorObservers: [_VeriFiNavigatorObserver()],
-            );
+        return MaterialApp(
+          theme: themeState.lightTheme,
+          darkTheme: themeState.darkTheme,
+          themeMode: ThemeMode.system,
+          initialRoute: (FirebaseAuth.instance.currentUser != null &&
+                  context.read<ProfileCubit>().displayName != null)
+              ? '/home'
+              : '/onboarding',
+          routes: {
+            '/home': (context) => Home(),
+            '/onboarding': (context) => const IntroScreen(),
+            '/onboarding/readyWeb3': (context) => ReadyWeb3Screen(),
+            '/onboarding/terms': (context) => TermsScreen(),
+            '/onboarding/displayName': (context) => DisplayNameScreen(),
+            '/onboarding/phone': (context) => const PhoneNumberScreen(),
+            '/onboarding/sms': (context) => SmsCodeScreen(),
+            '/onboarding/permissions': (context) => PermissionsScreen(),
+            '/onboarding/wallet': (context) => ConnectWalletScreen(),
+            '/onboarding/wallet/sign': (context) => SignWalletScreen(),
+            '/onboarding/pfpNft': (context) => PfpNftScreen(),
+            '/onboarding/pfpAvatar': (context) => PfpAvatarScreen(),
+            '/onboarding/finalSetup': (context) => FinalSetupScreen(),
           },
+          navigatorObservers: [_VeriFiNavigatorObserver()],
         );
       },
     );

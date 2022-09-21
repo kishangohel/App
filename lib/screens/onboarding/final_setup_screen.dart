@@ -58,7 +58,6 @@ class _FinalSetupScreenState extends State<FinalSetupScreen> {
     final brightness = MediaQuery.of(context).platformBrightness;
     if (brightness == Brightness.dark) textColor = Colors.white;
     return WillPopScope(
-      onWillPop: () async => false,
       child: Scaffold(
         appBar: OnboardingAppBar(),
         body: Container(
@@ -73,6 +72,7 @@ class _FinalSetupScreenState extends State<FinalSetupScreen> {
           ),
         ),
       ),
+      onWillPop: () async => false,
     );
   }
 

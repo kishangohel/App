@@ -137,21 +137,21 @@ class ThemeCubit extends Cubit<ThemeState> {
     return sortedMap.keys.toList(growable: false);
   }
 
-  // @override
-  // ThemeState? fromJson(Map<String, dynamic> json) => ThemeState(
-  //       lightTheme: ThemeDecoder.decodeThemeData(json["light_theme"])!,
-  //       darkTheme: ThemeDecoder.decodeThemeData(json["dark_theme"])!,
-  //       colors: (json["colors"] as List<int>?)
-  //               ?.map((value) => Color(value))
-  //               .toList(growable: false) ??
-  //           [],
-  //     );
-  //
-  // @override
-  // Map<String, dynamic>? toJson(ThemeState state) => {
-  //       "light_theme": ThemeEncoder.encodeThemeData(state.lightTheme),
-  //       "dark_theme": ThemeEncoder.encodeThemeData(state.darkTheme),
-  //       "colors":
-  //           state.colors.map((color) => color.value).toList(growable: false),
-  //     };
+  @override
+  ThemeState? fromJson(Map<String, dynamic> json) => ThemeState(
+        lightTheme: ThemeDecoder.decodeThemeData(json["light_theme"])!,
+        darkTheme: ThemeDecoder.decodeThemeData(json["dark_theme"])!,
+        colors: (json["colors"] as List<int>?)
+                ?.map((value) => Color(value))
+                .toList(growable: false) ??
+            [],
+      );
+
+  @override
+  Map<String, dynamic>? toJson(ThemeState state) => {
+        "light_theme": ThemeEncoder.encodeThemeData(state.lightTheme),
+        "dark_theme": ThemeEncoder.encodeThemeData(state.darkTheme),
+        "colors":
+            state.colors.map((color) => color.value).toList(growable: false),
+      };
 }

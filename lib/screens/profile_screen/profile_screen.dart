@@ -106,15 +106,14 @@ class _ProfileBodyState extends State<ProfileBody> {
       child: const Text(
         "Logout",
       ),
-      onPressed: () {
-        context.read<ProfileCubit>().clear();
+      onPressed: () async {
+        await context.read<ProfileCubit>().clear();
         context.read<ProfileCubit>().logout();
-        context.read<AuthenticationCubit>().logout().then(
-              (value) => Navigator.of(context).pushNamedAndRemoveUntil(
-                '/onboarding',
-                (route) => false,
-              ),
-            );
+        context.read<AuthenticationCubit>().logout();
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          '/onboarding',
+          (route) => false,
+        );
       },
     );
   }

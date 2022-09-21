@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/screens/onboarding/widgets/onboarding_app_bar.dart';
+import 'package:verifi/screens/onboarding/widgets/onboarding_outline_button.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 
 class PfpAvatarScreen extends StatefulWidget {
@@ -13,7 +14,6 @@ class PfpAvatarScreen extends StatefulWidget {
 
 class _PfpAvatarScreenState extends State<PfpAvatarScreen> {
   double opacity = 0;
-  Color textColor = Colors.black;
   final PageController _controller = PageController();
   // Randomized order that avatars appear
   List<int> _randomizedAvatarIndices = [];
@@ -79,10 +79,7 @@ class _PfpAvatarScreenState extends State<PfpAvatarScreen> {
   Widget _pfpTitle() {
     return Text(
       "Select an avatar below for your profile picture",
-      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.w600,
-            color: textColor,
-          ),
+      style: Theme.of(context).textTheme.headlineSmall,
       textAlign: TextAlign.center,
     );
   }
@@ -130,13 +127,11 @@ class _PfpAvatarScreenState extends State<PfpAvatarScreen> {
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: Text(
               "Swipe left/right to select",
-              style: Theme.of(context).textTheme.caption?.copyWith(
-                    color: textColor,
-                  ),
+              style: Theme.of(context).textTheme.labelLarge,
             ),
           ),
-          OutlinedButton(
-            onPressed: () {
+          OnboardingOutlineButton(
+            onPressed: () async {
               final strIndex =
                   (_randomizedAvatarIndices[_controller.page!.toInt()] + 1)
                       .toString()
@@ -148,23 +143,7 @@ class _PfpAvatarScreenState extends State<PfpAvatarScreen> {
                 '/onboarding/displayName',
               );
             },
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Text(
-                "Select Avatar",
-                style: Theme.of(context).textTheme.headline5?.copyWith(
-                      color: textColor,
-                      fontWeight: FontWeight.w600,
-                    ),
-              ),
-            ),
-            style: OutlinedButton.styleFrom(
-              side: BorderSide(
-                width: 2.0,
-                color: textColor,
-              ),
-              foregroundColor: textColor,
-            ),
+            text: "Select Avatar",
           ),
         ],
       ),

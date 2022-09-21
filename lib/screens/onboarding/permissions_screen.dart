@@ -16,6 +16,9 @@ class PermissionsScreen extends StatefulWidget {
   State<StatefulWidget> createState() => _PermissionsScreenState();
 }
 
+/// Screen to accept location permissions and activity recognition permissions.
+/// If user closes app, then they are automatically logged out via
+/// [WillPopScope] override.
 class _PermissionsScreenState extends State<PermissionsScreen> {
   double opacity = 0;
   Color textColor = Colors.black;
@@ -39,10 +42,10 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
   Widget build(BuildContext context) {
     final brightness = MediaQuery.of(context).platformBrightness;
     if (brightness == Brightness.dark) textColor = Colors.white;
-    return WillPopScope(
-      child: Scaffold(
-        appBar: OnboardingAppBar(),
-        body: Container(
+    return Scaffold(
+      appBar: OnboardingAppBar(),
+      body: WillPopScope(
+        child: Container(
           color: Colors.white,
           child: SafeArea(
             child: Stack(
@@ -53,12 +56,13 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
             ),
           ),
         ),
+        onWillPop: () async {
+          await context.read<AuthenticationCubit>().logout();
+          context.read<ProfileCubit>().logout();
+          await context.read<ProfileCubit>().clear();
+          return true;
+        },
       ),
-      onWillPop: () async {
-        await context.read<AuthenticationCubit>().logout();
-        context.read<ProfileCubit>().logout();
-        return true;
-      },
     );
   }
 
@@ -136,9 +140,15 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
         sharedPrefs.setPermissionsComplete();
         final displayName = context.read<ProfileCubit>().displayName;
         if (displayName == null) {
-          await Navigator.of(context).pushNamed('/onboarding/readyWeb3');
+          await Navigator.of(context).pushNamedAndRemoveUntil(
+            '/onboarding/readyWeb3',
+            ModalRoute.withName('onboarding/'),
+          );
         } else {
-          await Navigator.of(context).pushNamed('/onboarding/finalSetup');
+          await Navigator.of(context).pushNamedAndRemoveUntil(
+            '/onboarding/finalSetup',
+            ModalRoute.withName('onboarding/'),
+          );
         }
       },
       text: "Finish",

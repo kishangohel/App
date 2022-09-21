@@ -31,16 +31,24 @@ class _ReadyWeb3ScreenState extends State<ReadyWeb3Screen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: OnboardingAppBar(),
-      body: Container(
-        color: Colors.white,
-        child: SafeArea(
-          child: Stack(
-            children: [
-              ...onBoardingBackground(context),
-              _askToConnectWalletContents(),
-            ],
+      body: WillPopScope(
+        child: Container(
+          color: Colors.white,
+          child: SafeArea(
+            child: Stack(
+              children: [
+                ...onBoardingBackground(context),
+                _askToConnectWalletContents(),
+              ],
+            ),
           ),
         ),
+        onWillPop: () async {
+          await context.read<AuthenticationCubit>().logout();
+          context.read<ProfileCubit>().logout();
+          await context.read<ProfileCubit>().clear();
+          return true;
+        },
       ),
     );
   }

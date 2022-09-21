@@ -28,7 +28,7 @@ class WalletConnectCubit extends Cubit<WalletConnectState> {
     provider = EthereumWalletConnectProvider(connector);
   }
 
-  void canConnect() async {
+  Future<void> canConnect() async {
     final _canConnect = await canLaunchUrl(Uri(scheme: "wc"));
     emit(state.copyWith(canConnect: _canConnect));
   }

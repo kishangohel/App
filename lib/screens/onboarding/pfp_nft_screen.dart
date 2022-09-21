@@ -94,12 +94,13 @@ class _PfpNftScreenState extends State<PfpNftScreen> {
       builder: (context, nfts) {
         return SizedBox(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Expanded(
-                child: (nfts.isNotEmpty)
-                    ? _pfpPageView(nfts)
-                    : _noNftsFoundText(),
-              ),
+              (nfts.isNotEmpty)
+                  ? Expanded(
+                      child: _pfpPageView(nfts),
+                    )
+                  : _noNftsFoundText(),
               Visibility(
                 visible: nfts.isNotEmpty,
                 child: Padding(
@@ -192,7 +193,8 @@ class _PfpNftScreenState extends State<PfpNftScreen> {
   }
 
   Widget _noNftsFoundText() {
-    return Center(
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
       child: AutoSizeText(
         "No NFTs found in your wallet",
         style: Theme.of(context).textTheme.headline5,

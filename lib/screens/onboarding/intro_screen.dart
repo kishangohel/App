@@ -1,10 +1,8 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/material.dart';
 import 'package:verifi/screens/onboarding/phone_number_screen.dart';
 import 'package:verifi/screens/onboarding/widgets/app_title.dart';
-import 'package:verifi/screens/onboarding/widgets/double_back_warning_snackbar.dart';
 import 'package:verifi/screens/onboarding/widgets/onboarding_outline_button.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 
@@ -31,16 +29,13 @@ class _IntroScreenState extends State<IntroScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: DoubleBackToCloseApp(
-        child: SafeArea(
-          child: Stack(
-            children: [
-              ...onBoardingBackground(context),
-              _introContent(),
-            ],
-          ),
+      body: SafeArea(
+        child: Stack(
+          children: [
+            ...onBoardingBackground(context),
+            _introContent(),
+          ],
         ),
-        snackBar: doubleBackWarningSnackBar(context),
       ),
     );
   }

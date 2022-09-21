@@ -62,6 +62,8 @@ class AuthenticationRepository {
   Future<void> signInWithCredential(AuthCredential credential) async =>
       _fbAuth.signInWithCredential(credential);
 
-  /// Signs the user out, calling both the [FirebaseAuth] and [GoogleSignIn]
-  Future<void> signOut() => _fbAuth.signOut();
+  /// Signs the [FirebaseAuth] user instance out
+  Future<void> signOut() async {
+    await _fbAuth.signOut();
+  }
 }
