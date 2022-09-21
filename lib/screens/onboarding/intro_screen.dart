@@ -29,13 +29,11 @@ class _IntroScreenState extends State<IntroScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Stack(
-          children: [
-            ...onBoardingBackground(context),
-            _introContent(),
-          ],
-        ),
+      body: Stack(
+        children: [
+          ...onBoardingBackground(context),
+          _introContent(),
+        ],
       ),
     );
   }

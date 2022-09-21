@@ -7,7 +7,7 @@ class MapButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      top: 100,
+      top: MediaQuery.of(context).size.height * 0.15,
       right: 0,
       child: SizedBox(
         child: ElevatedButton(

@@ -34,13 +34,11 @@ class _TermsScreenState extends State<TermsScreen> {
       appBar: OnboardingAppBar(),
       body: Container(
         color: Colors.white,
-        child: SafeArea(
-          child: Stack(
-            children: [
-              ...onBoardingBackground(context),
-              _termsScreenContents(),
-            ],
-          ),
+        child: Stack(
+          children: [
+            ...onBoardingBackground(context),
+            _termsScreenContents(),
+          ],
         ),
       ),
     );
@@ -101,7 +99,7 @@ class _TermsScreenState extends State<TermsScreen> {
   Widget _headerSubtitle() {
     return AutoSizeText(
       "Please review and accept the following terms and conditions",
-      style: Theme.of(context).textTheme.titleSmall,
+      style: Theme.of(context).textTheme.titleLarge,
       textAlign: TextAlign.center,
     );
   }
@@ -123,7 +121,7 @@ class _TermsScreenState extends State<TermsScreen> {
             children: [
               TextSpan(
                 text: "I accept the ",
-                style: Theme.of(context).textTheme.titleSmall,
+                style: Theme.of(context).textTheme.titleLarge,
               ),
               TextSpan(
                 text: "Terms of Use",
@@ -131,7 +129,7 @@ class _TermsScreenState extends State<TermsScreen> {
                   ..onTap = () {
                     launchUrl(Uri.parse("https://verifi.world/terms"));
                   },
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       decoration: TextDecoration.underline,
                     ),
               ),
@@ -159,7 +157,7 @@ class _TermsScreenState extends State<TermsScreen> {
             children: [
               TextSpan(
                 text: "I accept the ",
-                style: Theme.of(context).textTheme.titleSmall,
+                style: Theme.of(context).textTheme.titleLarge,
               ),
               TextSpan(
                 text: "Privacy Policy",
@@ -167,7 +165,7 @@ class _TermsScreenState extends State<TermsScreen> {
                   ..onTap = () {
                     launchUrl(Uri.parse("https://verifi.world/privacy"));
                   },
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       decoration: TextDecoration.underline,
                       decorationColor: Theme.of(context).colorScheme.onSurface,
                     ),

@@ -36,13 +36,11 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: OnboardingAppBar(),
-      body: SafeArea(
-        child: Stack(
-          children: [
-            ...onBoardingBackground(context),
-            _onboardingContent(),
-          ],
-        ),
+      body: Stack(
+        children: [
+          ...onBoardingBackground(context),
+          _onboardingContent(),
+        ],
       ),
     );
   }

@@ -34,13 +34,11 @@ class _ReadyWeb3ScreenState extends State<ReadyWeb3Screen> {
       body: WillPopScope(
         child: Container(
           color: Colors.white,
-          child: SafeArea(
-            child: Stack(
-              children: [
-                ...onBoardingBackground(context),
-                _askToConnectWalletContents(),
-              ],
-            ),
+          child: Stack(
+            children: [
+              ...onBoardingBackground(context),
+              _askToConnectWalletContents(),
+            ],
           ),
         ),
         onWillPop: () async {

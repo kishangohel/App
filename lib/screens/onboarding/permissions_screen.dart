@@ -47,13 +47,11 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
       body: WillPopScope(
         child: Container(
           color: Colors.white,
-          child: SafeArea(
-            child: Stack(
-              children: [
-                ...onBoardingBackground(context),
-                _permissionsScreenContents(),
-              ],
-            ),
+          child: Stack(
+            children: [
+              ...onBoardingBackground(context),
+              _permissionsScreenContents(),
+            ],
           ),
         ),
         onWillPop: () async {

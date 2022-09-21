@@ -11,7 +11,6 @@ import 'package:verifi/blocs/nfts/nfts_cubit.dart';
 import 'package:verifi/blocs/shared_prefs.dart';
 import 'package:verifi/blocs/theme/theme_cubit.dart';
 import 'package:verifi/blocs/theme/theme_state.dart';
-import 'package:verifi/models/profile.dart';
 import 'package:verifi/repositories/nftport_repository.dart';
 import 'package:verifi/repositories/repositories.dart';
 import 'package:verifi/screens/onboarding/pfp_avatar_screen.dart';
@@ -27,7 +26,6 @@ import 'package:verifi/screens/onboarding/sms_code_screen.dart';
 import 'package:verifi/screens/onboarding/intro_screen.dart';
 import 'package:verifi/screens/onboarding/terms_screen.dart';
 import 'package:verifi/widgets/home_page.dart';
-import 'package:verifi/widgets/splash_screen/splash_screen.dart';
 
 // The top-level [Widget] for the VeriFi application.
 //
@@ -164,10 +162,7 @@ class VeriFiApp extends StatelessWidget {
           theme: themeState.lightTheme,
           darkTheme: themeState.darkTheme,
           themeMode: ThemeMode.system,
-          initialRoute: (FirebaseAuth.instance.currentUser != null &&
-                  context.read<ProfileCubit>().displayName != null)
-              ? '/home'
-              : '/onboarding',
+          initialRoute: _initialRoute(context),
           routes: {
             '/home': (context) => Home(),
             '/onboarding': (context) => const IntroScreen(),
@@ -189,9 +184,16 @@ class VeriFiApp extends StatelessWidget {
     );
   }
 
-  String? _initialRoute(AuthenticationState authState, BuildContext context) {
-    if (authState.user == null) {
+  String? _initialRoute(BuildContext context) {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
       return '/onboarding';
+    } else if (false == sharedPrefs.permissionsComplete) {
+      return '/onboarding/permissions';
+    } else if (context.read<ProfileCubit>().displayName == null) {
+      return '/onboarding/readyWeb3';
+    } else if (false == sharedPrefs.onboardingComplete) {
+      return '/onboarding/finalSetup';
     } else {
       return '/home';
     }

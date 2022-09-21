@@ -12,6 +12,8 @@ class LocationCubit extends HydratedCubit<LatLng?> {
     if (locationAllowed) {
       Position position = await Geolocator.getCurrentPosition();
       emit(LatLng(position.latitude, position.longitude));
+    } else {
+      print("Penis");
     }
   }
 

@@ -2,6 +2,14 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSMotionUsageDescription</key>
+	<string>VeriFi uses your current activity to conserve battery and more intelligently connect you to nearby WiFi.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>VeriFi uses your location to intelligently connect you to nearby WiFi and display your position on the VeriMap.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>VeriFi uses your location in the background to intelligently connect you to nearby WiFi.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>VeriFi uses your location to intelligently connect you to nearby WiFi and display your position on the VeriMap.</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
@@ -22,6 +30,17 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.120678530892-6r5tcaocaodrbmfhjjc782rvghjpo7g7</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>

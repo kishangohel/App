@@ -73,7 +73,7 @@ final defaultDarkTheme = ThemeData.from(
   ),
 );
 
-class ThemeCubit extends Cubit<ThemeState> {
+class ThemeCubit extends HydratedCubit<ThemeState> {
   ThemeCubit()
       : super(ThemeState(
           lightTheme: defaultLightTheme,
