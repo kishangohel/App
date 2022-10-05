@@ -28,11 +28,11 @@ class Wifi extends Clusterable {
     String? childMarkerId,
   }) : super(
           markerId: id,
-          latitude: (placeDetails != null)
-              ? placeDetails.geometry?.location?.lat
+          latitude: (wifiDetails != null)
+              ? wifiDetails.location.latitude
               : clusterLocation?.latitude,
-          longitude: (placeDetails != null)
-              ? placeDetails.geometry?.location?.lng
+          longitude: (wifiDetails != null)
+              ? wifiDetails.location.longitude
               : clusterLocation?.longitude,
           isCluster: isCluster,
           clusterId: clusterId,

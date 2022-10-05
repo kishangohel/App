@@ -1,0 +1,39 @@
+{
+  "access_points": [
+    {
+      "lat": 33.504,
+      "lng": -82.0533,
+      "geohash": "djvwsg4wg",
+      "ssid": "test-network-0",
+      "name": "Test Location 0"
+    },
+    {
+      "lat": 33.5052,
+      "lng": -82.0538,
+      "geohash": "djvwsg6jz",
+      "ssid": "test-network-1",
+      "name": "Test Location 1"
+    },
+    {
+      "lat": 33.5041,
+      "lng": -82.0519,
+      "geohash": "djvwsg5xs",
+      "ssid": "test-network-2",
+      "name": "Test Location 2"
+    },
+    {
+      "lat": 33.5046,
+      "lng": -82.0532,
+      "geohash": "djvwsg6dm",
+      "ssid": "test-network-3",
+      "name": "Test Location 3"
+    },
+    {
+      "lat": 33.504,
+      "lng": -82.0539,
+      "geohash": "djvwsg4nv",
+      "ssid": "test-network-4",
+      "name": "Test Location 4"
+    }
+  ]
+}

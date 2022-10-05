@@ -15,11 +15,13 @@ dependencies:
   bloc: ^8.0.0
   cached_network_image: ^3.2.0
   cloud_firestore: ^3.4.0
+  coinbase_wallet_sdk: ^1.0.0
   double_back_to_close_app: ^2.1.0
   equatable: ^2.0.0
   firebase_analytics: ^9.3.0
   firebase_app_check: ^0.0.6
   firebase_auth: ^3.6.0
+  firebase_core: ^1.23.0
   firebase_crashlytics: ^2.8.0
   fluster: ^1.2.0
   flutter_bloc: ^8.1.0
@@ -32,7 +34,10 @@ dependencies:
   geoflutterfire: ^3.0.3
   geolocator: ^9.0.0
   google_fonts: ^3.0.0
-  google_maps_flutter: ^2.1.0
+  google_maps_flutter: ^2.2.0
+  # no constraints to ensure compatibility w/ google_maps_flutter
+  google_maps_flutter_android: any
+  google_maps_flutter_platform_interface: any
   google_place: ^0.4.7
   http: ^0.13.0
   hydrated_bloc: ^9.0.0-dev

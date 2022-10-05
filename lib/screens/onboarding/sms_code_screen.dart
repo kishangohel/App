@@ -60,7 +60,7 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
               if (sharedPrefs.permissionsComplete) {
                 // if account already exists, finish setup
                 // Otherwise, skip permissions and complete onboarding
-                // In all cases, if user presses back, return to IntroScreen
+                // In all cases, if user presses back, they return to IntroScreen
                 if (profile.displayName == null) {
                   Navigator.of(context).pushNamedAndRemoveUntil(
                     '/onboarding/readyWeb3',

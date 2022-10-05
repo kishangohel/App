@@ -3,7 +3,7 @@ import 'package:verifi/entities/wifi_entity.dart';
 
 class WifiDetails {
   final String id;
-  final String placeId;
+  final String? placeId;
   final LatLng location;
   final String ssid;
   final String? password;
@@ -12,7 +12,7 @@ class WifiDetails {
 
   WifiDetails({
     required this.id,
-    required this.placeId,
+    this.placeId,
     required this.location,
     required this.ssid,
     this.password,

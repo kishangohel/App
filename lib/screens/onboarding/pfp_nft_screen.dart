@@ -32,15 +32,12 @@ class _PfpNftScreenState extends State<PfpNftScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: OnboardingAppBar(),
-      body: Container(
-        color: Colors.black,
-        child: SafeArea(
-          child: Stack(
-            children: [
-              ...onBoardingBackground(context),
-              _profilePictureScreenContents(),
-            ],
-          ),
+      body: SafeArea(
+        child: Stack(
+          children: [
+            ...onBoardingBackground(context),
+            _profilePictureScreenContents(),
+          ],
         ),
       ),
     );
@@ -82,9 +79,7 @@ class _PfpNftScreenState extends State<PfpNftScreen> {
   Widget _pfpTitle() {
     return Text(
       "Select an NFT from your wallet as your profile photo",
-      style: Theme.of(context).textTheme.headline4?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
+      style: Theme.of(context).textTheme.headlineMedium,
       textAlign: TextAlign.center,
     );
   }
@@ -159,11 +154,7 @@ class _PfpNftScreenState extends State<PfpNftScreen> {
                 child: AutoSizeText(
                   nft.name ?? '',
                   maxLines: 1,
-                  style: Theme.of(context).textTheme.headline4?.copyWith(
-                        color: (Theme.of(context).primaryColor == Colors.white)
-                            ? Colors.black
-                            : Colors.white,
-                      ),
+                  style: Theme.of(context).textTheme.headlineMedium,
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -177,11 +168,7 @@ class _PfpNftScreenState extends State<PfpNftScreen> {
                 child: AutoSizeText(
                   nft.description ?? '',
                   maxLines: 1,
-                  style: Theme.of(context).textTheme.headline6?.copyWith(
-                        color: (Theme.of(context).primaryColor == Colors.white)
-                            ? Colors.black
-                            : Colors.white,
-                      ),
+                  style: Theme.of(context).textTheme.titleLarge,
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -197,7 +184,7 @@ class _PfpNftScreenState extends State<PfpNftScreen> {
       padding: const EdgeInsets.only(bottom: 16.0),
       child: AutoSizeText(
         "No NFTs found in your wallet",
-        style: Theme.of(context).textTheme.headline5,
+        style: Theme.of(context).textTheme.headlineMedium,
         textAlign: TextAlign.center,
       ),
     );

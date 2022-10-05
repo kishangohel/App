@@ -10,10 +10,12 @@ class LocationCubit extends HydratedCubit<LatLng?> {
   Future<void> getLocation() async {
     final locationAllowed = await Permission.locationWhenInUse.isGranted;
     if (locationAllowed) {
-      Position position = await Geolocator.getCurrentPosition();
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
       emit(LatLng(position.latitude, position.longitude));
     } else {
-      print("Penis");
+      emit(const LatLng(-1.0, -1.0));
     }
   }
 

@@ -55,7 +55,7 @@ class PermissionsInfoDialog extends StatelessWidget {
                 OutlinedButton(
                   onPressed: () => Navigator.pop(context, null),
                   style: OutlinedButton.styleFrom(
-                    primary: Colors.grey,
+                    foregroundColor: Colors.grey,
                     side: BorderSide(
                       color: fontColor,
                     ),

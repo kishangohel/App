@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,7 +6,6 @@ import 'package:verifi/blocs/nfts/nfts_cubit.dart';
 import 'package:verifi/blocs/wallet_connect/wallet_connect_cubit.dart';
 import 'package:verifi/blocs/wallet_connect/wallet_connect_state.dart';
 import 'package:verifi/screens/onboarding/widgets/onboarding_app_bar.dart';
-import 'package:verifi/screens/onboarding/widgets/onboarding_outline_button.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 
 class ConnectWalletScreen extends StatefulWidget {
@@ -26,44 +23,39 @@ class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
       const Duration(seconds: 1),
       () => setState(() => opacity = 1),
     );
-    context.read<WalletConnectCubit>().canConnect();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<WalletConnectCubit, WalletConnectState>(
-      // listenWhen ensures status is not null
       listenWhen: (previous, current) {
-        return (previous.status == null ||
-                previous.status!.accounts.isEmpty) &&
-            (current.status != null);
+        return (current.status != null || current.cbAccount != null);
       },
       listener: (context, state) {
-        context.read<NftsCubit>().loadNftsOwnedbyAddress(
-              state.status!.accounts[0],
-            );
+        if (state.status != null) {
+          context.read<NftsCubit>().loadNftsOwnedbyAddress(
+                state.status!.accounts[0],
+              );
+        } else if (state.cbAccount != null) {
+          context.read<NftsCubit>().loadNftsOwnedbyAddress(
+                state.cbAccount!.address,
+              );
+        }
         Navigator.of(context).pushNamed('/onboarding/wallet/sign');
       },
       child: Scaffold(
         appBar: OnboardingAppBar(),
-        body: Container(
-          color: Colors.black,
-          child: SafeArea(
-            child: Stack(
-              children: [
-                ...onBoardingBackground(context),
-                (Platform.isIOS)
-                    ? _iosConnectWallet()
-                    : _androidConnectWallet(),
-              ],
-            ),
-          ),
+        body: Stack(
+          children: [
+            ...onBoardingBackground(context),
+            _connectWalletContents(),
+          ],
         ),
       ),
     );
   }
 
-  Widget _androidConnectWallet() {
+  Widget _connectWalletContents() {
     return AnimatedOpacity(
       opacity: opacity,
       duration: const Duration(seconds: 1),
@@ -74,7 +66,9 @@ class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _topTextTitle(),
+                _walletConnectTitle(),
+                _walletConnectSubtitle(),
+                _walletConnectDescription(),
               ],
             ),
           ),
@@ -82,9 +76,12 @@ class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _bottomTextTitle(),
-                _bottomTextContent(),
-                _bottomConnectButton(),
+                Expanded(
+                  child: _walletSelectList(),
+                ),
+                Expanded(
+                  child: _walletSelectHint(),
+                ),
               ],
             ),
           ),
@@ -93,7 +90,7 @@ class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
     );
   }
 
-  Widget _topTextTitle() {
+  Widget _walletConnectTitle() {
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: 12.0,
@@ -101,13 +98,13 @@ class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
       ),
       child: AutoSizeText(
         "Connect your Ethereum wallet",
-        style: Theme.of(context).textTheme.headlineSmall,
+        style: Theme.of(context).textTheme.headlineMedium,
         textAlign: TextAlign.center,
       ),
     );
   }
 
-  Widget _bottomTextTitle() {
+  Widget _walletConnectSubtitle() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
       child: AutoSizeText(
@@ -120,7 +117,7 @@ class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
     );
   }
 
-  Widget _bottomTextContent() {
+  Widget _walletConnectDescription() {
     return Padding(
       padding: const EdgeInsets.only(
         bottom: 24.0,
@@ -128,78 +125,58 @@ class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
         right: 12.0,
       ),
       child: AutoSizeText(
-        '''\u2022 Agree to VeriFi terms and conditions
+        '''\u2022 Agree to our terms and conditions
 \u2022 Select an NFT as your PFP 
-\u2022 Receive web3 incentives (tokens, airdrops, NFTs, etc.)''',
+\u2022 Receive Web3 incentives (tokens, airdrops, NFTs, etc.)''',
         style: Theme.of(context).textTheme.titleMedium,
       ),
     );
   }
 
-  Widget _bottomConnectButton() {
-    return BlocBuilder<WalletConnectCubit, WalletConnectState>(
-      builder: (context, wcState) {
-        return (wcState.canConnect)
-            ? OnboardingOutlineButton(
-                onPressed: () async =>
-                    context.read<WalletConnectCubit>().connect(null),
-                text: "Connect",
-              )
-            : Text(
-                "No wallets installed",
-                style: Theme.of(context).textTheme.titleLarge,
-              );
-      },
-    );
-  }
-
-  Widget _iosConnectWallet() {
-    final _wallets = [
-      [
-        'assets/wallet_logos/metamask.png',
-        "MetaMask",
-        "metamask.io",
-      ],
-      [
-        'assets/wallet_logos/ledger_live.png',
-        "Ledger Live",
-        "ledger.com",
-      ],
-      [
-        'assets/wallet_logos/crypto_com.png',
-        "Crypto.com DeFi Wallet",
-        "crypto.com",
-      ],
-    ];
-
+  Widget _walletSelectList() {
+    final wallets = context.read<WalletConnectCubit>().wallets;
     return ScrollSnapList(
       itemBuilder: (context, index) {
         return Center(
           child: InkWell(
             child: SizedBox(
-              height: MediaQuery.of(context).size.height * 0.5,
               width: MediaQuery.of(context).size.width * 0.4,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Image.asset(_wallets[index][0]),
-                  Text(
-                    _wallets[index][1],
-                    style: Theme.of(context).textTheme.titleLarge,
-                    textAlign: TextAlign.center,
+                  SizedBox(
+                    height: 100,
+                    width: 100,
+                    child: Image.asset(wallets[index].logo),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    child: Text(
+                      wallets[index].name,
+                      style: Theme.of(context).textTheme.titleLarge,
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ],
               ),
             ),
-            onTap: () =>
-                context.read<WalletConnectCubit>().connect(_wallets[index][2]),
+            onTap: () async => context.read<WalletConnectCubit>().connect(
+                  wallets[index].domain,
+                ),
           ),
         );
       },
-      itemCount: _wallets.length,
+      itemCount: wallets.length,
       itemSize: MediaQuery.of(context).size.width * 0.4,
       onItemFocus: (index) {},
       dynamicItemSize: true,
+    );
+  }
+
+  Widget _walletSelectHint() {
+    return Text(
+      "Select your wallet",
+      style: Theme.of(context).textTheme.bodyMedium,
     );
   }
 }

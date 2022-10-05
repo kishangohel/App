@@ -2,15 +2,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:verifi/blocs/activity_recognition/activity_recognition_cubit.dart';
 import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/blocs/display_name_textfield/display_name_textfield_bloc.dart';
-import 'package:verifi/blocs/geofencing/geofencing_cubit.dart';
 import 'package:verifi/blocs/intro_pages/intro_pages_cubit.dart';
 import 'package:verifi/blocs/nfts/nfts_cubit.dart';
 import 'package:verifi/blocs/shared_prefs.dart';
 import 'package:verifi/blocs/theme/theme_cubit.dart';
 import 'package:verifi/blocs/theme/theme_state.dart';
+import 'package:verifi/models/profile.dart';
 import 'package:verifi/repositories/nftport_repository.dart';
 import 'package:verifi/repositories/repositories.dart';
 import 'package:verifi/screens/onboarding/pfp_avatar_screen.dart';
@@ -27,19 +26,24 @@ import 'package:verifi/screens/onboarding/intro_screen.dart';
 import 'package:verifi/screens/onboarding/terms_screen.dart';
 import 'package:verifi/widgets/home_page.dart';
 
-// The top-level [Widget] for the VeriFi application.
-//
-// This should only be built by calling [runApp] in [main].
-//
-// The widget is a [StatefulWidget] in order to setup communication with
-// [Isolate]s via [SendPort] and [ReceivePort].
-//
-// Once the [IsolateNameServer] is setup and listening for callbacks,
-// [platform.invokeMethod] is called with the "initialize" method to initialize
-// the platform-specific code.
-//
-// This widget provides all of the [Bloc]s and [Repository]s to their children.
+/// The top-level [Widget] for the VeriFi application.
+///
+/// This should only be built by calling [runApp] in [main].
+///
+///
+///
+/// The widget is a [StatefulWidget] in order to setup communication with
+/// [Isolate]s via [SendPort] and [ReceivePort].
+///
+/// Once the [IsolateNameServer] is setup and listening for callbacks,
+/// [platform.invokeMethod] is called with the "initialize" method to initialize
+/// the platform-specific code.
+///
+/// This widget provides all of the [Bloc]s and [Repository]s to their children.
 class VeriFi extends StatefulWidget {
+  final Profile? testProfile;
+  const VeriFi(this.testProfile);
+
   @override
   State<StatefulWidget> createState() => VeriFiState();
 }
@@ -79,9 +83,6 @@ class VeriFiState extends State<VeriFi> {
       ],
       child: MultiBlocProvider(
         providers: [
-          BlocProvider(
-            create: (context) => ActivityRecognitionCubit(),
-          ),
           BlocProvider<AddNetworkCubit>(
             create: (context) => AddNetworkCubit(
               RepositoryProvider.of<WifiRepository>(context),
@@ -99,9 +100,6 @@ class VeriFiState extends State<VeriFi> {
           ),
           BlocProvider<FeedFilterBloc>(
             create: (context) => FeedFilterBloc(),
-          ),
-          BlocProvider(
-            create: (context) => GeofencingCubit(),
           ),
           BlocProvider<IntroPagesCubit>(
             create: (context) => IntroPagesCubit(),
@@ -127,9 +125,15 @@ class VeriFiState extends State<VeriFi> {
             ),
           ),
           BlocProvider<ProfileCubit>(
-            create: (context) => ProfileCubit(
-              RepositoryProvider.of<UsersRepository>(context),
-            ),
+            create: (context) {
+              final cubit = ProfileCubit(
+                RepositoryProvider.of<UsersRepository>(context),
+              );
+              if (widget.testProfile != null) {
+                cubit.setProfile(widget.testProfile!);
+              }
+              return cubit;
+            },
           ),
           BlocProvider<TabBloc>(
             create: (context) => TabBloc(),
@@ -185,8 +189,10 @@ class VeriFiApp extends StatelessWidget {
   }
 
   String? _initialRoute(BuildContext context) {
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
+    // Have to call [FirebaseAuth] directly to force update [AuthenticationCubit]
+    FirebaseAuth.instance.currentUser;
+    bool isLoggedIn = context.read<AuthenticationCubit>().isLoggedIn;
+    if (false == isLoggedIn) {
       return '/onboarding';
     } else if (false == sharedPrefs.permissionsComplete) {
       return '/onboarding/permissions';

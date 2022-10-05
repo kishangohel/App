@@ -61,6 +61,7 @@ android {
         }
     }
     namespace 'world.verifi.app'
+    buildToolsVersion '33.0.0'
 }
 
 flutter {

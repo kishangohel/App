@@ -1,7 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:palette_generator/palette_generator.dart';
-import 'package:verifi/blocs/shared_prefs.dart';
 import 'package:verifi/models/profile.dart';
 import 'package:verifi/repositories/users_repository.dart';
 
@@ -40,6 +39,8 @@ class ProfileCubit extends HydratedCubit<Profile> {
   void setPfp(String pfp) => emit(state.copyWith(pfp: pfp));
 
   void setDisplayName(String name) => emit(state.copyWith(displayName: name));
+
+  void setProfile(Profile profile) => emit(profile);
 
   void logout() {
     emit(Profile.empty());

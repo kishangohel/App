@@ -60,11 +60,14 @@ class PlacesRepository {
   }
 
   Future<DetailsResult?> getPlaceDetails(
-    String placeId,
+    String? placeId,
     bool isAutocomplete,
   ) async {
     if (googlePlacesDb == null) {
       await initLocalDbs();
+    }
+    if (placeId == null) {
+      return null;
     }
     DetailsResult? placeDetails = await _getPlaceDetailsCache(placeId);
     placeDetails ??= await _getPlaceDetailsRemote(placeId, isAutocomplete);

@@ -94,21 +94,26 @@ class MapMarkersHelper {
     Color clusterTextColor,
     int clusterWidth,
   ) async {
-    final wifis = await Future.wait<Wifi>(clusterManager.clusters(
-        [-180, -85, 180, 85], currentZoom.toInt()).map((mapMarker) async {
-      final isCluster = mapMarker.isCluster;
-      if (isCluster != null && isCluster) {
-        mapMarker.icon = await _getClusterMarkerImage(
-          mapMarker.pointsSize,
-          clusterColor,
-          clusterTextColor,
-          clusterWidth,
-        );
-        mapMarker.points = clusterManager.points(mapMarker.clusterId!);
-      }
-
-      return mapMarker;
-    }));
+    final wifis = await Future.wait<Wifi>(
+      clusterManager.clusters(
+        [-180, -85, 180, 85],
+        currentZoom.toInt(),
+      ).map(
+        (mapMarker) async {
+          final isCluster = mapMarker.isCluster;
+          if (isCluster != null && isCluster) {
+            mapMarker.icon = await _getClusterMarkerImage(
+              mapMarker.pointsSize,
+              clusterColor,
+              clusterTextColor,
+              clusterWidth,
+            );
+            mapMarker.points = clusterManager.points(mapMarker.clusterId!);
+          }
+          return mapMarker;
+        },
+      ),
+    );
     return wifis;
   }
 

@@ -30,8 +30,7 @@ class WifiUtils {
             .toStringAsFixed(1),
       );
 
-      final entity =
-          WifiEntity.fromDocumentSnapshotWithDistance(doc, distance);
+      final entity = WifiEntity.fromDocumentSnapshotWithDistance(doc, distance);
       return WifiDetails.fromEntity(entity);
     }).toList();
 
@@ -43,7 +42,6 @@ class WifiUtils {
           entry.value.placeId,
           false,
         );
-        if (placeDetails != null) {}
         // Add new Wifi object to list. Keep Firestore order of documents.
         wifis.add(Wifi(
           id: entry.value.id,
@@ -75,8 +73,7 @@ class WifiUtils {
             .toStringAsFixed(1),
       );
 
-      final entity =
-          WifiEntity.fromDocumentSnapshotWithDistance(doc, distance);
+      final entity = WifiEntity.fromDocumentSnapshotWithDistance(doc, distance);
       return WifiDetails.fromEntity(entity);
     }).toList();
     for (var wifiDetail in wifiDetailsList) {

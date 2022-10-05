@@ -2,14 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSMotionUsageDescription</key>
-	<string>VeriFi uses your current activity to conserve battery and more intelligently connect you to nearby WiFi.</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>VeriFi uses your location to intelligently connect you to nearby WiFi and display your position on the VeriMap.</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>VeriFi uses your location in the background to intelligently connect you to nearby WiFi.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>VeriFi uses your location to intelligently connect you to nearby WiFi and display your position on the VeriMap.</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
@@ -38,12 +30,32 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>com.googleusercontent.apps.120678530892-6r5tcaocaodrbmfhjjc782rvghjpo7g7</string>
+				<string>verifi</string>
 			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>FlutterDeepLinkingEnabled</key>
+	<true/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>https</string>
+		<string>ledgerlive</string>
+		<string>metamask</string>
+		<string>cbwallet</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>VeriFi uses your location to intelligently connect you to nearby WiFi and display your position on the VeriMap.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>VeriFi uses your location in the background to intelligently connect you to nearby WiFi.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>VeriFi uses your location to intelligently connect you to nearby WiFi and display your position on the VeriMap.</string>
+	<key>NSMotionUsageDescription</key>
+	<string>VeriFi uses your current activity to conserve battery and more intelligently connect you to nearby WiFi.</string>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
@@ -56,13 +68,6 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-	</array>
-	<key>UISupportedInterfaceOrientations~ipad</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>

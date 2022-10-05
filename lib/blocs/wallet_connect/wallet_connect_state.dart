@@ -1,38 +1,56 @@
+import 'package:coinbase_wallet_sdk/account.dart';
 import 'package:equatable/equatable.dart';
+import 'package:verifi/models/wallet.dart';
 import 'package:walletconnect_dart/walletconnect_dart.dart';
 
 class WalletConnectState extends Equatable {
-  final bool canConnect;
+  final Wallet? activeWallet;
   final SessionStatus? status;
-  final WalletConnectException? exception;
+  final String? errorMessage;
   final bool agreementSigned;
+  // Coinbase only
+  final Account? cbAccount;
+
   const WalletConnectState({
+    this.activeWallet,
     this.status,
-    this.canConnect = false,
-    this.exception,
+    this.errorMessage,
     this.agreementSigned = false,
+    this.cbAccount,
   });
 
   @override
-  List<Object?> get props => [status, canConnect, exception, agreementSigned];
+  List<Object?> get props => [
+        activeWallet,
+        status,
+        errorMessage,
+        agreementSigned,
+        cbAccount,
+      ];
 
   WalletConnectState copyWith({
     SessionStatus? status,
-    bool? canConnect,
-    WalletConnectException? exception,
+    Wallet? activeWallet,
+    String? errorMessage,
     bool? agreementSigned,
+    Account? cbAccount,
   }) {
     return WalletConnectState(
+      activeWallet: activeWallet ?? this.activeWallet,
       status: status ?? this.status,
-      canConnect: canConnect ?? this.canConnect,
-      exception: exception ?? this.exception,
+      errorMessage: errorMessage ?? this.errorMessage,
       agreementSigned: agreementSigned ?? this.agreementSigned,
+      cbAccount: cbAccount ?? this.cbAccount,
     );
   }
 
   @override
   String toString() {
-    return 'WalletConnectState : { status: $status, canConnect: $canConnect, '
-        'exception: $exception, agreementSigned: $agreementSigned}';
+    return 'WalletConnectState : { '
+        'activeWallet: $activeWallet, '
+        'status: $status, '
+        'errorMessage: $errorMessage, '
+        'agreementSigned: $agreementSigned, '
+        'cbAccount: $cbAccount }';
   }
 }

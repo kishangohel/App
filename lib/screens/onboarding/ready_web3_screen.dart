@@ -24,7 +24,6 @@ class _ReadyWeb3ScreenState extends State<ReadyWeb3Screen> {
       const Duration(seconds: 1),
       () => setState(() => opacity = 1),
     );
-    context.read<WalletConnectCubit>().canConnect();
   }
 
   @override
@@ -104,11 +103,11 @@ class _ReadyWeb3ScreenState extends State<ReadyWeb3Screen> {
 
   Widget _headerSubtitle() {
     return AutoSizeText(
-      "Our vision is to create the most accessible, impactful web3 project in "
+      "Our vision is to create the most accessible, impactful Web3 project in "
       "the world.\n\n"
       "VeriFi directly incentivize users around the world to contribute to and "
       "maintain VeriNet: the world's first WiFi crowdsourcing project powered "
-      "by web3. This lays the foundation for a plethora of future initiatives "
+      "by Web3. This lays the foundation for a plethora of future initiatives "
       "on our roadmap.",
       maxLines: 9,
       style: Theme.of(context).textTheme.headlineSmall,
@@ -151,7 +150,9 @@ class _ReadyWeb3ScreenState extends State<ReadyWeb3Screen> {
         return OnboardingOutlineButton(
           text: "Continue",
           onPressed: () async {
-            (state.canConnect)
+            final wallets =
+                await context.read<WalletConnectCubit>().getAvailableWallets();
+            wallets.isNotEmpty
                 ? await Navigator.of(context).pushNamed('/onboarding/wallet')
                 : await Navigator.of(context).pushNamed('/onboarding/terms');
           },

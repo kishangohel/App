@@ -1,10 +1,9 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:async/async.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:verifi/blocs/activity_recognition/activity_recognition_cubit.dart';
 import 'package:verifi/blocs/blocs.dart';
-import 'package:verifi/blocs/geofencing/geofencing_cubit.dart';
 import 'package:verifi/blocs/shared_prefs.dart';
 import 'package:verifi/blocs/theme/theme_cubit.dart';
 import 'package:verifi/screens/onboarding/widgets/onboarding_app_bar.dart';
@@ -38,16 +37,18 @@ class _FinalSetupScreenState extends State<FinalSetupScreen> {
         context.read<ThemeCubit>().updateColors(palette);
       }));
       futureGroup.add(context.read<LocationCubit>().getLocation());
-      futureGroup.add(GeofencingCubit.registerNearbyGeofences());
-      futureGroup.add(
-        ActivityRecognitionCubit.requestActivityTransitionUpdates(),
-      );
+      // futureGroup.add(GeofencingCubit.registerNearbyGeofences());
+      // futureGroup.add(
+      //   ActivityRecognitionCubit.requestActivityTransitionUpdates(),
+      // );
       futureGroup.future.then(
         (List<dynamic> values) {
           sharedPrefs.setOnboardingComplete();
           setState(() {});
         },
-        onError: (error) {},
+        onError: (error) {
+          FirebaseCrashlytics.instance.log(error);
+        },
       );
       futureGroup.close();
     });

@@ -31,12 +31,11 @@ class _MapGoogleMapState extends State<MapGoogleMap>
         return GoogleMap(
           mapToolbarEnabled: false,
           initialCameraPosition: _initialCameraPosition,
-          myLocationEnabled: true,
+          // myLocationEnabled: true,
           myLocationButtonEnabled: false,
           zoomControlsEnabled: false,
-          markers:
-              state.wifis?.map((wifi) => wifi.toMarker(context)).toSet() ??
-                  const <Marker>{},
+          markers: state.wifis?.map((wifi) => wifi.toMarker(context)).toSet() ??
+              const <Marker>{},
           onCameraMove: (cp) {
             context.read<MapCubit>().currentPosition = cp;
           },
