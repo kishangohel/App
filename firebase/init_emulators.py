@@ -79,6 +79,16 @@ def get_random_nearby_coordinate():
 
 
 def main():
+    cred = credentials.Certificate(
+        "/Users/dalelakes/Projects/verifi-world/verifi-5db5b-13d2f4c494a4.json"
+    )
+    firebase_admin.initialize_app(cred)
+    db = firestore.client()
+
+    # Create user
+    user: UserRecord = auth.create_user(phone_number="+1 650-555-3434")
+
+    # Create access points
     access_points = []
     for i in range(5):
         coordinate = get_random_nearby_coordinate()
@@ -92,15 +102,6 @@ def main():
             }
         )
 
-    cred = credentials.Certificate(
-        "/Users/dalelakes/Projects/verifi-world/verifi-5db5b-13d2f4c494a4.json"
-    )
-    app = firebase_admin.initialize_app(cred)
-    db = firestore.client()
-
-    # Create user
-    record: UserRecord = auth.create_user(phone_number="+1 650-555-3434")
-
     # Add access points
     for ap in access_points:
         db.collection("access_points").add(
@@ -111,11 +112,15 @@ def main():
                 },
                 "Name": ap["name"],
                 "SSID": ap["ssid"],
+                "LastValidated": datetime.datetime.now(
+                    tz=datetime.timezone.utc,
+                ),
+                "SubmittedBy": user.uid,
             }
         )
 
     # Create profile
-    db.collection("users").document(record.uid).set(
+    db.collection("users").document(user.uid).set(
         {
             "createdOn": datetime.datetime.now(tz=datetime.timezone.utc),
             "displayName": "test-user",

@@ -3,58 +3,63 @@ import 'dart:ui';
 
 import 'package:fluster/fluster.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:verifi/models/wifi.dart';
 
 class MapMarkersHelper {
-  static Future<void> resetMarker(BuildContext context) async {
-    await DefaultCacheManager().removeFile("map-marker.png");
-    await initMarker(context);
-  }
+  static Future<Map<String, BitmapDescriptor>> getMarkers() async => {
+        "Expired": await _getMarker("red"),
+        "UnVeriFied": await _getMarker("orange"),
+        "VeriFied": await _getMarker("green"),
+      };
 
-  static Future<void> initMarker(BuildContext context) async {
-    // If marker already in cache, do nothing
-    final FileInfo? markerImage =
-        await DefaultCacheManager().getFileFromCache("map-marker.png");
-    if (markerImage != null) return;
-
-    // Transform icon into Uint8List
-    const iconData = Icons.wifi;
-    final pictureRecorder = PictureRecorder();
-    final canvas = Canvas(pictureRecorder);
-    final textPainter = TextPainter(textDirection: TextDirection.ltr);
-    textPainter.text = TextSpan(
-      text: String.fromCharCode(iconData.codePoint),
-      style: TextStyle(
-        letterSpacing: 0.0,
-        fontSize: 60.0,
-        fontFamily: iconData.fontFamily,
-        color: Theme.of(context).colorScheme.primary,
-      ),
+  static Future<BitmapDescriptor> _getMarker(String color) async {
+    return BitmapDescriptor.fromAssetImage(
+      const ImageConfiguration(size: Size(48, 48)),
+      'assets/wifi_markers/map_marker_$color.png',
     );
-    textPainter.layout();
-    textPainter.paint(canvas, const Offset(0.0, 0.0));
-    final Picture pic = pictureRecorder.endRecording();
-    final img = await pic.toImage(60, 60);
-    final ByteData? byteData =
-        await img.toByteData(format: ImageByteFormat.png);
-    if (null != byteData) {
-      await DefaultCacheManager().putFile(
-        "map-marker.png",
-        byteData.buffer.asUint8List(),
-        fileExtension: "png",
-      );
-    }
   }
 
-  static Future<BitmapDescriptor> getMarker() async {
-    final FileInfo? markerImage =
-        await DefaultCacheManager().getFileFromCache("map-marker.png");
-    assert(markerImage != null);
-    final Uint8List markerImageBytes = await markerImage!.file.readAsBytes();
-    return BitmapDescriptor.fromBytes(markerImageBytes);
-  }
+  // static Future<void> resetMarker(BuildContext context) async {
+  //   await DefaultCacheManager().removeFile("map-marker.png");
+  //   await initMarker(context);
+  // }
+  //
+  // static Future<void> initMarker(BuildContext context) async {
+  //   // If marker already in cache, do nothing
+  //   final FileInfo? markerImage =
+  //       await DefaultCacheManager().getFileFromCache("map-marker.png");
+  //   if (markerImage != null) return;
+  //
+  //   // Transform icon into Uint8List
+  //   const iconData = Icons.wifi;
+  //   final pictureRecorder = PictureRecorder();
+  //   final canvas = Canvas(pictureRecorder);
+  //   final textPainter = TextPainter(textDirection: TextDirection.ltr);
+  //   textPainter.text = TextSpan(
+  //     text: String.fromCharCode(iconData.codePoint),
+  //     style: TextStyle(
+  //       letterSpacing: 0.0,
+  //       fontSize: 60.0,
+  //       fontFamily: iconData.fontFamily,
+  //       color: Theme.of(context).colorScheme.primary,
+  //     ),
+  //   );
+  //   textPainter.layout();
+  //   textPainter.paint(canvas, const Offset(0.0, 0.0));
+  //   final Picture pic = pictureRecorder.endRecording();
+  //   final img = await pic.toImage(60, 60);
+  //   final ByteData? byteData =
+  //       await img.toByteData(format: ImageByteFormat.png);
+  //   if (null != byteData) {
+  //     await DefaultCacheManager().putFile(
+  //       "map-marker.png",
+  //       byteData.buffer.asUint8List(),
+  //       fileExtension: "png",
+  //     );
+  //   }
+  // }
+  //
 
   static Future<Fluster<Wifi>> initClusterManager(
     List<Wifi> markers,

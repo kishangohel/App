@@ -83,17 +83,17 @@ class WifiUtils {
   }
 
   static Future<List<Wifi>> transformToClusters(
-    List<Wifi> wifiMarkers,
+    List<Wifi> wifis,
     double zoom,
-    BitmapDescriptor wifiMarker,
+    Map<String, BitmapDescriptor> wifiMarkers,
     Color clusterColor,
     Color clusterTextColor,
   ) async {
-    for (Wifi marker in wifiMarkers) {
-      marker.icon = wifiMarker;
+    for (Wifi wifi in wifis) {
+      wifi.icon = wifiMarkers[getVeriFiedStatus(wifi)];
     }
     Fluster<Wifi> clusterManager = await MapMarkersHelper.initClusterManager(
-      wifiMarkers,
+      wifis,
       11, // min zoom
       19, // max zoom
     );
@@ -105,5 +105,15 @@ class WifiUtils {
       120,
     );
     return updatedMarkers;
+  }
+
+  static String getVeriFiedStatus(Wifi wifi) {
+    final lastValidatedDuration =
+        wifi.wifiDetails!.lastValidated.difference(DateTime.now()).inDays;
+    if (lastValidatedDuration < 3) {
+      return "green";
+    } else {
+      return "orange";
+    }
   }
 }

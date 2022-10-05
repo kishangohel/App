@@ -7,7 +7,8 @@ class WifiDetails {
   final LatLng location;
   final String ssid;
   final String? password;
-  //final String submittedBy;
+  final String submittedBy;
+  final DateTime lastValidated;
   final num? distance;
 
   WifiDetails({
@@ -16,7 +17,8 @@ class WifiDetails {
     required this.location,
     required this.ssid,
     this.password,
-    //this.submittedBy,
+    required this.submittedBy,
+    required this.lastValidated,
     this.distance,
   });
 
@@ -28,6 +30,8 @@ class WifiDetails {
       placeId: entity.placeId,
       location: LatLng(entity.location.latitude, entity.location.longitude),
       distance: entity.distance,
+      submittedBy: entity.submittedBy,
+      lastValidated: entity.lastValidated,
     );
   }
 
@@ -38,8 +42,8 @@ class WifiDetails {
       location: LatLng(json['location']['lat'], json['location']['lng']),
       ssid: json['ssid'],
       password: json['password'],
-      // Deliberately not storing distance
-      // distance: json['distance'],
+      submittedBy: json['submittedBy'],
+      lastValidated: DateTime.fromMillisecondsSinceEpoch(json['lastValidated']),
     );
   }
 
@@ -54,5 +58,7 @@ class WifiDetails {
           'lat': location.latitude,
           'lng': location.longitude,
         },
+        'submittedBy': submittedBy,
+        'lastValidated': lastValidated.millisecondsSinceEpoch,
       };
 }

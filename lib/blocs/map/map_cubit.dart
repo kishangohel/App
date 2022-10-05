@@ -19,7 +19,7 @@ class MapCubit extends Cubit<MapState> {
 
   // This should be directly updated by the map whenever onMapChanged occurs
   CameraPosition? currentPosition;
-  BitmapDescriptor? marker;
+  Map<String, BitmapDescriptor>? markers;
   FocusNode? focus;
 
   MapCubit(
@@ -37,9 +37,7 @@ class MapCubit extends Cubit<MapState> {
         (MediaQuery.of(context).platformBrightness == Brightness.light)
             ? lightMapStyle
             : darkMapStyle);
-    await MapMarkersHelper.resetMarker(context);
-    await MapMarkersHelper.initMarker(context);
-    marker = await MapMarkersHelper.getMarker();
+    markers = await MapMarkersHelper.getMarkers();
   }
 
   void update(BuildContext context) async {
@@ -67,7 +65,7 @@ class MapCubit extends Cubit<MapState> {
     wifis = await WifiUtils.transformToClusters(
       wifis,
       zoom,
-      marker!,
+      markers!,
       clusterColor,
       clusterTextColor,
     );

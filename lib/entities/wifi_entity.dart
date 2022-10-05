@@ -8,6 +8,8 @@ class WifiEntity extends Equatable {
   final String? password;
   final GeoPoint location;
   final double? distance;
+  final String submittedBy;
+  final DateTime lastValidated;
 
   const WifiEntity({
     required this.id,
@@ -16,22 +18,15 @@ class WifiEntity extends Equatable {
     this.password,
     required this.location,
     this.distance,
+    required this.submittedBy,
+    required this.lastValidated,
   });
 
   @override
   List<Object> get props => [id];
 
   @override
-  String toString() {
-    return '''WifiMarkerEntity {
-  id: $id,
-  PlaceId: $placeId,
-  Password: $password,
-  SSID: $ssid,
-  Location: $location,
-  Distance: $distance,
-}''';
-  }
+  String toString() => "WifiEntity { id: $id, PlaceId: $placeId, SSID: $ssid }";
 
   static WifiEntity fromDocumentSnapshotWithDistance(
     DocumentSnapshot snapshot,
@@ -45,6 +40,10 @@ class WifiEntity extends Equatable {
       ssid: data['SSID'],
       distance: distance,
       location: data['Location']['geopoint'],
+      lastValidated: DateTime.parse(
+        (data['LastValidated'] as Timestamp).toDate().toString(),
+      ),
+      submittedBy: data['SubmittedBy'],
     );
   }
 
@@ -55,8 +54,9 @@ class WifiEntity extends Equatable {
       placeId: data['PlaceId'],
       password: data['Password'],
       ssid: data['SSID'],
-      // position contains geohash and geopoint children
       location: data['Location']['geopoint'],
+      lastValidated: data['LastValidated'],
+      submittedBy: data['SubmittedBy'],
     );
   }
 }
