@@ -54,13 +54,16 @@ class Wifi extends Clusterable {
         'wifiDetails': wifiDetails?.toJson(),
       };
 
+  @override
+  String toString() => "WiFi: { id: $id, icon: $icon }";
+
   Marker toMarker(BuildContext context) {
     final marker = Marker(
       markerId: MarkerId((wifiDetails != null) ? wifiDetails?.id ?? id : id),
-      position: (placeDetails != null)
+      position: (wifiDetails != null)
           ? LatLng(
-              placeDetails?.geometry?.location?.lat ?? -1.0,
-              placeDetails?.geometry?.location?.lng ?? -1.0,
+              wifiDetails?.location.latitude ?? -1.0,
+              wifiDetails?.location.longitude ?? -1.0,
             )
           : LatLng(clusterLocation?.latitude ?? -1.0,
               clusterLocation?.longitude ?? -1.0),
@@ -72,8 +75,8 @@ class Wifi extends Clusterable {
               .mapController
               ?.animateCamera(CameraUpdate.newLatLngZoom(
                 LatLng(
-                  placeDetails?.geometry?.location?.lat ?? -1.0,
-                  placeDetails?.geometry?.location?.lng ?? -1.0,
+                  wifiDetails?.location.latitude ?? -1.0,
+                  wifiDetails?.location.longitude ?? -1.0,
                 ),
                 19,
               ));

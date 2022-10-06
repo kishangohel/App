@@ -55,7 +55,9 @@ class WifiEntity extends Equatable {
       password: data['Password'],
       ssid: data['SSID'],
       location: data['Location']['geopoint'],
-      lastValidated: data['LastValidated'],
+      lastValidated: DateTime.parse(
+        (data['LastValidated'] as Timestamp).toDate().toString(),
+      ),
       submittedBy: data['SubmittedBy'],
     );
   }

@@ -31,18 +31,16 @@ class MapCubit extends Cubit<MapState> {
     GoogleMapController controller,
     BuildContext context,
   ) async {
-    debugPrint("Map initialize called");
     mapController = controller;
     mapController?.setMapStyle(
         (MediaQuery.of(context).platformBrightness == Brightness.light)
             ? lightMapStyle
             : darkMapStyle);
-    markers = await MapMarkersHelper.getMarkers();
+    markers = await MapMarkersHelper.getMarkers(context);
   }
 
   void update(BuildContext context) async {
-    final clusterColor = Theme.of(context).colorScheme.primary;
-    final clusterTextColor = Theme.of(context).colorScheme.onPrimary;
+    const clusterTextColor = Colors.white;
     if (currentPosition == null) {
       return;
     }
@@ -66,7 +64,6 @@ class MapCubit extends Cubit<MapState> {
       wifis,
       zoom,
       markers!,
-      clusterColor,
       clusterTextColor,
     );
     emit(state.copyWith(wifis: wifis));

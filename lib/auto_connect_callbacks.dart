@@ -19,12 +19,12 @@ Future<bool> addNearbyAccessPoints(double lat, double lng) async {
     wifis = wifis.sublist(0, 100);
   }
   for (Wifi wifi in wifis) {
-    assert(wifi.wifiDetails != null && wifi.placeDetails != null);
+    assert(wifi.wifiDetails != null);
     AutoConnect.addAccessPoint(
       Geofence(
         id: wifi.placeDetails!.placeId!,
-        lat: wifi.placeDetails!.geometry!.location!.lat!,
-        lng: wifi.placeDetails!.geometry!.location!.lng!,
+        lat: wifi.wifiDetails!.location.latitude,
+        lng: wifi.wifiDetails!.location.longitude,
         radius: 100.0,
       ),
       AccessPoint(

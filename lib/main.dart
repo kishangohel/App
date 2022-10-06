@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:auto_connect/auto_connect.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -13,6 +14,7 @@ import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:http/http.dart' as http;
 import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:network_info_plus/network_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:verifi/blocs/logging_bloc_delegate.dart';
 import 'package:verifi/blocs/shared_prefs.dart';
@@ -78,8 +80,13 @@ void main() async {
   // Setup auto connect
   AutoConnect.initialize();
 
+  if (Platform.isIOS) {
+    await getLocalNetworkAccess();
+  }
+
   Profile? profile;
   if (kDebugMode) {
+    await FirebaseAuth.instance.signOut();
     profile = await authenticateTestUser();
   }
   // Run the app
@@ -118,4 +125,16 @@ Future<Profile> authenticateTestUser() async {
     displayName: "test-user",
     pfp: "assets/profile_avatars/People-01.png",
   );
+}
+
+Future<void> getLocalNetworkAccess() async {
+  try {
+    var deviceIp = await NetworkInfo().getWifiIP();
+    Duration? timeOutDuration = const Duration(milliseconds: 100);
+    await Socket.connect(deviceIp, 80, timeout: timeOutDuration);
+  } catch (e) {
+    // Give dev time to accept local network pop-up before continuing
+    sleep(const Duration(seconds: 10));
+  }
+  return;
 }

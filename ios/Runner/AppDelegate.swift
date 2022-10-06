@@ -2,6 +2,12 @@ import CoinbaseWalletSDK
 import Flutter
 import GoogleMaps
 import UIKit
+import auto_connect
+
+// Need this to register auto_connect headless runner
+func registerPlugins(_ registry: FlutterPluginRegistry) {
+    GeneratedPluginRegistrant.register(with: registry)
+}
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
@@ -11,9 +17,11 @@ import UIKit
     ) -> Bool {
         GMSServices.provideAPIKey("AIzaSyD6mXR7XtiPugZ7a_ybwjIj7IsfGnLeUIA")
         GeneratedPluginRegistrant.register(with: self)
+        SwiftAutoConnectPlugin.setPluginRegistrantCallback(registerPlugins(_:))
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
-
+    
+    // Coinbase Wallet SDK callback
     override func application(_ app: UIApplication,
                               open url: URL,
                               options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool

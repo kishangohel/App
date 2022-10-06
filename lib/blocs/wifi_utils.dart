@@ -86,7 +86,6 @@ class WifiUtils {
     List<Wifi> wifis,
     double zoom,
     Map<String, BitmapDescriptor> wifiMarkers,
-    Color clusterColor,
     Color clusterTextColor,
   ) async {
     for (Wifi wifi in wifis) {
@@ -100,7 +99,6 @@ class WifiUtils {
     final updatedMarkers = await MapMarkersHelper.getClusterMarkers(
       clusterManager,
       zoom,
-      clusterColor,
       clusterTextColor,
       120,
     );
@@ -109,11 +107,12 @@ class WifiUtils {
 
   static String getVeriFiedStatus(Wifi wifi) {
     final lastValidatedDuration =
-        wifi.wifiDetails!.lastValidated.difference(DateTime.now()).inDays;
+        DateTime.now().difference(wifi.wifiDetails!.lastValidated).inDays;
+    debugPrint("Last validated: $lastValidatedDuration days ago");
     if (lastValidatedDuration < 3) {
-      return "green";
+      return "VeriFied";
     } else {
-      return "orange";
+      return "UnVeriFied";
     }
   }
 }
