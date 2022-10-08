@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/services.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:verifi/blocs/svg_provider.dart';
+import 'package:verifi/models/nft.dart';
 
 part 'profile.g.dart';
 
@@ -8,37 +9,33 @@ part 'profile.g.dart';
 class Profile extends Equatable {
   final String id;
   final String? ethAddress;
-  final String? pfp;
-  final PfpType? pfpType;
-  final Uint8List? pfpBytes;
+
+  /// If [pfp] is null, then we load the multiavatar based on [displayname].
+  final Nft? pfp;
   final String? displayName;
 
   const Profile({
     required this.id,
     this.ethAddress,
     this.pfp,
-    this.pfpType,
-    this.pfpBytes,
     this.displayName,
   });
 
   @override
-  List<Object?> get props => [id, ethAddress, pfp, displayName];
+  List<Object?> get props => [id];
 
   factory Profile.empty() => const Profile(id: '');
 
   Profile copyWith({
     String? id,
     String? ethAddress,
-    String? pfp,
-    PfpType? pfpType,
+    Nft? pfp,
     String? displayName,
   }) {
     return Profile(
       id: id ?? this.id,
       ethAddress: ethAddress ?? this.ethAddress,
       pfp: pfp ?? this.pfp,
-      pfpType: pfpType ?? this.pfpType,
       displayName: displayName ?? this.displayName,
     );
   }
@@ -49,5 +46,5 @@ class Profile extends Equatable {
   Map<String, dynamic> toJson() => _$ProfileToJson(this);
 
   @override
-  String toString() => "User: { $id, $displayName }";
+  String toString() => "User: { id: '$id', displayName: '$displayName' }";
 }

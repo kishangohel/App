@@ -16,10 +16,13 @@ import 'package:http/http.dart' as http;
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:random_avatar/random_avatar.dart';
 import 'package:verifi/blocs/logging_bloc_delegate.dart';
 import 'package:verifi/blocs/profile/profile_cubit.dart';
 import 'package:verifi/blocs/shared_prefs.dart';
+import 'package:verifi/blocs/svg_provider.dart';
 import 'package:verifi/firebase_options.dart';
+import 'package:verifi/models/nft.dart';
 import 'package:verifi/models/profile.dart';
 import 'package:verifi/widgets/app.dart';
 
@@ -129,13 +132,12 @@ Future<Profile> setupTestEnvironment() async {
   );
   final uid = await authCompleter.future;
   // Generate test Profile with auth token
-  final pfp = ProfileCubit.getRandomAvatar();
   final profile = Profile(
     id: uid,
     ethAddress: "0x0123456789abcdef0123456789abcdef01234567",
     displayName: "test-user",
-    pfp: pfp,
-    pfpType: PfpType.localSvg,
+    // setting to null causes multiavatar to get used
+    pfp: null,
   );
   // Return profile to pass to VeriFi app during Bloc setup
   return profile;

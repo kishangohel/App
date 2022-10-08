@@ -3,7 +3,7 @@ export 'app_tab.dart';
 export 'bounty.dart';
 export 'email.dart';
 export 'feed_filter.dart';
-export 'pfp.dart';
+export 'nft.dart';
 export 'password.dart';
 export 'profile.dart';
 export 'user_location.dart';

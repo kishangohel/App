@@ -46,6 +46,7 @@ dependencies:
   hydrated_bloc: ^9.0.0-dev
   json_annotation: ^4.7.0
   json_theme: ^4.0.0
+  mime: ^1.0.0
   network_info_plus: ^2.3.0
   page_transition: ^2.0.0
   palette_generator: ^0.3.0

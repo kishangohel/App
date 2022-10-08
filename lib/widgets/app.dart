@@ -12,7 +12,6 @@ import 'package:verifi/blocs/theme/theme_state.dart';
 import 'package:verifi/models/profile.dart';
 import 'package:verifi/repositories/nftport_repository.dart';
 import 'package:verifi/repositories/repositories.dart';
-import 'package:verifi/screens/onboarding/pfp_avatar_screen.dart';
 import 'package:verifi/screens/onboarding/pfp_nft_screen.dart';
 import 'package:verifi/screens/onboarding/ready_web3_screen.dart';
 import 'package:verifi/screens/onboarding/connect_wallet_screen.dart';
@@ -131,7 +130,6 @@ class VeriFiState extends State<VeriFi> {
               );
               if (widget.testProfile != null) {
                 cubit.setProfile(widget.testProfile!);
-                cubit.setPfpBitmap();
               }
               return cubit;
             },
@@ -185,7 +183,6 @@ class VeriFiApp extends StatelessWidget {
             '/onboarding/wallet': (context) => ConnectWalletScreen(),
             '/onboarding/wallet/sign': (context) => SignWalletScreen(),
             '/onboarding/pfpNft': (context) => PfpNftScreen(),
-            '/onboarding/pfpAvatar': (context) => PfpAvatarScreen(),
             '/onboarding/finalSetup': (context) => FinalSetupScreen(),
           },
           navigatorObservers: [_VeriFiNavigatorObserver()],

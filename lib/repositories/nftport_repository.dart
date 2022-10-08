@@ -18,8 +18,8 @@ class NftPortRepository {
           "Content-Type": "application/json",
         };
 
-  Future<List<Pfp>> getAssetsOwnedByAddress(String address) async {
-    List<Pfp> nfts = [];
+  Future<List<Nft>> getAssetsOwnedByAddress(String address) async {
+    List<Nft> nfts = [];
     final queryParams = {
       "chain": "ethereum",
       "include": "metadata",
@@ -31,12 +31,11 @@ class NftPortRepository {
     final response = await http.get(_uri, headers: _headers);
     final assets = jsonDecode(response.body)['nfts'] as List<dynamic>?;
     if (assets == null) {
-      return <Pfp>[];
+      return <Nft>[];
     }
     for (Map<String, dynamic> asset in assets) {
-      Pfp? nft = Pfp.fromNftPortResponse(asset);
-      // Only support images for now (not vectors or videos)
-      if (nft != null && nft.type == PfpTypes.image) nfts.add(nft);
+      Nft? nft = Nft.fromNftPortResponse(asset);
+      if (nft != null) nfts.add(nft);
     }
     return nfts;
   }

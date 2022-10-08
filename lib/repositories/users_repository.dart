@@ -14,9 +14,9 @@ class UsersRepository {
     });
   }
 
-  Future<void> updatePfp(String userId, String pfp) async {
+  Future<void> updatePfp(String userId, Nft pfp) async {
     return usersCollection.doc(userId).update({
-      "pfp": pfp,
+      "pfp": pfp.url,
     });
   }
 

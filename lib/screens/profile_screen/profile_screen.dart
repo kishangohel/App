@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:random_avatar/random_avatar.dart';
 import 'package:verifi/blocs/blocs.dart';
+import 'package:verifi/blocs/svg_provider.dart';
 import 'package:verifi/screens/profile_screen/edit_profile_modal_bottom_sheet.dart';
 
 class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -41,8 +43,8 @@ class _ProfileBodyState extends State<ProfileBody> {
 
   Widget _profilePhoto() {
     final pfp = context.read<ProfileCubit>().pfp;
-    final pfpType = context.read<ProfileCubit>().pfpType;
-    assert(pfp != null && pfpType != null);
+    final displayName = context.read<ProfileCubit>().displayName;
+    assert(displayName != null);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -55,20 +57,15 @@ class _ProfileBodyState extends State<ProfileBody> {
               CircleAvatar(
                 radius: 60,
                 backgroundColor: Theme.of(context).colorScheme.secondary,
-                child: FutureBuilder<ImageProvider>(
-                  future: ProfileCubit.pfpToImage(pfp!, pfpType!),
-                  builder: (context, AsyncSnapshot<ImageProvider> snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      return CircleAvatar(
-                        radius: 55,
-                        backgroundImage: snapshot.data,
-                        backgroundColor:
-                            Theme.of(context).colorScheme.background,
-                      );
-                    } else {
-                      return const CircularProgressIndicator();
-                    }
-                  },
+                child: CircleAvatar(
+                  radius: 55,
+                  backgroundImage: (pfp != null)
+                      ? pfp.image
+                      : Svg(
+                          randomAvatarString(displayName!, trBackground: true),
+                          source: SvgSource.raw,
+                        ),
+                  backgroundColor: Theme.of(context).colorScheme.background,
                 ),
               ),
               Positioned(

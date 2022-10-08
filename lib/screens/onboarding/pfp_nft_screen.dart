@@ -3,8 +3,10 @@ import 'dart:core';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:random_avatar/random_avatar.dart';
 import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/blocs/nfts/nfts_cubit.dart';
+import 'package:verifi/blocs/svg_provider.dart';
 import 'package:verifi/models/models.dart';
 import 'package:verifi/screens/onboarding/widgets/onboarding_app_bar.dart';
 import 'package:verifi/screens/onboarding/widgets/onboarding_outline_button.dart';
@@ -85,7 +87,7 @@ class _PfpNftScreenState extends State<PfpNftScreen> {
   }
 
   Widget _pfpContents() {
-    return BlocBuilder<NftsCubit, List<Pfp>>(
+    return BlocBuilder<NftsCubit, List<Nft>>(
       builder: (context, nfts) {
         return SizedBox(
           child: Column(
@@ -116,7 +118,7 @@ class _PfpNftScreenState extends State<PfpNftScreen> {
     );
   }
 
-  Widget _pfpPageView(List<Pfp> nfts) {
+  Widget _pfpPageView(List<Nft> nfts) {
     return PageView.builder(
       controller: _controller,
       itemCount: nfts.length,
@@ -142,7 +144,9 @@ class _PfpNftScreenState extends State<PfpNftScreen> {
                     right: 16,
                     top: 16.0,
                   ),
-                  child: Image.network(nft.image),
+                  child: Image(
+                      image: nft.image ??
+                          const Svg('test-user', source: SvgSource.raw)),
                 ),
               ),
               // NFT name
@@ -190,13 +194,10 @@ class _PfpNftScreenState extends State<PfpNftScreen> {
     );
   }
 
-  Widget _completeSetupButton(List<Pfp> nfts) {
+  Widget _completeSetupButton(List<Nft> nfts) {
     return OnboardingOutlineButton(
       onPressed: () async {
-        context.read<ProfileCubit>().setPfp(
-              nfts[_controller.page!.toInt()].image,
-              PfpType.remotePng,
-            );
+        context.read<ProfileCubit>().setPfp(nfts[_controller.page!.toInt()]);
         await Navigator.of(context).pushNamed(
           '/onboarding/displayName',
         );

@@ -1,12 +1,11 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:verifi/blocs/nfts/nfts_cubit.dart';
 import 'package:verifi/blocs/profile/profile_cubit.dart';
 import 'package:verifi/blocs/theme/theme_cubit.dart';
-import 'package:verifi/models/pfp.dart';
+import 'package:verifi/models/nft.dart';
 
 class EditProfileModalBottomSheet extends StatefulWidget {
   @override
@@ -17,13 +16,6 @@ class _EditProfileModalBottomSheetState
     extends State<EditProfileModalBottomSheet> {
   final _pageController = PageController();
   Color? _selectedThemeColor;
-  List<int> _randomizedAvatarIndices = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _randomizedAvatarIndices = _randomizeAvatarIndices();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -146,7 +138,7 @@ class _EditProfileModalBottomSheetState
   }
 
   Widget _pfpBottomPageView(bool web3Enabled) {
-    return BlocBuilder<NftsCubit, List<Pfp>>(
+    return BlocBuilder<NftsCubit, List<Nft>>(
       builder: (context, nfts) {
         return (web3Enabled && nfts.isNotEmpty)
             ? Column(
@@ -157,19 +149,13 @@ class _EditProfileModalBottomSheetState
                   _pfpNftsUpdateButton(),
                 ],
               )
-            : Column(
-                children: [
-                  Expanded(
-                    child: _pfpAvatarsBottomPageView(),
-                  ),
-                  _pfpAvatarsUpdateButton(),
-                ],
-              );
+            //TODO
+            : Container();
       },
     );
   }
 
-  Widget _pfpNftsBottomPageView(List<Pfp> nfts) {
+  Widget _pfpNftsBottomPageView(List<Nft> nfts) {
     return PageView.builder(
       controller: _pageController,
       itemCount: nfts.length,
@@ -180,9 +166,7 @@ class _EditProfileModalBottomSheetState
               flex: 8,
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: CachedNetworkImage(
-                  imageUrl: nfts[index].image,
-                ),
+                child: Image(image: nfts[index].image!),
               ),
             ),
             Visibility(
@@ -216,15 +200,11 @@ class _EditProfileModalBottomSheetState
   Widget _pfpNftsUpdateButton() {
     return ElevatedButton(
       onPressed: () async {
-        final photo = context
-            .read<NftsCubit>()
-            .state[_pageController.page!.toInt()]
-            .image;
+        final photo =
+            context.read<NftsCubit>().state[_pageController.page!.toInt()];
         context.read<ProfileCubit>().setPfp(photo);
         context.read<ThemeCubit>().updateColors(
-              await PaletteGenerator.fromImageProvider(
-                NetworkImage(photo),
-              ),
+              await PaletteGenerator.fromImageProvider(photo.image!),
             );
         Navigator.of(context).pop();
       },
@@ -232,68 +212,5 @@ class _EditProfileModalBottomSheetState
         "Update",
       ),
     );
-  }
-
-  Widget _pfpAvatarsBottomPageView() {
-    return PageView.builder(
-      controller: _pageController,
-      itemCount: 24,
-      itemBuilder: (context, index) {
-        final strIndex =
-            (_randomizedAvatarIndices[index] + 1).toString().padLeft(2, "0");
-        return Container(
-          margin: const EdgeInsets.symmetric(
-            horizontal: 24.0,
-          ),
-          decoration: const BoxDecoration(
-            borderRadius: BorderRadius.all(
-              Radius.circular(12),
-            ),
-          ),
-          child: Container(
-            padding: const EdgeInsets.only(
-              left: 16,
-              right: 16,
-              top: 16.0,
-            ),
-            child: Image(
-              image: AssetImage(
-                'assets/profile_avatars/People-$strIndex.png',
-              ),
-              fit: BoxFit.contain,
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _pfpAvatarsUpdateButton() {
-    return ElevatedButton(
-      onPressed: () async {
-        final strIndex =
-            (_randomizedAvatarIndices[_pageController.page!.toInt()] + 1)
-                .toString()
-                .padLeft(2, "0");
-
-        final avatar = 'assets/profile_avatars/People-$strIndex.png';
-        context.read<ProfileCubit>().setPfp(avatar);
-        context.read<ThemeCubit>().updateColors(
-              await PaletteGenerator.fromImageProvider(
-                AssetImage(avatar),
-              ),
-            );
-        Navigator.of(context).pop();
-      },
-      child: const Text(
-        "Update",
-      ),
-    );
-  }
-
-  List<int> _randomizeAvatarIndices() {
-    final intList = List<int>.generate(24, (i) => i);
-    intList.shuffle();
-    return intList;
   }
 }
