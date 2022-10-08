@@ -1,22 +1,19 @@
+import 'dart:async';
+
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 // Maintains current location
 class LocationCubit extends HydratedCubit<LatLng?> {
-  LocationCubit() : super(null);
-
-  Future<void> getLocation() async {
-    final locationAllowed = await Permission.locationWhenInUse.isGranted;
-    if (locationAllowed) {
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
+  late StreamSubscription<Position> _locationStream;
+  LocationCubit() : super(null) {
+    _locationStream = Geolocator.getPositionStream(
+      // only update when user moves 10 or more meters
+      locationSettings: const LocationSettings(distanceFilter: 10),
+    ).listen((Position position) {
       emit(LatLng(position.latitude, position.longitude));
-    } else {
-      emit(const LatLng(-1.0, -1.0));
-    }
+    });
   }
 
   @override
@@ -36,5 +33,11 @@ class LocationCubit extends HydratedCubit<LatLng?> {
       };
     }
     return null;
+  }
+
+  @override
+  Future<void> close() async {
+    _locationStream.cancel();
+    super.close();
   }
 }

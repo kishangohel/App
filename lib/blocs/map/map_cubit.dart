@@ -25,7 +25,9 @@ class MapCubit extends Cubit<MapState> {
   MapCubit(
     this._remoteRepository,
     this._placesRepository,
-  ) : super(const MapState());
+  ) : super(const MapState()) {
+    MapMarkersHelper.getMarkers().then((value) => markers = value);
+  }
 
   void initialize(
     GoogleMapController controller,
@@ -36,7 +38,6 @@ class MapCubit extends Cubit<MapState> {
         (MediaQuery.of(context).platformBrightness == Brightness.light)
             ? lightMapStyle
             : darkMapStyle);
-    markers = await MapMarkersHelper.getMarkers(context);
   }
 
   void update(BuildContext context) async {

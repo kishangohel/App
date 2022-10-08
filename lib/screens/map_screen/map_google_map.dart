@@ -28,14 +28,30 @@ class _MapGoogleMapState extends State<MapGoogleMap>
 
     return BlocBuilder<MapCubit, MapState>(
       builder: (context, state) {
+        // init markers
+        Set<Marker> _markers = <Marker>{};
+        if (context.read<LocationCubit>().state != null &&
+            context.read<ProfileCubit>().pfpBitmap != null) {
+          _markers.add(
+            Marker(
+              markerId: const MarkerId('user'),
+              icon: context.read<ProfileCubit>().pfpBitmap!,
+              position: context.read<LocationCubit>().state!,
+            ),
+          );
+        }
+        final wifis = state.wifis?.map((wifi) => wifi.toMarker(context));
+        if (wifis != null) {
+          _markers.addAll(wifis);
+        }
+
         return GoogleMap(
           mapToolbarEnabled: false,
           initialCameraPosition: _initialCameraPosition,
           // myLocationEnabled: true,
           myLocationButtonEnabled: false,
           zoomControlsEnabled: false,
-          markers: state.wifis?.map((wifi) => wifi.toMarker(context)).toSet() ??
-              const <Marker>{},
+          markers: _markers,
           onCameraMove: (cp) {
             context.read<MapCubit>().currentPosition = cp;
           },

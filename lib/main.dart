@@ -17,6 +17,7 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:verifi/blocs/logging_bloc_delegate.dart';
+import 'package:verifi/blocs/profile/profile_cubit.dart';
 import 'package:verifi/blocs/shared_prefs.dart';
 import 'package:verifi/firebase_options.dart';
 import 'package:verifi/models/profile.dart';
@@ -36,9 +37,6 @@ import 'package:verifi/widgets/app.dart';
 /// * [SharedPrefs]
 /// * Firebase emulators, if in debug mode
 /// * [GoogleMapsFlutterAndroid] if on Android
-
-const String emulatorEndpoint = "192.168.12.152";
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Setup hydrated bloc storage
@@ -47,7 +45,7 @@ void main() async {
   );
   // Setup bloc observer
   Bloc.observer = LoggingBlocObserver();
-  // disable debug print in release mode
+  // disable debugPrint in release mode
   if (kReleaseMode) {
     debugPrint = (String? message, {int? wrapWidth}) {};
   }
@@ -57,43 +55,54 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  // Use Firebase App Check
+  // Activate Firebase App Check
   await FirebaseAppCheck.instance.activate();
-  // Use auth emulator in debug mode
-  if (kDebugMode) {
-    FirebaseAuth.instance.useAuthEmulator(
-      emulatorEndpoint,
-      9099,
-    );
-    FirebaseFirestore.instance.useFirestoreEmulator(
-      emulatorEndpoint,
-      8080,
-    );
-  }
   // Pass all uncaught errors from the framework to Crashlytics.
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
-  // Use hybrid composition if on Android
+  // If Android, use hybrid composition for Google Maps
   final mapsImplementation = GoogleMapsFlutterPlatform.instance;
   if (mapsImplementation is GoogleMapsFlutterAndroid) {
-    mapsImplementation.useAndroidViewSurface = true;
+    mapsImplementation.useAndroidViewSurface = false;
   }
   // Setup auto connect
   AutoConnect.initialize();
-
-  if (Platform.isIOS) {
-    await getLocalNetworkAccess();
-  }
-
+  // If debug mode, setup test environment
   Profile? profile;
   if (kDebugMode) {
-    await FirebaseAuth.instance.signOut();
-    profile = await authenticateTestUser();
+    profile = await setupTestEnvironment();
   }
   // Run the app
+  // If release mode, profile will be null.
   runApp(VeriFi(profile));
 }
 
-Future<Profile> authenticateTestUser() async {
+/// Sets up application for testing.
+///
+/// The following steps are taken:
+/// 1. Setup Firebase to use emulators (auth + firestore)
+/// 2. If on iOS, get local network access.
+///    - This sleeps for 10 seconds to give dev time to click pop-up before
+///       continuing.
+Future<Profile> setupTestEnvironment() async {
+  // CHANGE ME TO YOUR EMULATOR ENDPOINT
+  const String emulatorEndpoint = "192.168.12.152";
+  // Setup Firebase emulators
+  FirebaseAuth.instance.useAuthEmulator(
+    emulatorEndpoint,
+    9099,
+  );
+  FirebaseFirestore.instance.useFirestoreEmulator(
+    emulatorEndpoint,
+    8080,
+  );
+  // If on iOS, get local network access and reset auth key
+  // We have to do this b/c iOS keychain saves auth token, which causes errors
+  // if you restart the emulator and a new auth token gets created.
+  if (Platform.isIOS) {
+    await getLocalNetworkAccess();
+    await FirebaseAuth.instance.signOut();
+  }
+  // Sign in to Firebase via test phone number
   const verificationCodesEndpoint =
       "http://$emulatorEndpoint:9099/emulator/v1/projects/verifi-5db5b/verificationCodes";
   final authCompleter = Completer<String>();
@@ -119,12 +128,17 @@ Future<Profile> authenticateTestUser() async {
     codeAutoRetrievalTimeout: (String verificationId) {},
   );
   final uid = await authCompleter.future;
-  return Profile(
+  // Generate test Profile with auth token
+  final pfp = ProfileCubit.getRandomAvatar();
+  final profile = Profile(
     id: uid,
     ethAddress: "0x0123456789abcdef0123456789abcdef01234567",
     displayName: "test-user",
-    pfp: "assets/profile_avatars/People-01.png",
+    pfp: pfp,
+    pfpType: PfpType.localSvg,
   );
+  // Return profile to pass to VeriFi app during Bloc setup
+  return profile;
 }
 
 Future<void> getLocalNetworkAccess() async {

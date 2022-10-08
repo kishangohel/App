@@ -31,12 +31,15 @@ class _FinalSetupScreenState extends State<FinalSetupScreen> {
     // waits for context to be populated
     WidgetsBinding.instance.addPostFrameCallback((_) {
       futureGroup.add(context.read<ProfileCubit>().createProfile());
-      futureGroup.add(Future(() async {
-        final palette =
-            await context.read<ProfileCubit>().createPaletteFromPfp();
-        context.read<ThemeCubit>().updateColors(palette);
-      }));
-      futureGroup.add(context.read<LocationCubit>().getLocation());
+      futureGroup.add(Future(
+        () async {
+          final palette =
+              await context.read<ProfileCubit>().createPaletteFromPfp();
+          context.read<ThemeCubit>().updateColors(palette);
+        },
+      ));
+      // A simple read will initialize location stream
+      context.read<LocationCubit>();
       // futureGroup.add(GeofencingCubit.registerNearbyGeofences());
       // futureGroup.add(
       //   ActivityRecognitionCubit.requestActivityTransitionUpdates(),

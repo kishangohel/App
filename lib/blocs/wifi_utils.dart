@@ -8,6 +8,7 @@ import 'package:verifi/blocs/map_markers_helper.dart';
 import 'package:verifi/entities/wifi_entity.dart';
 import 'package:verifi/models/models.dart';
 import 'package:verifi/repositories/repositories.dart';
+import 'package:verifi/widgets/app.dart';
 
 class WifiUtils {
   static Future<List<Wifi>> getNearbyWifiWithPlaceDetails(
@@ -88,6 +89,9 @@ class WifiUtils {
     Map<String, BitmapDescriptor> wifiMarkers,
     Color clusterTextColor,
   ) async {
+    final pixelRatio = MediaQuery.of(
+      NavigationService.navigatorKey.currentContext!,
+    ).devicePixelRatio;
     for (Wifi wifi in wifis) {
       wifi.icon = wifiMarkers[getVeriFiedStatus(wifi)];
     }
@@ -100,7 +104,7 @@ class WifiUtils {
       clusterManager,
       zoom,
       clusterTextColor,
-      120,
+      (30 * pixelRatio).toInt(),
     );
     return updatedMarkers;
   }

@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verifi/blocs/blocs.dart';
@@ -41,15 +40,9 @@ class _ProfileBodyState extends State<ProfileBody> {
   }
 
   Widget _profilePhoto() {
-    final photoUrl = context.watch<ProfileCubit>().pfp;
-    ImageProvider<Object>? _backgroundImage;
-    if (photoUrl != null) {
-      if (photoUrl.contains("http")) {
-        _backgroundImage = CachedNetworkImageProvider(photoUrl);
-      } else {
-        _backgroundImage = AssetImage(photoUrl);
-      }
-    }
+    final pfp = context.read<ProfileCubit>().pfp;
+    final pfpType = context.read<ProfileCubit>().pfpType;
+    assert(pfp != null && pfpType != null);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -64,7 +57,7 @@ class _ProfileBodyState extends State<ProfileBody> {
                 backgroundColor: Theme.of(context).colorScheme.secondary,
                 child: CircleAvatar(
                   radius: 55,
-                  backgroundImage: _backgroundImage,
+                  backgroundImage: ProfileCubit.pfpToImage(pfp!, pfpType!),
                   backgroundColor: Theme.of(context).colorScheme.background,
                 ),
               ),

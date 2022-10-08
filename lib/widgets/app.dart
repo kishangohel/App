@@ -131,6 +131,7 @@ class VeriFiState extends State<VeriFi> {
               );
               if (widget.testProfile != null) {
                 cubit.setProfile(widget.testProfile!);
+                cubit.setPfpBitmap();
               }
               return cubit;
             },
@@ -157,12 +158,17 @@ class VeriFiState extends State<VeriFi> {
   }
 }
 
+class NavigationService {
+  static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+}
+
 class VeriFiApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeCubit, ThemeState>(
       builder: (context, themeState) {
         return MaterialApp(
+          navigatorKey: NavigationService.navigatorKey,
           theme: themeState.lightTheme,
           darkTheme: themeState.darkTheme,
           themeMode: ThemeMode.system,
