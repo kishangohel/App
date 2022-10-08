@@ -4,11 +4,11 @@ import 'package:fluster/fluster.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:image/image.dart' as img;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart';
-import 'package:image/image.dart' as img;
-import 'package:verifi/blocs/wifi_utils.dart';
-import 'package:verifi/models/wifi.dart';
+import 'package:verifi/blocs/map_utils.dart';
+import 'package:verifi/models/models.dart';
 import 'package:verifi/widgets/app.dart';
 
 class MapMarkersHelper {
@@ -122,7 +122,10 @@ class MapMarkersHelper {
   static Future<BitmapDescriptor> getBitmapFromRemotePng(
     String url,
     double width,
-  ) async {}
+  ) async {
+    final bytes = await getBytesFromRemotePng(url, width);
+    return BitmapDescriptor.fromBytes(bytes);
+  }
 
   static Future<Uint8List> getBytesFromRemotePng(
     String url,
@@ -134,27 +137,27 @@ class MapMarkersHelper {
     return Uint8List.fromList(img.encodePng(resized));
   }
 
-  static Future<Fluster<Wifi>> initClusterManager(
-    List<Wifi> markers,
+  static Future<Fluster<AccessPoint>> initClusterManager(
+    List<AccessPoint> accessPoints,
     int minZoom,
     int maxZoom,
   ) async {
-    return Fluster<Wifi>(
+    return Fluster<AccessPoint>(
       minZoom: minZoom,
       maxZoom: maxZoom,
       radius: 100,
       extent: 512,
       nodeSize: 64,
-      points: markers,
+      points: accessPoints,
       createCluster: (
         BaseCluster? cluster,
         double? lng,
         double? lat,
       ) {
         if (cluster == null) {
-          return Wifi(id: '');
+          return AccessPoint(id: '');
         }
-        return Wifi(
+        return AccessPoint(
           id: cluster.id.toString(),
           isCluster: true,
           clusterLocation: LatLng(lat!, lng!),
@@ -166,13 +169,13 @@ class MapMarkersHelper {
     );
   }
 
-  static Future<List<Wifi>> getClusterMarkers(
-    Fluster<Wifi> clusterManager,
+  static Future<List<AccessPoint>> getClusterMarkers(
+    Fluster<AccessPoint> clusterManager,
     double currentZoom,
     Color clusterTextColor,
     int clusterWidth,
   ) async {
-    final wifis = await Future.wait<Wifi>(
+    final wifis = await Future.wait<AccessPoint>(
       clusterManager.clusters(
         [-180, -85, 180, 85],
         currentZoom.toInt(),
@@ -250,10 +253,10 @@ class MapMarkersHelper {
   /// present, returns [Colors.orange];
   ///
   /// If neither VeriFied nor UnVeriFied WiFis are present, return [Colors.red].
-  static Future<Color> _getClusterColor(List<Wifi> wifis) async {
+  static Future<Color> _getClusterColor(List<AccessPoint> accessPoints) async {
     Color color = Colors.red;
-    for (Wifi wifi in wifis) {
-      final status = WifiUtils.getVeriFiedStatus(wifi);
+    for (AccessPoint ap in accessPoints) {
+      final status = MapUtils.getVeriFiedStatus(ap);
       switch (status) {
         case "VeriFied":
           return Colors.green;

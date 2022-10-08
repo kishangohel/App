@@ -85,7 +85,7 @@ class Svg extends ImageProvider<SvgImageKey> {
   }
 
   @override
-  ImageStreamCompleter load(SvgImageKey key, nil) {
+  ImageStreamCompleter load(SvgImageKey key, decode) {
     return OneFrameImageStreamCompleter(_loadAsync(key));
   }
 
@@ -198,7 +198,7 @@ class SvgImageKey {
 
   @override
   int get hashCode =>
-      hashValues(path, pixelWidth, pixelHeight, scale, source, svgGetter);
+      Object.hash(path, pixelWidth, pixelHeight, scale, source, svgGetter);
 
   @override
   String toString() => '${objectRuntimeType(this, 'SvgImageKey')}'

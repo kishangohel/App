@@ -1,16 +1,16 @@
 import 'package:equatable/equatable.dart';
-import 'package:verifi/models/wifi.dart';
+import 'package:verifi/models/access_point.dart';
 
 class WifiFeedState extends Equatable {
-  final List<Wifi>? wifis;
-  const WifiFeedState({this.wifis});
+  final List<AccessPoint>? accessPoints;
+  const WifiFeedState({this.accessPoints});
 
   @override
-  List<Object> get props => wifis ?? [];
+  List<Object> get props => accessPoints ?? [];
 
-  WifiFeedState copyWith({List<Wifi>? wifis}) {
+  WifiFeedState copyWith({List<AccessPoint>? accessPoints}) {
     return WifiFeedState(
-      wifis: wifis ?? this.wifis,
+      accessPoints: accessPoints ?? this.accessPoints,
     );
   }
 }

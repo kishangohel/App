@@ -195,6 +195,7 @@ class _PfpNftScreenState extends State<PfpNftScreen> {
       onPressed: () async {
         context.read<ProfileCubit>().setPfp(
               nfts[_controller.page!.toInt()].image,
+              PfpType.remotePng,
             );
         await Navigator.of(context).pushNamed(
           '/onboarding/displayName',

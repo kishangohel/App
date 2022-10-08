@@ -26,6 +26,7 @@ dependencies:
   fluster: ^1.2.0
   flutter_bloc: ^8.1.0
   flutter_cache_manager: ^3.3.0
+  flutter_image: ^4.1.0
   flutter_launcher_icons: ^0.10.0
   flutter_local_notifications: ^9.8.0
   flutter_picker: ^2.0.0

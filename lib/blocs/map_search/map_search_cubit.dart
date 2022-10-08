@@ -3,8 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:google_place/google_place.dart';
 import 'package:verifi/blocs/blocs.dart';
-import 'package:verifi/models/wifi.dart';
-import 'package:verifi/models/wifi_details.dart';
+import 'package:verifi/models/models.dart';
 import 'package:verifi/repositories/repositories.dart';
 
 import 'map_search.dart';
@@ -43,11 +42,11 @@ class MapSearchCubit extends Cubit<MapSearchState> {
       _getPlaceDetails(placeId),
       _getWifiDetails(placeId),
     ]);
-    final wifi = Wifi(
+    final ap = AccessPoint(
       id: (details[1] as WifiDetails).id,
       placeDetails: details[0] as DetailsResult?,
       wifiDetails: details[1] as WifiDetails?,
     );
-    emit(state.copyWith(selectedPlace: wifi, predictions: [], loading: false));
+    emit(state.copyWith(selectedPlace: ap, predictions: [], loading: false));
   }
 }

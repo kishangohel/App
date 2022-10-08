@@ -7,15 +7,15 @@ import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/models/wifi_details.dart';
 
 // Main class to be passed to the UI
-class Wifi extends Clusterable {
+class AccessPoint extends Clusterable {
   final String id;
   final DetailsResult? placeDetails;
   final WifiDetails? wifiDetails;
   final LatLng? clusterLocation;
   BitmapDescriptor? icon;
-  List<Wifi>? points;
+  List<AccessPoint>? points;
 
-  Wifi({
+  AccessPoint({
     required this.id,
     this.placeDetails,
     this.wifiDetails,
@@ -40,8 +40,8 @@ class Wifi extends Clusterable {
           childMarkerId: childMarkerId,
         );
 
-  factory Wifi.fromJson(Map<String, dynamic> json) {
-    return Wifi(
+  factory AccessPoint.fromJson(Map<String, dynamic> json) {
+    return AccessPoint(
       id: json['id'],
       placeDetails: DetailsResult.fromJson(json['placeDetails']),
       wifiDetails: WifiDetails.fromJson(json['wifiDetails']),
@@ -55,7 +55,7 @@ class Wifi extends Clusterable {
       };
 
   @override
-  String toString() => "WiFi: { id: $id, icon: $icon }";
+  String toString() => "AccessPoint: { id: $id, icon: $icon }";
 
   Marker toMarker(BuildContext context) {
     final marker = Marker(

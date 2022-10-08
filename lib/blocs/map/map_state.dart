@@ -1,15 +1,25 @@
 import 'package:equatable/equatable.dart';
-import 'package:verifi/models/wifi.dart';
+import 'package:verifi/models/models.dart';
 
 class MapState extends Equatable {
-  final List<Wifi>? wifis;
+  final List<AccessPoint>? accessPoints;
+  final List<Profile>? users;
 
-  const MapState({this.wifis});
+  const MapState({
+    this.accessPoints,
+    this.users,
+  });
 
   @override
-  List<Object?> get props => [wifis];
+  List<Object?> get props => [accessPoints, users];
 
-  MapState copyWith({List<Wifi>? wifis}) {
-    return MapState(wifis: wifis ?? this.wifis);
+  MapState copyWith({
+    List<AccessPoint>? accessPoints,
+    List<Profile>? users,
+  }) {
+    return MapState(
+      accessPoints: accessPoints ?? this.accessPoints,
+      users: users ?? this.users,
+    );
   }
 }

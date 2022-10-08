@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:verifi/blocs/map/map.dart';
+import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/blocs/map_markers_helper.dart';
 import 'package:verifi/blocs/map_styles.dart';
-import 'package:verifi/blocs/wifi_utils.dart';
-import 'package:verifi/models/wifi.dart';
+import 'package:verifi/models/access_point.dart';
 import 'package:verifi/repositories/repositories.dart';
 
 // Maintains global state of map position and map controller.
@@ -19,14 +18,14 @@ class MapCubit extends Cubit<MapState> {
 
   // This should be directly updated by the map whenever onMapChanged occurs
   CameraPosition? currentPosition;
-  Map<String, BitmapDescriptor>? markers;
+  Map<String, BitmapDescriptor>? apMarkers;
   FocusNode? focus;
 
   MapCubit(
     this._remoteRepository,
     this._placesRepository,
   ) : super(const MapState()) {
-    MapMarkersHelper.getMarkers().then((value) => markers = value);
+    MapMarkersHelper.getMarkers().then((value) => apMarkers = value);
   }
 
   void initialize(
@@ -55,22 +54,23 @@ class MapCubit extends Cubit<MapState> {
       lng: bounds.northeast.longitude,
     );
     double zoom = await mapController!.getZoomLevel();
-    List<Wifi> wifis = await WifiUtils.getNearbyWifiWithPlaceDetails(
+    List<AccessPoint> accessPoints =
+        await MapUtils.getNearbyAccessPointsWithPlaceDetails(
       _remoteRepository,
       _placesRepository,
       currentGeoPoint,
       radius,
     );
-    wifis = await WifiUtils.transformToClusters(
-      wifis,
+    accessPoints = await MapUtils.transformToClusters(
+      accessPoints,
       zoom,
-      markers!,
+      apMarkers!,
       clusterTextColor,
     );
-    emit(state.copyWith(wifis: wifis));
+    emit(state.copyWith(accessPoints: accessPoints));
   }
 
   void clear() {
-    emit(state.copyWith(wifis: []));
+    emit(state.copyWith(accessPoints: [], users: []));
   }
 }

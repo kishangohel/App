@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/services.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'profile.g.dart';
@@ -9,6 +10,7 @@ class Profile extends Equatable {
   final String? ethAddress;
   final String? pfp;
   final PfpType? pfpType;
+  final Uint8List? pfpBytes;
   final String? displayName;
 
   const Profile({
@@ -16,6 +18,7 @@ class Profile extends Equatable {
     this.ethAddress,
     this.pfp,
     this.pfpType,
+    this.pfpBytes,
     this.displayName,
   });
 
@@ -48,5 +51,3 @@ class Profile extends Equatable {
   @override
   String toString() => "User: { $id, $displayName }";
 }
-
-enum PfpType { remoteSvg, remotePng, localSvg, localPng, rawSvg }

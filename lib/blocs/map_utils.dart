@@ -10,8 +10,8 @@ import 'package:verifi/models/models.dart';
 import 'package:verifi/repositories/repositories.dart';
 import 'package:verifi/widgets/app.dart';
 
-class WifiUtils {
-  static Future<List<Wifi>> getNearbyWifiWithPlaceDetails(
+class MapUtils {
+  static Future<List<AccessPoint>> getNearbyAccessPointsWithPlaceDetails(
     WifiRepository wifiRepo,
     PlacesRepository placesRepo,
     GeoFirePoint location,
@@ -22,7 +22,7 @@ class WifiUtils {
     // Set wifis to length of documents. This allows us to async update
     // List<Wifi> and keep the order of the documents returned by
     // distance.
-    List<Wifi> wifis = [];
+    List<AccessPoint> accessPoints = [];
     final List<WifiDetails> wifiDetailsList = docs.map((doc) {
       final GeoPoint docPoint = doc['Location']['geopoint'];
       final distance = double.parse(
@@ -44,17 +44,17 @@ class WifiUtils {
           false,
         );
         // Add new Wifi object to list. Keep Firestore order of documents.
-        wifis.add(Wifi(
+        accessPoints.add(AccessPoint(
           id: entry.value.id,
           wifiDetails: entry.value,
           placeDetails: placeDetails,
         ));
       }),
     );
-    return wifis;
+    return accessPoints;
   }
 
-  static Future<List<Wifi>> getNearbyWifi(
+  static Future<List<AccessPoint>> getNearbyWifi(
     WifiRepository repo,
     GeoFirePoint location,
     double radius,
@@ -65,7 +65,7 @@ class WifiUtils {
     // Set wifis to length of documents. This allows us to async update
     // List<Wifi> and keep the order of the documents returned by
     // distance.
-    List<Wifi> wifis = [];
+    List<AccessPoint> accessPoints = [];
     final List<WifiDetails> wifiDetailsList = docs.map((doc) {
       final GeoPoint docPoint = doc['Location']['geopoint'];
       final distance = double.parse(
@@ -78,13 +78,13 @@ class WifiUtils {
       return WifiDetails.fromEntity(entity);
     }).toList();
     for (var wifiDetail in wifiDetailsList) {
-      wifis.add(Wifi(id: wifiDetail.id, wifiDetails: wifiDetail));
+      accessPoints.add(AccessPoint(id: wifiDetail.id, wifiDetails: wifiDetail));
     }
-    return wifis;
+    return accessPoints;
   }
 
-  static Future<List<Wifi>> transformToClusters(
-    List<Wifi> wifis,
+  static Future<List<AccessPoint>> transformToClusters(
+    List<AccessPoint> accessPoints,
     double zoom,
     Map<String, BitmapDescriptor> wifiMarkers,
     Color clusterTextColor,
@@ -92,11 +92,12 @@ class WifiUtils {
     final pixelRatio = MediaQuery.of(
       NavigationService.navigatorKey.currentContext!,
     ).devicePixelRatio;
-    for (Wifi wifi in wifis) {
-      wifi.icon = wifiMarkers[getVeriFiedStatus(wifi)];
+    for (AccessPoint ap in accessPoints) {
+      ap.icon = wifiMarkers[getVeriFiedStatus(ap)];
     }
-    Fluster<Wifi> clusterManager = await MapMarkersHelper.initClusterManager(
-      wifis,
+    Fluster<AccessPoint> clusterManager =
+        await MapMarkersHelper.initClusterManager(
+      accessPoints,
       11, // min zoom
       19, // max zoom
     );
@@ -109,9 +110,9 @@ class WifiUtils {
     return updatedMarkers;
   }
 
-  static String getVeriFiedStatus(Wifi wifi) {
+  static String getVeriFiedStatus(AccessPoint ap) {
     final lastValidatedDuration =
-        DateTime.now().difference(wifi.wifiDetails!.lastValidated).inDays;
+        DateTime.now().difference(ap.wifiDetails!.lastValidated).inDays;
     debugPrint("Last validated: $lastValidatedDuration days ago");
     if (lastValidatedDuration < 3) {
       return "VeriFied";

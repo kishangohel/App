@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:http/http.dart';
@@ -42,19 +42,19 @@ class ProfileCubit extends HydratedCubit<Profile> {
   // Getters
   String? get pfp => state.pfp;
   PfpType? get pfpType => state.pfpType;
+  Uint8List? get pfpBytes => state.pfpBytes;
   String? get ethAddress => state.ethAddress;
   String? get displayName => state.displayName;
 
   // Setters
   void setEthAddress(String addr) => emit(state.copyWith(ethAddress: addr));
-  void setPfp(String pfp) => emit(state.copyWith(pfp: pfp));
+  void setPfp(String pfp, PfpType pfpType) => emit(state.copyWith(
+        pfp: pfp,
+        pfpType: pfpType,
+      ));
 
   void setDisplayName(String name) => emit(state.copyWith(displayName: name));
   void setProfile(Profile profile) => emit(profile);
-
-  Future<void> setPfpBitmap() async {
-    //TODO
-  }
 
   void logout() {
     emit(Profile.empty());
@@ -65,10 +65,13 @@ class ProfileCubit extends HydratedCubit<Profile> {
     return _usersRepository.createProfile(state);
   }
 
-  Future<void> updatePfp(String pfp) async {
+  Future<void> updatePfp(
+    String pfp,
+    PfpType pfpType,
+    Uint8List pfpBytes,
+  ) async {
     await _usersRepository.updatePfp(state.id, pfp);
-    setPfp(pfp);
-    setPfpBitmap();
+    setPfp(pfp, pfpType, pfpBytes);
   }
 
   Future<PaletteGenerator> createPaletteFromPfp() async {
@@ -118,7 +121,7 @@ class ProfileCubit extends HydratedCubit<Profile> {
     }
   }
 
-  static Future<BitmapDescriptor> pfpToBitmap(
+  static Future<BitmapDescriptor?> pfpToBitmap(
     String pfp,
     PfpType pfpType,
   ) async {
@@ -132,6 +135,9 @@ class ProfileCubit extends HydratedCubit<Profile> {
       return MapMarkersHelper.getBitmapFromAssetSvg(pfp, width);
     } else if (pfpType == PfpType.remotePng) {
       return MapMarkersHelper.getBitmapFromAssetPng(pfp, width);
+    } else {
+      // rawSvg
+      return MapMarkersHelper.getBitmapFromRawSvg(pfp, width);
     }
   }
 

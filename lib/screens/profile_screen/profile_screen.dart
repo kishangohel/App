@@ -55,10 +55,20 @@ class _ProfileBodyState extends State<ProfileBody> {
               CircleAvatar(
                 radius: 60,
                 backgroundColor: Theme.of(context).colorScheme.secondary,
-                child: CircleAvatar(
-                  radius: 55,
-                  backgroundImage: ProfileCubit.pfpToImage(pfp!, pfpType!),
-                  backgroundColor: Theme.of(context).colorScheme.background,
+                child: FutureBuilder<ImageProvider>(
+                  future: ProfileCubit.pfpToImage(pfp!, pfpType!),
+                  builder: (context, AsyncSnapshot<ImageProvider> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      return CircleAvatar(
+                        radius: 55,
+                        backgroundImage: snapshot.data,
+                        backgroundColor:
+                            Theme.of(context).colorScheme.background,
+                      );
+                    } else {
+                      return const CircularProgressIndicator();
+                    }
+                  },
                 ),
               ),
               Positioned(

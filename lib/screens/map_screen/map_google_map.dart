@@ -40,9 +40,10 @@ class _MapGoogleMapState extends State<MapGoogleMap>
             ),
           );
         }
-        final wifis = state.wifis?.map((wifi) => wifi.toMarker(context));
-        if (wifis != null) {
-          _markers.addAll(wifis);
+        final accessPoints =
+            state.accessPoints?.map((ap) => ap.toMarker(context));
+        if (accessPoints != null) {
+          _markers.addAll(accessPoints);
         }
 
         return GoogleMap(

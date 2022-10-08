@@ -3,6 +3,7 @@ import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verifi/blocs/blocs.dart';
+import 'package:verifi/blocs/map_markers_helper.dart';
 import 'package:verifi/screens/onboarding/widgets/onboarding_app_bar.dart';
 import 'package:verifi/screens/onboarding/widgets/onboarding_outline_button.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
@@ -136,8 +137,9 @@ class _PfpAvatarScreenState extends State<PfpAvatarScreen> {
                   (_randomizedAvatarIndices[_controller.page!.toInt()] + 1)
                       .toString()
                       .padLeft(2, "0");
+              final path = 'assets/profile_avatars/People-$strIndex.png',
+              await MapMarkersHelper.getBytesFromAssetPng(path, width)
               context.read<ProfileCubit>().setPfp(
-                    'assets/profile_avatars/People-$strIndex.png',
                   );
               Navigator.of(context).pushNamed(
                 '/onboarding/displayName',

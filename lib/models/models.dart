@@ -1,3 +1,4 @@
+export 'access_point.dart';
 export 'app_tab.dart';
 export 'bounty.dart';
 export 'email.dart';
@@ -6,5 +7,4 @@ export 'pfp.dart';
 export 'password.dart';
 export 'profile.dart';
 export 'user_location.dart';
-export 'wifi.dart';
 export 'wifi_details.dart';
