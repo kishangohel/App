@@ -7,8 +7,8 @@ import sys
 import firebase_admin
 from firebase_admin import auth
 from firebase_admin import firestore
-from firebase_admin import credentials
 from firebase_admin.auth import UserRecord
+from google.auth import credentials
 from google.cloud.firestore import GeoPoint
 
 # CHANGE THIS TO YOUR LOCATION
@@ -79,14 +79,13 @@ def get_random_nearby_coordinate():
 
 
 def main():
-    cred = credentials.Certificate(
-        "/Users/dalelakes/Projects/verifi-world/verifi-5db5b-13d2f4c494a4.json"
+    firebase_admin.initialize_app(
+        credential=credentials.AnonymousCredentials()
     )
-    firebase_admin.initialize_app(cred)
     db = firestore.client()
 
     # Create user
-    user: UserRecord = auth.create_user(phone_number="+1 650-555-3434")
+    user: UserRecord = auth.create_user(phone_number="+1 6505553434")
 
     # Create access points
     access_points = []
@@ -125,7 +124,7 @@ def main():
             "createdOn": datetime.datetime.now(tz=datetime.timezone.utc),
             "displayName": "test-user",
             "ethAddress": "0x0123456789abcdef0123456789abcdef01234567",
-            "pfp": "assets/profile_avatars/People-01.png",
+            "pfp": None,
         }
     )
 
