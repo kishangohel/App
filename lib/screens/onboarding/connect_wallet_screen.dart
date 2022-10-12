@@ -32,15 +32,18 @@ class _ConnectWalletScreenState extends State<ConnectWalletScreen> {
         return (current.status != null || current.cbAccount != null);
       },
       listener: (context, state) {
-        if (state.status != null) {
-          context.read<NftsCubit>().loadNftsOwnedbyAddress(
-                state.status!.accounts[0],
-              );
-        } else if (state.cbAccount != null) {
-          context.read<NftsCubit>().loadNftsOwnedbyAddress(
-                state.cbAccount!.address,
-              );
-        }
+        context.read<NftsCubit>().loadNftsOwnedbyAddress(
+              "0x09457fA22b7D56C93E7407D8a1587C2447316D55",
+            );
+        // if (state.status != null) {
+        //   context.read<NftsCubit>().loadNftsOwnedbyAddress(
+        //         state.status!.accounts[0],
+        //       );
+        // } else if (state.cbAccount != null) {
+        //   context.read<NftsCubit>().loadNftsOwnedbyAddress(
+        //         state.cbAccount!.address,
+        //       );
+        // }
         Navigator.of(context).pushNamed('/onboarding/wallet/sign');
       },
       child: Scaffold(

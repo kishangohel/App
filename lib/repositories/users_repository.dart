@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:random_avatar/random_avatar.dart';
 import 'package:verifi/blocs/image_utils.dart';
+import 'package:verifi/blocs/svg_provider.dart';
 import 'package:verifi/entities/user_entity.dart';
 import 'package:verifi/models/models.dart';
 
@@ -43,8 +45,7 @@ class UsersRepository {
     });
   }
 
-  /// Attempts to get Firestore document by user id and transform into
-  /// [Profile].
+  /// Attempts to get Firestore document by user id and transform into [Profile].
   ///
   /// If it exists, returns a [Profile]. Otherwise, returns null.
   ///
@@ -53,16 +54,26 @@ class UsersRepository {
   Future<Profile> getProfileById(String id) async {
     final doc = await usersCollection.doc(id).get();
     if (!doc.exists) {
+      // No profile exists, so we return a new one
       return Profile(id: id);
     }
     final entity = UserEntity.fromDocumentSnapshot(doc);
     if (entity.pfp == null) {
+      // No url stored, so we generate multiavatar [Pfp]
+      final multiavatar =
+          randomAvatarString(entity.displayName, trBackground: true);
       return Profile(
         id: entity.id,
         ethAddress: entity.ethAddress,
         displayName: entity.displayName,
+        pfp: Pfp(
+          id: entity.displayName,
+          image: SvgProvider(multiavatar, source: SvgSource.raw),
+          imageBitmap: await ImageUtils.rawVectorToBytes(multiavatar, 60.0),
+        ),
       );
     } else {
+      // url is stored, so we generate NFT [Pfp]
       assert(entity.encodedPfp != null);
       final imageBitmap = base64Decode(entity.encodedPfp!);
       final imageProvider = ImageUtils.getImageProvider(entity.pfp!);
@@ -73,7 +84,7 @@ class UsersRepository {
         pfp: Pfp(
           id: entity.displayName,
           url: entity.pfp!,
-          image: imageProvider,
+          image: imageProvider!,
           imageBitmap: imageBitmap,
         ),
       );

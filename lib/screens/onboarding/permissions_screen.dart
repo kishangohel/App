@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:verifi/blocs/blocs.dart';
-import 'package:verifi/blocs/shared_prefs.dart';
 import 'package:verifi/screens/onboarding/widgets/onboarding_app_bar.dart';
 import 'package:verifi/screens/onboarding/widgets/onboarding_outline_button.dart';
 import 'package:verifi/screens/onboarding/widgets/permission_request_row.dart';
@@ -96,9 +95,8 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
                     moreInfoDialog: const PermissionsInfoDialog(
                       title: "Why does VeriFi need my location?",
                       contents: '''\u2022 Identify nearby WiFi access points
-\u2022 Show your location on the VeriFi Map
-\u2022 Ensure accurate calculation of incentives 
-\u2022 Collect usage metrics and anonymous, location-aware metadata''',
+\u2022 Show your location on the VeriMap
+\u2022 Ensure accurate calculation of incentives''',
                     ),
                   ),
                   PermissionRequestRow(
@@ -138,15 +136,6 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
   Widget _finishPermissionsButton() {
     return OnboardingOutlineButton(
       onPressed: () async {
-        //TODO: Check to see if this is still needed
-        // // if we got to permissions screen as first screen because iOS keystore
-        // // cached auth creds, then we need to sync w/ Profile cubit
-        // if (context.read<ProfileCubit>().state == Profile.empty()) {
-        //   context.read<ProfileCubit>().getProfile(
-        //         context.read<AuthenticationCubit>().state.user!.uid,
-        //       );
-        // }
-        sharedPrefs.setPermissionsComplete();
         final displayName = context.read<ProfileCubit>().displayName;
         if (displayName == null) {
           await Navigator.of(context).pushNamedAndRemoveUntil(

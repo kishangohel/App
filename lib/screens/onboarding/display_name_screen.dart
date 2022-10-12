@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verifi/blocs/display_name_textfield/display_name_textfield_bloc.dart';
 import 'package:verifi/blocs/profile/profile_cubit.dart';
+import 'package:verifi/models/models.dart';
 import 'package:verifi/screens/onboarding/widgets/onboarding_app_bar.dart';
 import 'package:verifi/screens/onboarding/widgets/onboarding_outline_button.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
@@ -166,7 +167,12 @@ class _DisplayNameScreenState extends State<DisplayNameScreen> {
                     context.read<ProfileCubit>().setDisplayName(
                           displayNameState.displayName!,
                         );
-
+                    if (context.read<ProfileCubit>().pfp == null) {
+                      final pfp = await Pfp.fromMultiavatarString(
+                        displayNameState.displayName!,
+                      );
+                      context.read<ProfileCubit>().setPfp(pfp);
+                    }
                     Navigator.of(context).pushNamed(
                       '/onboarding/finalSetup',
                     );

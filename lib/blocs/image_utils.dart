@@ -41,7 +41,7 @@ class ImageUtils {
 
   /// Creates an [ImageProvider] based on the mime type of the remote file.
   /// If the mime type is not a supported image type, this returns null.
-  static ImageProvider getImageProvider(String url) {
+  static ImageProvider? getImageProvider(String url) {
     final type = getRemoteImageType(url);
     switch (type) {
       case ImageType.image:
@@ -49,7 +49,7 @@ class ImageUtils {
       case ImageType.vector:
         return SvgProvider(url, source: SvgSource.network);
       default:
-        throw UnsupportedError('Invalid iamge type');
+        return null;
     }
   }
 
@@ -77,7 +77,7 @@ class ImageUtils {
   /// Transform the bytes of an image into a Base64 encoded string.
   ///
   /// Supports both standard images (png, jpeg, etc.) and SVG vector images.
-  static Future<Uint8List> encodeImage(String url) async {
+  static Future<Uint8List?> encodeImage(String url) async {
     final type = getRemoteImageType(url);
     Uint8List? bytes;
     switch (type) {
@@ -88,7 +88,7 @@ class ImageUtils {
         bytes = await _remoteVectorToBytes(url, 60.0);
         break;
       default:
-        throw UnsupportedError('Invalid image url: $url');
+        return null;
     }
     return bytes;
   }
@@ -108,6 +108,7 @@ class ImageUtils {
       throw UnsupportedError('Invalid file type');
     }
     final resp = await get(Uri.parse(url));
+    width = devicePixelRatio * width;
 
     final image = img.decodeImage(resp.bodyBytes);
     if (image == null) {

@@ -30,7 +30,14 @@ class Pfp extends Equatable {
     if (json['cached_file_url'] == null) return null;
     final imageUrl = json['cached_file_url'];
     final image = ImageUtils.getImageProvider(imageUrl);
+    // If unsupported image type
+    if (image == null) {
+      return null;
+    }
     final encodedImage = await ImageUtils.encodeImage(imageUrl);
+    if (encodedImage == null) {
+      return null;
+    }
     final nft = Pfp(
       id: "${json['contract_address']}:${json['token_id']}",
       url: imageUrl,
@@ -65,7 +72,9 @@ class Pfp extends Equatable {
         name: json['name'],
         description: json['description'],
         image: (json['url'] != null)
-            ? ImageUtils.getImageProvider(json['url'])
+            // Can guarantee this call will succeed because it had to be
+            // first pass through [fromNftPortResponse] to be stored as JSON.
+            ? ImageUtils.getImageProvider(json['url'])!
             : SvgProvider(
                 randomAvatarString(json['name']),
                 source: SvgSource.raw,

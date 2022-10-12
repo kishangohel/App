@@ -48,7 +48,10 @@ class _SignWalletScreenState extends State<SignWalletScreen> {
             } else {
               ethAddress = walletState.cbAccount!.address;
             }
-            context.read<ProfileCubit>().setEthAddress(ethAddress);
+            context.read<ProfileCubit>().setEthAddress(
+                  "0x09457fA22b7D56C93E7407D8a1587C2447316D55",
+                );
+            // context.read<ProfileCubit>().setEthAddress(ethAddress);
             Navigator.of(context).pushNamedAndRemoveUntil(
               '/onboarding/pfpNft',
               ModalRoute.withName('/onboarding/wallet/sign'),

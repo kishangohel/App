@@ -217,7 +217,7 @@ class _EditProfileModalBottomSheetState
       onPressed: () async {
         final photo =
             context.read<NftsCubit>().state[_pageController.page!.toInt()];
-        await context.read<ProfileCubit>().setPfp(photo);
+        await context.read<ProfileCubit>().updatePfp(photo);
         context.read<ThemeCubit>().updateColors(
               await PaletteGenerator.fromImageProvider(photo.image),
             );

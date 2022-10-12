@@ -16,8 +16,11 @@ import 'package:http/http.dart' as http;
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:random_avatar/random_avatar.dart';
+import 'package:verifi/blocs/image_utils.dart';
 import 'package:verifi/blocs/logging_bloc_delegate.dart';
 import 'package:verifi/blocs/shared_prefs.dart';
+import 'package:verifi/blocs/svg_provider.dart';
 import 'package:verifi/firebase_options.dart';
 import 'package:verifi/models/models.dart';
 import 'package:verifi/widgets/app.dart';
@@ -68,7 +71,7 @@ void main() async {
   // If debug mode, setup test environment
   Profile? profile;
   if (kDebugMode) {
-    profile = await setupTestEnvironment(signInTestUser: true);
+    profile = await setupTestEnvironment(signInTestUser: false);
   }
   // Run the app
   // If release mode, profile will be null.
@@ -81,10 +84,10 @@ void main() async {
 /// 1. Setup Firebase to use emulators (auth + firestore)
 /// 2. If on iOS, get local network access.
 ///    - This sleeps for 10 seconds to give dev time to click pop-up before
-///       continuing.
-/// 3. If [signInTestUser] is true, sign in to test-user and return Profile. Otherwise,
-///    return null and go through full onboarding process.
-Future<Profile?> setupTestEnvironment({bool signInTestUser = false}) async {
+///      continuing.
+/// 3. If [signInTestUser] is true, sign in to test-user and return Profile.
+///    Otherwise, return null and go through full onboarding process.
+Future<Profile?> setupTestEnvironment({bool signInTestUser = true}) async {
   // CHANGE ME TO YOUR EMULATOR ENDPOINT
   const String emulatorEndpoint = "192.168.12.152";
   // Setup Firebase emulators
@@ -130,14 +133,20 @@ Future<Profile?> setupTestEnvironment({bool signInTestUser = false}) async {
       codeAutoRetrievalTimeout: (String verificationId) {},
     );
     final uid = await authCompleter.future;
-    // Generate test Profile with auth token
-    const ethAddress = "0x09457fA22b7D56C93E7407D8a1587C2447316D55";
+    // Generate test Profile with auth token as id
+    const ethAddress = "0x0123456789abcdef0123456789abcdef01234567";
+    const displayName = "testuser";
+    final avatar = randomAvatarString(displayName, trBackground: true);
     final profile = Profile(
       id: uid,
       ethAddress: ethAddress,
-      displayName: "test-user",
-      // setting to null causes multiavatar to get used
-      pfp: null,
+      displayName: displayName,
+      pfp: Pfp(
+        id: displayName,
+        name: displayName,
+        image: SvgProvider(avatar, source: SvgSource.raw),
+        imageBitmap: await ImageUtils.rawVectorToBytes(avatar, 60.0),
+      ),
     );
     // Return profile to pass to VeriFi app during Bloc setup
     return profile;

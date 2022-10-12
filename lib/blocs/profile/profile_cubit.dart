@@ -29,24 +29,32 @@ class ProfileCubit extends HydratedCubit<Profile> {
   String? get displayName => state.displayName;
 
   // Setters
-  Future<void> setEthAddress(String addr) async {
-    await _usersRepository.updateEthAddress(userId, addr);
-    emit(state.copyWith(ethAddress: addr));
-  }
+  void setEthAddress(String addr) => emit(state.copyWith(ethAddress: addr));
 
-  Future<void> setPfp(Pfp pfp) async {
-    // await _setPfpNftBitmap(pfp);
-    await _usersRepository.updatePfp(userId, pfp);
-    emit(state.copyWith(pfp: pfp));
-  }
+  void setPfp(Pfp pfp) => emit(state.copyWith(pfp: pfp));
 
-  Future<void> setDisplayName(String displayName) async {
-    await _usersRepository.updateDisplayName(userId, displayName);
-    emit(state.copyWith(displayName: displayName));
-  }
+  void setDisplayName(String displayName) =>
+      emit(state.copyWith(displayName: displayName));
 
+  /// LOCAL TESTING ONLY
   Future<void> setProfile(Profile profile) async {
     emit(profile);
+  }
+
+  // Updaters
+  Future<void> updateEthAddress(String address) async {
+    await _usersRepository.updateEthAddress(userId, address);
+    setEthAddress(address);
+  }
+
+  Future<void> updateDisplayName(String displayName) async {
+    await _usersRepository.updateDisplayName(userId, displayName);
+    setDisplayName(displayName);
+  }
+
+  Future<void> updatePfp(Pfp pfp) async {
+    await _usersRepository.updatePfp(userId, pfp);
+    setPfp(pfp);
   }
 
   void logout() {

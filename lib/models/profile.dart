@@ -19,7 +19,7 @@ class Profile extends Equatable {
   });
 
   @override
-  List<Object?> get props => [id];
+  List<Object?> get props => [id, pfp, ethAddress, displayName];
 
   Profile copyWith({
     String? id,
@@ -41,5 +41,6 @@ class Profile extends Equatable {
   Map<String, dynamic> toJson() => _$ProfileToJson(this);
 
   @override
-  String toString() => "User: { id: '$id', displayName: '$displayName' }";
+  String toString() =>
+      "User: { id: '$id', ethAddress: '$ethAddress', pfp: '$pfp', displayName: '$displayName' }";
 }
