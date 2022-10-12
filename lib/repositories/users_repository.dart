@@ -35,7 +35,7 @@ class UsersRepository {
     final imageBitmap = await ImageUtils.encodeImage(pfp.url!);
     return usersCollection.doc(userId).update({
       "pfp": pfp.url,
-      "encodedPfp": base64Encode(imageBitmap),
+      "encodedPfp": base64Encode(imageBitmap!),
     });
   }
 
