@@ -31,11 +31,13 @@ class _MapGoogleMapState extends State<MapGoogleMap>
         // init markers
         Set<Marker> _markers = <Marker>{};
         if (context.read<LocationCubit>().state != null &&
-            context.read<ProfileCubit>().pfpBitmap != null) {
+            context.read<ProfileCubit>().pfp?.imageBitmap != null) {
           _markers.add(
             Marker(
               markerId: const MarkerId('user'),
-              icon: context.read<ProfileCubit>().pfpBitmap!,
+              icon: BitmapDescriptor.fromBytes(
+                context.read<ProfileCubit>().pfp!.imageBitmap,
+              ),
               position: context.read<LocationCubit>().state!,
             ),
           );

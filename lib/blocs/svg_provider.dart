@@ -19,16 +19,8 @@ enum SvgSource {
   raw,
 }
 
-/// Rasterizes given svg picture for displaying in [Image] widget:
-///
-/// ```dart
-/// Image(
-///   width: 32,
-///   height: 32,
-///   image: Svg('assets/my_icon.svg'),
-/// )
-/// ```
-class Svg extends ImageProvider<SvgImageKey> {
+/// An [ImageProvider] for SVG images.
+class SvgProvider extends ImageProvider<SvgImageKey> {
   /// Path to svg file or asset
   final String path;
 
@@ -55,7 +47,7 @@ class Svg extends ImageProvider<SvgImageKey> {
   /// Width and height can also be specified from [Image] constructor.
   /// Default size is 100x100 logical pixels.
   /// Different size can be specified in [Image] parameters
-  const Svg(
+  const SvgProvider(
     this.path, {
     this.size,
     this.scale,

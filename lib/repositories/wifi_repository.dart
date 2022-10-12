@@ -1,6 +1,6 @@
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:verifi/entities/wifi_entity.dart';
+import 'package:verifi/entities/access_point_entity.dart';
 import 'package:verifi/models/models.dart';
 
 class WifiRepository {
@@ -16,7 +16,7 @@ class WifiRepository {
         .then((querySnapshot) {
       if (querySnapshot.docs.length == 1) {
         return WifiDetails.fromEntity(
-            WifiEntity.fromDocumentSnapshot(querySnapshot.docs.first));
+            AccessPointEntity.fromDocumentSnapshot(querySnapshot.docs.first));
       } else {
         return null;
       }
@@ -24,7 +24,9 @@ class WifiRepository {
   }
 
   Stream<List<DocumentSnapshot>> getWifiWithinRadiusStream(
-      GeoFirePoint center, double radius) {
+    GeoFirePoint center,
+    double radius,
+  ) {
     return geo.collection(collectionRef: wifiMarkersCollection).within(
           center: center,
           radius: radius,
@@ -57,7 +59,7 @@ class WifiRepository {
       for (var networkDoc in querySnapshot.docs) {
         networks.add(
           WifiDetails.fromEntity(
-            WifiEntity.fromDocumentSnapshot(networkDoc),
+            AccessPointEntity.fromDocumentSnapshot(networkDoc),
           ),
         );
       }

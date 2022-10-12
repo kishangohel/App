@@ -1,75 +1,69 @@
-import 'package:flutter/services.dart';
-import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:random_avatar/random_avatar.dart';
-import 'package:verifi/blocs/map_markers_helper.dart';
 import 'package:verifi/blocs/svg_provider.dart';
-import 'package:verifi/models/nft.dart';
+import 'package:verifi/models/pfp.dart';
 import 'package:verifi/models/profile.dart';
 import 'package:verifi/repositories/users_repository.dart';
 
 class ProfileCubit extends HydratedCubit<Profile> {
   final UsersRepository _usersRepository;
-  BitmapDescriptor? pfpBitmap;
 
   ProfileCubit(
     this._usersRepository,
-  ) : super(Profile.empty());
+  ) : super(const Profile(id: ''));
 
   /// Get the profile information for a user by uid.
   ///
-  /// If a user record is found, then a Profile object
-  /// If a user record is not found, then null is emitted.
+  /// If a user record is not found, then a new [Profile] object is emitted
+  /// with only [userId] set.
   Future<void> getProfile(String userId) async {
-    final userData = await _usersRepository.getUserById(userId);
-    if (userData == null) {
-      emit(Profile(id: userId));
-    } else {
-      emit(Profile(
-        id: userId,
-        ethAddress: userData["ethAddress"],
-        pfp: userData["pfp"],
-        displayName: userData["displayName"],
-      ));
-    }
+    final profile = await _usersRepository.getProfileById(userId);
+    emit(profile);
   }
 
   // Getters
-  Nft? get pfp => state.pfp;
+  String get userId => state.id;
+  Pfp? get pfp => state.pfp;
   String? get ethAddress => state.ethAddress;
   String? get displayName => state.displayName;
 
   // Setters
-  void setEthAddress(String addr) => emit(state.copyWith(ethAddress: addr));
-  void setPfp(Nft pfp) => emit(state.copyWith(pfp: pfp));
-  void setDisplayName(String name) => emit(state.copyWith(displayName: name));
-  void setProfile(Profile profile) => emit(profile);
+  Future<void> setEthAddress(String addr) async {
+    await _usersRepository.updateEthAddress(userId, addr);
+    emit(state.copyWith(ethAddress: addr));
+  }
+
+  Future<void> setPfp(Pfp pfp) async {
+    // await _setPfpNftBitmap(pfp);
+    await _usersRepository.updatePfp(userId, pfp);
+    emit(state.copyWith(pfp: pfp));
+  }
+
+  Future<void> setDisplayName(String displayName) async {
+    await _usersRepository.updateDisplayName(userId, displayName);
+    emit(state.copyWith(displayName: displayName));
+  }
+
+  Future<void> setProfile(Profile profile) async {
+    emit(profile);
+  }
 
   void logout() {
-    emit(Profile.empty());
+    emit(const Profile(id: ''));
   }
 
   Future<void> createProfile() {
-    assert(state.id != '');
     return _usersRepository.createProfile(state);
-  }
-
-  Future<void> updatePfp(
-    Nft pfp,
-    Uint8List pfpBytes,
-  ) async {
-    await _usersRepository.updatePfp(state.id, pfp);
-    setPfp(pfp);
   }
 
   Future<PaletteGenerator> createPaletteFromPfp() async {
     PaletteGenerator palette;
     assert(state.displayName != null);
-    if (state.pfp?.image != null) {
-      palette = await PaletteGenerator.fromImageProvider(state.pfp!.image!);
+    if (pfp != null) {
+      palette = await PaletteGenerator.fromImageProvider(state.pfp!.image);
     } else {
-      palette = await PaletteGenerator.fromImageProvider(Svg(
+      palette = await PaletteGenerator.fromImageProvider(SvgProvider(
         randomAvatarString(state.displayName!, trBackground: true),
         source: SvgSource.raw,
       ));
@@ -77,27 +71,23 @@ class ProfileCubit extends HydratedCubit<Profile> {
     return palette;
   }
 
-  static String getMultiavatar(String displayName) {
-    return randomAvatarString(displayName, trBackground: false);
-  }
-
-  //TODO
-  static Future<BitmapDescriptor?> pfpToBitmap(
-    Nft? pfp,
-  ) async {
-    const width = 60.0;
-    if (pfp == null) {
-      return await MapMarkersHelper.getBitmapFromRawSvg(
-        randomAvatarString('test-user', trBackground: true),
-        width,
-      );
-    } else {
-      final bytes = (await NetworkAssetBundle(Uri.parse(pfp.url)).load(pfp.url))
-          .buffer
-          .asUint8List();
-      return BitmapDescriptor.fromBytes(bytes);
-    }
-  }
+  // /// Creates pfp bitmap for use by Google Maps.
+  // ///
+  // /// If [nft] is null, the Multiavatar is used.
+  // /// If [nft] is not null, the image is pulled from network.
+  // Future<void> _setPfpNftBitmap(Nft? nft) async {
+  //   Uint8List pfpBytes;
+  //   if (nft == null) {
+  //     pfpBytes = await ImageUtils.rawVectorToBytes(
+  //       randomAvatarString(displayName!, trBackground: true),
+  //       60.0,
+  //     );
+  //   } else {
+  //     pfpBytes = await ImageUtils.encodeImage(nft.url);
+  //   }
+  //   state.pfp.imageBitmap = pfpBytes;
+  //   debugPrint("Pfp bitmap set: ${pfpBitmap.runtimeType}");
+  // }
 
   @override
   Profile? fromJson(Map<String, dynamic> json) => Profile.fromJson(json);

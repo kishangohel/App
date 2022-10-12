@@ -16,14 +16,10 @@ import 'package:http/http.dart' as http;
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:random_avatar/random_avatar.dart';
 import 'package:verifi/blocs/logging_bloc_delegate.dart';
-import 'package:verifi/blocs/profile/profile_cubit.dart';
 import 'package:verifi/blocs/shared_prefs.dart';
-import 'package:verifi/blocs/svg_provider.dart';
 import 'package:verifi/firebase_options.dart';
-import 'package:verifi/models/nft.dart';
-import 'package:verifi/models/profile.dart';
+import 'package:verifi/models/models.dart';
 import 'package:verifi/widgets/app.dart';
 
 /// The entrypoint of application.
@@ -72,7 +68,7 @@ void main() async {
   // If debug mode, setup test environment
   Profile? profile;
   if (kDebugMode) {
-    profile = await setupTestEnvironment();
+    profile = await setupTestEnvironment(signInTestUser: true);
   }
   // Run the app
   // If release mode, profile will be null.
@@ -86,7 +82,9 @@ void main() async {
 /// 2. If on iOS, get local network access.
 ///    - This sleeps for 10 seconds to give dev time to click pop-up before
 ///       continuing.
-Future<Profile> setupTestEnvironment() async {
+/// 3. If [signInTestUser] is true, sign in to test-user and return Profile. Otherwise,
+///    return null and go through full onboarding process.
+Future<Profile?> setupTestEnvironment({bool signInTestUser = false}) async {
   // CHANGE ME TO YOUR EMULATOR ENDPOINT
   const String emulatorEndpoint = "192.168.12.152";
   // Setup Firebase emulators
@@ -105,42 +103,47 @@ Future<Profile> setupTestEnvironment() async {
     await getLocalNetworkAccess();
     await FirebaseAuth.instance.signOut();
   }
-  // Sign in to Firebase via test phone number
-  const verificationCodesEndpoint =
-      "http://$emulatorEndpoint:9099/emulator/v1/projects/verifi-5db5b/verificationCodes";
-  final authCompleter = Completer<String>();
-  final fbAuth = FirebaseAuth.instance;
-  await fbAuth.verifyPhoneNumber(
-    phoneNumber: "+1 650-555-3434",
-    verificationCompleted: (PhoneAuthCredential credential) async {
-      final userCred = await fbAuth.signInWithCredential(credential);
-      authCompleter.complete(userCred.user!.uid);
-    },
-    verificationFailed: (FirebaseAuthException e) {},
-    codeSent: (String verificationId, int? resendToken) async {
-      final resp = await http.get(Uri.parse(verificationCodesEndpoint));
-      final result = jsonDecode(resp.body);
-      final code = result["verificationCodes"].last["code"]!;
-      final creds = PhoneAuthProvider.credential(
-        verificationId: verificationId,
-        smsCode: code,
-      );
-      final userCred = await fbAuth.signInWithCredential(creds);
-      authCompleter.complete(userCred.user!.uid);
-    },
-    codeAutoRetrievalTimeout: (String verificationId) {},
-  );
-  final uid = await authCompleter.future;
-  // Generate test Profile with auth token
-  final profile = Profile(
-    id: uid,
-    ethAddress: "0x0123456789abcdef0123456789abcdef01234567",
-    displayName: "test-user",
-    // setting to null causes multiavatar to get used
-    pfp: null,
-  );
-  // Return profile to pass to VeriFi app during Bloc setup
-  return profile;
+  if (signInTestUser) {
+    // Sign in to Firebase via test phone number
+    const verificationCodesEndpoint =
+        "http://$emulatorEndpoint:9099/emulator/v1/projects/verifi-5db5b/verificationCodes";
+    final authCompleter = Completer<String>();
+    final fbAuth = FirebaseAuth.instance;
+    await fbAuth.verifyPhoneNumber(
+      phoneNumber: "+1 6505553434",
+      verificationCompleted: (PhoneAuthCredential credential) async {
+        final userCred = await fbAuth.signInWithCredential(credential);
+        authCompleter.complete(userCred.user!.uid);
+      },
+      verificationFailed: (FirebaseAuthException e) {},
+      codeSent: (String verificationId, int? resendToken) async {
+        final resp = await http.get(Uri.parse(verificationCodesEndpoint));
+        final result = jsonDecode(resp.body);
+        final code = result["verificationCodes"].last["code"]!;
+        final creds = PhoneAuthProvider.credential(
+          verificationId: verificationId,
+          smsCode: code,
+        );
+        final userCred = await fbAuth.signInWithCredential(creds);
+        authCompleter.complete(userCred.user!.uid);
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {},
+    );
+    final uid = await authCompleter.future;
+    // Generate test Profile with auth token
+    const ethAddress = "0x09457fA22b7D56C93E7407D8a1587C2447316D55";
+    final profile = Profile(
+      id: uid,
+      ethAddress: ethAddress,
+      displayName: "test-user",
+      // setting to null causes multiavatar to get used
+      pfp: null,
+    );
+    // Return profile to pass to VeriFi app during Bloc setup
+    return profile;
+  } else {
+    return null;
+  }
 }
 
 Future<void> getLocalNetworkAccess() async {

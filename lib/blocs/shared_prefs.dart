@@ -15,7 +15,7 @@ class SharedPrefs {
   bool get onboardingComplete =>
       _sharedPrefs!.containsKey(isOnboardingComplete);
 
-  void setOnboardingComplete() =>
+  Future<void> setOnboardingComplete() async =>
       _sharedPrefs!.setBool(isOnboardingComplete, true);
 
   /// Returns [true] if [isPermissionsComplete] exists
@@ -23,8 +23,8 @@ class SharedPrefs {
   bool get permissionsComplete =>
       _sharedPrefs!.containsKey(isPermissionsComplete);
 
-  void setPermissionsComplete() =>
-      _sharedPrefs!.setBool(isPermissionsComplete, true);
+  Future<void> setPermissionsComplete() async =>
+      await _sharedPrefs!.setBool(isPermissionsComplete, true);
 }
 
 final sharedPrefs = SharedPrefs();

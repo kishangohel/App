@@ -1,7 +1,7 @@
 import 'package:auto_connect/auto_connect.dart' as ac;
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:verifi/blocs/map_utils.dart';
+import 'package:verifi/blocs/map/map_utils.dart';
 import 'package:verifi/models/models.dart';
 import 'package:verifi/repositories/wifi_repository.dart';
 
@@ -10,7 +10,7 @@ Future<bool> addNearbyAccessPoints(double lat, double lng) async {
   if (permissionGranted == false) {
     return false;
   }
-  List<AccessPoint> accessPoints = await MapUtils.getNearbyWifi(
+  List<AccessPoint> accessPoints = await MapUtils.getNearbyAccessPoints(
     WifiRepository(),
     GeoFirePoint(lat, lng),
     3.0, // get everything within 3km

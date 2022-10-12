@@ -4,11 +4,9 @@ import os
 import random
 import sys
 
+from firebase_admin import auth, credentials, firestore
 import firebase_admin
-from firebase_admin import auth
-from firebase_admin import firestore
 from firebase_admin.auth import UserRecord
-from google.auth import credentials
 from google.cloud.firestore import GeoPoint
 
 # CHANGE THIS TO YOUR LOCATION
@@ -79,9 +77,8 @@ def get_random_nearby_coordinate():
 
 
 def main():
-    firebase_admin.initialize_app(
-        credential=credentials.AnonymousCredentials()
-    )
+    cred = credentials.Certificate("service_account.json")
+    firebase_admin.initialize_app(credential=cred)
     db = firestore.client()
 
     # Create user
@@ -133,9 +130,11 @@ if __name__ == "__main__":
     authEmulator = os.getenv("FIREBASE_AUTH_EMULATOR_HOST")
     if authEmulator is None:
         print("FIREBASE_AUTH_EMULATOR_HOST environment variable is not set")
+        print("It should most likely be set to 'localhost:9099'")
         sys.exit(1)
     firestoreEmulator = os.getenv("FIRESTORE_EMULATOR_HOST")
     if firestoreEmulator is None:
         print("FIRESTORE_EMULATOR_HOST environment varaible is not set")
+        print("It should most likely be set to 'localhost:8080'")
         sys.exit(1)
     main()

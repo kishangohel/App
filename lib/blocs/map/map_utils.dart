@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_place/google_place.dart';
-import 'package:verifi/blocs/map_markers_helper.dart';
-import 'package:verifi/entities/wifi_entity.dart';
+import 'package:verifi/blocs/map/map_markers_helper.dart';
+import 'package:verifi/entities/access_point_entity.dart';
 import 'package:verifi/models/models.dart';
 import 'package:verifi/repositories/repositories.dart';
 import 'package:verifi/widgets/app.dart';
@@ -31,7 +31,10 @@ class MapUtils {
             .toStringAsFixed(1),
       );
 
-      final entity = WifiEntity.fromDocumentSnapshotWithDistance(doc, distance);
+      final entity = AccessPointEntity.fromDocumentSnapshotWithDistance(
+        doc,
+        distance,
+      );
       return WifiDetails.fromEntity(entity);
     }).toList();
 
@@ -54,7 +57,7 @@ class MapUtils {
     return accessPoints;
   }
 
-  static Future<List<AccessPoint>> getNearbyWifi(
+  static Future<List<AccessPoint>> getNearbyAccessPoints(
     WifiRepository repo,
     GeoFirePoint location,
     double radius,
@@ -74,7 +77,10 @@ class MapUtils {
             .toStringAsFixed(1),
       );
 
-      final entity = WifiEntity.fromDocumentSnapshotWithDistance(doc, distance);
+      final entity = AccessPointEntity.fromDocumentSnapshotWithDistance(
+        doc,
+        distance,
+      );
       return WifiDetails.fromEntity(entity);
     }).toList();
     for (var wifiDetail in wifiDetailsList) {

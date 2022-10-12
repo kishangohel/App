@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
-class WifiEntity extends Equatable {
+class AccessPointEntity extends Equatable {
   final String id;
   final String? placeId;
   final String ssid;
@@ -11,7 +11,7 @@ class WifiEntity extends Equatable {
   final String submittedBy;
   final DateTime lastValidated;
 
-  const WifiEntity({
+  const AccessPointEntity({
     required this.id,
     this.placeId,
     required this.ssid,
@@ -26,14 +26,15 @@ class WifiEntity extends Equatable {
   List<Object> get props => [id];
 
   @override
-  String toString() => "WifiEntity { id: $id, PlaceId: $placeId, SSID: $ssid }";
+  String toString() =>
+      "AccessPointEntity { id: $id, PlaceId: $placeId, SSID: $ssid }";
 
-  static WifiEntity fromDocumentSnapshotWithDistance(
+  static AccessPointEntity fromDocumentSnapshotWithDistance(
     DocumentSnapshot snapshot,
     double distance,
   ) {
     Map data = snapshot.data() as Map<String, dynamic>;
-    return WifiEntity(
+    return AccessPointEntity(
       id: snapshot.id,
       placeId: data['placeId'],
       password: data['password'],
@@ -47,9 +48,9 @@ class WifiEntity extends Equatable {
     );
   }
 
-  static WifiEntity fromDocumentSnapshot(DocumentSnapshot snapshot) {
+  static AccessPointEntity fromDocumentSnapshot(DocumentSnapshot snapshot) {
     Map data = snapshot.data() as Map;
-    return WifiEntity(
+    return AccessPointEntity(
       id: snapshot.id,
       placeId: data['PlaceId'],
       password: data['Password'],

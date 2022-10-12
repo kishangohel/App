@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/blocs/shared_prefs.dart';
-import 'package:verifi/models/profile.dart';
 import 'package:verifi/screens/onboarding/widgets/onboarding_app_bar.dart';
 import 'package:verifi/screens/onboarding/widgets/onboarding_outline_button.dart';
 import 'package:verifi/screens/onboarding/widgets/permission_request_row.dart';
@@ -139,13 +138,14 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
   Widget _finishPermissionsButton() {
     return OnboardingOutlineButton(
       onPressed: () async {
-        // if we got to permissions screen as first screen because iOS keystore
-        // cached auth creds, then we need to sync w/ Profile cubit
-        if (context.read<ProfileCubit>().state == Profile.empty()) {
-          context.read<ProfileCubit>().getProfile(
-                context.read<AuthenticationCubit>().state.user!.uid,
-              );
-        }
+        //TODO: Check to see if this is still needed
+        // // if we got to permissions screen as first screen because iOS keystore
+        // // cached auth creds, then we need to sync w/ Profile cubit
+        // if (context.read<ProfileCubit>().state == Profile.empty()) {
+        //   context.read<ProfileCubit>().getProfile(
+        //         context.read<AuthenticationCubit>().state.user!.uid,
+        //       );
+        // }
         sharedPrefs.setPermissionsComplete();
         final displayName = context.read<ProfileCubit>().displayName;
         if (displayName == null) {

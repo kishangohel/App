@@ -197,22 +197,24 @@ class WalletConnectCubit extends HydratedCubit<WalletConnectState> {
   }
 
   @override
-  WalletConnectState? fromJson(Map<String, dynamic> json) =>
-    WalletConnectState(
-      status: (json["status"] != null) ? SessionStatus(chainId:
-        json["status"]["chainId"], accounts: json["status"]["accounts"],) :
-      null,
-      cbAccount: Account.fromJson(json["cbAccount"]),
-    );
+  WalletConnectState? fromJson(Map<String, dynamic> json) => WalletConnectState(
+        status: (json["status"] != null)
+            ? SessionStatus(
+                chainId: json["status"]["chainId"],
+                accounts: json["status"]["accounts"],
+              )
+            : null,
+        cbAccount: Account.fromJson(json["cbAccount"]),
+      );
 
   @override
   Map<String, dynamic>? toJson(WalletConnectState state) => {
-    "status": {
-      "rpcUrl": state.status?.rpcUrl,
-      "chainId": state.status?.chainId,
-      "accounts": state.status?.accounts,
-      "networkId": state.status?.networkId,
-    },
-    "cbAccount": state.cbAccount?.toJson(),
-  };
+        "status": {
+          "rpcUrl": state.status?.rpcUrl,
+          "chainId": state.status?.chainId,
+          "accounts": state.status?.accounts,
+          "networkId": state.status?.networkId,
+        },
+        "cbAccount": state.cbAccount?.toJson(),
+      };
 }

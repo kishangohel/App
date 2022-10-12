@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/blocs/display_name_textfield/display_name_textfield_bloc.dart';
-import 'package:verifi/blocs/intro_pages/intro_pages_cubit.dart';
 import 'package:verifi/blocs/nfts/nfts_cubit.dart';
 import 'package:verifi/blocs/shared_prefs.dart';
 import 'package:verifi/blocs/theme/theme_cubit.dart';
@@ -97,14 +96,11 @@ class VeriFiState extends State<VeriFi> {
               RepositoryProvider.of<UsersRepository>(context),
             ),
           ),
-          BlocProvider<FeedFilterBloc>(
-            create: (context) => FeedFilterBloc(),
-          ),
-          BlocProvider<IntroPagesCubit>(
-            create: (context) => IntroPagesCubit(),
-          ),
           BlocProvider<LocationCubit>(
-            create: (context) => LocationCubit(),
+            create: (context) => LocationCubit(
+              RepositoryProvider.of<UsersRepository>(context),
+              RepositoryProvider.of<AuthenticationRepository>(context),
+            ),
           ),
           BlocProvider<MapCubit>(
             create: (context) => MapCubit(
@@ -142,12 +138,6 @@ class VeriFiState extends State<VeriFi> {
           ),
           BlocProvider<WalletConnectCubit>(
             create: (context) => WalletConnectCubit(),
-          ),
-          BlocProvider<WifiFeedCubit>(
-            create: (context) => WifiFeedCubit(
-              RepositoryProvider.of<WifiRepository>(context),
-              RepositoryProvider.of<PlacesRepository>(context),
-            ),
           ),
         ],
         child: VeriFiApp(),

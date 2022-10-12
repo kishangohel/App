@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:verifi/blocs/svg_provider.dart';
-import 'package:verifi/models/nft.dart';
+import 'package:verifi/models/pfp.dart';
 
 part 'profile.g.dart';
 
@@ -9,27 +8,23 @@ part 'profile.g.dart';
 class Profile extends Equatable {
   final String id;
   final String? ethAddress;
-
-  /// If [pfp] is null, then we load the multiavatar based on [displayname].
-  final Nft? pfp;
+  final Pfp? pfp;
   final String? displayName;
 
   const Profile({
     required this.id,
-    this.ethAddress,
     this.pfp,
+    this.ethAddress,
     this.displayName,
   });
 
   @override
   List<Object?> get props => [id];
 
-  factory Profile.empty() => const Profile(id: '');
-
   Profile copyWith({
     String? id,
     String? ethAddress,
-    Nft? pfp,
+    Pfp? pfp,
     String? displayName,
   }) {
     return Profile(

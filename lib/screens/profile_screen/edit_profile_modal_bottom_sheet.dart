@@ -5,7 +5,7 @@ import 'package:palette_generator/palette_generator.dart';
 import 'package:verifi/blocs/nfts/nfts_cubit.dart';
 import 'package:verifi/blocs/profile/profile_cubit.dart';
 import 'package:verifi/blocs/theme/theme_cubit.dart';
-import 'package:verifi/models/nft.dart';
+import 'package:verifi/models/pfp.dart';
 
 class EditProfileModalBottomSheet extends StatefulWidget {
   @override
@@ -16,48 +16,52 @@ class _EditProfileModalBottomSheetState
     extends State<EditProfileModalBottomSheet> {
   final _pageController = PageController();
   Color? _selectedThemeColor;
+  final themeTab = const Tab(
+    child: AutoSizeText(
+      "Theme",
+      maxLines: 1,
+    ),
+    height: 32.0,
+  );
+  final pfpTab = const Tab(
+    child: AutoSizeText(
+      "Profile Picture",
+      maxLines: 1,
+    ),
+    height: 32.0,
+  );
 
   @override
   Widget build(BuildContext context) {
+    final isNftPfp = context.read<ProfileCubit>().pfp != null;
     return StatefulBuilder(
       builder: (context, setModalState) {
         return Container(
           color: Theme.of(context).colorScheme.surface,
           height: MediaQuery.of(context).size.height * 0.5,
           padding: const EdgeInsets.all(16.0),
+          // If pfp is an NFT, show tabs to change both theme color and pfp.
+          // Otherwise, just show tab to change theme color.
           child: DefaultTabController(
-            length: 2,
+            length: (isNftPfp) ? 2 : 1,
             child: Column(
               children: [
                 TabBar(
                   indicatorColor: Theme.of(context).colorScheme.onSurface,
                   labelColor: Theme.of(context).colorScheme.onSurface,
-                  labelStyle: Theme.of(context).textTheme.headline6?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                  tabs: const [
-                    Tab(
-                      child: AutoSizeText(
-                        "Theme",
-                        maxLines: 1,
-                      ),
-                      height: 32.0,
-                    ),
-                    Tab(
-                      child: AutoSizeText(
-                        "Profile Picture",
-                        maxLines: 1,
-                      ),
-                      height: 32.0,
-                    ),
-                  ],
+                  labelStyle: Theme.of(context).textTheme.titleMedium,
+                  tabs: (isNftPfp) ? [themeTab, pfpTab] : [themeTab],
                 ),
                 Expanded(
                   child: TabBarView(
-                    children: [
-                      _changeThemeContents(setModalState),
-                      _editProfileContents(),
-                    ],
+                    children: (isNftPfp)
+                        ? [
+                            _changeThemeColorContents(setModalState),
+                            _changeNftPfpContents(),
+                          ]
+                        : [
+                            _changeThemeColorContents(setModalState),
+                          ],
                   ),
                 ),
               ],
@@ -68,9 +72,13 @@ class _EditProfileModalBottomSheetState
     );
   }
 
-  Widget _changeThemeContents(StateSetter setModalState) {
-    final colors = context.read<ThemeCubit>().state.colors;
-    final colorCubes = colors.map((color) {
+  /// Modal sheet tab to change theme to different color.
+  Widget _changeThemeColorContents(StateSetter setModalState) {
+    // Only get the top six brightest colors
+    final colors = context.read<ThemeCubit>().state.colors.take(8);
+    // Circles filled with colors that user can choose as primary theme color
+    final colorCircles = colors.map((color) {
+      // When user taps color, add border around color to indicate selection
       return GestureDetector(
         onTap: () => setModalState(() => _selectedThemeColor = color),
         child: Container(
@@ -90,12 +98,14 @@ class _EditProfileModalBottomSheetState
     }).toList(growable: false);
     return Column(
       children: [
+        // Grid of colors
         Expanded(
           child: GridView.count(
             crossAxisCount: 4,
-            children: colorCubes,
+            children: colorCircles,
           ),
         ),
+        // Update theme color button
         ElevatedButton(
           onPressed: () async {
             final _color = _selectedThemeColor;
@@ -112,35 +122,35 @@ class _EditProfileModalBottomSheetState
     );
   }
 
-  Widget _editProfileContents() {
+  /// Modal sheet tab to edit profile picture by selecting NFT in wallet.
+  Widget _changeNftPfpContents() {
     // If address linked, check for new NFTs first
-    bool web3Enabled = context.read<ProfileCubit>().ethAddress != null;
-    return (web3Enabled)
-        ? FutureBuilder(
-            future: context.read<NftsCubit>().loadNftsOwnedbyAddress(
-                  context.read<ProfileCubit>().ethAddress!,
-                ),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState != ConnectionState.done) {
-                return const Center(
-                  child: SizedBox(
-                    height: 50,
-                    width: 50,
-                    child: CircularProgressIndicator(),
-                  ),
-                );
-              } else {
-                return _pfpBottomPageView(web3Enabled);
-              }
-            },
-          )
-        : _pfpBottomPageView(web3Enabled);
+    String? ethAddress = context.read<ProfileCubit>().ethAddress;
+    assert(ethAddress != null);
+    return FutureBuilder(
+      future: context.read<NftsCubit>().loadNftsOwnedbyAddress(
+            context.read<ProfileCubit>().ethAddress!,
+          ),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return const Center(
+            child: SizedBox(
+              height: 50,
+              width: 50,
+              child: CircularProgressIndicator(),
+            ),
+          );
+        } else {
+          return _pfpBottomPageView();
+        }
+      },
+    );
   }
 
-  Widget _pfpBottomPageView(bool web3Enabled) {
-    return BlocBuilder<NftsCubit, List<Nft>>(
+  Widget _pfpBottomPageView() {
+    return BlocBuilder<NftsCubit, List<Pfp>>(
       builder: (context, nfts) {
-        return (web3Enabled && nfts.isNotEmpty)
+        return (nfts.isNotEmpty)
             ? Column(
                 children: [
                   Expanded(
@@ -149,13 +159,18 @@ class _EditProfileModalBottomSheetState
                   _pfpNftsUpdateButton(),
                 ],
               )
-            //TODO
-            : Container();
+            : Center(
+                child: AutoSizeText(
+                  "No NFTs in wallet",
+                  maxLines: 1,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              );
       },
     );
   }
 
-  Widget _pfpNftsBottomPageView(List<Nft> nfts) {
+  Widget _pfpNftsBottomPageView(List<Pfp> nfts) {
     return PageView.builder(
       controller: _pageController,
       itemCount: nfts.length,
@@ -166,7 +181,7 @@ class _EditProfileModalBottomSheetState
               flex: 8,
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Image(image: nfts[index].image!),
+                child: Image(image: nfts[index].image),
               ),
             ),
             Visibility(
@@ -202,9 +217,9 @@ class _EditProfileModalBottomSheetState
       onPressed: () async {
         final photo =
             context.read<NftsCubit>().state[_pageController.page!.toInt()];
-        context.read<ProfileCubit>().setPfp(photo);
+        await context.read<ProfileCubit>().setPfp(photo);
         context.read<ThemeCubit>().updateColors(
-              await PaletteGenerator.fromImageProvider(photo.image!),
+              await PaletteGenerator.fromImageProvider(photo.image),
             );
         Navigator.of(context).pop();
       },

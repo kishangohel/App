@@ -1,5 +1,5 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:verifi/entities/wifi_entity.dart';
+import 'package:verifi/entities/access_point_entity.dart';
 
 class WifiDetails {
   final String id;
@@ -22,7 +22,7 @@ class WifiDetails {
     this.distance,
   });
 
-  factory WifiDetails.fromEntity(WifiEntity entity) {
+  factory WifiDetails.fromEntity(AccessPointEntity entity) {
     return WifiDetails(
       id: entity.id,
       ssid: entity.ssid,

@@ -1,6 +1,5 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:async/async.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verifi/blocs/blocs.dart';
@@ -27,33 +26,18 @@ class _FinalSetupScreenState extends State<FinalSetupScreen> {
       const Duration(seconds: 1, milliseconds: 500),
       () => setState(() => opacity = 1),
     );
-    FutureGroup futureGroup = FutureGroup();
     // waits for context to be populated
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      futureGroup.add(context.read<ProfileCubit>().createProfile());
-      futureGroup.add(Future(
-        () async {
-          final palette =
-              await context.read<ProfileCubit>().createPaletteFromPfp();
-          context.read<ThemeCubit>().updateColors(palette);
-        },
-      ));
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await context.read<ProfileCubit>().createProfile();
+      final palette = await context.read<ProfileCubit>().createPaletteFromPfp();
+      context.read<ThemeCubit>().updateColors(palette);
       // A simple read will initialize location stream
       context.read<LocationCubit>();
       // futureGroup.add(GeofencingCubit.registerNearbyGeofences());
       // futureGroup.add(
       //   ActivityRecognitionCubit.requestActivityTransitionUpdates(),
       // );
-      futureGroup.future.then(
-        (List<dynamic> values) {
-          sharedPrefs.setOnboardingComplete();
-          setState(() {});
-        },
-        onError: (error) {
-          FirebaseCrashlytics.instance.log(error);
-        },
-      );
-      futureGroup.close();
+      await sharedPrefs.setOnboardingComplete();
     });
   }
 
@@ -137,10 +121,24 @@ class _FinalSetupScreenState extends State<FinalSetupScreen> {
           isRepeatingAnimation: false,
           animatedTexts: _animatedTexts(),
           onFinished: () {
-            Navigator.of(context).pushNamedAndRemoveUntil(
-              '/home',
-              (route) => false, // remove all routes on stack
-            );
+            if (sharedPrefs.onboardingComplete) {
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                '/home',
+                // remove all routes on stack
+                (route) => false,
+              );
+            } else {
+              showModalBottomSheet(
+                context: context,
+                builder: (context) {
+                  return AutoSizeText(
+                    "Failed to finish setup. Please close and reopen the app",
+                    style: Theme.of(context).textTheme.bodyMedium,
+                    maxLines: 2,
+                  );
+                },
+              );
+            }
           },
         ),
       ),
