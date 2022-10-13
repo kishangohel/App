@@ -18,7 +18,7 @@ class PlacesRepository {
   String get apiKey => _googleMapsPlaces.apiKEY;
 
   Future<void> initLocalDbs() async {
-    final dir = await getApplicationDocumentsDirectory();
+    final dir = await getApplicationSupportDirectory();
     await dir.create(recursive: true);
     final dbPath = join(dir.path, googlePlacesDbFilename);
     googlePlacesDb = await databaseFactoryIo.openDatabase(dbPath);
@@ -108,9 +108,10 @@ class PlacesRepository {
       input,
       sessionToken: sessionToken,
       location: location,
+      radius: 200,
       types: "establishment",
       language: "en",
-      components: [Component("country", "us")],
+      strictbounds: true,
     );
     return response?.predictions;
   }

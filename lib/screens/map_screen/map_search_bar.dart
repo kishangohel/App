@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class MapSearchBar extends StatelessWidget implements PreferredSizeWidget {
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight + 4);
 
   @override
   Widget build(BuildContext context) {
@@ -10,13 +10,13 @@ class MapSearchBar extends StatelessWidget implements PreferredSizeWidget {
       alignment: Alignment.topCenter,
       margin: EdgeInsets.fromLTRB(
         8,
-        MediaQuery.of(context).padding.top + 4,
+        MediaQuery.of(context).padding.top + 8,
         8,
-        0,
+        4,
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 4.0),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(36),
+        borderRadius: BorderRadius.circular(10),
         color: Theme.of(context).colorScheme.surface,
         boxShadow: kElevationToShadow[6],
       ),
@@ -39,7 +39,7 @@ class MapSearchBar extends StatelessWidget implements PreferredSizeWidget {
               icon: Icon(
                 Icons.search,
                 color: Theme.of(context).colorScheme.primary,
-                size: Theme.of(context).textTheme.headline6?.fontSize,
+                size: Theme.of(context).textTheme.titleLarge?.fontSize,
               ),
               onPressed: () {}),
         ],

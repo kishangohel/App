@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/models/app_tab.dart';
 import 'package:verifi/models/models.dart';
+import 'package:verifi/screens/map_screen/map_search_bar.dart';
 import 'package:verifi/screens/profile_screen/profile_screen.dart';
 import 'package:verifi/screens/map_screen/add_network_fab.dart';
 import 'package:verifi/screens/map_screen/map_screen.dart';
@@ -46,6 +47,7 @@ class _HomeState extends State<Home> {
         ),
         floatingActionButton: _buildFab(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        extendBodyBehindAppBar: (_currentIndex == 0) ? true : false,
       ),
     );
   }
@@ -66,7 +68,7 @@ class _HomeState extends State<Home> {
   PreferredSizeWidget? buildAppBar() {
     switch (_currentIndex) {
       case 0:
-        return null;
+        return MapSearchBar();
       case 1:
         return ProfileAppBar();
       default:

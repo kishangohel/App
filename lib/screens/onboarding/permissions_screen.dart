@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:verifi/blocs/blocs.dart';
+import 'package:verifi/blocs/shared_prefs.dart';
 import 'package:verifi/screens/onboarding/widgets/onboarding_app_bar.dart';
 import 'package:verifi/screens/onboarding/widgets/onboarding_outline_button.dart';
 import 'package:verifi/screens/onboarding/widgets/permission_request_row.dart';
@@ -136,6 +137,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
   Widget _finishPermissionsButton() {
     return OnboardingOutlineButton(
       onPressed: () async {
+        await sharedPrefs.setPermissionsComplete();
         final displayName = context.read<ProfileCubit>().displayName;
         if (displayName == null) {
           await Navigator.of(context).pushNamedAndRemoveUntil(

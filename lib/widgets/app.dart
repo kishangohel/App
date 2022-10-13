@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/blocs/display_name_textfield/display_name_textfield_bloc.dart';
 import 'package:verifi/blocs/nfts/nfts_cubit.dart';
+import 'package:verifi/blocs/places/places_cubit.dart';
 import 'package:verifi/blocs/shared_prefs.dart';
 import 'package:verifi/blocs/theme/theme_cubit.dart';
 import 'package:verifi/blocs/theme/theme_state.dart';
@@ -118,6 +119,11 @@ class VeriFiState extends State<VeriFi> {
           BlocProvider<NftsCubit>(
             create: (context) => NftsCubit(
               RepositoryProvider.of<NftPortRepository>(context),
+            ),
+          ),
+          BlocProvider<PlacesCubit>(
+            create: (context) => PlacesCubit(
+              RepositoryProvider.of<PlacesRepository>(context),
             ),
           ),
           BlocProvider<ProfileCubit>(

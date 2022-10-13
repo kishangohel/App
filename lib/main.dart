@@ -50,9 +50,9 @@ void main() async {
   // Setup bloc observer
   Bloc.observer = LoggingBlocObserver();
   // disable debugPrint in release mode
-  // if (kReleaseMode) {
-  debugPrint = (String? message, {int? wrapWidth}) {};
-  // }
+  if (kReleaseMode) {
+    debugPrint = (String? message, {int? wrapWidth}) {};
+  }
   // Initialize shared preferences
   await sharedPrefs.init();
   // Initialize Firebase
@@ -76,7 +76,7 @@ void main() async {
   // If debug mode, setup test environment
   Profile? profile;
   if (kDebugMode) {
-    profile = await setupTestEnvironment(signInTestUser: false);
+    profile = await setupTestEnvironment(signInTestUser: true);
   }
   // Run the app
   // If release mode, profile will be null.
@@ -109,7 +109,7 @@ Future<Profile?> setupTestEnvironment({bool signInTestUser = true}) async {
   // if you restart the emulator and a new auth token gets created.
   if (Platform.isIOS) {
     await getLocalNetworkAccess();
-    await FirebaseAuth.instance.signOut();
+    // await FirebaseAuth.instance.signOut();
   }
   if (signInTestUser) {
     // Sign in to Firebase via test phone number
