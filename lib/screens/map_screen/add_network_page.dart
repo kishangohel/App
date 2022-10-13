@@ -3,14 +3,66 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:plugin_wifi_connect/plugin_wifi_connect.dart';
 import 'package:verifi/blocs/location/location_cubit.dart';
 import 'package:verifi/blocs/places/places_cubit.dart';
 import 'package:verifi/models/place.dart';
 
-class AddNetworkPage extends StatelessWidget {
+class AddNetworkPage extends StatefulWidget {
   final String? wifiName;
   final String? placeName;
   const AddNetworkPage({this.wifiName, this.placeName});
+
+  @override
+  State<StatefulWidget> createState() => _AddNetworkPageState();
+}
+
+class _AddNetworkPageState extends State<AddNetworkPage> {
+  GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  String? ssid;
+  String? password;
+  Place? place;
+
+  final _passwordController = TextEditingController();
+  bool _isPasswordRequired = false;
+  bool _obscurePasswordText = true;
+
+  final _placeController = TextEditingController();
+  bool _isPlaceSelected = false;
+  Place? _selectedPlace;
+
+  void updateSsid(String ssid) {
+    this.ssid = ssid;
+  }
+
+  void updatePassword(String password) {
+    this.password = password;
+  }
+
+  void updatePlace(Place place) {
+    this.place = place;
+  }
+
+  Future<void> connectToNetwork() async {
+    bool? result;
+    if (password != null) {
+      result = await PluginWifiConnect.connectToSecureNetwork(
+        ssid!,
+        password!,
+        saveNetwork: true,
+      );
+    } else {
+      result = await PluginWifiConnect.connect(ssid!, saveNetwork: true);
+    }
+    debugPrint("Connection worked: $result");
+  }
+
+  Future<void> submitNetwork() async {
+    debugPrint("Submitting network");
+    debugPrint("SSID: $ssid");
+    debugPrint("Password: $password");
+    debugPrint("Place: ${place.toString()}");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,24 +74,24 @@ class AddNetworkPage extends StatelessWidget {
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
       height: MediaQuery.of(context).size.height * 0.9,
-      child: Column(
-        children: [
-          AddNetworkTitle(),
-          SSIDRow(wifiName),
-          PasswordRow(),
-          Expanded(
-            child: PlaceRow(placeName),
-          ),
-          SubmitNetworkButton(),
-        ],
+      child: Form(
+        key: formKey,
+        child: Column(
+          children: [
+            _addNetworkTitle(),
+            _ssidRow(),
+            _passwordRow(),
+            Expanded(
+              child: _placeRow(),
+            ),
+            _submitNetworkButton(),
+          ],
+        ),
       ),
     );
   }
-}
 
-class AddNetworkTitle extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
+  Widget _addNetworkTitle() {
     return Container(
       padding: const EdgeInsets.only(top: 8.0, bottom: 16.0),
       child: Text(
@@ -48,20 +100,8 @@ class AddNetworkTitle extends StatelessWidget {
       ),
     );
   }
-}
 
-class SSIDRow extends StatefulWidget {
-  final String? wifiName;
-
-  const SSIDRow(this.wifiName);
-
-  @override
-  State<StatefulWidget> createState() => _SSIDRowState();
-}
-
-class _SSIDRowState extends State<SSIDRow> {
-  @override
-  Widget build(BuildContext context) {
+  Widget _ssidRow() {
     return Row(
       children: [
         Expanded(
@@ -76,7 +116,18 @@ class _SSIDRowState extends State<SSIDRow> {
             ),
             style: Theme.of(context).textTheme.bodyMedium,
             enabled: false,
-            initialValue: widget.wifiName?.replaceAll('"', ''),
+            initialValue: widget.wifiName,
+            validator: (value) {
+              if (value == null || value.isEmpty || value != widget.wifiName) {
+                debugPrint("Invalid network");
+                return "Invalid network";
+              }
+              return null;
+            },
+            onSaved: (value) {
+              assert(value != null);
+              setState(() => ssid = value);
+            },
           ),
         ),
         IconButton(
@@ -87,7 +138,7 @@ class _SSIDRowState extends State<SSIDRow> {
           onPressed: () {
             showDialog(
               context: context,
-              builder: (context) => _alertDialog(),
+              builder: (context) => _ssidRowAlertDialog(),
             );
           },
         ),
@@ -95,14 +146,15 @@ class _SSIDRowState extends State<SSIDRow> {
     );
   }
 
-  Widget _alertDialog() {
+  Widget _ssidRowAlertDialog() {
     return AlertDialog(
       title: Text(
         "Why can't I edit this?",
         style: Theme.of(context).textTheme.titleLarge,
       ),
       content: Text(
-        "You may only submit the currently connected WiFi network to VeriNet.",
+        "You may only submit a WiFi network if your device is currently "
+        "connected to that network.",
         style: Theme.of(context).textTheme.bodyMedium,
       ),
       actions: [
@@ -118,20 +170,8 @@ class _SSIDRowState extends State<SSIDRow> {
       ],
     );
   }
-}
 
-class PasswordRow extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => _PasswordRowState();
-}
-
-class _PasswordRowState extends State<PasswordRow> {
-  final _controller = TextEditingController();
-  bool _isPasswordRequired = true;
-  bool _obscureText = true;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _passwordRow() {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
@@ -153,10 +193,11 @@ class _PasswordRowState extends State<PasswordRow> {
                   textAlign: TextAlign.center,
                 ),
                 Switch(
+                  activeColor: Theme.of(context).colorScheme.primary,
                   value: _isPasswordRequired,
                   onChanged: (value) {
                     if (value == false) {
-                      _controller.clear();
+                      _passwordController.clear();
                     }
                     setState(() {
                       _isPasswordRequired = value;
@@ -173,20 +214,20 @@ class _PasswordRowState extends State<PasswordRow> {
 
   Widget _passwordTextFormField() {
     return TextFormField(
-      controller: _controller,
+      controller: _passwordController,
       decoration: InputDecoration(
         border: const OutlineInputBorder(),
         labelText: "Password",
-        suffixIcon: (_controller.value.text.isNotEmpty)
+        suffixIcon: (_passwordController.value.text.isNotEmpty)
             ? IconButton(
                 icon: FaIcon(
-                  _obscureText
+                  _obscurePasswordText
                       ? FontAwesomeIcons.eyeSlash
                       : FontAwesomeIcons.eye,
                   size: Theme.of(context).textTheme.bodyMedium!.fontSize,
                 ),
                 onPressed: () => setState(
-                  () => _obscureText = !_obscureText,
+                  () => _obscurePasswordText = !_obscurePasswordText,
                 ),
               )
             : null,
@@ -197,26 +238,17 @@ class _PasswordRowState extends State<PasswordRow> {
       ),
       style: Theme.of(context).textTheme.bodyMedium,
       enabled: _isPasswordRequired,
-      obscureText: _obscureText,
+      obscureText: _obscurePasswordText,
       onChanged: (text) => setState(() {}),
+      onSaved: (value) {
+        if (value != null) {
+          setState(() => password = value);
+        }
+      },
     );
   }
-}
 
-class PlaceRow extends StatefulWidget {
-  final String? placeName;
-
-  const PlaceRow(this.placeName);
-
-  @override
-  State<StatefulWidget> createState() => _PlaceRowState();
-}
-
-class _PlaceRowState extends State<PlaceRow> {
-  final _controller = TextEditingController();
-  bool isPlaceSelected = false;
-  @override
-  Widget build(BuildContext context) {
+  Widget _placeRow() {
     return (widget.placeName == null)
         ? Container(
             padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -234,7 +266,7 @@ class _PlaceRowState extends State<PlaceRow> {
                   onPressed: () {
                     showDialog(
                       context: context,
-                      builder: (context) => _alertDialog(),
+                      builder: (context) => _placeRowAlertDialog(),
                     );
                   },
                 ),
@@ -245,9 +277,9 @@ class _PlaceRowState extends State<PlaceRow> {
   }
 
   Widget _searchPlaceTypeAheadField() {
-    return TypeAheadField<Place>(
+    return TypeAheadFormField<Place>(
       textFieldConfiguration: TextFieldConfiguration(
-        controller: _controller,
+        controller: _placeController,
         decoration: const InputDecoration(
           border: OutlineInputBorder(),
           labelText: "Location",
@@ -259,8 +291,11 @@ class _PlaceRowState extends State<PlaceRow> {
         style: Theme.of(context).textTheme.bodyMedium,
       ),
       onSuggestionSelected: (place) {
-        _controller.text = place.name;
-        setState(() => isPlaceSelected = true);
+        _placeController.text = place.name;
+        setState(() {
+          _isPlaceSelected = true;
+          _selectedPlace = place;
+        });
       },
       itemBuilder: (BuildContext context, Place place) {
         return ListTile(
@@ -282,6 +317,21 @@ class _PlaceRowState extends State<PlaceRow> {
         }
         return <Place>[];
       },
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      validator: (value) {
+        if (value == null ||
+            value.isEmpty ||
+            !_isPlaceSelected ||
+            value != _selectedPlace?.name) {
+          debugPrint("Invalid place");
+          return "Invalid place";
+        }
+        return null;
+      },
+      onSaved: (value) {
+        assert(_selectedPlace != null);
+        setState(() => place = _selectedPlace!);
+      },
     );
   }
 
@@ -294,10 +344,17 @@ class _PlaceRowState extends State<PlaceRow> {
       style: Theme.of(context).textTheme.bodyMedium,
       enabled: false,
       initialValue: widget.placeName,
+      validator: (value) {
+        if (value == null || value.isEmpty || value != placeName) {
+          debugPrint("Invalid place");
+          return "Invalid place";
+        }
+        return null;
+      },
     );
   }
 
-  Widget _alertDialog() {
+  Widget _placeRowAlertDialog() {
     return AlertDialog(
       title: Text(
         "Why do only certain places show up?",
@@ -324,19 +381,32 @@ class _PlaceRowState extends State<PlaceRow> {
       ],
     );
   }
-}
 
-class SubmitNetworkButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () async {},
+  Widget _submitNetworkButton() {
+    final _button = ElevatedButton(
+      onPressed: () async {
+        final valid = formKey.currentState!.validate();
+        debugPrint("Valid: $valid");
+        if (valid) {
+          formKey.currentState!.save();
+          final success = await connectToNetwork();
+          if (success) {
+            submitNetwork();
+          }
+        }
+      },
       child: Text(
-        "Submit",
-        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+        "Submit Network",
+        style: Theme.of(context).textTheme.titleLarge?.copyWith(
               color: Theme.of(context).colorScheme.onPrimary,
             ),
       ),
     );
+    // If keyboard is closed, expand button. Otherwise, don't expand.
+    return (MediaQuery.of(context).viewInsets.bottom == 0)
+        ? Expanded(
+            child: Center(child: _button),
+          )
+        : _button;
   }
 }

@@ -1162,6 +1162,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.3"
+  plugin_wifi_connect:
+    dependency: "direct main"
+    description:
+      name: plugin_wifi_connect
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.2"
   pool:
     dependency: transitive
     description:
