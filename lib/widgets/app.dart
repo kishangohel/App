@@ -71,11 +71,14 @@ class VeriFiState extends State<VeriFi> {
         RepositoryProvider<NftPortRepository>(
           create: (context) => NftPortRepository(),
         ),
-        RepositoryProvider<PlacesRepository>(
-          create: (context) => PlacesRepository(),
+        RepositoryProvider<PlaceRepository>(
+          create: (context) => PlaceRepository(),
         ),
-        RepositoryProvider<UsersRepository>(
-          create: (context) => UsersRepository(),
+        RepositoryProvider<UserLocationRepository>(
+          create: (context) => UserLocationRepository(),
+        ),
+        RepositoryProvider<UserProfileRepository>(
+          create: (context) => UserProfileRepository(),
         ),
         RepositoryProvider<WifiRepository>(
           create: (context) => WifiRepository(),
@@ -95,24 +98,24 @@ class VeriFiState extends State<VeriFi> {
           ),
           BlocProvider<DisplayNameTextfieldBloc>(
             create: (context) => DisplayNameTextfieldBloc(
-              RepositoryProvider.of<UsersRepository>(context),
+              RepositoryProvider.of<UserProfileRepository>(context),
             ),
           ),
           BlocProvider<LocationCubit>(
             create: (context) => LocationCubit(
-              RepositoryProvider.of<UsersRepository>(context),
+              RepositoryProvider.of<UserLocationRepository>(context),
               RepositoryProvider.of<AuthenticationRepository>(context),
             ),
           ),
           BlocProvider<MapCubit>(
             create: (context) => MapCubit(
               RepositoryProvider.of<WifiRepository>(context),
-              RepositoryProvider.of<PlacesRepository>(context),
+              RepositoryProvider.of<PlaceRepository>(context),
             ),
           ),
           BlocProvider<MapSearchCubit>(
             create: (context) => MapSearchCubit(
-              RepositoryProvider.of<PlacesRepository>(context),
+              RepositoryProvider.of<PlaceRepository>(context),
               RepositoryProvider.of<WifiRepository>(context),
             ),
           ),
@@ -123,13 +126,13 @@ class VeriFiState extends State<VeriFi> {
           ),
           BlocProvider<PlacesCubit>(
             create: (context) => PlacesCubit(
-              RepositoryProvider.of<PlacesRepository>(context),
+              RepositoryProvider.of<PlaceRepository>(context),
             ),
           ),
           BlocProvider<ProfileCubit>(
             create: (context) {
               final cubit = ProfileCubit(
-                RepositoryProvider.of<UsersRepository>(context),
+                RepositoryProvider.of<UserProfileRepository>(context),
               );
               if (kDebugMode && widget.testProfile != null) {
                 cubit.setProfile(widget.testProfile!);

@@ -7,7 +7,7 @@ class DisplayNameTextfieldBloc
     extends Bloc<DisplayNameTextfieldEvent, DisplayNameTextfieldState> {
   final _duration = const Duration(milliseconds: 300);
 
-  final UsersRepository _repository;
+  final UserProfileRepository _repository;
 
   EventTransformer<Event> debounce<Event>(Duration duration) {
     return (events, mapper) => events.debounce(duration).switchMap(mapper);

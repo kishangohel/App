@@ -5,7 +5,7 @@ import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
 import 'package:uuid/uuid.dart';
 
-class PlacesRepository {
+class PlaceRepository {
   final googlePlacesDbFilename = 'places.db';
   final store = stringMapStoreFactory.store();
   var sessionToken = const Uuid().v4();

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
@@ -7,12 +8,12 @@ import 'package:verifi/repositories/repositories.dart';
 
 // Maintains current location
 class LocationCubit extends HydratedCubit<LatLng?> {
-  final UsersRepository _usersRepository;
+  final UserLocationRepository _userLocationRepository;
   final AuthenticationRepository _authenticationRepository;
   late StreamSubscription<Position> _locationStream;
 
   LocationCubit(
-    this._usersRepository,
+    this._userLocationRepository,
     this._authenticationRepository,
   ) : super(null) {
     _locationStream = Geolocator.getPositionStream(
@@ -22,7 +23,10 @@ class LocationCubit extends HydratedCubit<LatLng?> {
       // If user is logged in, upload location to Firestore
       final userId = _authenticationRepository.currentUser?.uid;
       if (userId != null) {
-        await _usersRepository.updateLastLocation(userId, position);
+        await _userLocationRepository.updateUserLocation(
+          userId,
+          GeoPoint(position.latitude, position.longitude),
+        );
       }
       emit(LatLng(position.latitude, position.longitude));
     });

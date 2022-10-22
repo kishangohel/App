@@ -13,8 +13,8 @@ import 'package:verifi/repositories/repositories.dart';
 // Maintains global state of map position and map controller.
 // Markers are yielded via MapLoaded.
 class MapCubit extends Cubit<MapState> {
-  final WifiRepository _remoteRepository;
-  final PlacesRepository _placesRepository;
+  final WifiRepository _wifiRepository;
+  final PlaceRepository _placeRepository;
   GoogleMapController? mapController;
 
   // This should be directly updated by the map whenever onMapChanged occurs
@@ -23,8 +23,8 @@ class MapCubit extends Cubit<MapState> {
   FocusNode? focus;
 
   MapCubit(
-    this._remoteRepository,
-    this._placesRepository,
+    this._wifiRepository,
+    this._placeRepository,
   ) : super(const MapState()) {
     MapMarkersHelper.getMarkers().then((value) => apMarkers = value);
   }
@@ -46,7 +46,7 @@ class MapCubit extends Cubit<MapState> {
       return;
     }
     final bounds = await mapController!.getVisibleRegion();
-    final GeoFirePoint currentGeoPoint = _remoteRepository.geo.point(
+    final GeoFirePoint currentGeoPoint = _wifiRepository.geo.point(
       latitude: currentPosition!.target.latitude,
       longitude: currentPosition!.target.longitude,
     );
@@ -57,8 +57,8 @@ class MapCubit extends Cubit<MapState> {
     double zoom = await mapController!.getZoomLevel();
     List<AccessPoint> accessPoints =
         await MapUtils.getNearbyAccessPointsWithPlaceDetails(
-      _remoteRepository,
-      _placesRepository,
+      _wifiRepository,
+      _placeRepository,
       currentGeoPoint,
       radius,
     );

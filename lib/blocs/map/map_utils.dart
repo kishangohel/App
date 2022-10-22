@@ -12,13 +12,13 @@ import 'package:verifi/widgets/app.dart';
 
 class MapUtils {
   static Future<List<AccessPoint>> getNearbyAccessPointsWithPlaceDetails(
-    WifiRepository wifiRepo,
-    PlacesRepository placesRepo,
+    WifiRepository wifiRepository,
+    PlaceRepository placeRepository,
     GeoFirePoint location,
     double radius,
   ) async {
     List<DocumentSnapshot> docs =
-        await wifiRepo.getWifiWithinRadiusStream(location, radius).first;
+        await wifiRepository.getWifiWithinRadiusStream(location, radius).first;
     // Set wifis to length of documents. This allows us to async update
     // List<Wifi> and keep the order of the documents returned by
     // distance.
@@ -42,7 +42,7 @@ class MapUtils {
     // before returning wifis.
     await Future.wait(
       wifiDetailsList.asMap().entries.map((entry) async {
-        DetailsResult? placeDetails = await placesRepo.getPlaceDetails(
+        DetailsResult? placeDetails = await placeRepository.getPlaceDetails(
           entry.value.placeId,
           false,
         );

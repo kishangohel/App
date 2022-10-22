@@ -9,11 +9,11 @@ import 'package:verifi/repositories/repositories.dart';
 import 'map_search.dart';
 
 class MapSearchCubit extends Cubit<MapSearchState> {
-  final PlacesRepository _placesRepository;
+  final PlaceRepository _placeRepository;
   final WifiRepository _wifiRepository;
 
   MapSearchCubit(
-    this._placesRepository,
+    this._placeRepository,
     this._wifiRepository,
   ) : super(const MapSearchState());
 
@@ -21,7 +21,7 @@ class MapSearchCubit extends Cubit<MapSearchState> {
     if (query.isEmpty) {
       emit(state.copyWith(predictions: null));
     }
-    final predictions = await _placesRepository.searchNearbyPlaces(
+    final predictions = await _placeRepository.searchNearbyPlaces(
       location,
       query,
     );
@@ -29,7 +29,7 @@ class MapSearchCubit extends Cubit<MapSearchState> {
   }
 
   Future<DetailsResult?> _getPlaceDetails(String placeId) {
-    return _placesRepository.getPlaceDetails(placeId, true);
+    return _placeRepository.getPlaceDetails(placeId, true);
   }
 
   Future<WifiDetails?> _getWifiDetails(String placeId) {

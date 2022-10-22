@@ -66,20 +66,21 @@ void main() async {
   // If Android, use hybrid composition for Google Maps
   final mapsImplementation = GoogleMapsFlutterPlatform.instance;
   if (mapsImplementation is GoogleMapsFlutterAndroid) {
-    mapsImplementation.useAndroidViewSurface = false;
+    mapsImplementation.useAndroidViewSurface = true;
   }
+
+  // Setup auto connect
+  await AutoConnect.initialize();
   // Setup Coinbase
   await initCoinbaseSDK();
 
-  // Setup auto connect
-  AutoConnect.initialize();
   // If debug mode, setup test environment
   Profile? profile;
   if (kDebugMode) {
     profile = await setupTestEnvironment(signInTestUser: true);
   }
   // Run the app
-  // If release mode, profile will be null.
+  // If release mode or [signInTestUser] is false, profile will be null.
   runApp(VeriFi(profile));
 }
 
@@ -109,7 +110,7 @@ Future<Profile?> setupTestEnvironment({bool signInTestUser = true}) async {
   // if you restart the emulator and a new auth token gets created.
   if (Platform.isIOS) {
     await getLocalNetworkAccess();
-    // await FirebaseAuth.instance.signOut();
+    await FirebaseAuth.instance.signOut();
   }
   if (signInTestUser) {
     // Sign in to Firebase via test phone number
@@ -150,7 +151,7 @@ Future<Profile?> setupTestEnvironment({bool signInTestUser = true}) async {
         id: displayName,
         name: displayName,
         image: SvgProvider(avatar, source: SvgSource.raw),
-        imageBitmap: await ImageUtils.rawVectorToBytes(avatar, 60.0),
+        imageBitmap: await ImageUtils.rawVectorToBytes(avatar, 100.0),
       ),
     );
     // Return profile to pass to VeriFi app during Bloc setup
@@ -163,7 +164,7 @@ Future<Profile?> setupTestEnvironment({bool signInTestUser = true}) async {
 Future<void> getLocalNetworkAccess() async {
   try {
     var deviceIp = await NetworkInfo().getWifiIP();
-    Duration? timeOutDuration = const Duration(milliseconds: 100);
+    Duration? timeOutDuration = const Duration(milliseconds: 500);
     await Socket.connect(deviceIp, 80, timeout: timeOutDuration);
   } catch (e) {
     // Give dev time to accept local network pop-up before continuing

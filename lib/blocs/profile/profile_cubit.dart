@@ -4,13 +4,13 @@ import 'package:random_avatar/random_avatar.dart';
 import 'package:verifi/blocs/svg_provider.dart';
 import 'package:verifi/models/pfp.dart';
 import 'package:verifi/models/profile.dart';
-import 'package:verifi/repositories/users_repository.dart';
+import 'package:verifi/repositories/user_profile_repository.dart';
 
 class ProfileCubit extends HydratedCubit<Profile> {
-  final UsersRepository _usersRepository;
+  final UserProfileRepository _userProfileRepository;
 
   ProfileCubit(
-    this._usersRepository,
+    this._userProfileRepository,
   ) : super(const Profile(id: ''));
 
   /// Get the profile information for a user by uid.
@@ -18,7 +18,7 @@ class ProfileCubit extends HydratedCubit<Profile> {
   /// If a user record is not found, then a new [Profile] object is emitted
   /// with only [userId] set.
   Future<void> getProfile(String userId) async {
-    final profile = await _usersRepository.getProfileById(userId);
+    final profile = await _userProfileRepository.getProfileById(userId);
     emit(profile);
   }
 
@@ -43,17 +43,17 @@ class ProfileCubit extends HydratedCubit<Profile> {
 
   // Updaters
   Future<void> updateEthAddress(String address) async {
-    await _usersRepository.updateEthAddress(userId, address);
+    await _userProfileRepository.updateEthAddress(userId, address);
     setEthAddress(address);
   }
 
   Future<void> updateDisplayName(String displayName) async {
-    await _usersRepository.updateDisplayName(userId, displayName);
+    await _userProfileRepository.updateDisplayName(userId, displayName);
     setDisplayName(displayName);
   }
 
   Future<void> updatePfp(Pfp pfp) async {
-    await _usersRepository.updatePfp(userId, pfp);
+    await _userProfileRepository.updatePfp(userId, pfp);
     setPfp(pfp);
   }
 
@@ -62,7 +62,7 @@ class ProfileCubit extends HydratedCubit<Profile> {
   }
 
   Future<void> createProfile() {
-    return _usersRepository.createProfile(state);
+    return _userProfileRepository.createProfile(state);
   }
 
   Future<PaletteGenerator> createPaletteFromPfp() async {
@@ -78,24 +78,6 @@ class ProfileCubit extends HydratedCubit<Profile> {
     }
     return palette;
   }
-
-  // /// Creates pfp bitmap for use by Google Maps.
-  // ///
-  // /// If [nft] is null, the Multiavatar is used.
-  // /// If [nft] is not null, the image is pulled from network.
-  // Future<void> _setPfpNftBitmap(Nft? nft) async {
-  //   Uint8List pfpBytes;
-  //   if (nft == null) {
-  //     pfpBytes = await ImageUtils.rawVectorToBytes(
-  //       randomAvatarString(displayName!, trBackground: true),
-  //       60.0,
-  //     );
-  //   } else {
-  //     pfpBytes = await ImageUtils.encodeImage(nft.url);
-  //   }
-  //   state.pfp.imageBitmap = pfpBytes;
-  //   debugPrint("Pfp bitmap set: ${pfpBitmap.runtimeType}");
-  // }
 
   @override
   Profile? fromJson(Map<String, dynamic> json) => Profile.fromJson(json);

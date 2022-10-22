@@ -52,7 +52,7 @@ class Pfp extends Equatable {
   static Future<Pfp> fromMultiavatarString(String name) async {
     final multiAvatar = randomAvatarString(name, trBackground: true);
     final image = SvgProvider(multiAvatar, source: SvgSource.raw);
-    final imageBitmap = await ImageUtils.rawVectorToBytes(multiAvatar, 60.0);
+    final imageBitmap = await ImageUtils.rawVectorToBytes(multiAvatar, 100.0);
     return Pfp(
       id: name,
       image: image,

@@ -1,9 +1,9 @@
+import 'package:auto_connect/auto_connect.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:plugin_wifi_connect/plugin_wifi_connect.dart';
 import 'package:verifi/blocs/location/location_cubit.dart';
 import 'package:verifi/blocs/places/places_cubit.dart';
 import 'package:verifi/models/place.dart';
@@ -19,8 +19,8 @@ class AddNetworkPage extends StatefulWidget {
 
 class _AddNetworkPageState extends State<AddNetworkPage> {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  String? ssid;
-  String? password;
+  String ssid = "";
+  String password = "";
   Place? place;
 
   final _passwordController = TextEditingController();
@@ -43,25 +43,11 @@ class _AddNetworkPageState extends State<AddNetworkPage> {
     this.place = place;
   }
 
-  Future<void> connectToNetwork() async {
-    bool? result;
-    if (password != null) {
-      result = await PluginWifiConnect.connectToSecureNetwork(
-        ssid!,
-        password!,
-        saveNetwork: true,
-      );
-    } else {
-      result = await PluginWifiConnect.connect(ssid!, saveNetwork: true);
-    }
+  Future<void> validateNetwork() async {
+    final result = await AutoConnect.verifyAccessPoint(
+      wifi: WiFi(ssid: ssid, password: password),
+    );
     debugPrint("Connection worked: $result");
-  }
-
-  Future<void> submitNetwork() async {
-    debugPrint("Submitting network");
-    debugPrint("SSID: $ssid");
-    debugPrint("Password: $password");
-    debugPrint("Place: ${place.toString()}");
   }
 
   @override
@@ -126,7 +112,7 @@ class _AddNetworkPageState extends State<AddNetworkPage> {
             },
             onSaved: (value) {
               assert(value != null);
-              setState(() => ssid = value);
+              setState(() => ssid = value!);
             },
           ),
         ),
@@ -389,10 +375,7 @@ class _AddNetworkPageState extends State<AddNetworkPage> {
         debugPrint("Valid: $valid");
         if (valid) {
           formKey.currentState!.save();
-          final success = await connectToNetwork();
-          if (success) {
-            submitNetwork();
-          }
+          validateNetwork();
         }
       },
       child: Text(

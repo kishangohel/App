@@ -82,10 +82,10 @@ class ImageUtils {
     Uint8List? bytes;
     switch (type) {
       case ImageType.image:
-        bytes = await _remoteImageToBytes(url, 60.0);
+        bytes = await _remoteImageToBytes(url, 100.0);
         break;
       case ImageType.vector:
-        bytes = await _remoteVectorToBytes(url, 60.0);
+        bytes = await _remoteVectorToBytes(url, 100.0);
         break;
       default:
         return null;
@@ -144,7 +144,7 @@ class ImageUtils {
     double width,
   ) async {
     final drawableRoot = await svg.fromSvgString(svgString, svgString);
-    return _drawableRootToBytes(drawableRoot, 60.0);
+    return _drawableRootToBytes(drawableRoot, 100.0);
   }
 
   static Future<Uint8List> _drawableRootToBytes(

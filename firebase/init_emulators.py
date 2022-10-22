@@ -8,10 +8,9 @@ from firebase_admin import auth, credentials, firestore
 import firebase_admin
 from firebase_admin.auth import UserRecord
 from google.cloud.firestore import GeoPoint
+from google.api_core.retry import Retry
 
-# CHANGE THIS TO YOUR LOCATION
-# Recommend at least 4 digits after the decimal (10 meter precision)
-MY_LOCATION = [33.5049, -82.0529]
+MY_LOCATION = [-1.0, -1.0]
 
 BASE32_CODES = "0123456789bcdefghjkmnpqrstuvwxyz"
 
@@ -82,7 +81,13 @@ def main():
     db = firestore.client()
 
     # Create user
-    user: UserRecord = auth.create_user(phone_number="+1 6505553434")
+    try:
+        user: UserRecord = auth.create_user(phone_number="+1 6505553434")
+    except:  # noqa: E722
+        print(
+            "Unable to create user. Are you sure Firebase emulator is running?"
+        )
+        sys.exit(1)
 
     # Create access points
     access_points = []
@@ -100,28 +105,36 @@ def main():
 
     # Add access points
     for ap in access_points:
-        db.collection("access_points").add(
-            {
-                "Location": {
-                    "geohash": ap["geohash"],
-                    "geopoint": GeoPoint(ap["lat"], ap["lng"]),
+        try:
+            db.collection("AccessPoint").add(
+                {
+                    "Location": {
+                        "geohash": ap["geohash"],
+                        "geopoint": GeoPoint(ap["lat"], ap["lng"]),
+                    },
+                    "Name": ap["name"],
+                    "SSID": ap["ssid"],
+                    "LastValidated": datetime.datetime.now(
+                        tz=datetime.timezone.utc,
+                    ),
+                    "SubmittedBy": user.uid,
                 },
-                "Name": ap["name"],
-                "SSID": ap["ssid"],
-                "LastValidated": datetime.datetime.now(
-                    tz=datetime.timezone.utc,
-                ),
-                "SubmittedBy": user.uid,
-            }
-        )
+                retry=Retry(deadline=5.0),
+            )
+        except:  # noqa: E722
+            print(
+                "Failed to connect to Firestore. Are you sure the emulator is "
+                "running?"
+            )
+            sys.exit(1)
 
     # Create profile
-    db.collection("users").document(user.uid).set(
+    db.collection("UserProfile").document(user.uid).set(
         {
-            "createdOn": datetime.datetime.now(tz=datetime.timezone.utc),
-            "displayName": "test-user",
-            "ethAddress": "0x0123456789abcdef0123456789abcdef01234567",
-            "pfp": None,
+            "CreatedOn": datetime.datetime.now(tz=datetime.timezone.utc),
+            "DisplayName": "test-user",
+            "EthAddress": "0x0123456789abcdef0123456789abcdef01234567",
+            "ProfilePicture": None,
         }
     )
 
@@ -132,9 +145,21 @@ if __name__ == "__main__":
         print("FIREBASE_AUTH_EMULATOR_HOST environment variable is not set")
         print("It should most likely be set to 'localhost:9099'")
         sys.exit(1)
+
     firestoreEmulator = os.getenv("FIRESTORE_EMULATOR_HOST")
     if firestoreEmulator is None:
         print("FIRESTORE_EMULATOR_HOST environment varaible is not set")
         print("It should most likely be set to 'localhost:8080'")
         sys.exit(1)
+
+    if len(sys.argv) != 3:
+        print("Invalid arguments")
+        print(
+            "Please pass the GPS coordinates seperated by a space "
+            "(e.g. 12.3456 -7.8901) of the location to create fake WiFi "
+            "access points and users."
+        )
+        sys.exit(1)
+
+    MY_LOCATION = [float(sys.argv[1]), float(sys.argv[2])]
     main()

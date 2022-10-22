@@ -1,4 +1,4 @@
-import 'package:auto_connect/auto_connect.dart' as ac;
+import 'package:auto_connect/auto_connect.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:verifi/blocs/map/map_utils.dart';
@@ -20,18 +20,16 @@ Future<bool> addNearbyAccessPoints(double lat, double lng) async {
   }
   for (AccessPoint ap in accessPoints) {
     assert(ap.wifiDetails != null);
-    ac.AutoConnect.addAccessPoint(
-      ac.Geofence(
-        id: ap.placeDetails!.placeId!,
+    AutoConnect.addAccessPointWithGeofence(
+      id: ap.placeDetails!.placeId!,
+      geofence: Geofence(
         lat: ap.wifiDetails!.location.latitude,
         lng: ap.wifiDetails!.location.longitude,
-        radius: 100.0,
       ),
-      ac.WiFi(
+      wifi: WiFi(
         ssid: ap.wifiDetails!.ssid,
         password: ap.wifiDetails!.password ?? "",
       ),
-      addNearbyAccessPoints,
     );
   }
   return true;

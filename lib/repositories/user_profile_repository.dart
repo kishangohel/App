@@ -1,19 +1,19 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:random_avatar/random_avatar.dart';
 import 'package:verifi/blocs/image_utils.dart';
 import 'package:verifi/blocs/svg_provider.dart';
 import 'package:verifi/entities/user_entity.dart';
 import 'package:verifi/models/models.dart';
 
-class UsersRepository {
-  final usersCollection = FirebaseFirestore.instance.collection('users');
+class UserProfileRepository {
+  final usersProfileCollection =
+      FirebaseFirestore.instance.collection('UserProfile');
 
   /// Creates new user profile in Firestore users collection.
   Future<void> createProfile(Profile profile) async {
-    return usersCollection.doc(profile.id).set({
+    return usersProfileCollection.doc(profile.id).set({
       "ethAddress": profile.ethAddress,
       "pfp": profile.pfp?.url,
       "encodedPfp": (profile.pfp?.imageBitmap != null)
@@ -25,7 +25,7 @@ class UsersRepository {
   }
 
   Future<void> updateEthAddress(String userId, String address) async {
-    return usersCollection.doc(userId).update({
+    return usersProfileCollection.doc(userId).update({
       "ethAddress": address,
     });
   }
@@ -33,14 +33,14 @@ class UsersRepository {
   Future<void> updatePfp(String userId, Pfp pfp) async {
     assert(pfp.url != null);
     final imageBitmap = await ImageUtils.encodeImage(pfp.url!);
-    return usersCollection.doc(userId).update({
+    return usersProfileCollection.doc(userId).update({
       "pfp": pfp.url,
       "encodedPfp": base64Encode(imageBitmap!),
     });
   }
 
   Future<void> updateDisplayName(String userId, String displayName) async {
-    return usersCollection.doc(userId).update({
+    return usersProfileCollection.doc(userId).update({
       "displayName": displayName,
     });
   }
@@ -52,7 +52,7 @@ class UsersRepository {
   /// If the document contains a valid URL to an NFT, then [Profile] contains an
   /// [NFT] object as well. Otherwise, that field is null.
   Future<Profile> getProfileById(String id) async {
-    final doc = await usersCollection.doc(id).get();
+    final doc = await usersProfileCollection.doc(id).get();
     if (!doc.exists) {
       // No profile exists, so we return a new one
       return Profile(id: id);
@@ -69,7 +69,7 @@ class UsersRepository {
         pfp: Pfp(
           id: entity.displayName,
           image: SvgProvider(multiavatar, source: SvgSource.raw),
-          imageBitmap: await ImageUtils.rawVectorToBytes(multiavatar, 60.0),
+          imageBitmap: await ImageUtils.rawVectorToBytes(multiavatar, 100.0),
         ),
       );
     } else {
@@ -92,15 +92,9 @@ class UsersRepository {
   }
 
   Future<bool> checkIfDisplayNameExists(String? displayName) async {
-    final snapshot = await usersCollection
+    final snapshot = await usersProfileCollection
         .where('displayName', isEqualTo: displayName)
         .get();
     return (snapshot.size > 0);
-  }
-
-  Future<void> updateLastLocation(String userId, Position position) async {
-    usersCollection.doc(userId).update({
-      'lastLocation': GeoPoint(position.latitude, position.longitude),
-    });
   }
 }
