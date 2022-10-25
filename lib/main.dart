@@ -60,7 +60,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   // Activate Firebase App Check
-  await FirebaseAppCheck.instance.activate();
+  // await FirebaseAppCheck.instance.activate();
   // Pass all uncaught errors from the framework to Crashlytics.
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
   // If Android, use hybrid composition for Google Maps
@@ -78,6 +78,7 @@ void main() async {
   Profile? profile;
   if (kDebugMode) {
     profile = await setupTestEnvironment(signInTestUser: true);
+    debugPrint("Profile: ${profile.toString()}");
   }
   // Run the app
   // If release mode or [signInTestUser] is false, profile will be null.
@@ -94,6 +95,7 @@ void main() async {
 /// 3. If [signInTestUser] is true, sign in to test-user and return Profile.
 ///    Otherwise, return null and go through full onboarding process.
 Future<Profile?> setupTestEnvironment({bool signInTestUser = true}) async {
+  debugPrint("Setting up test environment");
   // CHANGE ME TO YOUR EMULATOR ENDPOINT
   const String emulatorEndpoint = "192.168.12.152";
   // Setup Firebase emulators
@@ -109,22 +111,25 @@ Future<Profile?> setupTestEnvironment({bool signInTestUser = true}) async {
   // We have to do this b/c iOS keychain saves auth token, which causes errors
   // if you restart the emulator and a new auth token gets created.
   if (Platform.isIOS) {
-    await getLocalNetworkAccess();
+    // await getLocalNetworkAccess();
     await FirebaseAuth.instance.signOut();
   }
   if (signInTestUser) {
     // Sign in to Firebase via test phone number
     const verificationCodesEndpoint =
-        "http://$emulatorEndpoint:9099/emulator/v1/projects/verifi-5db5b/verificationCodes";
+        "http://$emulatorEndpoint:9099/emulator/v1/projects/bionic-water-366401/verificationCodes";
     final authCompleter = Completer<String>();
     final fbAuth = FirebaseAuth.instance;
-    await fbAuth.verifyPhoneNumber(
+    debugPrint("Verifying phone number");
+    fbAuth.verifyPhoneNumber(
       phoneNumber: "+1 6505553434",
       verificationCompleted: (PhoneAuthCredential credential) async {
         final userCred = await fbAuth.signInWithCredential(credential);
-        authCompleter.complete(userCred.user!.uid);
+        authCompleter.complete(userCred.user?.uid);
       },
-      verificationFailed: (FirebaseAuthException e) {},
+      verificationFailed: (FirebaseAuthException e) {
+        debugPrint("Verification failed: ${e.message?.toString()}");
+      },
       codeSent: (String verificationId, int? resendToken) async {
         final resp = await http.get(Uri.parse(verificationCodesEndpoint));
         final result = jsonDecode(resp.body);
@@ -134,11 +139,14 @@ Future<Profile?> setupTestEnvironment({bool signInTestUser = true}) async {
           smsCode: code,
         );
         final userCred = await fbAuth.signInWithCredential(creds);
-        authCompleter.complete(userCred.user!.uid);
+        authCompleter.complete(userCred.user?.uid);
       },
-      codeAutoRetrievalTimeout: (String verificationId) {},
+      codeAutoRetrievalTimeout: (String verificationId) {
+        debugPrint("Auto retrieval timed out");
+      },
     );
     final uid = await authCompleter.future;
+    debugPrint("Phone number verified");
     // Generate test Profile with auth token as id
     const ethAddress = "0x0123456789abcdef0123456789abcdef01234567";
     const displayName = "testuser";
@@ -175,6 +183,9 @@ Future<void> getLocalNetworkAccess() async {
 
 /// Initialize Coinbase SDK. This can only be called once.
 Future<void> initCoinbaseSDK() async {
+  //TODO: Move this to wallet connect bloc and ensure only initialized once
+  // i.e. save bool for isInitialized or something so this  doesn't break the
+  // whole app on hot restarts
   await CoinbaseWalletSDK.shared.configure(
     Configuration(
       ios: IOSConfiguration(

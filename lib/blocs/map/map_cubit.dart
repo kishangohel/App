@@ -1,14 +1,12 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:verifi/blocs/blocs.dart';
-import 'package:verifi/blocs/map/map_markers_helper.dart';
-import 'package:verifi/blocs/map/map_utils.dart';
 import 'package:verifi/blocs/map_styles.dart';
 import 'package:verifi/models/access_point.dart';
 import 'package:verifi/repositories/repositories.dart';
+import 'package:verifi/utils/geoflutterfire/geoflutterfire.dart';
 
 // Maintains global state of map position and map controller.
 // Markers are yielded via MapLoaded.

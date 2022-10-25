@@ -49,13 +49,6 @@ class VeriFi extends StatefulWidget {
 }
 
 class VeriFiState extends State<VeriFi> {
-  DateTime onboardingPreBackPressTime = DateTime.now();
-  @override
-  void initState() {
-    super.initState();
-    onboardingPreBackPressTime = DateTime.now();
-  }
-
   @override
   Widget build(BuildContext context) {
     // Only allow app to be used in portrait mode.
@@ -102,10 +95,7 @@ class VeriFiState extends State<VeriFi> {
             ),
           ),
           BlocProvider<LocationCubit>(
-            create: (context) => LocationCubit(
-              RepositoryProvider.of<UserLocationRepository>(context),
-              RepositoryProvider.of<AuthenticationRepository>(context),
-            ),
+            create: (context) => LocationCubit(),
           ),
           BlocProvider<MapCubit>(
             create: (context) => MapCubit(

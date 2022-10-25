@@ -50,21 +50,20 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDjC3_3a_u-nEUD11nSPJzwhm0KZ0fKQz8',
-    appId: '1:120678530892:android:21194af32fd5ef804499e9',
-    messagingSenderId: '120678530892',
-    projectId: 'verifi-5db5b',
-    storageBucket: 'verifi-5db5b.appspot.com',
+    apiKey: 'AIzaSyCb8_Vk9npdFfl_K0tK73vy9YPOSGCAFqY',
+    appId: '1:629088905005:android:15d37351abbdd64ce015a4',
+    messagingSenderId: '629088905005',
+    projectId: 'bionic-water-366401',
+    storageBucket: 'bionic-water-366401.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyB_cJqUivOjF23bjjjldVhpsFSEmGW9fuU',
-    appId: '1:120678530892:ios:c4cba8aa6d9c1bc44499e9',
-    messagingSenderId: '120678530892',
-    projectId: 'verifi-5db5b',
-    storageBucket: 'verifi-5db5b.appspot.com',
-    androidClientId: '120678530892-9db7a4q9ail5n9i3qnji466rsqcs9871.apps.googleusercontent.com',
-    iosClientId: '120678530892-6r5tcaocaodrbmfhjjc782rvghjpo7g7.apps.googleusercontent.com',
+    apiKey: 'AIzaSyDZ0hQDyjO7SuKh24RvskYdAfp3_f7X7G8',
+    appId: '1:629088905005:ios:d24403e8fa9ec9d4e015a4',
+    messagingSenderId: '629088905005',
+    projectId: 'bionic-water-366401',
+    storageBucket: 'bionic-water-366401.appspot.com',
+    iosClientId: '629088905005-9l4vt43sp337ne7nq2arsnvmmb2vccrt.apps.googleusercontent.com',
     iosBundleId: 'world.verifi.app',
   );
 }

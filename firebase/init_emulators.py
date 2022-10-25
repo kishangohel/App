@@ -11,6 +11,7 @@ from google.cloud.firestore import GeoPoint
 from google.api_core.retry import Retry
 
 MY_LOCATION = [-1.0, -1.0]
+PLACE_ID = ""
 
 BASE32_CODES = "0123456789bcdefghjkmnpqrstuvwxyz"
 
@@ -76,7 +77,7 @@ def get_random_nearby_coordinate():
 
 
 def main():
-    cred = credentials.Certificate("service_account.json")
+    cred = credentials.Certificate("mock_service_account.json")
     firebase_admin.initialize_app(credential=cred)
     db = firestore.client()
 
@@ -98,7 +99,8 @@ def main():
                 "lat": coordinate[0],
                 "lng": coordinate[1],
                 "geohash": create_geohash(coordinate[0], coordinate[1]),
-                "ssid": f"test-network-{i}",
+                "ssid": "Another Pixel",
+                "password": "random.password",
                 "name": f"Test Location {i}",
             }
         )
@@ -112,8 +114,10 @@ def main():
                         "geohash": ap["geohash"],
                         "geopoint": GeoPoint(ap["lat"], ap["lng"]),
                     },
+                    "PlaceId": PLACE_ID,
                     "Name": ap["name"],
                     "SSID": ap["ssid"],
+                    "Password": ap["password"],
                     "LastValidated": datetime.datetime.now(
                         tz=datetime.timezone.utc,
                     ),
@@ -152,14 +156,15 @@ if __name__ == "__main__":
         print("It should most likely be set to 'localhost:8080'")
         sys.exit(1)
 
-    if len(sys.argv) != 3:
+    if len(sys.argv) != 4:
         print("Invalid arguments")
         print(
-            "Please pass the GPS coordinates seperated by a space "
-            "(e.g. 12.3456 -7.8901) of the location to create fake WiFi "
-            "access points and users."
+            "Please pass the GPS coordinates and place ID, all seperated by "
+            "spaces (e.g. 12.3456 -7.8901 ChIJcVTyZY_S-YgMBGplVHWkw0c) of the "
+            "location to create fake WiFi access points and users."
         )
         sys.exit(1)
 
     MY_LOCATION = [float(sys.argv[1]), float(sys.argv[2])]
+    PLACE_ID = sys.argv[3]
     main()

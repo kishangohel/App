@@ -15,7 +15,7 @@ func registerPlugins(_ registry: FlutterPluginRegistry) {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-        GMSServices.provideAPIKey("AIzaSyD6mXR7XtiPugZ7a_ybwjIj7IsfGnLeUIA")
+        GMSServices.provideAPIKey("AIzaSyAPaH8IRL7nbQB1zvdcBrZsymzV26SxLLw")
         GeneratedPluginRegistrant.register(with: self)
         SwiftAutoConnectPlugin.setPluginRegistrantCallback(registerPlugins(_:))
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)

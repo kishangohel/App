@@ -1,61 +1,37 @@
 {
   "project_info": {
-    "project_number": "120678530892",
-    "project_id": "verifi-5db5b",
-    "storage_bucket": "verifi-5db5b.appspot.com"
+    "project_number": "629088905005",
+    "project_id": "bionic-water-366401",
+    "storage_bucket": "bionic-water-366401.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:120678530892:android:21194af32fd5ef804499e9",
+        "mobilesdk_app_id": "1:629088905005:android:15d37351abbdd64ce015a4",
         "android_client_info": {
           "package_name": "world.verifi.app"
         }
       },
       "oauth_client": [
         {
-          "client_id": "120678530892-9db7a4q9ail5n9i3qnji466rsqcs9871.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "world.verifi.app",
-            "certificate_hash": "e13a4a65602e31b77faea9173bdab97a77d83e95"
-          }
-        },
-        {
-          "client_id": "120678530892-j2172k1f8trcug3vk3hb1qismu8ipv4d.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "world.verifi.app",
-            "certificate_hash": "91054394d3b467fdf903ca6fb0f8d558866f9082"
-          }
-        },
-        {
-          "client_id": "120678530892-sp3fa474r3tbg3eu6pcj9uvg924qrqcq.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "world.verifi.app",
-            "certificate_hash": "093fd2caf193470ed364b9564872966a1f57e3fd"
-          }
-        },
-        {
-          "client_id": "120678530892-bsiccirvjcu1hq1j2glvstro6e5udo7n.apps.googleusercontent.com",
+          "client_id": "629088905005-8n510m54vcmn4akckvf9lv59b4dr7u7m.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDjC3_3a_u-nEUD11nSPJzwhm0KZ0fKQz8"
+          "current_key": "AIzaSyCb8_Vk9npdFfl_K0tK73vy9YPOSGCAFqY"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "120678530892-bsiccirvjcu1hq1j2glvstro6e5udo7n.apps.googleusercontent.com",
+              "client_id": "629088905005-8n510m54vcmn4akckvf9lv59b4dr7u7m.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "120678530892-6r5tcaocaodrbmfhjjc782rvghjpo7g7.apps.googleusercontent.com",
+              "client_id": "629088905005-9l4vt43sp337ne7nq2arsnvmmb2vccrt.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
                 "bundle_id": "world.verifi.app"

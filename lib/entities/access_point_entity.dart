@@ -36,8 +36,8 @@ class AccessPointEntity extends Equatable {
     Map data = snapshot.data() as Map<String, dynamic>;
     return AccessPointEntity(
       id: snapshot.id,
-      placeId: data['placeId'],
-      password: data['password'],
+      placeId: data['PlaceId'],
+      password: data['Password'],
       ssid: data['SSID'],
       distance: distance,
       location: data['Location']['geopoint'],

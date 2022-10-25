@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:google_place/google_place.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -10,10 +11,13 @@ class PlaceRepository {
   final store = stringMapStoreFactory.store();
   var sessionToken = const Uuid().v4();
   Database? googlePlacesDb;
+  late GooglePlace _googleMapsPlaces;
 
-  final _googleMapsPlaces = GooglePlace(
-    'AIzaSyD80yy2qwlljBKXyMcWH0TBGeMgTuI5oRg',
-  );
+  PlaceRepository() {
+    _googleMapsPlaces = GooglePlace(
+      'AIzaSyAvSlAS6yLh5Nt1WuhEeTOOL_nDrLTAALo',
+    );
+  }
 
   String get apiKey => _googleMapsPlaces.apiKEY;
 
@@ -97,6 +101,8 @@ class PlaceRepository {
     if (isAutocomplete) {
       sessionToken = const Uuid().v4();
     }
+    debugPrint("${response?.status}");
+    debugPrint("Places response: ${response?.result?.name}");
     return response?.result;
   }
 

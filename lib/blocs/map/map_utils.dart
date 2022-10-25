@@ -1,13 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluster/fluster.dart';
 import 'package:flutter/material.dart';
-import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_place/google_place.dart';
 import 'package:verifi/blocs/map/map_markers_helper.dart';
 import 'package:verifi/entities/access_point_entity.dart';
 import 'package:verifi/models/models.dart';
 import 'package:verifi/repositories/repositories.dart';
+import 'package:verifi/utils/geoflutterfire/geoflutterfire.dart';
 import 'package:verifi/widgets/app.dart';
 
 class MapUtils {

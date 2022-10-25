@@ -1,7 +1,7 @@
-import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:verifi/entities/access_point_entity.dart';
 import 'package:verifi/models/models.dart';
+import 'package:verifi/utils/geoflutterfire/geoflutterfire.dart';
 
 class WifiRepository {
   final wifiMarkersCollection =

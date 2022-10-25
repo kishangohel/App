@@ -39,16 +39,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <receiver
-            android:name="world.verifi.auto_connect.GeofenceBroadcastReceiver"
+            android:name="world.verifi.auto_connect.GeofenceEventReceiver"
+            android:enabled="true" />
+        <receiver
+            android:name="world.verifi.auto_connect.WiFiConnectionBroadcastReceiver"
             android:enabled="true" />
 
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyD6mXR7XtiPugZ7a_ybwjIj7IsfGnLeUIA" />
+            android:value="AIzaSyCb8_Vk9npdFfl_K0tK73vy9YPOSGCAFqY" />
 
     </application>
 

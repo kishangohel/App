@@ -14,15 +14,15 @@ dependencies:
   auto_size_text: ^3.0.0
   bloc: ^8.0.0
   cached_network_image: ^3.2.0
-  cloud_firestore: ^3.4.0
+  cloud_firestore: ^4.0.0
   coinbase_wallet_sdk: ^1.0.0
   double_back_to_close_app: ^2.1.0
   equatable: ^2.0.0
-  firebase_analytics: ^9.3.0
-  firebase_app_check: ^0.0.9
-  firebase_auth: ^3.11.0
-  firebase_core: ^1.24.0
-  firebase_crashlytics: ^2.8.0
+  firebase_analytics: ^10.0.0
+  firebase_app_check: ^0.1.0
+  firebase_auth: ^4.0.0
+  firebase_core: ^2.1.0
+  firebase_crashlytics: ^3.0.0
   fluster: ^1.2.0
   flutter_bloc: ^8.1.0
   flutter_cache_manager: ^3.3.0
@@ -35,7 +35,6 @@ dependencies:
   flutter_typeahead: ^4.1.1
   formz: ^0.4.1
   font_awesome_flutter: ^10.2.0
-  geoflutterfire: ^3.0.3
   geolocator: ^9.0.0
   google_fonts: ^3.0.0
   google_maps_flutter: ^2.2.0
