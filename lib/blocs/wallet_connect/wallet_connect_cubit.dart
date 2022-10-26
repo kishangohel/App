@@ -1,5 +1,6 @@
 import 'package:coinbase_wallet_sdk/account.dart';
 import 'package:coinbase_wallet_sdk/coinbase_wallet_sdk.dart';
+import 'package:coinbase_wallet_sdk/configuration.dart';
 import 'package:coinbase_wallet_sdk/eth_web3_rpc.dart';
 import 'package:coinbase_wallet_sdk/request.dart';
 import 'package:flutter/services.dart';
@@ -32,6 +33,7 @@ class WalletConnectCubit extends HydratedCubit<WalletConnectState> {
       onDisconnect: _onDisconnect,
     );
     provider = EthereumWalletConnectProvider(connector);
+    _initCoinbaseSDK();
   }
 
   Future<void> connect(String domain) async {
@@ -176,6 +178,23 @@ class WalletConnectCubit extends HydratedCubit<WalletConnectState> {
     }
     wallets = availableWallets;
     return availableWallets;
+  }
+
+  /// Initialize Coinbase SDK. This can only be called once.
+  Future<void> _initCoinbaseSDK() async {
+    await CoinbaseWalletSDK.shared.configure(
+      Configuration(
+        ios: IOSConfiguration(
+          host: Uri.parse('https://wallet.coinbase.com/wsegue'),
+          // 'verifi://' is the required scheme to get Coinbase Wallet to
+          // switch back to our app after successfully connecting or signing
+          callback: Uri.parse('verifi://'),
+        ),
+        android: AndroidConfiguration(
+          domain: Uri.parse("https://verifi.world"),
+        ),
+      ),
+    );
   }
 
   @override

@@ -1,27 +1,41 @@
-import 'package:auto_connect/auto_connect.dart';
+import 'dart:io';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:network_info_plus/network_info_plus.dart';
 import 'package:verifi/blocs/location/location_cubit.dart';
 import 'package:verifi/blocs/places/places_cubit.dart';
 import 'package:verifi/models/place.dart';
 
-class AddNetworkPage extends StatefulWidget {
-  final String? wifiName;
+class AddNetworkInfoPage extends StatefulWidget {
+  final PageController controller;
+  final GlobalKey<FormState> formKey;
   final String? placeName;
-  const AddNetworkPage({this.wifiName, this.placeName});
+  final Function(String) onSSIDUpdated;
+  final Function(String) onPasswordUpdated;
+  final Function(Place) onPlaceUpdated;
+
+  const AddNetworkInfoPage({
+    required this.controller,
+    required this.formKey,
+    this.placeName,
+    required this.onSSIDUpdated,
+    required this.onPasswordUpdated,
+    required this.onPlaceUpdated,
+  });
 
   @override
-  State<StatefulWidget> createState() => _AddNetworkPageState();
+  State<StatefulWidget> createState() => _AddNetworkInfoPageState();
 }
 
-class _AddNetworkPageState extends State<AddNetworkPage> {
-  GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  String ssid = "";
-  String password = "";
-  Place? place;
+class _AddNetworkInfoPageState extends State<AddNetworkInfoPage> {
+  String? _ssid;
+  final _ssidController = TextEditingController();
+
+  bool _isPlaceValid = false;
 
   final _passwordController = TextEditingController();
   bool _isPasswordRequired = false;
@@ -31,67 +45,63 @@ class _AddNetworkPageState extends State<AddNetworkPage> {
   bool _isPlaceSelected = false;
   Place? _selectedPlace;
 
-  void updateSsid(String ssid) {
-    this.ssid = ssid;
+  void updateSSID(String ssid) {
+    widget.onSSIDUpdated(ssid);
   }
 
   void updatePassword(String password) {
-    this.password = password;
+    widget.onPasswordUpdated(password);
   }
 
   void updatePlace(Place place) {
-    this.place = place;
+    widget.onPlaceUpdated(place);
   }
 
-  Future<void> validateNetwork() async {
-    final result = await AutoConnect.verifyAccessPoint(
-      wifi: WiFi(ssid: ssid, password: password),
-    );
-    debugPrint("Connection worked: $result");
+  @override
+  void initState() {
+    super.initState();
+    _isPlaceValid = widget.placeName != null;
+    getSsid();
+  }
+
+  Future<void> getSsid() async {
+    var wifiName = await NetworkInfo().getWifiName();
+    if (wifiName != null) {
+      if (Platform.isAndroid) {
+        // Remove leading and trailing quotes
+        wifiName = wifiName.substring(1, wifiName.length - 1);
+      }
+      setState(() {
+        _ssid = wifiName;
+        _ssidController.text = wifiName!;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(
-        left: 8.0,
-        right: 8.0,
-        top: 4.0,
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-      ),
-      height: MediaQuery.of(context).size.height * 0.9,
-      child: Form(
-        key: formKey,
-        child: Column(
-          children: [
-            _addNetworkTitle(),
-            _ssidRow(),
-            _passwordRow(),
-            Expanded(
-              child: _placeRow(),
-            ),
-            _submitNetworkButton(),
-          ],
-        ),
+    return Form(
+      key: widget.formKey,
+      child: Column(
+        children: [
+          _addNetworkTitle(),
+          _ssidRow(_ssid),
+          _passwordRow(),
+          Expanded(
+            child: _placeRow(),
+          ),
+          _nextButton(),
+        ],
       ),
     );
   }
 
-  Widget _addNetworkTitle() {
-    return Container(
-      padding: const EdgeInsets.only(top: 8.0, bottom: 16.0),
-      child: Text(
-        "Add Network",
-        style: Theme.of(context).textTheme.headlineSmall,
-      ),
-    );
-  }
-
-  Widget _ssidRow() {
+  Widget _ssidRow(String? ssid) {
     return Row(
       children: [
         Expanded(
           child: TextFormField(
+            controller: _ssidController,
             decoration: const InputDecoration(
               border: OutlineInputBorder(),
               labelText: "Network name",
@@ -102,9 +112,8 @@ class _AddNetworkPageState extends State<AddNetworkPage> {
             ),
             style: Theme.of(context).textTheme.bodyMedium,
             enabled: false,
-            initialValue: widget.wifiName,
             validator: (value) {
-              if (value == null || value.isEmpty || value != widget.wifiName) {
+              if (value == null || value.isEmpty || value != ssid) {
                 debugPrint("Invalid network");
                 return "Invalid network";
               }
@@ -112,7 +121,7 @@ class _AddNetworkPageState extends State<AddNetworkPage> {
             },
             onSaved: (value) {
               assert(value != null);
-              setState(() => ssid = value!);
+              updateSSID(value!);
             },
           ),
         ),
@@ -225,10 +234,9 @@ class _AddNetworkPageState extends State<AddNetworkPage> {
       style: Theme.of(context).textTheme.bodyMedium,
       enabled: _isPasswordRequired,
       obscureText: _obscurePasswordText,
-      onChanged: (text) => setState(() {}),
       onSaved: (value) {
         if (value != null) {
-          setState(() => password = value);
+          updatePassword(value);
         }
       },
     );
@@ -312,11 +320,12 @@ class _AddNetworkPageState extends State<AddNetworkPage> {
           debugPrint("Invalid place");
           return "Invalid place";
         }
+        _isPlaceValid = true;
         return null;
       },
       onSaved: (value) {
-        assert(_selectedPlace != null);
-        setState(() => place = _selectedPlace!);
+        assert(value != null && _selectedPlace != null);
+        updatePlace(_selectedPlace!);
       },
     );
   }
@@ -368,28 +377,42 @@ class _AddNetworkPageState extends State<AddNetworkPage> {
     );
   }
 
-  Widget _submitNetworkButton() {
-    final _button = ElevatedButton(
-      onPressed: () async {
-        final valid = formKey.currentState!.validate();
-        debugPrint("Valid: $valid");
-        if (valid) {
-          formKey.currentState!.save();
-          validateNetwork();
-        }
-      },
-      child: Text(
-        "Submit Network",
-        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              color: Theme.of(context).colorScheme.onPrimary,
+  Widget _nextButton() {
+    return Visibility(
+      visible: _isPlaceValid,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          TextButton(
+            onPressed: () async {
+              final valid = widget.formKey.currentState!.validate();
+              debugPrint("Valid: $valid");
+              if (valid) {
+                widget.formKey.currentState!.save();
+                widget.controller.animateToPage(
+                  1,
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.linear,
+                );
+              }
+            },
+            child: Text(
+              "Next",
+              style: Theme.of(context).textTheme.button,
             ),
+          ),
+        ],
       ),
     );
-    // If keyboard is closed, expand button. Otherwise, don't expand.
-    return (MediaQuery.of(context).viewInsets.bottom == 0)
-        ? Expanded(
-            child: Center(child: _button),
-          )
-        : _button;
+  }
+
+  Widget _addNetworkTitle() {
+    return Container(
+      padding: const EdgeInsets.only(top: 8.0, bottom: 16.0),
+      child: Text(
+        "Add Network",
+        style: Theme.of(context).textTheme.headlineSmall,
+      ),
+    );
   }
 }

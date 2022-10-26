@@ -5,7 +5,7 @@ import 'package:verifi/models/app_tab.dart';
 import 'package:verifi/models/models.dart';
 import 'package:verifi/screens/map_screen/map_search_bar.dart';
 import 'package:verifi/screens/profile_screen/profile_screen.dart';
-import 'package:verifi/screens/map_screen/add_network_fab.dart';
+import 'package:verifi/screens/map_screen/add_network/add_network_fab.dart';
 import 'package:verifi/screens/map_screen/map_screen.dart';
 
 class Home extends StatefulWidget {

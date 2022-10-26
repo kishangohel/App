@@ -49,7 +49,7 @@ dependencies:
   json_theme: ^4.0.0
   mime: ^1.0.0
   modal_bottom_sheet: ^2.1.0
-  network_info_plus: ^2.3.0
+  network_info_plus: ^3.0.0
   page_transition: ^2.0.0
   palette_generator: ^0.3.0
   path_provider: ^2.0.9

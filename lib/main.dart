@@ -4,8 +4,6 @@ import 'dart:io';
 
 import 'package:auto_connect/auto_connect.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:coinbase_wallet_sdk/coinbase_wallet_sdk.dart';
-import 'package:coinbase_wallet_sdk/configuration.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -71,8 +69,6 @@ void main() async {
 
   // Setup auto connect
   await AutoConnect.initialize();
-  // Setup Coinbase
-  await initCoinbaseSDK();
 
   // If debug mode, setup test environment
   Profile? profile;
@@ -179,24 +175,4 @@ Future<void> getLocalNetworkAccess() async {
     sleep(const Duration(seconds: 10));
   }
   return;
-}
-
-/// Initialize Coinbase SDK. This can only be called once.
-Future<void> initCoinbaseSDK() async {
-  //TODO: Move this to wallet connect bloc and ensure only initialized once
-  // i.e. save bool for isInitialized or something so this  doesn't break the
-  // whole app on hot restarts
-  await CoinbaseWalletSDK.shared.configure(
-    Configuration(
-      ios: IOSConfiguration(
-        host: Uri.parse('https://wallet.coinbase.com/wsegue'),
-        // 'verifi://' is the required scheme to get Coinbase Wallet to
-        // switch back to our app after successfully connecting or signing
-        callback: Uri.parse('verifi://'),
-      ),
-      android: AndroidConfiguration(
-        domain: Uri.parse("https://verifi.world"),
-      ),
-    ),
-  );
 }
