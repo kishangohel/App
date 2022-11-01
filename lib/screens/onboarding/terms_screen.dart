@@ -127,7 +127,11 @@ class _TermsScreenState extends State<TermsScreen> {
                 text: "Terms of Use",
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {
-                    launchUrl(Uri.parse("https://verifi.world/terms"));
+                    launchUrl(
+                      Uri.parse(
+                        "https://app.termly.io/document/terms-of-use-for-website/4c89c05a-3428-42cd-8159-dec1c917903e",
+                      ),
+                    );
                   },
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       decoration: TextDecoration.underline,
@@ -163,7 +167,11 @@ class _TermsScreenState extends State<TermsScreen> {
                 text: "Privacy Policy",
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {
-                    launchUrl(Uri.parse("https://verifi.world/privacy"));
+                    launchUrl(
+                      Uri.parse(
+                        "https://app.termly.io/document/privacy-policy/5abe4dc5-d348-4f39-a404-d52c8dfa1f6e",
+                      ),
+                    );
                   },
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       decoration: TextDecoration.underline,
@@ -184,7 +192,7 @@ class _TermsScreenState extends State<TermsScreen> {
         text: "Continue",
         onPressed: () async {
           await Navigator.of(context).pushNamedAndRemoveUntil(
-            '/onboarding/pfpAvatar',
+            '/onboarding/displayName',
             (route) => false,
           );
         },

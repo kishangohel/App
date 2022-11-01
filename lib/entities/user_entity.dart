@@ -33,7 +33,6 @@ class UserEntity extends Equatable {
       displayName: data['displayName'],
       createdOn: data['createdOn'],
       ethAddress: data['ethAddress'],
-      lastLocation: data['lastLocation'],
       pfp: data['pfp'],
       encodedPfp: data['encodedPfp'],
     );

@@ -27,7 +27,7 @@ class AccessPointEntity extends Equatable {
 
   @override
   String toString() =>
-      "AccessPointEntity { id: $id, PlaceId: $placeId, SSID: $ssid }";
+      "AccessPointEntity { id: $id, placeId: $placeId, ssid: $ssid }";
 
   static AccessPointEntity fromDocumentSnapshotWithDistance(
     DocumentSnapshot snapshot,
@@ -36,15 +36,15 @@ class AccessPointEntity extends Equatable {
     Map data = snapshot.data() as Map<String, dynamic>;
     return AccessPointEntity(
       id: snapshot.id,
-      placeId: data['PlaceId'],
-      password: data['Password'],
-      ssid: data['SSID'],
+      placeId: data['placeId'],
+      password: data['password'],
+      ssid: data['ssid'],
       distance: distance,
-      location: data['Location']['geopoint'],
+      location: data['location']['geopoint'],
       lastValidated: DateTime.parse(
-        (data['LastValidated'] as Timestamp).toDate().toString(),
+        (data['lastValidated'] as Timestamp).toDate().toString(),
       ),
-      submittedBy: data['SubmittedBy'],
+      submittedBy: data['submittedBy'],
     );
   }
 
@@ -52,14 +52,14 @@ class AccessPointEntity extends Equatable {
     Map data = snapshot.data() as Map;
     return AccessPointEntity(
       id: snapshot.id,
-      placeId: data['PlaceId'],
-      password: data['Password'],
-      ssid: data['SSID'],
-      location: data['Location']['geopoint'],
+      placeId: data['placeId'],
+      password: data['password'],
+      ssid: data['ssid'],
+      location: data['location']['geopoint'],
       lastValidated: DateTime.parse(
-        (data['LastValidated'] as Timestamp).toDate().toString(),
+        (data['lastValidated'] as Timestamp).toDate().toString(),
       ),
-      submittedBy: data['SubmittedBy'],
+      submittedBy: data['submittedBy'],
     );
   }
 }

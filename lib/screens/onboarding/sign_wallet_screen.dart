@@ -1,6 +1,8 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/blocs/wallet_connect/wallet_connect_state.dart';
 import 'package:verifi/screens/onboarding/widgets/onboarding_app_bar.dart';
@@ -133,12 +135,48 @@ class _SignWalletScreenState extends State<SignWalletScreen> {
 
   Widget _bottomTermsText() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-      child: AutoSizeText(
-        "Terms of Use\n"
-        "Privacy Policy",
-        style: Theme.of(context).textTheme.headlineSmall,
-        textAlign: TextAlign.center,
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 4.0),
+            child: AutoSizeText.rich(
+              TextSpan(
+                text: "Terms of Use",
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () {
+                    launchUrl(
+                      Uri.parse(
+                        "https://app.termly.io/document/terms-of-use-for-website/4c89c05a-3428-42cd-8159-dec1c917903e",
+                      ),
+                    );
+                  },
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      decoration: TextDecoration.underline,
+                    ),
+              ),
+              style: Theme.of(context).textTheme.headlineSmall,
+              textAlign: TextAlign.center,
+            ),
+          ),
+          AutoSizeText.rich(
+            TextSpan(
+              text: "Privacy Policy",
+              recognizer: TapGestureRecognizer()
+                ..onTap = () {
+                  launchUrl(
+                    Uri.parse(
+                      "https://app.termly.io/document/privacy-policy/5abe4dc5-d348-4f39-a404-d52c8dfa1f6e",
+                    ),
+                  );
+                },
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    decoration: TextDecoration.underline,
+                    decorationColor: Theme.of(context).colorScheme.onSurface,
+                  ),
+            ),
+          ),
+        ],
       ),
     );
   }

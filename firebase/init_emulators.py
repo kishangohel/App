@@ -110,18 +110,18 @@ def main():
         try:
             db.collection("AccessPoint").add(
                 {
-                    "Location": {
+                    "location": {
                         "geohash": ap["geohash"],
                         "geopoint": GeoPoint(ap["lat"], ap["lng"]),
                     },
-                    "PlaceId": PLACE_ID,
-                    "Name": ap["name"],
-                    "SSID": ap["ssid"],
-                    "Password": ap["password"],
-                    "LastValidated": datetime.datetime.now(
+                    "placeId": PLACE_ID,
+                    "name": ap["name"],
+                    "ssid": ap["ssid"],
+                    "password": ap["password"],
+                    "lastValidated": datetime.datetime.now(
                         tz=datetime.timezone.utc,
                     ),
-                    "SubmittedBy": user.uid,
+                    "submittedBy": user.uid,
                 },
                 retry=Retry(deadline=5.0),
             )
@@ -135,10 +135,10 @@ def main():
     # Create profile
     db.collection("UserProfile").document(user.uid).set(
         {
-            "CreatedOn": datetime.datetime.now(tz=datetime.timezone.utc),
-            "DisplayName": "test-user",
-            "EthAddress": "0x0123456789abcdef0123456789abcdef01234567",
-            "ProfilePicture": None,
+            "createdOn": datetime.datetime.now(tz=datetime.timezone.utc),
+            "displayName": "test-user",
+            "ethAddress": "0x0123456789abcdef0123456789abcdef01234567",
+            "pfp": None,
         }
     )
 

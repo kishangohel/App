@@ -7,12 +7,20 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:629088905005:android:15d37351abbdd64ce015a4",
+        "mobilesdk_app_id": "1:629088905005:android:4673593161291f9fe015a4",
         "android_client_info": {
           "package_name": "world.verifi.app"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "629088905005-ulu7d9d6133nl5rnb3n0aq78qglsqf5n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "world.verifi.app",
+            "certificate_hash": "e13a4a65602e31b77faea9173bdab97a77d83e95"
+          }
+        },
         {
           "client_id": "629088905005-8n510m54vcmn4akckvf9lv59b4dr7u7m.apps.googleusercontent.com",
           "client_type": 3

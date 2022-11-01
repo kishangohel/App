@@ -24,7 +24,7 @@ class MapUtils {
     // distance.
     List<AccessPoint> accessPoints = [];
     final List<WifiDetails> wifiDetailsList = docs.map((doc) {
-      final GeoPoint docPoint = doc['Location']['geopoint'];
+      final GeoPoint docPoint = doc['location']['geopoint'];
       final distance = double.parse(
         location
             .haversineDistance(lat: docPoint.latitude, lng: docPoint.longitude)
@@ -70,7 +70,7 @@ class MapUtils {
     // distance.
     List<AccessPoint> accessPoints = [];
     final List<WifiDetails> wifiDetailsList = docs.map((doc) {
-      final GeoPoint docPoint = doc['Location']['geopoint'];
+      final GeoPoint docPoint = doc['location']['geopoint'];
       final distance = double.parse(
         location
             .haversineDistance(lat: docPoint.latitude, lng: docPoint.longitude)
@@ -125,5 +125,80 @@ class MapUtils {
     } else {
       return "UnVeriFied";
     }
+  }
+
+  static void showMarkerInfoSheet(BuildContext context, AccessPoint ap) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return SizedBox(
+          height: MediaQuery.of(context).size.height * 0.3,
+          child: SafeArea(
+            child: Column(
+              children: [
+                Expanded(
+                  child: ListTile(
+                    title: Text(
+                      ap.placeDetails?.name ?? "Unknown place",
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                    subtitle: Text(
+                      ap.placeDetails?.formattedAddress ?? "Unknown place",
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8.0,
+                    horizontal: 8.0,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(child: Container()),
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: ElevatedButton(
+                            onPressed: () {},
+                            child: const Text(
+                              "Save",
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {},
+                              child: Icon(
+                                Icons.question_mark,
+                                color:
+                                    Theme.of(context).colorScheme.onSecondary,
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                shape: const CircleBorder(),
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.secondary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.0),
+      ),
+      useRootNavigator: true,
+    );
   }
 }

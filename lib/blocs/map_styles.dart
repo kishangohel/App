@@ -91,7 +91,7 @@ String darkMapStyle = """
     "featureType": "administrative.land_parcel",
     "stylers": [
       {
-        "visibility": "off"
+        "visibility": "on"
       }
     ]
   },
@@ -171,7 +171,7 @@ String darkMapStyle = """
     "elementType": "labels",
     "stylers": [
       {
-        "visibility": "off"
+        "visibility": "on"
       }
     ]
   },

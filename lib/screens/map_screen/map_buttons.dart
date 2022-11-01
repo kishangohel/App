@@ -14,18 +14,21 @@ class MapButtons extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.all(14),
             shape: const CircleBorder(),
+            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
           ),
-          child: const Icon(
+          child: Icon(
             Icons.my_location,
+            color: Theme.of(context).colorScheme.onPrimaryContainer,
           ),
           onPressed: () {
             if (context.read<LocationCubit>().state != null) {
-              BlocProvider.of<MapCubit>(context)
-                  .mapController
-                  ?.animateCamera(CameraUpdate.newLatLngZoom(
-                    context.read<LocationCubit>().state!,
-                    18,
-                  ));
+              final location = LatLng(
+                context.read<LocationCubit>().state!.latitude,
+                context.read<LocationCubit>().state!.longitude,
+              );
+              BlocProvider.of<MapCubit>(context).mapController?.animateCamera(
+                    CameraUpdate.newLatLngZoom(location, 18),
+                  );
             }
           },
         ),

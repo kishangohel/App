@@ -24,9 +24,8 @@ class _AccountPhoneFormFieldState extends State<AccountPhoneFormField> {
       child: PhoneFormField(
         controller: widget.phoneController,
         flagSize: 16.0,
-        countrySelectorNavigator: CountrySelectorNavigator.modalBottomSheet(
-          height: MediaQuery.of(context).size.height * 0.7,
-        ),
+        countrySelectorNavigator:
+            const CountrySelectorNavigator.modalBottomSheet(),
         countryCodeStyle: Theme.of(context).textTheme.titleMedium,
         style: Theme.of(context).textTheme.titleMedium,
         decoration: InputDecoration(
@@ -68,7 +67,7 @@ class _AccountPhoneFormFieldState extends State<AccountPhoneFormField> {
           ),
         ),
         validator: PhoneValidator.validMobile(),
-        autovalidateMode: AutovalidateMode.always,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         onChanged: widget.onChanged,
         onSaved: (phoneNumber) {
           assert(phoneNumber != null);
@@ -76,7 +75,7 @@ class _AccountPhoneFormFieldState extends State<AccountPhoneFormField> {
         },
         onSubmitted: (phoneNumber) {
           if (widget.phoneController.value != null &&
-              widget.phoneController.value!.validate(
+              widget.phoneController.value!.isValid(
                 type: PhoneNumberType.mobile,
               )) {
             widget.formKey.currentState!.save();

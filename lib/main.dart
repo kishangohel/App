@@ -10,13 +10,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
-import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:http/http.dart' as http;
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:random_avatar/random_avatar.dart';
+import 'package:verifi/access_point_callbacks.dart';
 import 'package:verifi/blocs/image_utils.dart';
 import 'package:verifi/blocs/logging_bloc_delegate.dart';
 import 'package:verifi/blocs/shared_prefs.dart';
@@ -25,21 +24,50 @@ import 'package:verifi/firebase_options.dart';
 import 'package:verifi/models/models.dart';
 import 'package:verifi/widgets/app.dart';
 
-/// The entrypoint of application.
+/// The entrypoint of the application.
 ///
-/// The following are initialized before [runApp] is called:
-///
-/// * [AutoConnect]
-/// * [BlocObserver]
-/// * [FirebaseCrashlytics]
-/// * [Firebase]
-/// * [FirebaseAppCheck]
-/// * [HydratedBloc]
-/// * [HydratedStorage]
-/// * [SharedPrefs]
-/// * Firebase emulators, if in debug mode
-/// * [GoogleMapsFlutterAndroid] if on Android
 void main() async {
+  String? _emulatorEndpoint;
+  bool? _setupTestEnvironment;
+  Profile? _profile;
+  if (kDebugMode) {
+    _emulatorEndpoint = "192.168.12.152";
+    _setupTestEnvironment = false;
+  }
+  await initialize(emulatorEndpoint: _emulatorEndpoint);
+  if ((null != _emulatorEndpoint) && (true == _setupTestEnvironment)) {
+    _profile = await setupTestEnvironment(emulatorEndpoint: _emulatorEndpoint);
+  }
+  // Setup auto connect
+  await AutoConnect.initialize(
+    locationEventCallback: updateNearbyAccessPoints,
+    accessPointEventCallback: notifyAccessPointConnectionResult,
+  );
+  // disable debugPrint in release mode
+  if (kReleaseMode) {
+    debugPrint = (String? message, {int? wrapWidth}) {};
+  }
+  // Run the app
+  // If release mode or [_signInTestUser] is false, profile will be null and
+  // user will go through standard onboarding process.
+  runApp(VeriFi(_profile));
+}
+
+/// Initialize various dependencies.
+///
+/// The following dependencies are initialized:
+///   * [Firebase]
+///   * [HydratedBloc]
+///   * [BlocObserver]
+///   * [SharedPrefs]
+///   * [FirebaseAppCheck]
+///   * [FirebaseCrashlytics]
+///
+/// If [emulatorEndpoint] is set, the app communicates with the Firebase Auth
+/// and Firebase Firestore emulators. Otherwise, it communicates with the
+/// Firebase backend.
+///
+Future<void> initialize({String? emulatorEndpoint}) async {
   WidgetsFlutterBinding.ensureInitialized();
   // Setup hydrated bloc storage
   HydratedBloc.storage = await HydratedStorage.build(
@@ -47,10 +75,6 @@ void main() async {
   );
   // Setup bloc observer
   Bloc.observer = LoggingBlocObserver();
-  // disable debugPrint in release mode
-  if (kReleaseMode) {
-    debugPrint = (String? message, {int? wrapWidth}) {};
-  }
   // Initialize shared preferences
   await sharedPrefs.init();
   // Initialize Firebase
@@ -58,27 +82,29 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   // Activate Firebase App Check
-  // await FirebaseAppCheck.instance.activate();
-  // Pass all uncaught errors from the framework to Crashlytics.
+  if (kReleaseMode) {
+    await FirebaseAppCheck.instance.activate();
+  }
+  // Pass all uncaught errors from the framework to Crashlytics
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
-  // If Android, use hybrid composition for Google Maps
-  final mapsImplementation = GoogleMapsFlutterPlatform.instance;
-  if (mapsImplementation is GoogleMapsFlutterAndroid) {
-    mapsImplementation.useAndroidViewSurface = true;
+  // Use emulator if [emulatorEndpoint] is set
+  if (emulatorEndpoint != null) {
+    FirebaseAuth.instance.useAuthEmulator(
+      emulatorEndpoint,
+      9099,
+    );
+    FirebaseFirestore.instance.useFirestoreEmulator(
+      emulatorEndpoint,
+      8080,
+    );
+    // Get local network access before trying to interact with Firebase
+    // Also need to force sign out to clear out keys stored on iOS device
+    // that may be from previous emulator instance
+    if (Platform.isIOS) {
+      await getLocalNetworkAccess();
+      await FirebaseAuth.instance.signOut();
+    }
   }
-
-  // Setup auto connect
-  await AutoConnect.initialize();
-
-  // If debug mode, setup test environment
-  Profile? profile;
-  if (kDebugMode) {
-    profile = await setupTestEnvironment(signInTestUser: true);
-    debugPrint("Profile: ${profile.toString()}");
-  }
-  // Run the app
-  // If release mode or [signInTestUser] is false, profile will be null.
-  runApp(VeriFi(profile));
 }
 
 /// Sets up application for testing.
@@ -90,79 +116,62 @@ void main() async {
 ///      continuing.
 /// 3. If [signInTestUser] is true, sign in to test-user and return Profile.
 ///    Otherwise, return null and go through full onboarding process.
-Future<Profile?> setupTestEnvironment({bool signInTestUser = true}) async {
+Future<Profile> setupTestEnvironment({
+  required String emulatorEndpoint,
+}) async {
   debugPrint("Setting up test environment");
-  // CHANGE ME TO YOUR EMULATOR ENDPOINT
-  const String emulatorEndpoint = "192.168.12.152";
-  // Setup Firebase emulators
-  FirebaseAuth.instance.useAuthEmulator(
-    emulatorEndpoint,
-    9099,
-  );
-  FirebaseFirestore.instance.useFirestoreEmulator(
-    emulatorEndpoint,
-    8080,
-  );
-  // If on iOS, get local network access and reset auth key
+  // If on iOS, reset auth key
   // We have to do this b/c iOS keychain saves auth token, which causes errors
   // if you restart the emulator and a new auth token gets created.
-  if (Platform.isIOS) {
-    // await getLocalNetworkAccess();
-    await FirebaseAuth.instance.signOut();
-  }
-  if (signInTestUser) {
-    // Sign in to Firebase via test phone number
-    const verificationCodesEndpoint =
-        "http://$emulatorEndpoint:9099/emulator/v1/projects/bionic-water-366401/verificationCodes";
-    final authCompleter = Completer<String>();
-    final fbAuth = FirebaseAuth.instance;
-    debugPrint("Verifying phone number");
-    fbAuth.verifyPhoneNumber(
-      phoneNumber: "+1 6505553434",
-      verificationCompleted: (PhoneAuthCredential credential) async {
-        final userCred = await fbAuth.signInWithCredential(credential);
-        authCompleter.complete(userCred.user?.uid);
-      },
-      verificationFailed: (FirebaseAuthException e) {
-        debugPrint("Verification failed: ${e.message?.toString()}");
-      },
-      codeSent: (String verificationId, int? resendToken) async {
-        final resp = await http.get(Uri.parse(verificationCodesEndpoint));
-        final result = jsonDecode(resp.body);
-        final code = result["verificationCodes"].last["code"]!;
-        final creds = PhoneAuthProvider.credential(
-          verificationId: verificationId,
-          smsCode: code,
-        );
-        final userCred = await fbAuth.signInWithCredential(creds);
-        authCompleter.complete(userCred.user?.uid);
-      },
-      codeAutoRetrievalTimeout: (String verificationId) {
-        debugPrint("Auto retrieval timed out");
-      },
-    );
-    final uid = await authCompleter.future;
-    debugPrint("Phone number verified");
-    // Generate test Profile with auth token as id
-    const ethAddress = "0x0123456789abcdef0123456789abcdef01234567";
-    const displayName = "testuser";
-    final avatar = randomAvatarString(displayName, trBackground: true);
-    final profile = Profile(
-      id: uid,
-      ethAddress: ethAddress,
-      displayName: displayName,
-      pfp: Pfp(
-        id: displayName,
-        name: displayName,
-        image: SvgProvider(avatar, source: SvgSource.raw),
-        imageBitmap: await ImageUtils.rawVectorToBytes(avatar, 100.0),
-      ),
-    );
-    // Return profile to pass to VeriFi app during Bloc setup
-    return profile;
-  } else {
-    return null;
-  }
+  // Sign in to Firebase via test phone number
+  final verificationCodesEndpoint =
+      "http://$emulatorEndpoint:9099/emulator/v1/projects/bionic-water-366401/verificationCodes";
+  final authCompleter = Completer<String>();
+  final fbAuth = FirebaseAuth.instance;
+  debugPrint("Verifying phone number");
+  fbAuth.verifyPhoneNumber(
+    phoneNumber: "+1 6505553434",
+    verificationCompleted: (PhoneAuthCredential credential) async {
+      final userCred = await fbAuth.signInWithCredential(credential);
+      authCompleter.complete(userCred.user?.uid);
+    },
+    verificationFailed: (FirebaseAuthException e) {
+      debugPrint("Verification failed: ${e.message?.toString()}");
+    },
+    codeSent: (String verificationId, int? resendToken) async {
+      final resp = await http.get(Uri.parse(verificationCodesEndpoint));
+      final result = jsonDecode(resp.body);
+      final code = result["verificationCodes"].last["code"]!;
+      final creds = PhoneAuthProvider.credential(
+        verificationId: verificationId,
+        smsCode: code,
+      );
+      final userCred = await fbAuth.signInWithCredential(creds);
+      authCompleter.complete(userCred.user?.uid);
+    },
+    codeAutoRetrievalTimeout: (String verificationId) {
+      debugPrint("Auto retrieval timed out");
+    },
+  );
+  final uid = await authCompleter.future;
+  debugPrint("Phone number verified");
+  // Generate test Profile with auth token as id
+  const ethAddress = "0x0123456789abcdef0123456789abcdef01234567";
+  const displayName = "testuser";
+  final avatar = randomAvatarString(displayName, trBackground: true);
+  final profile = Profile(
+    id: uid,
+    ethAddress: ethAddress,
+    displayName: displayName,
+    pfp: Pfp(
+      id: displayName,
+      name: displayName,
+      image: SvgProvider(avatar, source: SvgSource.raw),
+      imageBitmap: await ImageUtils.rawVectorToBytes(avatar, 70.0),
+    ),
+  );
+  // Return profile to pass to VeriFi app during Bloc setup
+  return profile;
 }
 
 Future<void> getLocalNetworkAccess() async {

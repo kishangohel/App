@@ -21,8 +21,7 @@
         android:name="${applicationName}"
         android:label="VeriFi"
         tools:ignore="GoogleAppIndexingWarning"
-        android:icon="@mipmap/launcher_icon"
-        android:roundIcon="@mipmap/ic_launcher_round">
+        android:icon="@mipmap/app_icon">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
@@ -45,7 +44,12 @@
             android:enabled="true" />
         <receiver
             android:name="world.verifi.auto_connect.WiFiConnectionBroadcastReceiver"
-            android:enabled="true" />
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.net.wifi.action.WIFI_NETWORK_SUGGESTION_POST_CONNECTION" />
+            </intent-filter>
+        </receiver>
 
         <meta-data
             android:name="flutterEmbedding"

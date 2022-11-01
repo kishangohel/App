@@ -6,11 +6,11 @@ class AddNetworkFab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton.extended(
-      backgroundColor: Theme.of(context).colorScheme.primary,
       icon: const Icon(Icons.wifi),
       label: const Text("Add Network"),
       onPressed: () async {
         final wifiName = await NetworkInfo().getWifiName();
+        // only open if user is currently connected to WiFi
         if (wifiName == null) {
           return;
         }
@@ -18,9 +18,7 @@ class AddNetworkFab extends StatelessWidget {
           useRootNavigator: true,
           context: context,
           isScrollControlled: true,
-          // shape: RoundedRectangleBorder(
-          //   borderRadius: BorderRadius.circular(12.0),
-          // ),
+          enableDrag: false,
           builder: (context) {
             return Container(
               padding: const EdgeInsets.symmetric(

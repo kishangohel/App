@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:verifi/access_point_callbacks.dart';
 import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/models/app_tab.dart';
 import 'package:verifi/models/models.dart';
@@ -28,10 +30,25 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<TabBloc, AppTab>(
-      listener: (context, appTabState) {
-        setState(() => _currentIndex = appTabState.tab.index);
-      },
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<TabBloc, AppTab>(
+          listener: (context, appTabState) {
+            setState(() => _currentIndex = appTabState.tab.index);
+          },
+        ),
+        BlocListener<LocationCubit, Position?>(
+          listener: (context, location) async {
+            if (location != null) {
+              context.read<ProfileCubit>().updateLocation(location);
+              updateNearbyAccessPoints(location.latitude, location.longitude);
+            }
+          },
+          listenWhen: (_, current) {
+            return current != null;
+          },
+        ),
+      ],
       child: Scaffold(
         appBar: buildAppBar(),
         body: IndexedStack(

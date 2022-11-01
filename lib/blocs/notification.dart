@@ -14,7 +14,7 @@ class Notification {
       importance: Importance.max,
       priority: Priority.high,
     );
-    var iOSPlatformChannelSpecifics = const IOSNotificationDetails(
+    var iOSPlatformChannelSpecifics = const DarwinNotificationDetails(
       presentSound: false,
     );
     var platformChannelSpecifics = NotificationDetails(
@@ -33,7 +33,7 @@ class Notification {
   Notification() {
     var initializationSettingsAndroid =
         const AndroidInitializationSettings('@mipmap/ic_launcher');
-    var initializationSettingsIOS = const IOSInitializationSettings();
+    var initializationSettingsIOS = const DarwinInitializationSettings();
     var initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
       iOS: initializationSettingsIOS,

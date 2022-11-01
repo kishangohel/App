@@ -10,12 +10,13 @@ dependencies:
   flutter:
     sdk: flutter
   animated_text_kit: ^4.2.0
-  async: ^2.8.0
+  async: ^2.9.0
   auto_size_text: ^3.0.0
   bloc: ^8.0.0
   cached_network_image: ^3.2.0
   cloud_firestore: ^4.0.0
   coinbase_wallet_sdk: ^1.0.0
+  device_info_plus: ^8.0.0
   double_back_to_close_app: ^2.1.0
   equatable: ^2.0.0
   firebase_analytics: ^10.0.0
@@ -28,34 +29,30 @@ dependencies:
   flutter_cache_manager: ^3.3.0
   flutter_image: ^4.1.0
   flutter_launcher_icons: ^0.10.0
-  flutter_local_notifications: ^9.8.0
+  flutter_local_notifications: ^12.0.0
   flutter_picker: ^2.0.0
   flutter_svg: ^1.1.0
-  flutter_svg_provider: ^1.0.3
-  flutter_typeahead: ^4.1.1
-  formz: ^0.4.1
+  flutter_svg_provider: ^1.0.0
+  flutter_switch: ^0.3.0
+  flutter_typeahead: ^4.1.0
+  formz: ^0.4.0
   font_awesome_flutter: ^10.2.0
   geolocator: ^9.0.0
   google_fonts: ^3.0.0
   google_maps_flutter: ^2.2.0
-  # no constraints to ensure compatibility w/ google_maps_flutter
-  # Need to import these to set android maps view mode in main.dart
-  google_maps_flutter_android: any
-  google_maps_flutter_platform_interface: any
-  google_place: ^0.4.7
+  google_place: ^0.4.0
   http: ^0.13.0
   hydrated_bloc: ^9.0.0-dev
   json_annotation: ^4.7.0
-  json_theme: ^4.0.0
   mime: ^1.0.0
   modal_bottom_sheet: ^2.1.0
   network_info_plus: ^3.0.0
   page_transition: ^2.0.0
   palette_generator: ^0.3.0
-  path_provider: ^2.0.9
-  permission_handler: ^9.2.0
+  path_provider: ^2.0.0
+  permission_handler: ^10.0.0
   pinput: ^2.2.0
-  phone_form_field: ^5.0.0
+  phone_form_field: ^7.0.0
   random_avatar: ^0.0.7
   sembast: ^3.1.0
   scroll_snap_list: ^0.9.0
@@ -65,6 +62,9 @@ dependencies:
   url_launcher: ^6.1.0
   uuid: ^3.0.0
   walletconnect_dart: ^0.0.1
+
+  json_theme:
+    path: ../json_theme
 
   auto_connect:
     path: ../auto_connect

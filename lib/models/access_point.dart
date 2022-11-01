@@ -70,6 +70,7 @@ class AccessPoint extends Clusterable {
               clusterLocation?.longitude ?? -1.0),
       icon: icon ?? BitmapDescriptor.defaultMarker,
       onTap: () {
+        MapUtils.showMarkerInfoSheet(context, this);
         if (isCluster == false) {
           context
               .read<MapCubit>()

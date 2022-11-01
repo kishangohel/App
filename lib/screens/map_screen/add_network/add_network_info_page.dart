@@ -46,7 +46,11 @@ class _AddNetworkInfoPageState extends State<AddNetworkInfoPage> {
   Place? _selectedPlace;
 
   void updateSSID(String ssid) {
-    widget.onSSIDUpdated(ssid);
+    setState(() {
+      _ssid = ssid;
+      _ssidController.text = ssid;
+      widget.onSSIDUpdated(ssid);
+    });
   }
 
   void updatePassword(String password) {
@@ -65,16 +69,13 @@ class _AddNetworkInfoPageState extends State<AddNetworkInfoPage> {
   }
 
   Future<void> getSsid() async {
-    var wifiName = await NetworkInfo().getWifiName();
-    if (wifiName != null) {
-      if (Platform.isAndroid) {
+    var ssid = await NetworkInfo().getWifiName();
+    if (ssid != null) {
+      if (Platform.isAndroid && ssid.startsWith('"') && ssid.endsWith('"')) {
         // Remove leading and trailing quotes
-        wifiName = wifiName.substring(1, wifiName.length - 1);
+        ssid = ssid.substring(1, ssid.length - 1);
       }
-      setState(() {
-        _ssid = wifiName;
-        _ssidController.text = wifiName!;
-      });
+      updateSSID(ssid);
     }
   }
 
@@ -90,7 +91,7 @@ class _AddNetworkInfoPageState extends State<AddNetworkInfoPage> {
           Expanded(
             child: _placeRow(),
           ),
-          _nextButton(),
+          _navigationButtons(),
         ],
       ),
     );
@@ -213,19 +214,17 @@ class _AddNetworkInfoPageState extends State<AddNetworkInfoPage> {
       decoration: InputDecoration(
         border: const OutlineInputBorder(),
         labelText: "Password",
-        suffixIcon: (_passwordController.value.text.isNotEmpty)
-            ? IconButton(
-                icon: FaIcon(
-                  _obscurePasswordText
-                      ? FontAwesomeIcons.eyeSlash
-                      : FontAwesomeIcons.eye,
-                  size: Theme.of(context).textTheme.bodyMedium!.fontSize,
-                ),
-                onPressed: () => setState(
-                  () => _obscurePasswordText = !_obscurePasswordText,
-                ),
-              )
-            : null,
+        suffixIcon: IconButton(
+          icon: FaIcon(
+            _obscurePasswordText
+                ? FontAwesomeIcons.eyeSlash
+                : FontAwesomeIcons.eye,
+            size: Theme.of(context).textTheme.bodyMedium!.fontSize,
+          ),
+          onPressed: () => setState(
+            () => _obscurePasswordText = !_obscurePasswordText,
+          ),
+        ),
         contentPadding: const EdgeInsets.symmetric(
           vertical: 2.0,
           horizontal: 8.0,
@@ -377,28 +376,36 @@ class _AddNetworkInfoPageState extends State<AddNetworkInfoPage> {
     );
   }
 
-  Widget _nextButton() {
-    return Visibility(
-      visible: _isPlaceValid,
+  Widget _navigationButtons() {
+    return Container(
+      padding: const EdgeInsets.only(bottom: 16.0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           TextButton(
-            onPressed: () async {
-              final valid = widget.formKey.currentState!.validate();
-              debugPrint("Valid: $valid");
-              if (valid) {
-                widget.formKey.currentState!.save();
-                widget.controller.animateToPage(
-                  1,
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.linear,
-                );
-              }
+            onPressed: () {
+              Navigator.of(context).pop();
             },
-            child: Text(
-              "Next",
-              style: Theme.of(context).textTheme.button,
+            child: Text("Cancel", style: Theme.of(context).textTheme.button),
+          ),
+          Visibility(
+            visible: _isPlaceValid,
+            child: TextButton(
+              onPressed: () async {
+                final valid = widget.formKey.currentState!.validate();
+                if (valid) {
+                  widget.formKey.currentState!.save();
+                  widget.controller.animateToPage(
+                    1,
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.linear,
+                  );
+                }
+              },
+              child: Text(
+                "Next",
+                style: Theme.of(context).textTheme.button,
+              ),
             ),
           ),
         ],

@@ -60,6 +60,7 @@ final defaultLightTheme = ThemeData.from(
     outline: Colors.black,
   ),
   textTheme: juraSemiBoldLightTextTheme,
+  useMaterial3: true,
 );
 
 final defaultDarkTheme = ThemeData.from(
@@ -71,6 +72,7 @@ final defaultDarkTheme = ThemeData.from(
     displayColor: Colors.white,
     bodyColor: Colors.white,
   ),
+  useMaterial3: true,
 );
 
 class ThemeCubit extends HydratedCubit<ThemeState> {
@@ -94,6 +96,7 @@ class ThemeCubit extends HydratedCubit<ThemeState> {
       lightTheme: ThemeData.from(
         colorScheme: lightColorScheme,
         textTheme: juraSemiBoldLightTextTheme,
+        useMaterial3: true,
       ),
       darkTheme: ThemeData.from(
         colorScheme: darkColorScheme,
@@ -101,6 +104,7 @@ class ThemeCubit extends HydratedCubit<ThemeState> {
           displayColor: Colors.white,
           bodyColor: Colors.white,
         ),
+        useMaterial3: true,
       ),
     ));
   }

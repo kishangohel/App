@@ -10,7 +10,7 @@ class WifiRepository {
 
   Future<WifiDetails?> getWifiMarkerAtPlaceId(String placeId) {
     return wifiMarkersCollection
-        .where('PlaceId', isEqualTo: placeId)
+        .where('placeId', isEqualTo: placeId)
         .limit(1)
         .get()
         .then((querySnapshot) {
@@ -30,14 +30,14 @@ class WifiRepository {
     return geo.collection(collectionRef: wifiMarkersCollection).within(
           center: center,
           radius: radius,
-          field: 'Location',
+          field: 'location',
         );
   }
 
   Future<void> addWifiMarker(WifiDetails model) {
     Map<String, dynamic> wifiDetailsJson = model.toJson();
     // Transform location to GeoFirePoint data
-    wifiDetailsJson['Location'] = geo
+    wifiDetailsJson['location'] = geo
         .point(
           latitude: model.location.latitude,
           longitude: model.location.longitude,
@@ -53,7 +53,7 @@ class WifiRepository {
   ) async {
     List<WifiDetails> networks = [];
     wifiMarkersCollection
-        .where("SubmittedBy", isEqualTo: userId)
+        .where("submittedBy", isEqualTo: userId)
         .get()
         .then((querySnapshot) {
       for (var networkDoc in querySnapshot.docs) {

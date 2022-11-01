@@ -1,45 +1,29 @@
 import 'dart:io';
 
 import 'package:auto_connect/auto_connect.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:verifi/utils/geoflutterfire/geoflutterfire.dart';
-import 'package:verifi/blocs/map/map_utils.dart';
-import 'package:verifi/blocs/profile/profile_cubit.dart';
+import 'package:verifi/blocs/blocs.dart';
+import 'package:verifi/main.dart';
 import 'package:verifi/models/models.dart';
 import 'package:verifi/repositories/repositories.dart';
+import 'package:verifi/utils/geoflutterfire/geoflutterfire.dart';
 
-Future<bool> updateNearbyAccessPoints(double lat, double lng) async {
-  WidgetsFlutterBinding.ensureInitialized();
-  // Initialize storage for hydrated cubits
-  HydratedBloc.storage = await HydratedStorage.build(
-    storageDirectory: await getApplicationSupportDirectory(),
-  );
-  // Initialize repositories and cubits
-  final userProfileRepository = UserProfileRepository();
-  final userLocationRepository = UserLocationRepository();
-  final profile = ProfileCubit(userProfileRepository);
-  // Assumes user id is cached via hydrated cubit
-  final uid = profile.userId;
-  // Don't continue if not logged in
-  if (uid == '') {
-    return false;
+/// Pulls down nearby access points from Firestore to register geofences.
+///
+Future<void> updateNearbyAccessPoints(double lat, double lng) async {
+  debugPrint("Updating nearby access points");
+  if (kDebugMode) {
+    await initialize(emulatorEndpoint: "192.168.12.152");
   }
-  // Update user location
-  if (uid != '') {
-    userLocationRepository.updateUserLocation(uid, GeoPoint(lat, lng));
-  }
-  // Make sure we still have location permissions
   final permissionGranted = await Permission.location.isGranted;
   if (permissionGranted == false) {
-    return false;
+    return;
   }
   // Get geofences already registered on app
   final registeredGeofences = await AutoConnect.getGeofences();
-  debugPrint("Registerd geofences: ${registeredGeofences.toString()}");
   // Get nearby access points from Firestore DB
   List<AccessPoint> newAccessPoints =
       await MapUtils.getNearbyAccessPointsWithPlaceDetails(
@@ -86,13 +70,12 @@ Future<bool> updateNearbyAccessPoints(double lat, double lng) async {
         ap.placeDetails == null ||
         ap.placeDetails!.placeId == null) {
       debugPrint("Access point wifi or place details is null");
-      return false;
+      return;
     }
     // If geofence is already registered, skip
     if (registeredGeofences.contains(ap.placeDetails!.placeId!)) {
       continue;
     }
-    debugPrint("Adding access point ${ap.id}");
     AutoConnect.addAccessPointWithGeofence(
       id: ap.placeDetails!.placeId!,
       geofence: Geofence(
@@ -105,6 +88,37 @@ Future<bool> updateNearbyAccessPoints(double lat, double lng) async {
       ),
     );
   }
-  debugPrint("Finished updating geofences!");
-  return true;
+  return;
+}
+
+Future<void> notifyAccessPointConnectionResult(
+  String ssid,
+  String result,
+) async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final notifications = FlutterLocalNotificationsPlugin();
+  final isInitialized = await notifications.initialize(
+    const InitializationSettings(
+      android: AndroidInitializationSettings('app_icon'),
+      iOS: DarwinInitializationSettings(),
+    ),
+  );
+  if (isInitialized == null || !isInitialized) {
+    debugPrint("Notifications intialization failed");
+  }
+  await notifications.show(
+    0,
+    (result == 'Success') ? 'VeriFied' : 'VeriFication failed',
+    (result == 'Success') ? "You're now connected to $ssid" : result,
+    const NotificationDetails(
+      android: AndroidNotificationDetails(
+        'verifi-auto-connect-updates',
+        'Auto Connect Updates',
+        channelDescription: 'Notifies user that VeriFi automatically connected '
+            'to a nearby access point',
+      ),
+      iOS: DarwinNotificationDetails(),
+    ),
+  );
+  return;
 }

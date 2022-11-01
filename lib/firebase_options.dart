@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCb8_Vk9npdFfl_K0tK73vy9YPOSGCAFqY',
-    appId: '1:629088905005:android:15d37351abbdd64ce015a4',
+    appId: '1:629088905005:android:4673593161291f9fe015a4',
     messagingSenderId: '629088905005',
     projectId: 'bionic-water-366401',
     storageBucket: 'bionic-water-366401.appspot.com',
@@ -63,6 +63,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '629088905005',
     projectId: 'bionic-water-366401',
     storageBucket: 'bionic-water-366401.appspot.com',
+    androidClientId: '629088905005-ulu7d9d6133nl5rnb3n0aq78qglsqf5n.apps.googleusercontent.com',
     iosClientId: '629088905005-9l4vt43sp337ne7nq2arsnvmmb2vccrt.apps.googleusercontent.com',
     iosBundleId: 'world.verifi.app',
   );

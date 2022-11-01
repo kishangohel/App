@@ -98,7 +98,7 @@ class WalletConnectCubit extends HydratedCubit<WalletConnectState> {
             actions: [
               PersonalSign(
                 address: state.cbAccount!.address,
-                message: "I agree to VeriFi's terms and conditions",
+                message: "I agree to VeriFi's terms of use and privacy policy",
               ),
             ],
             account: state.cbAccount!,
@@ -126,7 +126,7 @@ class WalletConnectCubit extends HydratedCubit<WalletConnectState> {
       if (sessionUri != null) launchUrlString(sessionUri!);
       try {
         await provider.personalSign(
-          message: "I agree to VeriFi's terms and conditions",
+          message: "I agree to VeriFi's terms of use and privacy policy",
           address: connector.session.accounts[0],
           password: '',
         );

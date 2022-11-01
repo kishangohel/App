@@ -42,5 +42,5 @@ class Profile extends Equatable {
 
   @override
   String toString() =>
-      "User: { id: '$id', ethAddress: '$ethAddress', pfp: '$pfp', displayName: '$displayName' }";
+      "User: { id: $id, ethAddress: $ethAddress, pfp: $pfp, displayName: $displayName }";
 }

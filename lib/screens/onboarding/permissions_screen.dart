@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/blocs/shared_prefs.dart';
@@ -11,23 +13,20 @@ import 'package:verifi/screens/onboarding/widgets/permission_request_row.dart';
 import 'package:verifi/screens/onboarding/widgets/permissions_info_dialog.dart';
 import 'package:verifi/widgets/backgrounds/onboarding_background.dart';
 
+/// Screen to accept various permissions required by VeriFi.
+///
 class PermissionsScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _PermissionsScreenState();
 }
 
-/// Screen to accept location permissions and activity recognition permissions.
-/// If user closes app, then they are automatically logged out via
-/// [WillPopScope] override.
 class _PermissionsScreenState extends State<PermissionsScreen> {
   double opacity = 0;
-  Color textColor = Colors.black;
 
-  bool _backgroundLocationSelected = false;
-  // By default we disable location always switch
-  // until background location is permitted
-  bool _locationAlwaysSelected = true;
-  bool _activityRecognitionSelected = false;
+  bool? _locationWhileInUse;
+  bool? _locationAlways;
+  bool? _activityRecognition;
+  bool? _notifications;
 
   @override
   void initState() {
@@ -36,33 +35,20 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
       const Duration(seconds: 1),
       () => setState(() => opacity = 1),
     );
+    _getCurrentPermissions();
   }
 
   @override
   Widget build(BuildContext context) {
-    // If profile is empty, it is because iOS cached the phone credentials.
-    // We need to manually pull existing profile or create a new one,
-    // depending on whether user finished onboarding.
-    final brightness = MediaQuery.of(context).platformBrightness;
-    if (brightness == Brightness.dark) textColor = Colors.white;
     return Scaffold(
       appBar: OnboardingAppBar(),
-      body: WillPopScope(
-        child: Container(
-          color: Colors.white,
-          child: Stack(
-            children: [
-              ...onBoardingBackground(context),
-              _permissionsScreenContents(),
-            ],
-          ),
+      body: SafeArea(
+        child: Stack(
+          children: [
+            ...onBoardingBackground(context),
+            _permissionsScreenContents(),
+          ],
         ),
-        onWillPop: () async {
-          await context.read<AuthenticationCubit>().logout();
-          context.read<ProfileCubit>().logout();
-          await context.read<ProfileCubit>().clear();
-          return true;
-        },
       ),
     );
   }
@@ -84,15 +70,16 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
           ),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.only(bottom: 24.0),
+              padding: const EdgeInsets.only(bottom: 8.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   PermissionRequestRow(
                     permissionName: "Location While Using App",
-                    onChanged: (_backgroundLocationSelected == false)
-                        ? _requestBackgroundLocation
+                    onChanged: (null == _locationWhileInUse)
+                        ? _requestLocationWhileInUse
                         : null,
+                    switchValue: _locationWhileInUse ?? false,
                     moreInfoDialog: const PermissionsInfoDialog(
                       title: "Why does VeriFi need my location?",
                       contents: '''\u2022 Identify nearby WiFi access points
@@ -102,9 +89,10 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
                   ),
                   PermissionRequestRow(
                     permissionName: "Background Location",
-                    onChanged: (_locationAlwaysSelected == false)
+                    onChanged: (null == _locationAlways)
                         ? _requestLocationAlways
                         : null,
+                    switchValue: _locationAlways ?? false,
                     moreInfoDialog: const PermissionsInfoDialog(
                       title: "Why does VeriFi need my location all the time?",
                       contents:
@@ -114,9 +102,12 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
                   ),
                   PermissionRequestRow(
                     permissionName: "Activity Recognition",
-                    onChanged: (_activityRecognitionSelected == false)
-                        ? _requestActivityRecognition
+                    onChanged: (null == _activityRecognition)
+                        ? (Platform.isAndroid
+                            ? _requestAndroidActivityRecognition
+                            : _requestIOSActivityRecognition)
                         : null,
+                    switchValue: _activityRecognition ?? false,
                     moreInfoDialog: const PermissionsInfoDialog(
                       title: "Why does VeriFi need to recognize my activity?",
                       contents:
@@ -124,7 +115,31 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
 \u2022 More intelligently connect to nearby WiFi''',
                     ),
                   ),
-                  _finishPermissionsButton(),
+                  // Only show notification row if iOS or Android >= 33
+                  FutureBuilder<bool>(
+                      future: _notificationsVisible(),
+                      builder: (context, snapshot) {
+                        return Visibility(
+                          visible: (snapshot.data == true),
+                          child: PermissionRequestRow(
+                            permissionName: "Notifications",
+                            onChanged: (null == _notifications)
+                                ? (Platform.isAndroid
+                                    ? _requestAndroidNotifications
+                                    : _requestIOSNotifications)
+                                : null,
+                            switchValue: _notifications ?? false,
+                            moreInfoDialog: const PermissionsInfoDialog(
+                              title: "Why does VeriFi need to notify me?",
+                              contents:
+                                  '''\u2022 Notify when you connect to an access point
+\u2022 Notify you when there's access points nearby for you to validate
+\u2022 Notify you of your weekly leaderboard rankings''',
+                            ),
+                          ),
+                        );
+                      }),
+                  _continueButton(),
                 ],
               ),
             ),
@@ -134,25 +149,89 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
     );
   }
 
-  Widget _finishPermissionsButton() {
-    return OnboardingOutlineButton(
-      onPressed: () async {
-        await sharedPrefs.setPermissionsComplete();
-        final displayName = context.read<ProfileCubit>().displayName;
-        if (displayName == null) {
-          await Navigator.of(context).pushNamedAndRemoveUntil(
-            '/onboarding/readyWeb3',
-            ModalRoute.withName('onboarding/'),
-          );
-        } else {
-          await Navigator.of(context).pushNamedAndRemoveUntil(
-            '/onboarding/finalSetup',
-            ModalRoute.withName('onboarding/'),
-          );
-        }
-      },
-      text: "Finish",
+  Widget _continueButton() {
+    return Visibility(
+      visible: _locationWhileInUse != null &&
+          _locationAlways != null &&
+          _activityRecognition != null &&
+          _notifications != null,
+      child: OnboardingOutlineButton(
+        onPressed: () async {
+          // Set flag for routing to skip this page in future
+          await sharedPrefs.setPermissionsComplete();
+          // Decide which screen to navigate to next
+          final displayName = context.read<ProfileCubit>().displayName;
+          final wallets =
+              await context.read<WalletConnectCubit>().getAvailableWallets();
+          // If displayName is not set, continue onboarding
+          if (displayName == null) {
+            // Web3 onboarding
+            if (wallets.isNotEmpty) {
+              await Navigator.of(context).pushNamedAndRemoveUntil(
+                '/onboarding/readyWeb3',
+                ModalRoute.withName('onboarding/'),
+              );
+              // Web2 onboarding
+            } else {
+              await Navigator.of(context).pushNamedAndRemoveUntil(
+                '/onboarding/terms',
+                ModalRoute.withName('/onboarding'),
+              );
+            }
+            // If display name is not null, profile is complete.
+            // Navigate to final setup page.
+          } else {
+            await Navigator.of(context).pushNamedAndRemoveUntil(
+              '/onboarding/finalSetup',
+              ModalRoute.withName('onboarding/'),
+            );
+          }
+        },
+        text: "Continue",
+      ),
     );
+  }
+
+  Future<void> _getCurrentPermissions() async {
+    final locationWhenInUseGranted =
+        await Permission.locationWhenInUse.isGranted;
+    if (true == locationWhenInUseGranted) {
+      setState(() => _locationWhileInUse = true);
+    }
+    final locationAlwaysGranted = await Permission.locationAlways.isGranted;
+    if (locationAlwaysGranted) {
+      setState(() => _locationAlways = true);
+    }
+    if (Platform.isAndroid) {
+      final activityRecognitionGranted =
+          await Permission.activityRecognition.isGranted;
+      if (activityRecognitionGranted) {
+        setState(() => _activityRecognition = true);
+      }
+    } else {
+      final activityRecognitionGranted = await Permission.sensors.isGranted;
+      if (activityRecognitionGranted) {
+        setState(() => _activityRecognition = true);
+      }
+    }
+    if (Platform.isIOS) {
+      final notificationsGranted = await Permission.notification.isGranted;
+      if (notificationsGranted) {
+        setState(() => _notifications = true);
+      }
+    } else {
+      final deviceInfo = await DeviceInfoPlugin().androidInfo;
+      if (deviceInfo.version.sdkInt >= 33) {
+        final notifications = FlutterLocalNotificationsPlugin();
+        final notificationsGranted = await notifications
+            .resolvePlatformSpecificImplementation<
+                AndroidFlutterLocalNotificationsPlugin>()
+            ?.areNotificationsEnabled();
+        if (notificationsGranted == true) {
+          setState(() => _notifications = true);
+        }
+      }
+    }
   }
 
   Widget _permissionsDescriptionText() {
@@ -167,107 +246,182 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
     );
   }
 
-  /// Requests background location permissions from user.
-  /// Returns true if user granted permission, false otherwise.
-  Future<bool> _requestBackgroundLocation() async {
-    bool permitted = false;
+  /// Requests location while in use permission from user.
+  Future<void> _requestLocationWhileInUse() async {
     final status = await Permission.locationWhenInUse.request();
+    debugPrint("Location when in use permission: ${status.toString()}");
 
     switch (status) {
-      case PermissionStatus.denied:
-        permitted = false;
-        break;
 
+      // If user permanently denied location when in use
+      // set both locationWhenInUse and locationAlways to false
       case PermissionStatus.permanentlyDenied:
       case PermissionStatus.restricted:
-        permitted = false;
         setState(() {
-          _backgroundLocationSelected = true;
-          _locationAlwaysSelected = true;
+          _locationWhileInUse = false;
+          _locationAlways = false;
         });
         break;
 
+      // If user grants permission, set locationWhenInUse to true
       case PermissionStatus.granted:
-        permitted = true;
         setState(() {
-          _backgroundLocationSelected = true;
-          _locationAlwaysSelected = false;
+          _locationWhileInUse = true;
         });
         break;
 
+      // If denied (but not permanently denied), do nothing so user has
+      // ability to try again
+      case PermissionStatus.denied:
       default:
         break;
     }
-
-    return permitted;
   }
 
-  Future<bool> _requestLocationAlways() async {
-    bool permitted = false;
+  /// Requests background location permission from the user.
+  Future<void> _requestLocationAlways() async {
     final status = await Permission.locationAlways.request();
+    debugPrint("Location always permission: ${status.toString()}");
 
     switch (status) {
-      case PermissionStatus.denied:
-        permitted = false;
-        break;
 
+      // If user permanently denied location always
+      // set locationAlways to false
       case PermissionStatus.permanentlyDenied:
       case PermissionStatus.restricted:
-        permitted = false;
         setState(() {
-          _locationAlwaysSelected = true;
+          _locationAlways = false;
         });
         break;
 
+      // If user grants permission, set locationAlways to true
       case PermissionStatus.granted:
-        permitted = true;
         setState(() {
-          _locationAlwaysSelected = true;
+          _locationAlways = true;
         });
         break;
 
+      // If denied (but not permanently denied), do nothing so user has
+      // ability to try again
+      case PermissionStatus.denied:
       default:
         break;
     }
-
-    return permitted;
   }
 
-  /// Requests activity recognition permissions from user.
-  /// Returns true if user granted permission, false otherwise.
-  Future<bool> _requestActivityRecognition() async {
-    bool permitted = false;
-    PermissionStatus status = PermissionStatus.denied;
-
-    if (Platform.isIOS) {
-      status = await Permission.sensors.request();
-    } else if (Platform.isAndroid) {
-      status = await Permission.activityRecognition.request();
-    }
+  /// Requests Android activity recognition permission from user.
+  Future<void> _requestAndroidActivityRecognition() async {
+    final status = await Permission.activityRecognition.request();
+    debugPrint("Activity recognition permission: ${status.toString()}");
 
     switch (status) {
-      case PermissionStatus.denied:
-        permitted = false;
-        break;
+
+      // If user permanently denied location always
+      // set locationAlways to false
       case PermissionStatus.permanentlyDenied:
       case PermissionStatus.restricted:
-        permitted = false;
         setState(() {
-          _activityRecognitionSelected = true;
+          _activityRecognition = false;
         });
         break;
 
+      // If user grants permission, set locationAlways to true
       case PermissionStatus.granted:
-        permitted = true;
         setState(() {
-          _activityRecognitionSelected = true;
+          _activityRecognition = true;
         });
         break;
 
+      // If denied (but not permanently denied), do nothing so user has
+      // ability to try again
+      case PermissionStatus.denied:
       default:
         break;
     }
+  }
 
-    return permitted;
+  /// Requests iOS activity recognition permission from user.
+  Future<void> _requestIOSActivityRecognition() async {
+    final status = await Permission.sensors.request();
+    debugPrint("Activity recognition permission: ${status.toString()}");
+
+    switch (status) {
+
+      // If user permanently denied location always
+      // set locationAlways to false
+      case PermissionStatus.permanentlyDenied:
+      case PermissionStatus.restricted:
+        setState(() {
+          _activityRecognition = false;
+        });
+        break;
+
+      // If user grants permission, set locationAlways to true
+      case PermissionStatus.granted:
+        setState(() {
+          _activityRecognition = true;
+        });
+        break;
+
+      // If denied (but not permanently denied), do nothing so user has
+      // ability to try again
+      case PermissionStatus.denied:
+      default:
+        break;
+    }
+  }
+
+  Future<void> _requestAndroidNotifications() async {
+    final notifications = FlutterLocalNotificationsPlugin();
+    final status = await notifications
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.requestPermission();
+    setState(() => _notifications = status);
+  }
+
+  Future<void> _requestIOSNotifications() async {
+    final status = await Permission.notification.request();
+    debugPrint("Notification permission: ${status.toString()}");
+
+    switch (status) {
+
+      // If user permanently denied location always
+      // set locationAlways to false
+      case PermissionStatus.permanentlyDenied:
+      case PermissionStatus.restricted:
+        setState(() {
+          _notifications = false;
+        });
+        break;
+
+      // If user grants permission, set locationAlways to true
+      case PermissionStatus.granted:
+        setState(() {
+          _notifications = true;
+        });
+        break;
+
+      // If denied (but not permanently denied), do nothing so user has
+      // ability to try again
+      case PermissionStatus.denied:
+      default:
+        break;
+    }
+  }
+
+  Future<bool> _notificationsVisible() async {
+    if (Platform.isIOS) return true;
+    final deviceInfo = await DeviceInfoPlugin().androidInfo;
+    if (deviceInfo.version.sdkInt >= 33) {
+      return true;
+    }
+    // if notification permissions do not need to be requested, then we must
+    // set _notifications to true. Otherwise, _continueButton will not become
+    // visible.
+    setState(() {
+      _notifications = true;
+    });
+    return false;
   }
 }

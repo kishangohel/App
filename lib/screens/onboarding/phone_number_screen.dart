@@ -110,7 +110,7 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
         onChanged: (PhoneNumber? number) {
           setState(() {
             submitVisibility = phoneController.value != null &&
-                phoneController.value!.validate(
+                phoneController.value!.isValid(
                   type: PhoneNumberType.mobile,
                 );
           });

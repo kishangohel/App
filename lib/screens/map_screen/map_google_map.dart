@@ -5,26 +5,31 @@ import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/blocs/map_styles.dart';
 
 class MapGoogleMap extends StatefulWidget {
-  final LatLng initialMapPosition;
-
-  const MapGoogleMap(this.initialMapPosition);
-
   @override
   State<StatefulWidget> createState() => _MapGoogleMapState();
 }
 
 class _MapGoogleMapState extends State<MapGoogleMap>
     with WidgetsBindingObserver {
+  LatLng _initialLocation = const LatLng(40.77957, -73.96320);
+
   @override
   void initState() {
     super.initState();
+    // Used for dynamically changing map style for light/dark mode
     WidgetsBinding.instance.addObserver(this);
+    final cp = context.read<LocationCubit>().state;
+    if (cp != null) {
+      setState(() => _initialLocation = LatLng(cp.latitude, cp.longitude));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final _initialCameraPosition =
-        CameraPosition(target: widget.initialMapPosition, zoom: 16.0);
+    final _initialCameraPosition = CameraPosition(
+      target: _initialLocation,
+      zoom: 16.0,
+    );
 
     return BlocBuilder<MapCubit, MapState>(
       builder: (context, state) {
@@ -38,7 +43,10 @@ class _MapGoogleMapState extends State<MapGoogleMap>
               icon: BitmapDescriptor.fromBytes(
                 context.read<ProfileCubit>().pfp!.imageBitmap,
               ),
-              position: context.read<LocationCubit>().state!,
+              position: LatLng(
+                context.read<LocationCubit>().state!.latitude,
+                context.read<LocationCubit>().state!.longitude,
+              ),
             ),
           );
         }
@@ -51,7 +59,6 @@ class _MapGoogleMapState extends State<MapGoogleMap>
         return GoogleMap(
           mapToolbarEnabled: false,
           initialCameraPosition: _initialCameraPosition,
-          // myLocationEnabled: true,
           myLocationButtonEnabled: false,
           zoomControlsEnabled: false,
           markers: _markers,

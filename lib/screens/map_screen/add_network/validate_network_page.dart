@@ -1,10 +1,8 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:auto_connect/auto_connect.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:verifi/models/place.dart';
 
 class ValidateNetworkPage extends StatefulWidget {
@@ -26,7 +24,7 @@ class ValidateNetworkPage extends StatefulWidget {
 
 class _ValidateNetworkPageState extends State<ValidateNetworkPage> {
   bool _submitted = false;
-  final validated = Completer<bool>();
+  final validated = Completer<String>();
   @override
   Widget build(BuildContext context) {
     assert(widget.ssid != null && widget.place != null);
@@ -153,28 +151,49 @@ class _ValidateNetworkPageState extends State<ValidateNetworkPage> {
                   textAlign: TextAlign.center,
                 ),
               ),
-              Visibility(
-                visible: _submitted,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: AutoSizeText(
-                        'Validating network...',
-                        style: Theme.of(context).textTheme.titleLarge,
-                        textAlign: TextAlign.end,
-                      ),
+              Expanded(
+                child: Center(
+                  child: Visibility(
+                    visible: _submitted,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: AutoSizeText(
+                            'Validating network...',
+                            maxLines: 1,
+                            style: Theme.of(context).textTheme.headlineSmall,
+                            textAlign: TextAlign.end,
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Container(
+                            alignment: Alignment.center,
+                            height: 80,
+                            width: 80,
+                            child: FutureBuilder(
+                              future: validated.future,
+                              builder:
+                                  (context, AsyncSnapshot<String?> snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.done) {
+                                  return Icon(
+                                    (snapshot.data == "Success")
+                                        ? Icons.check
+                                        : Icons.close,
+                                    size: 60,
+                                  );
+                                } else {
+                                  return const CircularProgressIndicator();
+                                }
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    FutureBuilder(
-                      future: validated.future,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.done) {
-                          return const Icon(Icons.check);
-                        } else {
-                          return const CircularProgressIndicator();
-                        }
-                      },
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ],
@@ -214,11 +233,15 @@ class _ValidateNetworkPageState extends State<ValidateNetworkPage> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         TextButton(
-          onPressed: () => widget.controller.animateToPage(
-            0,
-            duration: const Duration(milliseconds: 500),
-            curve: Curves.linear,
-          ),
+          onPressed: () {
+            // Prevent back navigation if currently submitting
+            if (_submitted) return;
+            widget.controller.animateToPage(
+              0,
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.linear,
+            );
+          },
           child: Text(
             "Back",
             style: Theme.of(context).textTheme.button,
@@ -226,6 +249,7 @@ class _ValidateNetworkPageState extends State<ValidateNetworkPage> {
         ),
         TextButton(
           onPressed: () async {
+            if (_submitted) return;
             setState(() {
               _submitted = true;
             });
@@ -235,8 +259,19 @@ class _ValidateNetworkPageState extends State<ValidateNetworkPage> {
                 password: widget.password ?? "",
               ),
             );
-            debugPrint("AP Verified: ${result.toString()}");
+            debugPrint("Verify AP result: $result");
             validated.complete(result);
+            if (result != "Success") {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(result),
+                ),
+              );
+            }
+            Future.delayed(
+              const Duration(milliseconds: 1500),
+              () => Navigator.of(context).pop(),
+            );
           },
           child: Text(
             "Submit",

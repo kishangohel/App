@@ -1,5 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,19 +25,10 @@ import 'package:verifi/screens/onboarding/terms_screen.dart';
 import 'package:verifi/widgets/home_page.dart';
 
 /// The top-level [Widget] for the VeriFi application.
-///
 /// This should only be built by calling [runApp] in [main].
 ///
-///
-///
-/// The widget is a [StatefulWidget] in order to setup communication with
-/// [Isolate]s via [SendPort] and [ReceivePort].
-///
-/// Once the [IsolateNameServer] is setup and listening for callbacks,
-/// [platform.invokeMethod] is called with the "initialize" method to initialize
-/// the platform-specific code.
-///
-/// This widget provides all of the [Bloc]s and [Repository]s to their children.
+/// This widget provides all the [Bloc] and [Repository] instances needed by
+/// the app and initializes the [MaterialApp].
 class VeriFi extends StatefulWidget {
   final Profile? testProfile;
   const VeriFi(this.testProfile);
@@ -88,6 +77,7 @@ class VeriFiState extends State<VeriFi> {
             create: (context) => AuthenticationCubit(
               RepositoryProvider.of<AuthenticationRepository>(context),
             ),
+            lazy: false,
           ),
           BlocProvider<DisplayNameTextfieldBloc>(
             create: (context) => DisplayNameTextfieldBloc(
@@ -123,8 +113,9 @@ class VeriFiState extends State<VeriFi> {
             create: (context) {
               final cubit = ProfileCubit(
                 RepositoryProvider.of<UserProfileRepository>(context),
+                RepositoryProvider.of<UserLocationRepository>(context),
               );
-              if (kDebugMode && widget.testProfile != null) {
+              if (widget.testProfile != null) {
                 cubit.setProfile(widget.testProfile!);
               }
               return cubit;
@@ -150,7 +141,12 @@ class NavigationService {
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 }
 
-class VeriFiApp extends StatelessWidget {
+class VeriFiApp extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _VeriFiAppState();
+}
+
+class _VeriFiAppState extends State<VeriFiApp> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeCubit, ThemeState>(
@@ -160,7 +156,7 @@ class VeriFiApp extends StatelessWidget {
           theme: themeState.lightTheme,
           darkTheme: themeState.darkTheme,
           themeMode: ThemeMode.system,
-          initialRoute: _initialRoute(context),
+          initialRoute: _initialRoute(),
           routes: {
             '/home': (context) => Home(),
             '/onboarding': (context) => const IntroScreen(),
@@ -181,18 +177,19 @@ class VeriFiApp extends StatelessWidget {
     );
   }
 
-  String? _initialRoute(BuildContext context) {
-    // Have to call [FirebaseAuth] directly to force update [AuthenticationCubit]
-    FirebaseAuth.instance.currentUser;
+  String? _initialRoute() {
     bool isLoggedIn = context.read<AuthenticationCubit>().isLoggedIn;
     if (false == isLoggedIn) {
       return '/onboarding';
     } else if (false == sharedPrefs.permissionsComplete) {
       return '/onboarding/permissions';
-    } else if (context.read<ProfileCubit>().displayName == null) {
-      return '/onboarding/readyWeb3';
     } else if (false == sharedPrefs.onboardingComplete) {
-      return '/onboarding/finalSetup';
+      final profile = context.read<ProfileCubit>();
+      if (profile.displayName == null) {
+        return '/onboarding/readyWeb3';
+      } else {
+        return '/onboarding/finalSetup';
+      }
     } else {
       return '/home';
     }

@@ -33,7 +33,7 @@ class _EditProfileModalBottomSheetState
 
   @override
   Widget build(BuildContext context) {
-    final isNftPfp = context.read<ProfileCubit>().pfp != null;
+    final isWeb3Profile = context.read<ProfileCubit>().ethAddress != null;
     return StatefulBuilder(
       builder: (context, setModalState) {
         return Container(
@@ -43,18 +43,18 @@ class _EditProfileModalBottomSheetState
           // If pfp is an NFT, show tabs to change both theme color and pfp.
           // Otherwise, just show tab to change theme color.
           child: DefaultTabController(
-            length: (isNftPfp) ? 2 : 1,
+            length: (isWeb3Profile) ? 2 : 1,
             child: Column(
               children: [
                 TabBar(
                   indicatorColor: Theme.of(context).colorScheme.onSurface,
                   labelColor: Theme.of(context).colorScheme.onSurface,
                   labelStyle: Theme.of(context).textTheme.titleMedium,
-                  tabs: (isNftPfp) ? [themeTab, pfpTab] : [themeTab],
+                  tabs: (isWeb3Profile) ? [themeTab, pfpTab] : [themeTab],
                 ),
                 Expanded(
                   child: TabBarView(
-                    children: (isNftPfp)
+                    children: (isWeb3Profile)
                         ? [
                             _changeThemeColorContents(setModalState),
                             _changeNftPfpContents(),

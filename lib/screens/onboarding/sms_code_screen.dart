@@ -55,17 +55,29 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
             },
           ),
           BlocListener<ProfileCubit, Profile>(
-            listener: (context, profile) {
+            listener: (context, profile) async {
               // if user already visited permissions page before, skip
               if (sharedPrefs.permissionsComplete) {
                 // if account already exists, finish setup
                 // Otherwise, skip permissions and complete onboarding
                 // In all cases, if user presses back, they return to IntroScreen
                 if (profile.displayName == null) {
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                    '/onboarding/readyWeb3',
-                    ModalRoute.withName('onboarding/'),
-                  );
+                  final wallets = await context
+                      .read<WalletConnectCubit>()
+                      .getAvailableWallets();
+                  // Web3 onboarding
+                  if (wallets.isNotEmpty) {
+                    await Navigator.of(context).pushNamedAndRemoveUntil(
+                      '/onboarding/readyWeb3',
+                      ModalRoute.withName('onboarding/'),
+                    );
+                    // Web2 onboarding
+                  } else {
+                    await Navigator.of(context).pushNamedAndRemoveUntil(
+                      '/onboarding/terms',
+                      ModalRoute.withName('/onboarding'),
+                    );
+                  }
                 } else {
                   Navigator.of(context).pushNamedAndRemoveUntil(
                     '/onboarding/finalSetup',

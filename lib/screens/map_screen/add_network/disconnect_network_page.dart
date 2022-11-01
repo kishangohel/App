@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:network_info_plus/network_info_plus.dart';
@@ -58,18 +60,15 @@ class _DisconnectNetworkPageState extends State<DisconnectNetworkPage> {
                   textAlign: TextAlign.center,
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: const AutoSizeText(
-                  'Don\'t worry, VeriFi will automatically reconnect you to '
-                  'the network if the information you provided earlier '
-                  'is correct.',
-                  maxLines: 3,
-                  textAlign: TextAlign.center,
-                ),
+              const AutoSizeText(
+                'VeriFi will automatically re-connect you to '
+                'the network if the network information you provided '
+                'is correct.',
+                maxLines: 3,
+                textAlign: TextAlign.center,
               ),
               Container(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: const AutoSizeText(
                   'Click "Refresh" when you\'ve completed this step.',
                   maxLines: 1,
@@ -86,7 +85,14 @@ class _DisconnectNetworkPageState extends State<DisconnectNetworkPage> {
             Flexible(
               child: TextButton(
                 onPressed: () async {
-                  final ssid = await NetworkInfo().getWifiName();
+                  var ssid = await NetworkInfo().getWifiName();
+                  if (ssid != null &&
+                      Platform.isAndroid &&
+                      ssid.startsWith('"') &&
+                      ssid.endsWith('"')) {
+                    // Remove leading and trailing quotes
+                    ssid = ssid.substring(1, ssid.length - 1);
+                  }
                   if (ssid == null || ssid != widget.ssid) {
                     setState(() {
                       debugPrint("Disconnected");
@@ -142,9 +148,7 @@ class _DisconnectNetworkPageState extends State<DisconnectNetworkPage> {
           ),
         ),
         Visibility(
-          visible: true,
-          //TODO: Reset back
-          // visible: _isDisconnected,
+          visible: _isDisconnected,
           child: TextButton(
             onPressed: () => widget.controller.animateToPage(
               2,

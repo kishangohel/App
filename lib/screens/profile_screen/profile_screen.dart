@@ -1,8 +1,8 @@
+import 'package:auto_connect/auto_connect.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:random_avatar/random_avatar.dart';
 import 'package:verifi/blocs/blocs.dart';
-import 'package:verifi/blocs/svg_provider.dart';
+import 'package:verifi/models/pfp.dart';
 import 'package:verifi/models/profile.dart';
 import 'package:verifi/screens/profile_screen/edit_profile_modal_bottom_sheet.dart';
 
@@ -29,60 +29,51 @@ class ProfileBody extends StatefulWidget {
 class _ProfileBodyState extends State<ProfileBody> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          _profilePhoto(),
-          _profileName(),
-          _logoutButton(),
-        ],
-      ),
+    return BlocBuilder<ProfileCubit, Profile>(
+      builder: (context, profile) {
+        return Container(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              _profilePhoto(profile.pfp!, profile.displayName!),
+              _profileName(profile.displayName!),
+              _logoutButton(),
+            ],
+          ),
+        );
+      },
     );
   }
 
-  Widget _profilePhoto() {
-    return BlocBuilder<ProfileCubit, Profile>(
-      builder: (context, profile) {
-        final nftPfp = profile.pfp;
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 150,
-              width: 150,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  // Border around avatar
-                  CircleAvatar(
-                    radius: 60,
-                    backgroundColor: Theme.of(context).colorScheme.secondary,
-                    // Profile picture avatar
-                    child: CircleAvatar(
-                      radius: 55,
-                      // Show NFT if set, otherwise show Multiavatar
-                      backgroundImage: (nftPfp != null)
-                          ? nftPfp.image
-                          : SvgProvider(
-                              randomAvatarString(
-                                profile.displayName!,
-                                trBackground: true,
-                              ),
-                              source: SvgSource.raw,
-                            ),
-                      backgroundColor: Theme.of(context).colorScheme.background,
-                    ),
-                  ),
-                  // Edit icon centered at bottom of profile avatar
-                  _editProfileIconButton(),
-                ],
+  Widget _profilePhoto(Pfp nftPfp, String displayName) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(
+          height: 150,
+          width: 150,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              // Border around avatar
+              CircleAvatar(
+                radius: 60,
+                backgroundColor: Theme.of(context).colorScheme.secondary,
+                // Profile picture avatar
+                child: CircleAvatar(
+                  radius: 55,
+                  // Show NFT if set, otherwise show Multiavatar
+                  backgroundImage: nftPfp.image,
+                  backgroundColor: Theme.of(context).colorScheme.background,
+                ),
               ),
-            )
-          ],
-        );
-      },
+              // Edit icon centered at bottom of profile avatar
+              _editProfileIconButton(),
+            ],
+          ),
+        )
+      ],
     );
   }
 
@@ -94,12 +85,12 @@ class _ProfileBodyState extends State<ProfileBody> {
           minWidth: 32,
           minHeight: 32,
         ),
-        fillColor: Theme.of(context).colorScheme.primary,
+        fillColor: Theme.of(context).colorScheme.secondary,
         elevation: 2.0,
         shape: const CircleBorder(),
         child: Icon(
           Icons.edit,
-          color: Theme.of(context).colorScheme.onPrimary,
+          color: Theme.of(context).colorScheme.onSecondary,
           size: 20,
         ),
         onPressed: () => _showEditProfileBottomSheet(),
@@ -107,11 +98,9 @@ class _ProfileBodyState extends State<ProfileBody> {
     );
   }
 
-  Widget _profileName() {
-    final displayName = context.watch<ProfileCubit>().displayName;
-    assert(displayName != null);
+  Widget _profileName(String displayName) {
     return Text(
-      displayName!,
+      displayName,
       style: Theme.of(context).textTheme.headlineSmall,
     );
   }
@@ -122,9 +111,10 @@ class _ProfileBodyState extends State<ProfileBody> {
         "Logout",
       ),
       onPressed: () async {
+        await AutoConnect.removeAllGeofences();
         await context.read<ProfileCubit>().clear();
         context.read<ProfileCubit>().logout();
-        context.read<AuthenticationCubit>().logout();
+        await context.read<AuthenticationCubit>().logout();
         Navigator.of(context).pushNamedAndRemoveUntil(
           '/onboarding',
           (route) => false,

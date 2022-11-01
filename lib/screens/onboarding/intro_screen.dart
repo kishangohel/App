@@ -60,34 +60,37 @@ class _IntroScreenState extends State<IntroScreen> {
               ),
             ),
             Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: _verifiDescription(),
-                  ),
-                  OnboardingOutlineButton(
-                    text: "Get Started",
-                    onPressed: () async => await Navigator.of(context).push(
-                      PageRouteBuilder(
-                        settings: const RouteSettings(
-                          name: '/onboarding/phone',
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 48.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 24.0),
+                      child: _verifiDescription(),
+                    ),
+                    OnboardingOutlineButton(
+                      text: "Get Started",
+                      onPressed: () async => await Navigator.of(context).push(
+                        PageRouteBuilder(
+                          settings: const RouteSettings(
+                            name: '/onboarding/phone',
+                          ),
+                          transitionDuration: const Duration(
+                            seconds: 1,
+                            milliseconds: 500,
+                          ),
+                          reverseTransitionDuration: const Duration(
+                            seconds: 1,
+                          ),
+                          transitionsBuilder: _slideTransition,
+                          pageBuilder: (BuildContext context, _, __) =>
+                              const PhoneNumberScreen(),
                         ),
-                        transitionDuration: const Duration(
-                          seconds: 1,
-                          milliseconds: 500,
-                        ),
-                        reverseTransitionDuration: const Duration(
-                          seconds: 1,
-                        ),
-                        transitionsBuilder: _slideTransition,
-                        pageBuilder: (BuildContext context, _, __) =>
-                            const PhoneNumberScreen(),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],
@@ -125,22 +128,26 @@ class _IntroScreenState extends State<IntroScreen> {
 
   Widget _verifiDescription() {
     return SizedBox(
-      height: 70,
+      height: 90,
       child: DefaultTextStyle(
         style: Theme.of(context).textTheme.titleLarge!,
         textAlign: TextAlign.center,
         child: AnimatedTextKit(
           animatedTexts: [
             RotateAnimatedText(
-              "Fully automated WiFi access",
+              "Automatically connect to WiFi anywhere in the world",
               textAlign: TextAlign.center,
             ),
             RotateAnimatedText(
-              "Powered by Web3 incentives",
+              "Web2 and Web3 incentives, powered by Proof of Connection",
               textAlign: TextAlign.center,
             ),
             RotateAnimatedText(
-              "Digital communities reimagined",
+              "Unleashing digital communities into the physical world",
+              textAlign: TextAlign.center,
+            ),
+            RotateAnimatedText(
+              "Bridging the Universe with the Metaverse",
               textAlign: TextAlign.center,
             ),
           ],

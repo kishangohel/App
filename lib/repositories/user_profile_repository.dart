@@ -47,7 +47,8 @@ class UserProfileRepository {
 
   /// Attempts to get Firestore document by user id and transform into [Profile].
   ///
-  /// If it exists, returns a [Profile]. Otherwise, returns null.
+  /// If it exists, returns a [Profile]. Otherwise, return an empty Profile with
+  /// same id.
   ///
   /// If the document contains a valid URL to an NFT, then [Profile] contains an
   /// [NFT] object as well. Otherwise, that field is null.
@@ -68,8 +69,9 @@ class UserProfileRepository {
         displayName: entity.displayName,
         pfp: Pfp(
           id: entity.displayName,
+          name: entity.displayName,
           image: SvgProvider(multiavatar, source: SvgSource.raw),
-          imageBitmap: await ImageUtils.rawVectorToBytes(multiavatar, 100.0),
+          imageBitmap: await ImageUtils.rawVectorToBytes(multiavatar, 70.0),
         ),
       );
     } else {

@@ -52,19 +52,20 @@ class Pfp extends Equatable {
   static Future<Pfp> fromMultiavatarString(String name) async {
     final multiAvatar = randomAvatarString(name, trBackground: true);
     final image = SvgProvider(multiAvatar, source: SvgSource.raw);
-    final imageBitmap = await ImageUtils.rawVectorToBytes(multiAvatar, 100.0);
+    final imageBitmap = await ImageUtils.rawVectorToBytes(multiAvatar, 70.0);
     return Pfp(
       id: name,
+      name: name,
       image: image,
       imageBitmap: imageBitmap,
     );
   }
 
   @override
-  List<Object?> get props => [id];
+  List<Object?> get props => [id, url, name, description, image, imageBitmap];
 
   @override
-  String toString() => 'Nft: { id: "$id", name: "$name" }';
+  String toString() => 'Nft: { id: $id, name: $name }';
 
   factory Pfp.fromJson(Map<String, dynamic> json) => Pfp(
         id: json['id'],
@@ -76,7 +77,7 @@ class Pfp extends Equatable {
             // first pass through [fromNftPortResponse] to be stored as JSON.
             ? ImageUtils.getImageProvider(json['url'])!
             : SvgProvider(
-                randomAvatarString(json['name']),
+                randomAvatarString(json['name'], trBackground: true),
                 source: SvgSource.raw,
               ),
         imageBitmap: json['imageBitmap'],
