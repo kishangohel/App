@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/blocs/map_styles.dart';
+import 'package:verifi/models/access_point.dart';
+import 'package:verifi/screens/map_screen/marker_info_sheet.dart';
 
 class MapGoogleMap extends StatefulWidget {
   @override
@@ -39,19 +41,35 @@ class _MapGoogleMapState extends State<MapGoogleMap>
             context.read<ProfileCubit>().pfp?.imageBitmap != null) {
           _markers.add(
             Marker(
-              markerId: const MarkerId('user'),
-              icon: BitmapDescriptor.fromBytes(
-                context.read<ProfileCubit>().pfp!.imageBitmap,
-              ),
-              position: LatLng(
-                context.read<LocationCubit>().state!.latitude,
-                context.read<LocationCubit>().state!.longitude,
-              ),
-            ),
+                markerId: const MarkerId('user'),
+                icon: BitmapDescriptor.fromBytes(
+                  context.read<ProfileCubit>().pfp!.imageBitmap,
+                ),
+                position: LatLng(
+                  context.read<LocationCubit>().state!.latitude,
+                  context.read<LocationCubit>().state!.longitude,
+                ),
+                onTap: () {
+                  context.read<MapCubit>().mapController?.animateCamera(
+                        CameraUpdate.newLatLngZoom(
+                          LatLng(
+                            context.read<LocationCubit>().state!.latitude,
+                            context.read<LocationCubit>().state!.longitude,
+                          ),
+                          19,
+                        ),
+                      );
+                }),
           );
         }
-        final accessPoints =
-            state.accessPoints?.map((ap) => ap.toMarker(context));
+        final accessPoints = state.accessPoints?.map(
+          (ap) {
+            return ap.toMarker(
+              context,
+              showMarkerInfoSheet,
+            );
+          },
+        );
         if (accessPoints != null) {
           _markers.addAll(accessPoints);
         }
@@ -82,6 +100,11 @@ class _MapGoogleMapState extends State<MapGoogleMap>
                   context,
                 );
           },
+          // Dismiss keyboard and unfocus search bar if user taps anywhere
+          // on the map
+          onTap: (LatLng location) {
+            FocusManager.instance.primaryFocus?.unfocus();
+          },
         );
       },
     );
@@ -107,5 +130,16 @@ class _MapGoogleMapState extends State<MapGoogleMap>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  void showMarkerInfoSheet(AccessPoint ap) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => MarkerInfoSheet(ap),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.0),
+      ),
+      useRootNavigator: true,
+    );
   }
 }

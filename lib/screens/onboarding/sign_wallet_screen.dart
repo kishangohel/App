@@ -31,10 +31,15 @@ class _SignWalletScreenState extends State<SignWalletScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: OnboardingAppBar(),
+      backgroundColor:
+          MediaQuery.of(context).platformBrightness == Brightness.dark
+              ? Colors.black
+              : Colors.white,
       body: BlocListener<WalletConnectCubit, WalletConnectState>(
         listener: (context, walletState) {
           if (walletState.errorMessage != null) {
             showModalBottomSheet(
+              backgroundColor: Theme.of(context).colorScheme.surface,
               context: context,
               builder: (context) => _modalSheetError(context, walletState),
               shape: ContinuousRectangleBorder(
@@ -50,24 +55,19 @@ class _SignWalletScreenState extends State<SignWalletScreen> {
             } else {
               ethAddress = walletState.cbAccount!.address;
             }
-            ethAddress = "0x09457fA22b7D56C93E7407D8a1587C2447316D55";
             context.read<ProfileCubit>().setEthAddress(ethAddress);
-            // context.read<ProfileCubit>().setEthAddress(ethAddress);
             Navigator.of(context).pushNamedAndRemoveUntil(
               '/onboarding/pfpNft',
               ModalRoute.withName('/onboarding/wallet/sign'),
             );
           }
         },
-        child: Container(
-          color: Colors.black,
-          child: SafeArea(
-            child: Stack(
-              children: [
-                ...onBoardingBackground(context),
-                _signWalletContents(),
-              ],
-            ),
+        child: SafeArea(
+          child: Stack(
+            children: [
+              onBoardingBackground(context),
+              _signWalletContents(),
+            ],
           ),
         ),
       ),

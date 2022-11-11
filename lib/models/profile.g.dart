@@ -13,6 +13,7 @@ Profile _$ProfileFromJson(Map<String, dynamic> json) => Profile(
           : Pfp.fromJson(json['pfp'] as Map<String, dynamic>),
       ethAddress: json['ethAddress'] as String?,
       displayName: json['displayName'] as String?,
+      veriPoints: json['veriPoints'] as int?,
     );
 
 Map<String, dynamic> _$ProfileToJson(Profile instance) => <String, dynamic>{
@@ -20,4 +21,5 @@ Map<String, dynamic> _$ProfileToJson(Profile instance) => <String, dynamic>{
       'ethAddress': instance.ethAddress,
       'pfp': instance.pfp,
       'displayName': instance.displayName,
+      'veriPoints': instance.veriPoints,
     };

@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluster/fluster.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_place/google_place.dart';
+import 'package:google_maps_webservice/places.dart';
 import 'package:verifi/blocs/map/map_markers_helper.dart';
 import 'package:verifi/entities/access_point_entity.dart';
 import 'package:verifi/models/models.dart';
@@ -24,7 +25,7 @@ class MapUtils {
     // distance.
     List<AccessPoint> accessPoints = [];
     final List<WifiDetails> wifiDetailsList = docs.map((doc) {
-      final GeoPoint docPoint = doc['location']['geopoint'];
+      final GeoPoint docPoint = doc['Location']['geopoint'];
       final distance = double.parse(
         location
             .haversineDistance(lat: docPoint.latitude, lng: docPoint.longitude)
@@ -42,8 +43,8 @@ class MapUtils {
     // before returning wifis.
     await Future.wait(
       wifiDetailsList.asMap().entries.map((entry) async {
-        DetailsResult? placeDetails = await placeRepository.getPlaceDetails(
-          entry.value.placeId,
+        final placeDetails = await placeRepository.getPlaceDetails(
+          entry.value.placeId!,
           false,
         );
         // Add new Wifi object to list. Keep Firestore order of documents.
@@ -70,7 +71,7 @@ class MapUtils {
     // distance.
     List<AccessPoint> accessPoints = [];
     final List<WifiDetails> wifiDetailsList = docs.map((doc) {
-      final GeoPoint docPoint = doc['location']['geopoint'];
+      final GeoPoint docPoint = doc['Location']['geopoint'];
       final distance = double.parse(
         location
             .haversineDistance(lat: docPoint.latitude, lng: docPoint.longitude)
@@ -89,6 +90,15 @@ class MapUtils {
     return accessPoints;
   }
 
+  static Future<PlaceDetails> getPlaceDetails(
+    BuildContext context,
+    String placeId,
+  ) async {
+    final repo = context.read<PlaceRepository>();
+    final details = await repo.getPlaceDetails(placeId, false);
+    return details;
+  }
+
   static Future<List<AccessPoint>> transformToClusters(
     List<AccessPoint> accessPoints,
     double zoom,
@@ -99,7 +109,7 @@ class MapUtils {
       NavigationService.navigatorKey.currentContext!,
     ).devicePixelRatio;
     for (AccessPoint ap in accessPoints) {
-      ap.icon = wifiMarkers[getVeriFiedStatus(ap)];
+      ap.icon = wifiMarkers[ap.wifiDetails!.verifiedStatus];
     }
     Fluster<AccessPoint> clusterManager =
         await MapMarkersHelper.initClusterManager(
@@ -116,89 +126,20 @@ class MapUtils {
     return updatedMarkers;
   }
 
-  static String getVeriFiedStatus(AccessPoint ap) {
-    final lastValidatedDuration =
-        DateTime.now().difference(ap.wifiDetails!.lastValidated).inDays;
-    debugPrint("Last validated: $lastValidatedDuration days ago");
-    if (lastValidatedDuration < 3) {
+  static String getVeriFiedStatus(DateTime? lastValidated) {
+    if (lastValidated == null) {
+      return "UnVeriFied";
+    }
+    final lastValidatedDuration = getLastValidatedDuration(lastValidated);
+    // AP stays VeriFied for 30 days
+    if (lastValidatedDuration < 30) {
       return "VeriFied";
     } else {
       return "UnVeriFied";
     }
   }
 
-  static void showMarkerInfoSheet(BuildContext context, AccessPoint ap) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return SizedBox(
-          height: MediaQuery.of(context).size.height * 0.3,
-          child: SafeArea(
-            child: Column(
-              children: [
-                Expanded(
-                  child: ListTile(
-                    title: Text(
-                      ap.placeDetails?.name ?? "Unknown place",
-                      style: Theme.of(context).textTheme.headlineSmall,
-                    ),
-                    subtitle: Text(
-                      ap.placeDetails?.formattedAddress ?? "Unknown place",
-                    ),
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 8.0,
-                    horizontal: 8.0,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(child: Container()),
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: ElevatedButton(
-                            onPressed: () {},
-                            child: const Text(
-                              "Save",
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {},
-                              child: Icon(
-                                Icons.question_mark,
-                                color:
-                                    Theme.of(context).colorScheme.onSecondary,
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                shape: const CircleBorder(),
-                                backgroundColor:
-                                    Theme.of(context).colorScheme.secondary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.0),
-      ),
-      useRootNavigator: true,
-    );
+  static int getLastValidatedDuration(DateTime lastValidated) {
+    return DateTime.now().difference(lastValidated).inDays;
   }
 }

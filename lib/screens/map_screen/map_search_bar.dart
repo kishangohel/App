@@ -10,9 +10,9 @@ class MapSearchBar extends StatelessWidget implements PreferredSizeWidget {
       alignment: Alignment.topCenter,
       margin: EdgeInsets.fromLTRB(
         8,
-        MediaQuery.of(context).padding.top + 8,
+        MediaQuery.of(context).padding.top + 4,
         8,
-        4,
+        8,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 4.0),
       decoration: BoxDecoration(
@@ -26,9 +26,7 @@ class MapSearchBar extends StatelessWidget implements PreferredSizeWidget {
             child: Padding(
               padding: const EdgeInsets.only(left: 8.0),
               child: TextField(
-                style: Theme.of(context).textTheme.headline6?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
+                style: Theme.of(context).textTheme.titleLarge,
                 decoration: const InputDecoration(
                   border: InputBorder.none,
                 ),

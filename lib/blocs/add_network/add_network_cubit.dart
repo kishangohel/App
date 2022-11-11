@@ -4,17 +4,30 @@ import 'package:verifi/models/models.dart';
 import 'package:verifi/repositories/repositories.dart';
 
 class AddNetworkCubit extends Cubit<AddNetworkState> {
-  final WifiRepository _wifiRemoteRepository;
+  final WifiRepository _wifiRepository;
 
-  AddNetworkCubit(this._wifiRemoteRepository)
+  AddNetworkCubit(this._wifiRepository)
       : super(AddNetworkState.addNetworkEmpty);
 
-  void addNetwork(WifiDetails wifiDetails) async {
+  Future<void> addNetwork(
+    String ssid,
+    String? password,
+    Place place,
+    String userId,
+  ) async {
     emit(AddNetworkState.addNetworkSubmitting);
-    try {
-      await _wifiRemoteRepository.addWifiMarker(wifiDetails);
-    } catch (e) {
-      emit(AddNetworkState.addNetworkError);
-    }
+    await _wifiRepository.addNewAccessPoint(
+      ssid,
+      password,
+      place,
+      userId,
+    );
+    emit(AddNetworkState.addNetworkSubmitted);
   }
+
+  Future<void> addValidationEvent(
+    String userId,
+    String accessPointId,
+  ) async =>
+      _wifiRepository.networkValidatedByUser(accessPointId, userId);
 }

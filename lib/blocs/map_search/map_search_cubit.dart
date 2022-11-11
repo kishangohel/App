@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:google_place/google_place.dart';
+import 'package:google_maps_webservice/places.dart';
 import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/models/models.dart';
 import 'package:verifi/repositories/repositories.dart';
@@ -17,18 +17,19 @@ class MapSearchCubit extends Cubit<MapSearchState> {
     this._wifiRepository,
   ) : super(const MapSearchState());
 
-  Future<void> updateQuery(LatLon location, String query) async {
+  Future<void> updateQuery(Location location, String query) async {
     if (query.isEmpty) {
       emit(state.copyWith(predictions: null));
     }
     final predictions = await _placeRepository.searchNearbyPlaces(
       location,
       query,
+      50,
     );
     emit(state.copyWith(predictions: predictions));
   }
 
-  Future<DetailsResult?> _getPlaceDetails(String placeId) {
+  Future<PlaceDetails> _getPlaceDetails(String placeId) {
     return _placeRepository.getPlaceDetails(placeId, true);
   }
 
@@ -44,8 +45,8 @@ class MapSearchCubit extends Cubit<MapSearchState> {
     ]);
     final ap = AccessPoint(
       id: (details[1] as WifiDetails).id,
-      placeDetails: details[0] as DetailsResult?,
-      wifiDetails: details[1] as WifiDetails?,
+      placeDetails: details[0] as PlaceDetails,
+      wifiDetails: details[1] as WifiDetails,
     );
     emit(state.copyWith(selectedPlace: ap, predictions: [], loading: false));
   }

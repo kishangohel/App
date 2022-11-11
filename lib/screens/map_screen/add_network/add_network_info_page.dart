@@ -9,6 +9,7 @@ import 'package:network_info_plus/network_info_plus.dart';
 import 'package:verifi/blocs/location/location_cubit.dart';
 import 'package:verifi/blocs/places/places_cubit.dart';
 import 'package:verifi/models/place.dart';
+import 'package:verifi/repositories/repositories.dart';
 
 class AddNetworkInfoPage extends StatefulWidget {
   final PageController controller;
@@ -147,6 +148,7 @@ class _AddNetworkInfoPageState extends State<AddNetworkInfoPage> {
       title: Text(
         "Why can't I edit this?",
         style: Theme.of(context).textTheme.titleLarge,
+        textAlign: TextAlign.center,
       ),
       content: Text(
         "You may only submit a WiFi network if your device is currently "
@@ -283,7 +285,13 @@ class _AddNetworkInfoPageState extends State<AddNetworkInfoPage> {
         ),
         style: Theme.of(context).textTheme.bodyMedium,
       ),
-      onSuggestionSelected: (place) {
+      onSuggestionSelected: (place) async {
+        final placeDetails =
+            await context.read<PlaceRepository>().getPlaceDetails(
+                  place.placeId,
+                  true,
+                );
+        place.location = placeDetails.geometry!.location;
         _placeController.text = place.name;
         setState(() {
           _isPlaceSelected = true;
@@ -306,6 +314,7 @@ class _AddNetworkInfoPageState extends State<AddNetworkInfoPage> {
           return context.read<PlacesCubit>().searchNearbyPlaces(
                 query,
                 context.read<LocationCubit>().state!,
+                100,
               );
         }
         return <Place>[];
@@ -353,6 +362,7 @@ class _AddNetworkInfoPageState extends State<AddNetworkInfoPage> {
       title: Text(
         "Why do only certain places show up?",
         style: Theme.of(context).textTheme.titleLarge,
+        textAlign: TextAlign.center,
       ),
       content: Text(
         "VeriNet only links WiFi access points to business esablishments "

@@ -188,7 +188,7 @@ class WalletConnectCubit extends HydratedCubit<WalletConnectState> {
           host: Uri.parse('https://wallet.coinbase.com/wsegue'),
           // 'verifi://' is the required scheme to get Coinbase Wallet to
           // switch back to our app after successfully connecting or signing
-          callback: Uri.parse('verifi://'),
+          callback: Uri.parse('verifi-world://'),
         ),
         android: AndroidConfiguration(
           domain: Uri.parse("https://verifi.world"),

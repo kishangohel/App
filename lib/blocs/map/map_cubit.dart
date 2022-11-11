@@ -53,10 +53,8 @@ class MapCubit extends Cubit<MapState> {
       lng: bounds.northeast.longitude,
     );
     double zoom = await mapController!.getZoomLevel();
-    List<AccessPoint> accessPoints =
-        await MapUtils.getNearbyAccessPointsWithPlaceDetails(
+    List<AccessPoint> accessPoints = await MapUtils.getNearbyAccessPoints(
       _wifiRepository,
-      _placeRepository,
       currentGeoPoint,
       radius,
     );

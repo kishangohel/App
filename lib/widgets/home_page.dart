@@ -5,7 +5,6 @@ import 'package:verifi/access_point_callbacks.dart';
 import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/models/app_tab.dart';
 import 'package:verifi/models/models.dart';
-import 'package:verifi/screens/map_screen/map_search_bar.dart';
 import 'package:verifi/screens/profile_screen/profile_screen.dart';
 import 'package:verifi/screens/map_screen/add_network/add_network_fab.dart';
 import 'package:verifi/screens/map_screen/map_screen.dart';
@@ -85,7 +84,8 @@ class _HomeState extends State<Home> {
   PreferredSizeWidget? buildAppBar() {
     switch (_currentIndex) {
       case 0:
-        return MapSearchBar();
+        // return MapSearchBar();
+        return null;
       case 1:
         return ProfileAppBar();
       default:

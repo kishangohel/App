@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:auto_connect/auto_connect.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -42,10 +43,14 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: OnboardingAppBar(),
+      backgroundColor:
+          MediaQuery.of(context).platformBrightness == Brightness.dark
+              ? Colors.black
+              : Colors.white,
       body: SafeArea(
         child: Stack(
           children: [
-            ...onBoardingBackground(context),
+            onBoardingBackground(context),
             _permissionsScreenContents(),
           ],
         ),
@@ -70,7 +75,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
           ),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
+              padding: const EdgeInsets.only(bottom: 16.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -160,6 +165,11 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
           // Set flag for routing to skip this page in future
           await sharedPrefs.setPermissionsComplete();
           // Decide which screen to navigate to next
+          if (context.read<ProfileCubit>().userId == '') {
+            await context.read<ProfileCubit>().getProfile(
+                  context.read<AuthenticationCubit>().state.user!.uid,
+                );
+          }
           final displayName = context.read<ProfileCubit>().displayName;
           final wallets =
               await context.read<WalletConnectCubit>().getAvailableWallets();
@@ -361,6 +371,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
         setState(() {
           _activityRecognition = true;
         });
+        await AutoConnect.startActivityMonitoring();
         break;
 
       // If denied (but not permanently denied), do nothing so user has

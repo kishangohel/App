@@ -32,10 +32,14 @@ class _PfpNftScreenState extends State<PfpNftScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: OnboardingAppBar(),
+      backgroundColor:
+          MediaQuery.of(context).platformBrightness == Brightness.dark
+              ? Colors.black
+              : Colors.white,
       body: SafeArea(
         child: Stack(
           children: [
-            ...onBoardingBackground(context),
+            onBoardingBackground(context),
             _profilePictureScreenContents(),
           ],
         ),
@@ -51,6 +55,7 @@ class _PfpNftScreenState extends State<PfpNftScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Expanded(
+            flex: 4,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Column(
@@ -62,6 +67,7 @@ class _PfpNftScreenState extends State<PfpNftScreen> {
             ),
           ),
           Expanded(
+            flex: 6,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -107,6 +113,10 @@ class _PfpNftScreenState extends State<PfpNftScreen> {
                 ),
               ),
               _continueSetupButton(nfts),
+              Visibility(
+                visible: nfts.isNotEmpty,
+                child: _useDefaultAvatarButton(),
+              ),
             ],
           ),
         );
@@ -201,6 +211,20 @@ class _PfpNftScreenState extends State<PfpNftScreen> {
         );
       },
       text: "Continue",
+    );
+  }
+
+  Widget _useDefaultAvatarButton() {
+    return TextButton(
+      onPressed: () async {
+        await Navigator.of(context).pushNamed('/onboarding/displayName');
+      },
+      child: Text(
+        'Use the default avatar as my profile photo',
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              decoration: TextDecoration.underline,
+            ),
+      ),
     );
   }
 }

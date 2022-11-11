@@ -4,7 +4,7 @@ String lightMapStyle = """
     "elementType": "labels",
     "stylers": [
       {
-        "visibility": "off"
+        "visibility": "on"
       }
     ]
   },
@@ -49,6 +49,17 @@ String lightMapStyle = """
         "visibility": "on"
       }
     ]
+  },
+  {
+    "featureType": "poi",
+    "stylers": [
+      {
+        "saturation": -60
+      },
+      {
+        "lightness": 40
+      }
+    ]
   }
 ]
 """;
@@ -67,7 +78,7 @@ String darkMapStyle = """
     "elementType": "labels",
     "stylers": [
       {
-        "visibility": "off"
+        "visibility": "on"
       }
     ]
   },
@@ -261,6 +272,17 @@ String darkMapStyle = """
     "stylers": [
       {
         "color": "#17263c"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "stylers": [
+      {
+        "saturation": -60
+      },
+      {
+        "lightness": -40
       }
     ]
   }

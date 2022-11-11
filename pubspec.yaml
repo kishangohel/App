@@ -1,6 +1,6 @@
 name: verifi
-description: Bridging the universe with the metaverse
-version: 1.0.0+1
+description: Connect Without Limits
+version: 0.0.1+4
 publish_to: none
 
 environment:
@@ -40,7 +40,7 @@ dependencies:
   geolocator: ^9.0.0
   google_fonts: ^3.0.0
   google_maps_flutter: ^2.2.0
-  google_place: ^0.4.0
+  google_maps_webservice: ^0.0.20-nullsafety.5
   http: ^0.13.0
   hydrated_bloc: ^9.0.0-dev
   json_annotation: ^4.7.0
@@ -84,7 +84,6 @@ flutter:
     - assets/
     - assets/google_fonts/
     - assets/launcher_icon/
-    - assets/profile_avatars/
     - assets/social_media_icons/
     - assets/wallet_logos/
     - assets/wifi_markers/

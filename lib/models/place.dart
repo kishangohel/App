@@ -1,14 +1,13 @@
-import 'package:equatable/equatable.dart';
+import 'package:google_maps_webservice/places.dart';
 
-class Place extends Equatable {
+class Place {
   final String placeId;
   final String name;
+  Location? location;
 
-  const Place({required this.placeId, required this.name});
-
-  @override
-  List<Object?> get props => [placeId];
-
-  @override
-  String toString() => name;
+  Place({
+    required this.placeId,
+    required this.name,
+    this.location,
+  });
 }

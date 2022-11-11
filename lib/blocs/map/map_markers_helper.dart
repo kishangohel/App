@@ -152,7 +152,7 @@ class MapMarkersHelper {
   static Future<Color> _getClusterColor(List<AccessPoint> accessPoints) async {
     Color color = Colors.red;
     for (AccessPoint ap in accessPoints) {
-      final status = MapUtils.getVeriFiedStatus(ap);
+      final status = ap.wifiDetails!.verifiedStatus!;
       switch (status) {
         case "VeriFied":
           return Colors.green;

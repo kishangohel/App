@@ -34,15 +34,16 @@ class _DisplayNameScreenState extends State<DisplayNameScreen> {
     if (brightness == Brightness.dark) _fontColor = Colors.white;
     return Scaffold(
       appBar: OnboardingAppBar(),
-      body: Container(
-        color: Colors.black,
-        child: SafeArea(
-          child: Stack(
-            children: [
-              ...onBoardingBackground(context),
-              _displayNameScreenContents(),
-            ],
-          ),
+      backgroundColor:
+          MediaQuery.of(context).platformBrightness == Brightness.dark
+              ? Colors.black
+              : Colors.white,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            onBoardingBackground(context),
+            _displayNameScreenContents(),
+          ],
         ),
       ),
     );
@@ -173,6 +174,7 @@ class _DisplayNameScreenState extends State<DisplayNameScreen> {
                       );
                       context.read<ProfileCubit>().setPfp(pfp);
                     }
+                    await context.read<ProfileCubit>().createProfile();
                     Navigator.of(context).pushNamed(
                       '/onboarding/finalSetup',
                     );

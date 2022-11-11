@@ -36,9 +36,13 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: OnboardingAppBar(),
+      backgroundColor:
+          MediaQuery.of(context).platformBrightness == Brightness.dark
+              ? Colors.black
+              : Colors.white,
       body: Stack(
         children: [
-          ...onBoardingBackground(context),
+          onBoardingBackground(context),
           _onboardingContent(),
         ],
       ),

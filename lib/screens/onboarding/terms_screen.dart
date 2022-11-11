@@ -32,14 +32,15 @@ class _TermsScreenState extends State<TermsScreen> {
     if (brightness == Brightness.dark) _textColor = Colors.white;
     return Scaffold(
       appBar: OnboardingAppBar(),
-      body: Container(
-        color: Colors.white,
-        child: Stack(
-          children: [
-            ...onBoardingBackground(context),
-            _termsScreenContents(),
-          ],
-        ),
+      backgroundColor:
+          MediaQuery.of(context).platformBrightness == Brightness.dark
+              ? Colors.black
+              : Colors.white,
+      body: Stack(
+        children: [
+          onBoardingBackground(context),
+          _termsScreenContents(),
+        ],
       ),
     );
   }

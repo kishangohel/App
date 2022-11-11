@@ -58,6 +58,7 @@ final defaultLightTheme = ThemeData.from(
   colorScheme: const ColorScheme.light(
     primary: Colors.black,
     outline: Colors.black,
+    background: Colors.black,
   ),
   textTheme: juraSemiBoldLightTextTheme,
   useMaterial3: true,
@@ -67,6 +68,7 @@ final defaultDarkTheme = ThemeData.from(
   colorScheme: const ColorScheme.dark(
     primary: Colors.white,
     outline: Colors.white,
+    background: Colors.white,
   ),
   textTheme: juraSemiBoldDarkTextTheme.apply(
     displayColor: Colors.white,

@@ -1,22 +1,16 @@
 import 'package:flutter/material.dart';
 
-List<Widget> onBoardingBackground(BuildContext context) {
-  return [
-    Hero(
+Widget onBoardingBackground(BuildContext context) {
+  return Center(
+    child: Hero(
       tag: 'enter-the-metaverse',
       child: Image.asset(
         (MediaQuery.of(context).platformBrightness == Brightness.light)
-            ? 'assets/white_particles.gif'
-            : 'assets/black_particles.gif',
-        height: MediaQuery.of(context).size.height,
-        fit: BoxFit.fitHeight,
+            ? 'assets/white_particles_shrinked.gif'
+            : 'assets/black_particles_shrinked.gif',
+        width: MediaQuery.of(context).size.width,
+        fit: BoxFit.cover,
       ),
     ),
-    /* Hero( */
-    /*   tag: 'enter-the-metaverse-filter', */
-    /*   child: Container( */
-    /*     color: Colors.black.withOpacity(0.1), */
-    /*   ), */
-    /* ), */
-  ];
+  );
 }

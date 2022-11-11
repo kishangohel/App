@@ -30,15 +30,16 @@ class _ReadyWeb3ScreenState extends State<ReadyWeb3Screen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: OnboardingAppBar(),
+      backgroundColor:
+          MediaQuery.of(context).platformBrightness == Brightness.dark
+              ? Colors.black
+              : Colors.white,
       body: WillPopScope(
-        child: Container(
-          color: Colors.white,
-          child: Stack(
-            children: [
-              ...onBoardingBackground(context),
-              _askToConnectWalletContents(),
-            ],
-          ),
+        child: Stack(
+          children: [
+            onBoardingBackground(context),
+            _askToConnectWalletContents(),
+          ],
         ),
         onWillPop: () async {
           await context.read<AuthenticationCubit>().logout();

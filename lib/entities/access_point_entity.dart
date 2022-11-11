@@ -9,7 +9,7 @@ class AccessPointEntity extends Equatable {
   final GeoPoint location;
   final double? distance;
   final String submittedBy;
-  final DateTime lastValidated;
+  final DateTime? lastValidated;
 
   const AccessPointEntity({
     required this.id,
@@ -19,7 +19,7 @@ class AccessPointEntity extends Equatable {
     required this.location,
     this.distance,
     required this.submittedBy,
-    required this.lastValidated,
+    this.lastValidated,
   });
 
   @override
@@ -27,7 +27,7 @@ class AccessPointEntity extends Equatable {
 
   @override
   String toString() =>
-      "AccessPointEntity { id: $id, placeId: $placeId, ssid: $ssid }";
+      "AccessPointEntity { ID: $id, PlaceId: $placeId, SSID: $ssid }";
 
   static AccessPointEntity fromDocumentSnapshotWithDistance(
     DocumentSnapshot snapshot,
@@ -36,15 +36,17 @@ class AccessPointEntity extends Equatable {
     Map data = snapshot.data() as Map<String, dynamic>;
     return AccessPointEntity(
       id: snapshot.id,
-      placeId: data['placeId'],
-      password: data['password'],
-      ssid: data['ssid'],
+      placeId: data['PlaceId'],
+      password: data['Password'],
+      ssid: data['SSID'],
       distance: distance,
-      location: data['location']['geopoint'],
-      lastValidated: DateTime.parse(
-        (data['lastValidated'] as Timestamp).toDate().toString(),
-      ),
-      submittedBy: data['submittedBy'],
+      location: data['Location']['geopoint'],
+      lastValidated: (data['LastValidated'] != null)
+          ? DateTime.parse(
+              (data['LastValidated'] as Timestamp).toDate().toString(),
+            )
+          : null,
+      submittedBy: data['SubmittedBy'],
     );
   }
 
@@ -52,14 +54,14 @@ class AccessPointEntity extends Equatable {
     Map data = snapshot.data() as Map;
     return AccessPointEntity(
       id: snapshot.id,
-      placeId: data['placeId'],
-      password: data['password'],
-      ssid: data['ssid'],
-      location: data['location']['geopoint'],
+      placeId: data['PlaceId'],
+      password: data['Password'],
+      ssid: data['SSID'],
+      location: data['Location']['geopoint'],
       lastValidated: DateTime.parse(
-        (data['lastValidated'] as Timestamp).toDate().toString(),
+        (data['LastValidated'] as Timestamp).toDate().toString(),
       ),
-      submittedBy: data['submittedBy'],
+      submittedBy: data['SubmittedBy'],
     );
   }
 }

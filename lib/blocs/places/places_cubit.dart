@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_place/google_place.dart';
+import 'package:google_maps_webservice/places.dart';
 import 'package:verifi/models/place.dart';
 import 'package:verifi/repositories/place_repository.dart';
 
@@ -11,14 +11,13 @@ class PlacesCubit extends Cubit<List<Place>> {
   Future<List<Place>> searchNearbyPlaces(
     String query,
     Position location,
+    int radius,
   ) async {
     final predictions = await _placeRepository.searchNearbyPlaces(
-      LatLon(location.latitude, location.longitude),
+      Location(lat: location.latitude, lng: location.longitude),
       query,
+      radius,
     );
-    if (predictions == null) {
-      return <Place>[];
-    }
     final places = predictions
         .map<Place>((prediction) => Place(
               placeId: prediction.placeId!,

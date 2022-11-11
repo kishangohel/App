@@ -14,19 +14,20 @@ class UserProfileRepository {
   /// Creates new user profile in Firestore users collection.
   Future<void> createProfile(Profile profile) async {
     return usersProfileCollection.doc(profile.id).set({
-      "ethAddress": profile.ethAddress,
-      "pfp": profile.pfp?.url,
-      "encodedPfp": (profile.pfp?.imageBitmap != null)
+      "EthAddress": profile.ethAddress,
+      "PFP": profile.pfp?.url,
+      "EncodedPfp": (profile.pfp?.imageBitmap != null)
           ? base64Encode(profile.pfp!.imageBitmap)
           : null,
-      "displayName": profile.displayName,
-      "createdOn": Timestamp.now(),
+      "DisplayName": profile.displayName,
+      "CreatedOn": Timestamp.now(),
+      "VeriPoints": profile.veriPoints,
     });
   }
 
   Future<void> updateEthAddress(String userId, String address) async {
     return usersProfileCollection.doc(userId).update({
-      "ethAddress": address,
+      "EthAddress": address,
     });
   }
 
@@ -34,14 +35,14 @@ class UserProfileRepository {
     assert(pfp.url != null);
     final imageBitmap = await ImageUtils.encodeImage(pfp.url!);
     return usersProfileCollection.doc(userId).update({
-      "pfp": pfp.url,
-      "encodedPfp": base64Encode(imageBitmap!),
+      "PFP": pfp.url,
+      "EncodedPfp": base64Encode(imageBitmap!),
     });
   }
 
   Future<void> updateDisplayName(String userId, String displayName) async {
     return usersProfileCollection.doc(userId).update({
-      "displayName": displayName,
+      "DisplayName": displayName,
     });
   }
 
@@ -56,7 +57,10 @@ class UserProfileRepository {
     final doc = await usersProfileCollection.doc(id).get();
     if (!doc.exists) {
       // No profile exists, so we return a new one
-      return Profile(id: id);
+      return Profile(
+        id: id,
+        veriPoints: 0,
+      );
     }
     final entity = UserEntity.fromDocumentSnapshot(doc);
     if (entity.pfp == null) {
@@ -73,6 +77,7 @@ class UserProfileRepository {
           image: SvgProvider(multiavatar, source: SvgSource.raw),
           imageBitmap: await ImageUtils.rawVectorToBytes(multiavatar, 70.0),
         ),
+        veriPoints: entity.veriPoints,
       );
     } else {
       // url is stored, so we generate NFT [Pfp]
@@ -89,6 +94,7 @@ class UserProfileRepository {
           image: imageProvider!,
           imageBitmap: imageBitmap,
         ),
+        veriPoints: entity.veriPoints,
       );
     }
   }
@@ -98,5 +104,9 @@ class UserProfileRepository {
         .where('displayName', isEqualTo: displayName)
         .get();
     return (snapshot.size > 0);
+  }
+
+  Future<void> deleteProfile(String userId) async {
+    await usersProfileCollection.doc(userId).delete();
   }
 }

@@ -14,8 +14,12 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       centerTitle: true,
-      title: const Text(
-        "My Profile",
+      title: BlocBuilder<ProfileCubit, Profile>(
+        builder: (context, profile) {
+          return Text(
+            profile.displayName!,
+          );
+        },
       ),
     );
   }
@@ -30,15 +34,22 @@ class _ProfileBodyState extends State<ProfileBody> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ProfileCubit, Profile>(
+      buildWhen: (previous, current) => current.id != '',
       builder: (context, profile) {
         return Container(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.symmetric(
+            vertical: 8.0,
+            horizontal: 16.0,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               _profilePhoto(profile.pfp!, profile.displayName!),
-              _profileName(profile.displayName!),
+              Expanded(
+                child: _profileStats(profile.veriPoints),
+              ),
               _logoutButton(),
+              _deleteAccountButton(),
             ],
           ),
         );
@@ -98,10 +109,45 @@ class _ProfileBodyState extends State<ProfileBody> {
     );
   }
 
-  Widget _profileName(String displayName) {
-    return Text(
-      displayName,
-      style: Theme.of(context).textTheme.headlineSmall,
+  Widget _profileStats(int? veriPoints) {
+    return Column(
+      children: [
+        // Column(
+        //   crossAxisAlignment: CrossAxisAlignment.center,
+        //   mainAxisAlignment: MainAxisAlignment.start,
+        //   children: [
+        //     Text(
+        //       "$veriPoints",
+        //       style: Theme.of(context).textTheme.headlineSmall,
+        //     ),
+        //     Text(
+        //       "VeriPoints",
+        //       style: Theme.of(context).textTheme.bodyLarge,
+        //     ),
+        //   ],
+        // ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Column(
+              children: [
+                _getNumberContributed(),
+                Text(
+                  "Contributed",
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ],
+            ),
+            Column(children: [
+              _getNumberValidated(),
+              Text(
+                "Validated",
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ]),
+          ],
+        ),
+      ],
     );
   }
 
@@ -111,7 +157,7 @@ class _ProfileBodyState extends State<ProfileBody> {
         "Logout",
       ),
       onPressed: () async {
-        await AutoConnect.removeAllGeofences();
+        AutoConnect.removeAllGeofences();
         await context.read<ProfileCubit>().clear();
         context.read<ProfileCubit>().logout();
         await context.read<AuthenticationCubit>().logout();
@@ -120,6 +166,60 @@ class _ProfileBodyState extends State<ProfileBody> {
           (route) => false,
         );
       },
+    );
+  }
+
+  Widget _deleteAccountButton() {
+    return TextButton(
+      onPressed: () async {
+        final shouldDelete = await showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              icon: const Icon(Icons.warning),
+              title: const Text("Warning!"),
+              content: const Text(
+                "You are about to delete your account. This is final and not "
+                "reversible. All account information, stats, etc. will be "
+                "permanently deleted from our servers.",
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text(
+                    "Cancel",
+                    textAlign: TextAlign.end,
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: const Text(
+                    "Delete My Account",
+                    textAlign: TextAlign.end,
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+        if (shouldDelete) {
+          AutoConnect.removeAllGeofences();
+          await context.read<ProfileCubit>().deleteProfile();
+          await context.read<ProfileCubit>().clear();
+          context.read<ProfileCubit>().logout();
+          await context.read<AuthenticationCubit>().logout();
+          Navigator.of(context).pushNamedAndRemoveUntil(
+            '/onboarding',
+            (route) => false,
+          );
+        }
+      },
+      child: Text(
+        "Delete account",
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+      ),
     );
   }
 
@@ -132,6 +232,30 @@ class _ProfileBodyState extends State<ProfileBody> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8.0),
       ),
+    );
+  }
+
+  Widget _getNumberContributed() {
+    return FutureBuilder<int>(
+      future: context.read<ProfileCubit>().contributedCount,
+      initialData: 0,
+      builder: (context, snapshot) {
+        return Text(
+          "${snapshot.data}",
+        );
+      },
+    );
+  }
+
+  Widget _getNumberValidated() {
+    return FutureBuilder<int>(
+      future: context.read<ProfileCubit>().validatedCount,
+      initialData: 0,
+      builder: (context, snapshot) {
+        return Text(
+          "${snapshot.data}",
+        );
+      },
     );
   }
 }

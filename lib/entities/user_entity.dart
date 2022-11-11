@@ -9,6 +9,7 @@ class UserEntity extends Equatable {
   final GeoPoint? lastLocation;
   final String? pfp;
   final String? encodedPfp;
+  final int? veriPoints;
 
   const UserEntity({
     required this.id,
@@ -18,10 +19,11 @@ class UserEntity extends Equatable {
     this.ethAddress,
     this.pfp,
     this.encodedPfp,
+    this.veriPoints,
   });
 
   @override
-  String toString() => 'UserEntity: { id: "$id", displayName: $displayName }';
+  String toString() => 'UserEntity: { ID: "$id", DisplayName: $displayName }';
 
   @override
   List<Object?> get props => [id];
@@ -30,11 +32,12 @@ class UserEntity extends Equatable {
     Map data = snapshot.data() as Map;
     return UserEntity(
       id: snapshot.id,
-      displayName: data['displayName'],
-      createdOn: data['createdOn'],
-      ethAddress: data['ethAddress'],
-      pfp: data['pfp'],
-      encodedPfp: data['encodedPfp'],
+      displayName: data['DisplayName'],
+      createdOn: data['CreatedOn'],
+      ethAddress: data['EthAddress'],
+      pfp: data['PFP'],
+      encodedPfp: data['EncodedPfp'],
+      veriPoints: data['VeriPoints'],
     );
   }
 }

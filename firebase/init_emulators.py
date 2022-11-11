@@ -108,20 +108,21 @@ def main():
     # Add access points
     for ap in access_points:
         try:
+            time = datetime.datetime.now(tz=datetime.timezone.utc)
             db.collection("AccessPoint").add(
                 {
-                    "location": {
+                    "Location": {
                         "geohash": ap["geohash"],
                         "geopoint": GeoPoint(ap["lat"], ap["lng"]),
                     },
-                    "placeId": PLACE_ID,
-                    "name": ap["name"],
-                    "ssid": ap["ssid"],
-                    "password": ap["password"],
-                    "lastValidated": datetime.datetime.now(
-                        tz=datetime.timezone.utc,
-                    ),
-                    "submittedBy": user.uid,
+                    "PlaceId": PLACE_ID,
+                    "Name": ap["name"],
+                    "SSID": ap["ssid"],
+                    "Password": ap["password"],
+                    "LastValidated": time,
+                    "SubmittedBy": user.uid,
+                    "SubmittedOn": time,
+                    "ValidatedBy": [],
                 },
                 retry=Retry(deadline=5.0),
             )
@@ -135,10 +136,11 @@ def main():
     # Create profile
     db.collection("UserProfile").document(user.uid).set(
         {
-            "createdOn": datetime.datetime.now(tz=datetime.timezone.utc),
-            "displayName": "test-user",
-            "ethAddress": "0x0123456789abcdef0123456789abcdef01234567",
-            "pfp": None,
+            "CreatedOn": datetime.datetime.now(tz=datetime.timezone.utc),
+            "DisplayName": "test-user",
+            "EthAddress": "0x0123456789abcdef0123456789abcdef01234567",
+            "PFP": None,
+            "VeriPoints": 50,
         }
     )
 

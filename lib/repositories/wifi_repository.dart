@@ -10,7 +10,7 @@ class WifiRepository {
 
   Future<WifiDetails?> getWifiMarkerAtPlaceId(String placeId) {
     return wifiMarkersCollection
-        .where('placeId', isEqualTo: placeId)
+        .where('PlaceId', isEqualTo: placeId)
         .limit(1)
         .get()
         .then((querySnapshot) {
@@ -30,22 +30,31 @@ class WifiRepository {
     return geo.collection(collectionRef: wifiMarkersCollection).within(
           center: center,
           radius: radius,
-          field: 'location',
+          field: 'Location',
         );
   }
 
-  Future<void> addWifiMarker(WifiDetails model) {
-    Map<String, dynamic> wifiDetailsJson = model.toJson();
+  Future<void> addNewAccessPoint(
+    String ssid,
+    String? password,
+    Place place,
+    String userId,
+  ) {
     // Transform location to GeoFirePoint data
-    wifiDetailsJson['location'] = geo
+    final geoFirePoint = geo
         .point(
-          latitude: model.location.latitude,
-          longitude: model.location.longitude,
+          latitude: place.location!.lat,
+          longitude: place.location!.lng,
         )
         .data;
-    return geo
-        .collection(collectionRef: wifiMarkersCollection)
-        .add(wifiDetailsJson);
+    return wifiMarkersCollection.add({
+      "SSID": ssid,
+      "Password": password ?? "",
+      "PlaceId": place.placeId,
+      "Name": place.name,
+      "Location": geoFirePoint,
+      "SubmittedBy": userId,
+    });
   }
 
   Future<List<WifiDetails>> getNetworksSubmittedByUser(
@@ -53,7 +62,7 @@ class WifiRepository {
   ) async {
     List<WifiDetails> networks = [];
     wifiMarkersCollection
-        .where("submittedBy", isEqualTo: userId)
+        .where("SubmittedBy", isEqualTo: userId)
         .get()
         .then((querySnapshot) {
       for (var networkDoc in querySnapshot.docs) {
@@ -66,4 +75,28 @@ class WifiRepository {
     });
     return networks;
   }
+
+  Future<int> getNetworkContributionCount(String userId) async {
+    final query = await wifiMarkersCollection
+        .where("SubmittedBy", isEqualTo: userId)
+        .count()
+        .get();
+    return query.count;
+  }
+
+  Future<int> getNetworkValidatedCount(String userId) async {
+    final query = await wifiMarkersCollection
+        .where("ValidatedBy", arrayContains: userId)
+        .count()
+        .get();
+    return query.count;
+  }
+
+  Future<void> networkValidatedByUser(
+    String accessPointId,
+    String userId,
+  ) async =>
+      wifiMarkersCollection.doc(accessPointId).update({
+        "ValidatedBy": FieldValue.arrayUnion([userId])
+      });
 }

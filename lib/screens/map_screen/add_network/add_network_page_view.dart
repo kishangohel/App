@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_webservice/places.dart';
 import 'package:verifi/models/place.dart';
 import 'package:verifi/screens/map_screen/add_network/add_network_info_page.dart';
 import 'package:verifi/screens/map_screen/add_network/disconnect_network_page.dart';
@@ -17,6 +18,7 @@ class _AddNetworkPageViewState extends State<AddNetworkPageView> {
   String? ssid;
   String? password;
   Place? place;
+  Location? location;
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   @override

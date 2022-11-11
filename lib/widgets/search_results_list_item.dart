@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_place/google_place.dart';
+import 'package:google_maps_webservice/places.dart';
 
 class SearchResultsListItem extends StatelessWidget {
-  final AutocompletePrediction searchResult;
+  final Prediction searchResult;
   const SearchResultsListItem(this.searchResult);
 
   @override

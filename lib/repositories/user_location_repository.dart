@@ -6,7 +6,7 @@ class UserLocationRepository {
 
   Future<void> updateUserLocation(String id, GeoPoint location) {
     return usersProfileCollection.doc(id).set({
-      "locations": {
+      "Locations": {
         "${Timestamp.now().millisecondsSinceEpoch}": location,
       },
     }, SetOptions(merge: true));

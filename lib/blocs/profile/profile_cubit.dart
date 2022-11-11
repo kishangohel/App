@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:palette_generator/palette_generator.dart';
@@ -11,10 +12,12 @@ import 'package:verifi/repositories/repositories.dart';
 class ProfileCubit extends HydratedCubit<Profile> {
   final UserProfileRepository _userProfileRepository;
   final UserLocationRepository _userLocationRepository;
+  final WifiRepository _wifiRepository;
 
   ProfileCubit(
     this._userProfileRepository,
     this._userLocationRepository,
+    this._wifiRepository,
   ) : super(const Profile(id: ''));
 
   /// Get the profile information for a user by uid.
@@ -22,7 +25,7 @@ class ProfileCubit extends HydratedCubit<Profile> {
   /// If a user record is not found, then a new [Profile] object is emitted
   /// with only [userId] set.
   Future<void> getProfile(String userId) async {
-    final profile = await _userProfileRepository.getProfileById(userId);
+    Profile profile = await _userProfileRepository.getProfileById(userId);
     emit(profile);
   }
 
@@ -36,6 +39,11 @@ class ProfileCubit extends HydratedCubit<Profile> {
   Pfp? get pfp => state.pfp;
   String? get ethAddress => state.ethAddress;
   String? get displayName => state.displayName;
+  int? get veriPoints => state.veriPoints;
+  Future<int> get contributedCount async =>
+      await _wifiRepository.getNetworkContributionCount(userId);
+  Future<int> get validatedCount async =>
+      await _wifiRepository.getNetworkValidatedCount(userId);
 
   // Setters
   void setEthAddress(String addr) => emit(state.copyWith(ethAddress: addr));
@@ -70,6 +78,10 @@ class ProfileCubit extends HydratedCubit<Profile> {
 
   void logout() {
     emit(const Profile(id: ''));
+  }
+
+  Future<void> deleteProfile() async {
+    await _userProfileRepository.deleteProfile(userId);
   }
 
   Future<void> createProfile() async {

@@ -3,6 +3,9 @@ import 'dart:async';
 import 'package:auto_connect/auto_connect.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:verifi/blocs/add_network/add_network_cubit.dart';
+import 'package:verifi/blocs/profile/profile_cubit.dart';
 import 'package:verifi/models/place.dart';
 
 class ValidateNetworkPage extends StatefulWidget {
@@ -264,9 +267,22 @@ class _ValidateNetworkPageState extends State<ValidateNetworkPage> {
             if (result != "Success") {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(result),
+                  content: Text(
+                    result,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                  ),
+                  backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
                 ),
               );
+            } else {
+              context.read<AddNetworkCubit>().addNetwork(
+                    widget.ssid!,
+                    widget.password,
+                    widget.place!,
+                    context.read<ProfileCubit>().userId,
+                  );
             }
             Future.delayed(
               const Duration(milliseconds: 1500),

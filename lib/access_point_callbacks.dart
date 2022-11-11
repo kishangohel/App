@@ -1,11 +1,14 @@
 import 'dart:io';
 
 import 'package:auto_connect/auto_connect.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:verifi/blocs/blocs.dart';
+import 'package:verifi/firebase_options.dart';
 import 'package:verifi/main.dart';
 import 'package:verifi/models/models.dart';
 import 'package:verifi/repositories/repositories.dart';
@@ -15,9 +18,9 @@ import 'package:verifi/utils/geoflutterfire/geoflutterfire.dart';
 ///
 Future<void> updateNearbyAccessPoints(double lat, double lng) async {
   debugPrint("Updating nearby access points");
-  if (kDebugMode) {
-    await initialize(emulatorEndpoint: "192.168.12.152");
-  }
+  await initialize(
+    emulatorEndpoint: (kDebugMode) ? "192.168.12.152" : null,
+  );
   final permissionGranted = await Permission.location.isGranted;
   if (permissionGranted == false) {
     return;
@@ -32,6 +35,9 @@ Future<void> updateNearbyAccessPoints(double lat, double lng) async {
     GeoFirePoint(lat, lng),
     5.0, // get everything within 5km
   );
+  // Don't auto connect to UnVeriFied APs
+  newAccessPoints
+      .removeWhere((ap) => ap.wifiDetails?.verifiedStatus == "UnVeriFied");
   // Get pinned access points
   List<String> pinnedAccessPoints = await AutoConnect.getPinnedGeofences();
   // Shrink down geofence list to max amount allowed, minus pinned geofences
@@ -66,18 +72,16 @@ Future<void> updateNearbyAccessPoints(double lat, double lng) async {
   }
   // Register the new geofences
   for (AccessPoint ap in newAccessPoints) {
-    if (ap.wifiDetails == null ||
-        ap.placeDetails == null ||
-        ap.placeDetails!.placeId == null) {
+    if (ap.wifiDetails == null || ap.placeDetails == null) {
       debugPrint("Access point wifi or place details is null");
       return;
     }
     // If geofence is already registered, skip
-    if (registeredGeofences.contains(ap.placeDetails!.placeId!)) {
+    if (registeredGeofences.contains(ap.placeDetails!.placeId)) {
       continue;
     }
     AutoConnect.addAccessPointWithGeofence(
-      id: ap.placeDetails!.placeId!,
+      id: ap.placeDetails!.placeId,
       geofence: Geofence(
         lat: ap.wifiDetails!.location.latitude,
         lng: ap.wifiDetails!.location.longitude,
@@ -92,10 +96,23 @@ Future<void> updateNearbyAccessPoints(double lat, double lng) async {
 }
 
 Future<void> notifyAccessPointConnectionResult(
+  String accessPointId,
   String ssid,
   String result,
 ) async {
+  debugPrint("Notifying user of access point connection result");
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  final user = FirebaseAuth.instance.currentUser;
+  final wifiRepo = WifiRepository();
+  if (user != null) {
+    debugPrint("$ssid validated by $user");
+    await wifiRepo.networkValidatedByUser(accessPointId, user.uid);
+  } else {
+    debugPrint("Unable to get user for validation event");
+  }
   final notifications = FlutterLocalNotificationsPlugin();
   final isInitialized = await notifications.initialize(
     const InitializationSettings(

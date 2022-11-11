@@ -1,8 +1,8 @@
+import auto_connect
 import CoinbaseWalletSDK
 import Flutter
 import GoogleMaps
 import UIKit
-import auto_connect
 
 // Need this to register auto_connect headless runner
 func registerPlugins(_ registry: FlutterPluginRegistry) {
@@ -13,31 +13,48 @@ func registerPlugins(_ registry: FlutterPluginRegistry) {
 @objc class AppDelegate: FlutterAppDelegate {
     override func application(
         _ application: UIApplication,
-        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+        didFinishLaunchingWithOptions launchOptions: [UIApplication
+            .LaunchOptionsKey: Any]?
     ) -> Bool {
+        #if DEBUG
+            let providerFactory = AppCheckDebugProviderFactory()
+            AppCheck.setAppCheckProviderFactory(providerFactory)
+        #endif
         GMSServices.provideAPIKey("AIzaSyAPaH8IRL7nbQB1zvdcBrZsymzV26SxLLw")
+        UNUserNotificationCenter.current()
+            .delegate = self as UNUserNotificationCenterDelegate
         GeneratedPluginRegistrant.register(with: self)
         SwiftAutoConnectPlugin.setPluginRegistrantCallback(registerPlugins(_:))
-        return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+        return super.application(
+            application,
+            didFinishLaunchingWithOptions: launchOptions
+        )
     }
-    
+
     // Coinbase Wallet SDK callback
-    override func application(_ app: UIApplication,
-                              open url: URL,
-                              options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool
-    {
-        if (try? CoinbaseWalletSDK.shared.handleResponse(url)) == true {
-            return true
+    override func application(
+        _: UIApplication,
+        open url: URL,
+        options _: [UIApplication.OpenURLOptionsKey: Any] = [:]
+    ) -> Bool {
+        if url.scheme == "verifi-world" {
+            if (try? CoinbaseWalletSDK.shared.handleResponse(url)) == true {
+                return true
+            }
         }
         return false
     }
-    
-    override func application(_ application: UIApplication,
+
+    override func application(_: UIApplication,
                               continue userActivity: NSUserActivity,
-                              restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
-    ) -> Bool {
+                              restorationHandler _: @escaping (
+                                  [UIUserActivityRestoring]?
+                              )
+                                  -> Void) -> Bool
+    {
         if let url = userActivity.webpageURL,
-           (try? CoinbaseWalletSDK.shared.handleResponse(url)) == true {
+           (try? CoinbaseWalletSDK.shared.handleResponse(url)) == true
+        {
             return true
         }
         return false

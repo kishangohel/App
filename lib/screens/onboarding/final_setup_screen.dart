@@ -17,7 +17,6 @@ class _FinalSetupScreenState extends State<FinalSetupScreen> {
   double opacity = 0;
   Color textColor = Colors.black;
   Duration textSpeed = const Duration(milliseconds: 120);
-  bool _justKidding = false;
 
   @override
   void initState() {
@@ -28,7 +27,6 @@ class _FinalSetupScreenState extends State<FinalSetupScreen> {
     );
     // waits for context to be populated
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await context.read<ProfileCubit>().createProfile();
       final palette = await context.read<ProfileCubit>().createPaletteFromPfp();
       context.read<ThemeCubit>().updateColors(palette);
       // A simple read will initialize location stream
@@ -47,16 +45,17 @@ class _FinalSetupScreenState extends State<FinalSetupScreen> {
     if (brightness == Brightness.dark) textColor = Colors.white;
     return WillPopScope(
       child: Scaffold(
+        backgroundColor:
+            MediaQuery.of(context).platformBrightness == Brightness.dark
+                ? Colors.black
+                : Colors.white,
         appBar: OnboardingAppBar(),
-        body: Container(
-          color: Colors.black,
-          child: SafeArea(
-            child: Stack(
-              children: [
-                ...onBoardingBackground(context),
-                _newIntroContent(),
-              ],
-            ),
+        body: SafeArea(
+          child: Stack(
+            children: [
+              onBoardingBackground(context),
+              _newIntroContent(),
+            ],
           ),
         ),
       ),
@@ -87,7 +86,6 @@ class _FinalSetupScreenState extends State<FinalSetupScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 _settingThingsUpBottom(),
-                _justKiddingText(),
               ],
             ),
           ),
@@ -115,9 +113,6 @@ class _FinalSetupScreenState extends State<FinalSetupScreen> {
       child: SizedBox(
         width: MediaQuery.of(context).size.width,
         child: AnimatedTextKit(
-          onNextBeforePause: (i, b) {
-            if (b) setState(() => _justKidding = true);
-          },
           isRepeatingAnimation: false,
           animatedTexts: _animatedTexts(),
           onFinished: () {
@@ -129,6 +124,7 @@ class _FinalSetupScreenState extends State<FinalSetupScreen> {
               );
             } else {
               showModalBottomSheet(
+                backgroundColor: Theme.of(context).colorScheme.surface,
                 context: context,
                 builder: (context) {
                   return AutoSizeText(
@@ -154,33 +150,13 @@ class _FinalSetupScreenState extends State<FinalSetupScreen> {
         textStyle: Theme.of(context).textTheme.headlineSmall,
         textAlign: TextAlign.center,
       ),
-      /* TypewriterAnimatedText( */
-      /*   "Caching nearby WiFi...", */
-      /*   cursor: "", */
-      /*   speed: textSpeed, */
-      /*   textStyle: Theme.of(context).textTheme.headline4?.copyWith( */
-      /*         fontWeight: FontWeight.w600, */
-      /*         color: textColor, */
-      /*       ), */
-      /*   textAlign: TextAlign.center, */
-      /* ), */
       TypewriterAnimatedText(
-        "Installing bitcoin miner...",
+        "Caching nearby WiFi...",
         cursor: "",
         speed: textSpeed,
         textStyle: Theme.of(context).textTheme.headlineSmall,
         textAlign: TextAlign.center,
       ),
     ];
-  }
-
-  Widget _justKiddingText() {
-    return Visibility(
-      visible: _justKidding,
-      child: Text(
-        "Just kidding",
-        style: Theme.of(context).textTheme.labelLarge,
-      ),
-    );
   }
 }

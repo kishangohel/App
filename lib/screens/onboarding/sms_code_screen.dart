@@ -34,12 +34,17 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
     if (brightness == Brightness.dark) textColor = Colors.white;
     return Scaffold(
       appBar: OnboardingAppBar(),
+      backgroundColor:
+          MediaQuery.of(context).platformBrightness == Brightness.dark
+              ? Colors.black
+              : Colors.white,
       body: MultiBlocListener(
         listeners: [
           BlocListener<AuthenticationCubit, AuthenticationState>(
             listener: (context, authState) {
               if (authState.exception != null) {
                 showModalBottomSheet(
+                  backgroundColor: Theme.of(context).colorScheme.surface,
                   context: context,
                   builder: (context) => _modalSheetError(context, authState),
                   shape: ContinuousRectangleBorder(
@@ -93,15 +98,12 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
             },
           ),
         ],
-        child: Container(
-          color: Colors.black,
-          child: SafeArea(
-            child: Stack(
-              children: [
-                ...onBoardingBackground(context),
-                _smsCodeScreenContents(),
-              ],
-            ),
+        child: SafeArea(
+          child: Stack(
+            children: [
+              onBoardingBackground(context),
+              _smsCodeScreenContents(),
+            ],
           ),
         ),
       ),
@@ -201,9 +203,7 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
       child: Center(
         child: AutoSizeText(
           state.exception?.code.toString() ?? 'Failed to authenticate',
-          style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                fontSize: 18,
-              ),
+          style: Theme.of(context).textTheme.bodyMedium,
           textAlign: TextAlign.center,
         ),
       ),

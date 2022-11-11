@@ -31,13 +31,17 @@ void main() async {
   bool? _setupTestEnvironment;
   Profile? _profile;
   if (kDebugMode) {
+    // Change this to IP of Firebase emulator server (or localhost)
     _emulatorEndpoint = "192.168.12.152";
     _setupTestEnvironment = false;
   }
   await initialize(emulatorEndpoint: _emulatorEndpoint);
   if ((null != _emulatorEndpoint) && (true == _setupTestEnvironment)) {
-    _profile = await setupTestEnvironment(emulatorEndpoint: _emulatorEndpoint);
+    _profile = await setupTestEnvironment(
+      emulatorEndpoint: _emulatorEndpoint,
+    );
   }
+  await FirebaseAuth.instance.signOut();
   // Setup auto connect
   await AutoConnect.initialize(
     locationEventCallback: updateNearbyAccessPoints,
@@ -82,9 +86,7 @@ Future<void> initialize({String? emulatorEndpoint}) async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   // Activate Firebase App Check
-  if (kReleaseMode) {
-    await FirebaseAppCheck.instance.activate();
-  }
+  await FirebaseAppCheck.instance.activate();
   // Pass all uncaught errors from the framework to Crashlytics
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
   // Use emulator if [emulatorEndpoint] is set
@@ -97,9 +99,9 @@ Future<void> initialize({String? emulatorEndpoint}) async {
       emulatorEndpoint,
       8080,
     );
-    // Get local network access before trying to interact with Firebase
+    // Get local network access before trying to interact with Firebase emulator
     // Also need to force sign out to clear out keys stored on iOS device
-    // that may be from previous emulator instance
+    // that may be saved from previous emulator instance
     if (Platform.isIOS) {
       await getLocalNetworkAccess();
       await FirebaseAuth.instance.signOut();
@@ -163,6 +165,7 @@ Future<Profile> setupTestEnvironment({
     id: uid,
     ethAddress: ethAddress,
     displayName: displayName,
+    veriPoints: 50,
     pfp: Pfp(
       id: displayName,
       name: displayName,

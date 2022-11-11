@@ -1,7 +1,7 @@
 PODS:
   - auto_connect (0.0.1):
     - Flutter
-  - cloud_firestore (4.0.3):
+  - cloud_firestore (4.0.4):
     - Firebase/Firestore (= 10.0.0)
     - firebase_core
     - Flutter
@@ -30,23 +30,23 @@ PODS:
   - Firebase/Firestore (10.0.0):
     - Firebase/CoreOnly
     - FirebaseFirestore (~> 10.0.0)
-  - firebase_analytics (10.0.3):
+  - firebase_analytics (10.0.4):
     - Firebase/Analytics (= 10.0.0)
     - firebase_core
     - Flutter
-  - firebase_app_check (0.1.1-2):
+  - firebase_app_check (0.1.1-3):
     - Firebase/CoreOnly (~> 10.0.0)
     - firebase_core
     - FirebaseAppCheck (~> 10.0.0-beta)
     - Flutter
-  - firebase_auth (4.1.0):
+  - firebase_auth (4.1.1):
     - Firebase/Auth (= 10.0.0)
     - firebase_core
     - Flutter
   - firebase_core (2.1.1):
     - Firebase/CoreOnly (= 10.0.0)
     - Flutter
-  - firebase_crashlytics (3.0.3):
+  - firebase_crashlytics (3.0.4):
     - Firebase/Crashlytics (= 10.0.0)
     - firebase_core
     - Flutter
@@ -285,16 +285,16 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   auto_connect: 43b1a35536732c7e5be96e8cca402a981e4484db
-  cloud_firestore: 1efcf26ee1fe576dc695389683695230d60680f5
+  cloud_firestore: 62c5fa0e5ce5373be25d6233e8edbbe991fa973d
   coinbase_wallet_sdk: ff361faf52d1e546669e7ab95d50d40e978279db
   CoinbaseWalletSDK: 304652e641f9fb265082ff3f3e8c4f45e695e947
   device_info_plus: e5c5da33f982a436e103237c0c85f9031142abed
   Firebase: 1b810f3d0c0532e27a48f1961f8c0400a668a2cf
-  firebase_analytics: ed8e5198c08a3ec3f5e1dd150dd4db07d7871e5b
-  firebase_app_check: 8d938f5973cc08a3aa7a6f7e3e1b4d60be9b3480
-  firebase_auth: e07b2260d936b7b20f45f9ddafc871f75778be66
+  firebase_analytics: 38790c3205b2ee56b82be7bf0f54c84fc866253f
+  firebase_app_check: 73a73c306a3a8842d9adbb645dd87a10c91c2cb5
+  firebase_auth: dd33e93fce72a1c72040f7380dacf06e89db5705
   firebase_core: 5c0bb0ca7d0e70480a68a6e9ad9bf55d1edd5305
-  firebase_crashlytics: ff96f93b1f78d0347aa795abca038cf9f8625cdf
+  firebase_crashlytics: 5256cf2eb7f883fee0b5f1c8cd71ea3137942f62
   FirebaseAnalytics: 9921a52739f4ab66099da31b6e0243db78a3ac0a
   FirebaseAppCheck: 67a844ff5d09d66e47ad10363337fdaa666b0b26
   FirebaseAuth: 493382cf533cc45e2862b00e9aa4cfe4c98daf71

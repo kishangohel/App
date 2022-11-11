@@ -25,57 +25,70 @@ class _DisconnectNetworkPageState extends State<DisconnectNetworkPage> {
       children: [
         _disconnectTitle(),
         Expanded(
-          child: Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: const AutoSizeText(
-                  'In order to verify the accuracy of your contribution, we '
-                  'need to connect to the network manually using the '
-                  'information you provided on the previous screen.',
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: const AutoSizeText(
+                    'In order to verify the accuracy of your contribution, we '
+                    'need to connect to the network manually using the '
+                    'information you provided on the previous screen.',
+                    maxLines: 3,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Image(
+                  image: AssetImage(
+                    Platform.isIOS
+                        ? 'assets/ios_how_to_forget_network_1.jpg'
+                        : 'assets/android_how_to_forget_network_1.png',
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: AutoSizeText(
+                    Platform.isIOS
+                        ? 'First, open your WiFi settings and tap the Info '
+                            'button for the current network'
+                        : 'First, open your WiFi settings and tap the '
+                            'Settings button for the current network',
+                    maxLines: 2,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Image(
+                  image: AssetImage(
+                    Platform.isIOS
+                        ? 'assets/ios_how_to_forget_network_2.jpg'
+                        : 'assets/android_how_to_forget_network_2.png',
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: const AutoSizeText(
+                    'Then, select "Forget This Network".',
+                    maxLines: 1,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const AutoSizeText(
+                  'VeriFi will automatically re-connect you to '
+                  'the network if the network information you provided '
+                  'is correct.',
                   maxLines: 3,
                   textAlign: TextAlign.center,
                 ),
-              ),
-              const Image(
-                image: AssetImage('assets/how_to_add_network_1.jpg'),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: const AutoSizeText(
-                  'First, open your WiFi settings and tap the "Info" button '
-                  'for the network.',
-                  maxLines: 2,
-                  textAlign: TextAlign.center,
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: const AutoSizeText(
+                    'Click "Refresh" when you\'ve completed this step.',
+                    maxLines: 1,
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-              ),
-              const Image(
-                image: AssetImage('assets/how_to_add_network_2.jpg'),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: const AutoSizeText(
-                  'Then, select "Forget This Network".',
-                  maxLines: 1,
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              const AutoSizeText(
-                'VeriFi will automatically re-connect you to '
-                'the network if the network information you provided '
-                'is correct.',
-                maxLines: 3,
-                textAlign: TextAlign.center,
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: const AutoSizeText(
-                  'Click "Refresh" when you\'ve completed this step.',
-                  maxLines: 1,
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         Column(
@@ -124,7 +137,7 @@ class _DisconnectNetworkPageState extends State<DisconnectNetworkPage> {
 
   Widget _disconnectTitle() {
     return Container(
-      padding: const EdgeInsets.only(top: 8.0, bottom: 16.0),
+      padding: const EdgeInsets.only(top: 8.0),
       child: Text(
         "Disconnect from Network",
         style: Theme.of(context).textTheme.headlineSmall,

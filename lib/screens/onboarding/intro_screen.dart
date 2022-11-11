@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:verifi/screens/onboarding/phone_number_screen.dart';
 import 'package:verifi/screens/onboarding/widgets/app_title.dart';
 import 'package:verifi/screens/onboarding/widgets/onboarding_outline_button.dart';
@@ -29,9 +32,26 @@ class _IntroScreenState extends State<IntroScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor:
+              (MediaQuery.of(context).platformBrightness == Brightness.dark)
+                  ? Colors.black
+                  : Colors.white,
+          statusBarIconBrightness:
+              (MediaQuery.of(context).platformBrightness == Brightness.dark)
+                  ? Brightness.light
+                  : Brightness.dark,
+        ),
+      ),
+      backgroundColor:
+          MediaQuery.of(context).platformBrightness == Brightness.dark
+              ? Colors.black
+              : Colors.white,
       body: Stack(
         children: [
-          ...onBoardingBackground(context),
+          onBoardingBackground(context),
           _introContent(),
         ],
       ),
@@ -135,6 +155,10 @@ class _IntroScreenState extends State<IntroScreen> {
         child: AnimatedTextKit(
           animatedTexts: [
             RotateAnimatedText(
+              "Bridging the Universe with the Metaverse",
+              textAlign: TextAlign.center,
+            ),
+            RotateAnimatedText(
               "Automatically connect to WiFi anywhere in the world",
               textAlign: TextAlign.center,
             ),
@@ -144,10 +168,6 @@ class _IntroScreenState extends State<IntroScreen> {
             ),
             RotateAnimatedText(
               "Unleashing digital communities into the physical world",
-              textAlign: TextAlign.center,
-            ),
-            RotateAnimatedText(
-              "Bridging the Universe with the Metaverse",
               textAlign: TextAlign.center,
             ),
           ],

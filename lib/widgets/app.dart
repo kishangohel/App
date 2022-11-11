@@ -114,12 +114,14 @@ class VeriFiState extends State<VeriFi> {
               final cubit = ProfileCubit(
                 RepositoryProvider.of<UserProfileRepository>(context),
                 RepositoryProvider.of<UserLocationRepository>(context),
+                RepositoryProvider.of<WifiRepository>(context),
               );
               if (widget.testProfile != null) {
                 cubit.setProfile(widget.testProfile!);
               }
               return cubit;
             },
+            lazy: false,
           ),
           BlocProvider<TabBloc>(
             create: (context) => TabBloc(),
@@ -152,6 +154,7 @@ class _VeriFiAppState extends State<VeriFiApp> {
     return BlocBuilder<ThemeCubit, ThemeState>(
       builder: (context, themeState) {
         return MaterialApp(
+          debugShowCheckedModeBanner: false,
           navigatorKey: NavigationService.navigatorKey,
           theme: themeState.lightTheme,
           darkTheme: themeState.darkTheme,
@@ -184,8 +187,7 @@ class _VeriFiAppState extends State<VeriFiApp> {
     } else if (false == sharedPrefs.permissionsComplete) {
       return '/onboarding/permissions';
     } else if (false == sharedPrefs.onboardingComplete) {
-      final profile = context.read<ProfileCubit>();
-      if (profile.displayName == null) {
+      if (context.read<ProfileCubit>().displayName == null) {
         return '/onboarding/readyWeb3';
       } else {
         return '/onboarding/finalSetup';

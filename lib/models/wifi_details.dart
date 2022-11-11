@@ -1,4 +1,5 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:verifi/blocs/map/map.dart';
 import 'package:verifi/entities/access_point_entity.dart';
 
 class WifiDetails {
@@ -8,7 +9,7 @@ class WifiDetails {
   final String ssid;
   final String? password;
   final String submittedBy;
-  final DateTime lastValidated;
+  final String? verifiedStatus;
   final num? distance;
 
   WifiDetails({
@@ -18,7 +19,7 @@ class WifiDetails {
     required this.ssid,
     this.password,
     required this.submittedBy,
-    required this.lastValidated,
+    this.verifiedStatus,
     this.distance,
   });
 
@@ -31,34 +32,34 @@ class WifiDetails {
       location: LatLng(entity.location.latitude, entity.location.longitude),
       distance: entity.distance,
       submittedBy: entity.submittedBy,
-      lastValidated: entity.lastValidated,
+      verifiedStatus: MapUtils.getVeriFiedStatus(entity.lastValidated),
     );
   }
 
   factory WifiDetails.fromJson(Map<String, dynamic> json) {
     return WifiDetails(
-      id: json['id'],
-      placeId: json['placeId'],
-      location: LatLng(json['location']['lat'], json['location']['lng']),
-      ssid: json['ssid'],
-      password: json['password'],
-      submittedBy: json['submittedBy'],
-      lastValidated: DateTime.fromMillisecondsSinceEpoch(json['lastValidated']),
+      id: json['ID'],
+      placeId: json['PlaceId'],
+      location: LatLng(json['Location']['lat'], json['Location']['lng']),
+      ssid: json['SSID'],
+      password: json['Password'],
+      submittedBy: json['SubmittedBy'],
+      verifiedStatus: json['VerifiedStatus'],
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'ssid': ssid,
-        'password': password,
+        'ID': id,
+        'SSID': ssid,
+        'Password': password,
         // Deliberately not storing distance
         //'distance': distance,
-        'placeId': placeId,
-        'location': {
+        'PlaceId': placeId,
+        'Location': {
           'lat': location.latitude,
           'lng': location.longitude,
         },
-        'submittedBy': submittedBy,
-        'lastValidated': lastValidated.millisecondsSinceEpoch,
+        'SubmittedBy': submittedBy,
+        'VerifiedStatus': verifiedStatus,
       };
 }

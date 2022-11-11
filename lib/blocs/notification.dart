@@ -32,7 +32,7 @@ class Notification {
 
   Notification() {
     var initializationSettingsAndroid =
-        const AndroidInitializationSettings('@mipmap/ic_launcher');
+        const AndroidInitializationSettings('@mipmap/app_icon');
     var initializationSettingsIOS = const DarwinInitializationSettings();
     var initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
