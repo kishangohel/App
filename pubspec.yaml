@@ -1,6 +1,6 @@
 name: verifi
 description: Connect Without Limits
-version: 0.0.1+4
+version: 0.0.1+6
 publish_to: none
 
 environment:

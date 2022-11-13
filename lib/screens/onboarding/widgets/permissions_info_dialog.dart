@@ -22,7 +22,10 @@ class PermissionsInfoDialog extends StatelessWidget {
             borderRadius: BorderRadius.circular(8.0),
           ),
           child: Container(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.symmetric(
+              vertical: 8.0,
+              horizontal: 4.0,
+            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -30,7 +33,8 @@ class PermissionsInfoDialog extends StatelessWidget {
                   title: AutoSizeText(
                     title,
                     maxLines: 2,
-                    style: Theme.of(context).textTheme.headline6,
+                    style: Theme.of(context).textTheme.titleLarge,
+                    textAlign: TextAlign.center,
                   ),
                   subtitle: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4.0),

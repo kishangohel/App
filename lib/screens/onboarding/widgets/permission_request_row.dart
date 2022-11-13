@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
@@ -52,8 +54,18 @@ class _PermissionRequestRowState extends State<PermissionRequestRow> {
               ),
               inactiveColor: Theme.of(context).colorScheme.onSurface,
               inactiveToggleColor: Theme.of(context).colorScheme.surface,
-              onToggle: (value) =>
-                  (widget.onChanged != null) ? widget.onChanged!() : null,
+              onToggle: (value) async {
+                if (widget.onChanged != null) {
+                  // Must show info prompt before permission prompt on Android
+                  if (Platform.isAndroid) {
+                    await showDialog(
+                      context: context,
+                      builder: (context) => widget.moreInfoDialog,
+                    );
+                  }
+                  widget.onChanged!();
+                }
+              },
             ),
           ),
           Expanded(

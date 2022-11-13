@@ -87,9 +87,9 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
                     switchValue: _locationWhileInUse ?? false,
                     moreInfoDialog: const PermissionsInfoDialog(
                       title: "Why does VeriFi need my location?",
-                      contents: '''\u2022 Identify nearby WiFi access points
-\u2022 Show your location on the VeriMap
-\u2022 Ensure accurate calculation of incentives''',
+                      contents:
+                          '''\u2022  To automatically connect you to nearby WiFi access points.
+\u2022  To show your location on the VeriMap.''',
                     ),
                   ),
                   PermissionRequestRow(
@@ -99,10 +99,12 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
                         : null,
                     switchValue: _locationAlways ?? false,
                     moreInfoDialog: const PermissionsInfoDialog(
-                      title: "Why does VeriFi need my location all the time?",
+                      title:
+                          "Why does VeriFi need my location in the background?",
                       contents:
-                          '''\u2022 Automatically connect you to nearby WiFi at all times 
-\u2022 Notify you in real time of nearby opportunities to receive additional rewards.''',
+                          '''\u2022  Automatically connect you to nearby WiFi, even when the app is closed.
+\u2022  Notify you in real time of nearby UnVeriFied WiFi that you can verify.
+\u2022  Security and fraud prevention for contribution and validation actions.''',
                     ),
                   ),
                   PermissionRequestRow(
@@ -135,12 +137,11 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
                                 : null,
                             switchValue: _notifications ?? false,
                             moreInfoDialog: const PermissionsInfoDialog(
-                              title: "Why does VeriFi need to notify me?",
-                              contents:
-                                  '''\u2022 Notify when you connect to an access point
-\u2022 Notify you when there's access points nearby for you to validate
-\u2022 Notify you of your weekly leaderboard rankings''',
-                            ),
+                                title:
+                                    "Why does VeriFi need to send me notifications?",
+                                contents:
+                                    '''\u2022 Notify you when you connect to an access point.
+\u2022 Notify you when there's access points nearby for you to validate.'''),
                           ),
                         );
                       }),
