@@ -12,7 +12,7 @@ dependencies:
   animated_text_kit: ^4.2.0
   async: ^2.9.0
   auto_size_text: ^3.0.0
-  bloc: ^8.0.0
+  bloc: ^8.1.0
   cached_network_image: ^3.2.0
   cloud_firestore: ^4.0.0
   coinbase_wallet_sdk: ^1.0.0
@@ -52,7 +52,6 @@ dependencies:
   path_provider: ^2.0.0
   permission_handler: ^10.0.0
   pinput: ^2.2.0
-  phone_form_field: ^7.0.0
   random_avatar: ^0.0.7
   sembast: ^3.1.0
   scroll_snap_list: ^0.9.0
@@ -63,6 +62,9 @@ dependencies:
   uuid: ^3.0.0
   walletconnect_dart: ^0.0.1
 
+  phone_form_field:
+    path: ../phone_form_field
+
   json_theme:
     path: ../json_theme
 
@@ -72,10 +74,12 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  bloc_test: ^9.1.0
   build_runner: ^2.0.0
   dependency_validator: ^3.0.0
   flutter_lints: ^1.0.0
   json_serializable: ^6.5.0
+  mocktail: ^0.3.0
   test: ^1.21.0
 
 flutter:

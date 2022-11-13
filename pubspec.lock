@@ -71,6 +71,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "8.1.0"
+  bloc_test:
+    dependency: "direct dev"
+    description:
+      name: bloc_test
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "9.1.0"
   boolean_selector:
     dependency: transitive
     description:
@@ -309,6 +316,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.3"
+  diff_match_patch:
+    dependency: transitive
+    description:
+      name: diff_match_patch
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.4.1"
   double_back_to_close_app:
     dependency: "direct main"
     description:
@@ -882,6 +896,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.2"
+  mocktail:
+    dependency: "direct dev"
+    description:
+      name: mocktail
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.0"
   modal_bottom_sheet:
     dependency: "direct main"
     description:
@@ -1074,10 +1095,10 @@ packages:
   phone_form_field:
     dependency: "direct main"
     description:
-      name: phone_form_field
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "7.0.2"
+      path: "../phone_form_field"
+      relative: true
+    source: path
+    version: "7.0.1"
   phone_number_metadata:
     dependency: transitive
     description:

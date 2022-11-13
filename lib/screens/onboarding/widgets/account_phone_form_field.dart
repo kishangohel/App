@@ -24,8 +24,14 @@ class _AccountPhoneFormFieldState extends State<AccountPhoneFormField> {
       child: PhoneFormField(
         controller: widget.phoneController,
         flagSize: 16.0,
-        countrySelectorNavigator:
-            const CountrySelectorNavigator.modalBottomSheet(),
+        countrySelectorNavigator: CountrySelectorNavigator.searchDelegate(
+          titleStyle: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: Theme.of(context).colorScheme.surface,
+              ),
+          subtitleStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.surface,
+              ),
+        ),
         countryCodeStyle: Theme.of(context).textTheme.titleMedium,
         style: Theme.of(context).textTheme.titleMedium,
         decoration: InputDecoration(

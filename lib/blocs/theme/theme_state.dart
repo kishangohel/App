@@ -25,8 +25,8 @@ class ThemeState extends Equatable {
 
   @override
   List<Object?> get props => [
-        lightTheme.toString(),
-        darkTheme.toString(),
-        colors.toString(),
+        lightTheme.hashCode,
+        darkTheme.hashCode,
+        colors.hashCode,
       ];
 }

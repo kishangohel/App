@@ -32,7 +32,8 @@ void main() async {
   Profile? _profile;
   if (kDebugMode) {
     // Change this to IP of Firebase emulator server (or localhost)
-    _emulatorEndpoint = "192.168.12.152";
+    // _emulatorEndpoint = "192.168.12.152";
+    _emulatorEndpoint = null;
     _setupTestEnvironment = false;
   }
   await initialize(emulatorEndpoint: _emulatorEndpoint);

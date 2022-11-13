@@ -1,4 +1,3 @@
-import 'package:coinbase_wallet_sdk/account.dart';
 import 'package:coinbase_wallet_sdk/coinbase_wallet_sdk.dart';
 import 'package:coinbase_wallet_sdk/configuration.dart';
 import 'package:coinbase_wallet_sdk/eth_web3_rpc.dart';
@@ -11,14 +10,52 @@ import 'package:verifi/blocs/wallet_connect/wallet_connect_state.dart';
 import 'package:verifi/models/wallet.dart';
 import 'package:walletconnect_dart/walletconnect_dart.dart';
 
+class CoinbaseWalletSDKProvider {
+  final CoinbaseWalletSDK _coinbaseWalletSDK = CoinbaseWalletSDK.shared;
+  Future<void> configure() async {
+    try {
+      await _coinbaseWalletSDK.configure(
+        Configuration(
+          ios: IOSConfiguration(
+            host: Uri.parse('https://wallet.coinbase.com/wsegue'),
+            // 'verifi://' is the required scheme to get Coinbase Wallet to
+            // switch back to our app after successfully connecting or signing
+            callback: Uri.parse('verifi-world://'),
+          ),
+          android: AndroidConfiguration(
+            domain: Uri.parse("https://verifi.world"),
+          ),
+        ),
+      );
+    } on PlatformException {}
+  }
+
+  Future<List<ReturnValueWithAccount>> initiateHandshake() =>
+      _coinbaseWalletSDK.initiateHandshake([
+        const RequestAccounts(),
+      ]);
+}
+
 class WalletConnectCubit extends HydratedCubit<WalletConnectState> {
   late WalletConnect connector;
-  late EthereumWalletConnectProvider provider;
+  late EthereumWalletConnectProvider walletConnectProvider;
+  late CoinbaseWalletSDKProvider coinbaseProvider;
   String? sessionUri;
   List<Wallet> wallets = [];
 
-  WalletConnectCubit() : super(const WalletConnectState()) {
-    connector = WalletConnect(
+  WalletConnectCubit({
+    EthereumWalletConnectProvider? walletConnectProvider,
+    CoinbaseWalletSDKProvider? coinbaseProvider,
+    WalletConnect? connector,
+  }) : super(const WalletConnectState()) {
+    this.connector = connector ?? _initConnector();
+    this.walletConnectProvider =
+        walletConnectProvider ?? EthereumWalletConnectProvider(this.connector);
+    this.coinbaseProvider = coinbaseProvider ?? CoinbaseWalletSDKProvider();
+  }
+
+  WalletConnect _initConnector() {
+    final connector = WalletConnect(
       bridge: 'https://bridge.walletconnect.org',
       clientMeta: const PeerMeta(
         name: 'VeriFi',
@@ -32,16 +69,15 @@ class WalletConnectCubit extends HydratedCubit<WalletConnectState> {
       onSessionUpdate: _onSessionUpdate,
       onDisconnect: _onDisconnect,
     );
-    provider = EthereumWalletConnectProvider(connector);
-    _initCoinbaseSDK();
+    return connector;
   }
 
   Future<void> connect(String domain) async {
     if (domain == "cbwallet") {
-      final resp = await CoinbaseWalletSDK.shared.initiateHandshake([
-        const RequestAccounts(),
-      ]);
-      emit(state.copyWith(cbAccount: resp[0].account!));
+      await coinbaseProvider.configure();
+      final resp = await coinbaseProvider.initiateHandshake();
+      emit(state.copyWith(cbAccount: resp[0].account));
+      return;
     } else {
       await connector.connect(
         chainId: 1,
@@ -64,6 +100,7 @@ class WalletConnectCubit extends HydratedCubit<WalletConnectState> {
           );
         },
       );
+      return;
     }
   }
 
@@ -125,7 +162,7 @@ class WalletConnectCubit extends HydratedCubit<WalletConnectState> {
     } else {
       if (sessionUri != null) launchUrlString(sessionUri!);
       try {
-        await provider.personalSign(
+        await walletConnectProvider.personalSign(
           message: "I agree to VeriFi's terms of use and privacy policy",
           address: connector.session.accounts[0],
           password: '',
@@ -181,7 +218,7 @@ class WalletConnectCubit extends HydratedCubit<WalletConnectState> {
   }
 
   /// Initialize Coinbase SDK. This can only be called once.
-  Future<void> _initCoinbaseSDK() async {
+  Future<void> initCoinbaseSDK() async {
     await CoinbaseWalletSDK.shared.configure(
       Configuration(
         ios: IOSConfiguration(
@@ -198,24 +235,9 @@ class WalletConnectCubit extends HydratedCubit<WalletConnectState> {
   }
 
   @override
-  WalletConnectState? fromJson(Map<String, dynamic> json) => WalletConnectState(
-        status: (json["status"] != null)
-            ? SessionStatus(
-                chainId: json["status"]["chainId"],
-                accounts: json["status"]["accounts"],
-              )
-            : null,
-        cbAccount: Account.fromJson(json["cbAccount"]),
-      );
+  WalletConnectState fromJson(Map<String, dynamic> json) =>
+      WalletConnectState.fromJson(json);
 
   @override
-  Map<String, dynamic>? toJson(WalletConnectState state) => {
-        "status": {
-          "rpcUrl": state.status?.rpcUrl,
-          "chainId": state.status?.chainId,
-          "accounts": state.status?.accounts,
-          "networkId": state.status?.networkId,
-        },
-        "cbAccount": state.cbAccount?.toJson(),
-      };
+  Map<String, dynamic> toJson(WalletConnectState state) => state.toJson();
 }
