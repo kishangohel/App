@@ -165,12 +165,6 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
         onPressed: () async {
           // Set flag for routing to skip this page in future
           await sharedPrefs.setPermissionsComplete();
-          // Decide which screen to navigate to next
-          if (context.read<ProfileCubit>().userId == '') {
-            await context.read<ProfileCubit>().getProfile(
-                  context.read<AuthenticationCubit>().state.user!.uid,
-                );
-          }
           final displayName = context.read<ProfileCubit>().displayName;
           final wallets =
               await context.read<WalletConnectCubit>().getAvailableWallets();

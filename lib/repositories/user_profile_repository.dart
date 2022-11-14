@@ -53,50 +53,12 @@ class UserProfileRepository {
   ///
   /// If the document contains a valid URL to an NFT, then [Profile] contains an
   /// [NFT] object as well. Otherwise, that field is null.
-  Future<Profile> getProfileById(String id) async {
-    final doc = await usersProfileCollection.doc(id).get();
-    if (!doc.exists) {
-      // No profile exists, so we return a new one
-      return Profile(
-        id: id,
-        veriPoints: 0,
-      );
-    }
-    final entity = UserEntity.fromDocumentSnapshot(doc);
-    if (entity.pfp == null) {
-      // No url stored, so we generate multiavatar [Pfp]
-      final multiavatar =
-          randomAvatarString(entity.displayName, trBackground: true);
-      return Profile(
-        id: entity.id,
-        ethAddress: entity.ethAddress,
-        displayName: entity.displayName,
-        pfp: Pfp(
-          id: entity.displayName,
-          name: entity.displayName,
-          image: SvgProvider(multiavatar, source: SvgSource.raw),
-          imageBitmap: await ImageUtils.rawVectorToBytes(multiavatar, 70.0),
-        ),
-        veriPoints: entity.veriPoints,
-      );
-    } else {
-      // url is stored, so we generate NFT [Pfp]
-      assert(entity.encodedPfp != null);
-      final imageBitmap = base64Decode(entity.encodedPfp!);
-      final imageProvider = ImageUtils.getImageProvider(entity.pfp!);
-      return Profile(
-        id: entity.id,
-        ethAddress: entity.ethAddress,
-        displayName: entity.displayName,
-        pfp: Pfp(
-          id: entity.displayName,
-          url: entity.pfp!,
-          image: imageProvider!,
-          imageBitmap: imageBitmap,
-        ),
-        veriPoints: entity.veriPoints,
-      );
-    }
+  Stream<Profile> getProfileById(String id) {
+    return usersProfileCollection.doc(id).snapshots().asyncMap<Profile>(
+          (snapshot) => Profile.fromEntity(
+            UserEntity.fromDocumentSnapshot(snapshot),
+          ),
+        );
   }
 
   Future<bool> checkIfDisplayNameExists(String? displayName) async {

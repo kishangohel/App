@@ -32,9 +32,9 @@ void main() async {
   Profile? _profile;
   if (kDebugMode) {
     // Change this to IP of Firebase emulator server (or localhost)
-    // _emulatorEndpoint = "192.168.12.152";
-    _emulatorEndpoint = null;
-    _setupTestEnvironment = false;
+    _emulatorEndpoint = "192.168.12.152";
+    // _emulatorEndpoint = null;
+    // _setupTestEnvironment = true;
   }
   await initialize(emulatorEndpoint: _emulatorEndpoint);
   if ((null != _emulatorEndpoint) && (true == _setupTestEnvironment)) {
@@ -42,7 +42,6 @@ void main() async {
       emulatorEndpoint: _emulatorEndpoint,
     );
   }
-  await FirebaseAuth.instance.signOut();
   // Setup auto connect
   await AutoConnect.initialize(
     locationEventCallback: updateNearbyAccessPoints,

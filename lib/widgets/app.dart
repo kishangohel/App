@@ -121,7 +121,6 @@ class VeriFiState extends State<VeriFi> {
               }
               return cubit;
             },
-            lazy: false,
           ),
           BlocProvider<TabBloc>(
             create: (context) => TabBloc(),

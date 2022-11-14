@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
@@ -12,20 +14,38 @@ class ProfileCubit extends HydratedCubit<Profile> {
   final UserProfileRepository _userProfileRepository;
   final UserLocationRepository _userLocationRepository;
   final WifiRepository _wifiRepository;
+  StreamSubscription<Profile>? _profileStream;
 
   ProfileCubit(
     this._userProfileRepository,
     this._userLocationRepository,
     this._wifiRepository,
-  ) : super(const Profile(id: ''));
+  ) : super(const Profile(id: '')) {
+    getProfile(userId);
+  }
 
   /// Get the profile information for a user by uid.
   ///
   /// If a user record is not found, then a new [Profile] object is emitted
   /// with only [userId] set.
-  Future<void> getProfile(String userId) async {
-    Profile profile = await _userProfileRepository.getProfileById(userId);
-    emit(profile);
+  void getProfile(String userId) {
+    print('Getting profile');
+    if (userId != '') {
+      _profileStream?.cancel();
+      _profileStream = _userProfileRepository
+          .getProfileById(userId)
+          .asyncMap((profile) async {
+        final validated =
+            await _wifiRepository.getNetworkValidatedCount(profile.id);
+        final contributed =
+            await _wifiRepository.getNetworkContributionCount(profile.id);
+        final profileWithStats = profile.copyWith(
+          validated: validated,
+          contributed: contributed,
+        );
+        return profileWithStats;
+      }).listen((profile) => emit(profile));
+    }
   }
 
   /// FOR DEBUG TESTING ONLY
@@ -39,10 +59,8 @@ class ProfileCubit extends HydratedCubit<Profile> {
   String? get ethAddress => state.ethAddress;
   String? get displayName => state.displayName;
   int? get veriPoints => state.veriPoints;
-  Future<int> get contributedCount async =>
-      await _wifiRepository.getNetworkContributionCount(userId);
-  Future<int> get validatedCount async =>
-      await _wifiRepository.getNetworkValidatedCount(userId);
+  int? get contributedCount => state.contributed;
+  int? get validatedCount => state.validated;
 
   // Setters
   void setEthAddress(String addr) => emit(state.copyWith(ethAddress: addr));

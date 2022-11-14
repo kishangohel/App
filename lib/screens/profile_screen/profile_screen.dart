@@ -46,7 +46,7 @@ class _ProfileBodyState extends State<ProfileBody> {
             children: [
               _profilePhoto(profile.pfp!, profile.displayName!),
               Expanded(
-                child: _profileStats(profile.veriPoints),
+                child: _profileStats(profile),
               ),
               _logoutButton(),
               _deleteAccountButton(),
@@ -109,7 +109,7 @@ class _ProfileBodyState extends State<ProfileBody> {
     );
   }
 
-  Widget _profileStats(int? veriPoints) {
+  Widget _profileStats(Profile profile) {
     return Column(
       children: [
         // Column(
@@ -131,7 +131,7 @@ class _ProfileBodyState extends State<ProfileBody> {
           children: [
             Column(
               children: [
-                _getNumberContributed(),
+                Text("${profile.contributed}"),
                 Text(
                   "Contributed",
                   style: Theme.of(context).textTheme.bodySmall,
@@ -139,7 +139,7 @@ class _ProfileBodyState extends State<ProfileBody> {
               ],
             ),
             Column(children: [
-              _getNumberValidated(),
+              Text("${profile.validated}"),
               Text(
                 "Validated",
                 style: Theme.of(context).textTheme.bodySmall,
@@ -232,30 +232,6 @@ class _ProfileBodyState extends State<ProfileBody> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8.0),
       ),
-    );
-  }
-
-  Widget _getNumberContributed() {
-    return FutureBuilder<int>(
-      future: context.read<ProfileCubit>().contributedCount,
-      initialData: 0,
-      builder: (context, snapshot) {
-        return Text(
-          "${snapshot.data}",
-        );
-      },
-    );
-  }
-
-  Widget _getNumberValidated() {
-    return FutureBuilder<int>(
-      future: context.read<ProfileCubit>().validatedCount,
-      initialData: 0,
-      builder: (context, snapshot) {
-        return Text(
-          "${snapshot.data}",
-        );
-      },
     );
   }
 }

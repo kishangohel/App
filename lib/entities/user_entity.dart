@@ -3,8 +3,8 @@ import 'package:equatable/equatable.dart';
 
 class UserEntity extends Equatable {
   final String id;
-  final String displayName;
-  final Timestamp createdOn;
+  final String? displayName;
+  final Timestamp? createdOn;
   final String? ethAddress;
   final GeoPoint? lastLocation;
   final String? pfp;
@@ -13,8 +13,8 @@ class UserEntity extends Equatable {
 
   const UserEntity({
     required this.id,
-    required this.displayName,
-    required this.createdOn,
+    this.displayName,
+    this.createdOn,
     this.lastLocation,
     this.ethAddress,
     this.pfp,
@@ -29,15 +29,19 @@ class UserEntity extends Equatable {
   List<Object?> get props => [id];
 
   factory UserEntity.fromDocumentSnapshot(DocumentSnapshot snapshot) {
-    Map data = snapshot.data() as Map;
-    return UserEntity(
-      id: snapshot.id,
-      displayName: data['DisplayName'],
-      createdOn: data['CreatedOn'],
-      ethAddress: data['EthAddress'],
-      pfp: data['PFP'],
-      encodedPfp: data['EncodedPfp'],
-      veriPoints: data['VeriPoints'],
-    );
+    if (snapshot.exists) {
+      Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+      return UserEntity(
+        id: snapshot.id,
+        displayName: data['DisplayName'],
+        createdOn: data['CreatedOn'],
+        ethAddress: data['EthAddress'],
+        pfp: data['PFP'],
+        encodedPfp: data['EncodedPfp'],
+        veriPoints: data['VeriPoints'],
+      );
+    } else {
+      return UserEntity(id: snapshot.id);
+    }
   }
 }
