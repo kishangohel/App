@@ -20,7 +20,7 @@ func registerPlugins(_ registry: FlutterPluginRegistry) {
             let providerFactory = AppCheckDebugProviderFactory()
             AppCheck.setAppCheckProviderFactory(providerFactory)
         #endif
-        GMSServices.provideAPIKey("AIzaSyAPaH8IRL7nbQB1zvdcBrZsymzV26SxLLw")
+        GMSServices.provideAPIKey("AIzaSyDG-YS0daZzGspQdS7u00hATT3VCTFa2KM")
         UNUserNotificationCenter.current()
             .delegate = self as UNUserNotificationCenterDelegate
         GeneratedPluginRegistrant.register(with: self)

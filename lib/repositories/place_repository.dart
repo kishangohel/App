@@ -15,7 +15,7 @@ class PlaceRepository {
 
   PlaceRepository() {
     _googleMapsPlaces = GoogleMapsPlaces(
-      apiKey: 'AIzaSyAvSlAS6yLh5Nt1WuhEeTOOL_nDrLTAALo',
+      apiKey: 'AIzaSyBgs18q9v_rpeJVM-dIg6ZKvajHxxglyN0',
     );
   }
 
