@@ -3,8 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:verifi/access_point_callbacks.dart';
 import 'package:verifi/blocs/blocs.dart';
-import 'package:verifi/models/app_tab.dart';
-import 'package:verifi/models/models.dart';
 import 'package:verifi/screens/profile_screen/profile_screen.dart';
 import 'package:verifi/screens/map_screen/add_network/add_network_fab.dart';
 import 'package:verifi/screens/map_screen/map_screen.dart';
@@ -31,11 +29,6 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return MultiBlocListener(
       listeners: [
-        BlocListener<TabBloc, AppTab>(
-          listener: (context, appTabState) {
-            setState(() => _currentIndex = appTabState.tab.index);
-          },
-        ),
         BlocListener<LocationCubit, Position?>(
           listener: (context, location) async {
             if (location != null) {

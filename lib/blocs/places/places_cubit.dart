@@ -8,7 +8,7 @@ class PlacesCubit extends Cubit<List<Place>> {
   final PlaceRepository _placeRepository;
   PlacesCubit(this._placeRepository) : super(<Place>[]);
 
-  Future<List<Place>> searchNearbyPlaces(
+  Future<void> searchNearbyPlaces(
     String query,
     Position location,
     int radius,
@@ -24,6 +24,6 @@ class PlacesCubit extends Cubit<List<Place>> {
               name: prediction.description!,
             ))
         .toList();
-    return places;
+    emit(places);
   }
 }

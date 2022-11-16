@@ -1,9 +1,7 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:random_avatar/random_avatar.dart';
 import 'package:verifi/blocs/image_utils.dart';
-import 'package:verifi/blocs/svg_provider.dart';
 import 'package:verifi/entities/user_entity.dart';
 import 'package:verifi/models/models.dart';
 

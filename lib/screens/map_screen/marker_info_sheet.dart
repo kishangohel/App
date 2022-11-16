@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:verifi/blocs/location/location_cubit.dart';
-import 'package:verifi/blocs/map/map_utils.dart';
 import 'package:verifi/models/access_point.dart';
 import 'package:verifi/utils/geoflutterfire/geoflutterfire.dart';
 

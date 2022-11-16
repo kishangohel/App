@@ -291,7 +291,9 @@ class _AddNetworkInfoPageState extends State<AddNetworkInfoPage> {
                   place.placeId,
                   true,
                 );
-        place.location = placeDetails.geometry!.location;
+        place = place.copyWith(
+          location: placeDetails.geometry!.location,
+        );
         _placeController.text = place.name;
         setState(() {
           _isPlaceSelected = true;
@@ -309,13 +311,14 @@ class _AddNetworkInfoPageState extends State<AddNetworkInfoPage> {
       errorBuilder: (context, error) {
         return Text(error.toString());
       },
-      suggestionsCallback: (query) {
+      suggestionsCallback: (query) async {
         if (query != "") {
-          return context.read<PlacesCubit>().searchNearbyPlaces(
+          await context.read<PlacesCubit>().searchNearbyPlaces(
                 query,
                 context.read<LocationCubit>().state!,
                 100,
               );
+          return context.read<PlacesCubit>().state;
         }
         return <Place>[];
       },

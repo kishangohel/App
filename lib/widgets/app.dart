@@ -122,9 +122,6 @@ class VeriFiState extends State<VeriFi> {
               return cubit;
             },
           ),
-          BlocProvider<TabBloc>(
-            create: (context) => TabBloc(),
-          ),
           BlocProvider<ThemeCubit>(
             create: (context) => ThemeCubit(),
           ),
