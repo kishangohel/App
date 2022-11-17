@@ -14,6 +14,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "629088905005-qfl72u3t5qu43rf0cdvl45vcsgn0iefd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "world.verifi.app",
+            "certificate_hash": "bf7a74f0969ad89d331feaf82d0d2a82441ffeea"
+          }
+        },
+        {
+          "client_id": "629088905005-sd9r8h9onbu94dsput4o4vh1dffbqu3p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "world.verifi.app",
+            "certificate_hash": "59c7b3e5dedb405937448e4ec2194818bcad074b"
+          }
+        },
+        {
           "client_id": "629088905005-ulu7d9d6133nl5rnb3n0aq78qglsqf5n.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

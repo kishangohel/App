@@ -34,7 +34,7 @@ void main() async {
     // Change this to IP of Firebase emulator server (or localhost)
     _emulatorEndpoint = "192.168.12.152";
     // _emulatorEndpoint = null;
-    // _setupTestEnvironment = true;
+    _setupTestEnvironment = true;
   }
   await initialize(emulatorEndpoint: _emulatorEndpoint);
   if ((null != _emulatorEndpoint) && (true == _setupTestEnvironment)) {
