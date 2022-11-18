@@ -29,7 +29,6 @@ class ProfileCubit extends HydratedCubit<Profile> {
   /// If a user record is not found, then a new [Profile] object is emitted
   /// with only [userId] set.
   void getProfile(String userId) {
-    print('Getting profile');
     if (userId != '') {
       _profileStream?.cancel();
       _profileStream = _userProfileRepository
