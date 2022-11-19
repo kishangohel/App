@@ -96,6 +96,8 @@ class _SmsCodeScreenState extends State<SmsCodeScreen> {
                 );
               }
             },
+            // only fire when Profile id is set
+            listenWhen: (previous, current) => current.id != '',
           ),
         ],
         child: SafeArea(

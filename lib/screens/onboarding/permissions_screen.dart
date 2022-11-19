@@ -8,6 +8,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/blocs/shared_prefs.dart';
+import 'package:verifi/models/profile.dart';
 import 'package:verifi/screens/onboarding/widgets/onboarding_app_bar.dart';
 import 'package:verifi/screens/onboarding/widgets/onboarding_outline_button.dart';
 import 'package:verifi/screens/onboarding/widgets/permission_request_row.dart';
@@ -41,6 +42,11 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ProfileCubit>().getProfile(
+            context.read<AuthenticationCubit>().state.user!.uid,
+          );
+    });
     return Scaffold(
       appBar: OnboardingAppBar(),
       backgroundColor:
@@ -161,38 +167,42 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
           _locationAlways != null &&
           _activityRecognition != null &&
           _notifications != null,
-      child: OnboardingOutlineButton(
-        onPressed: () async {
-          // Set flag for routing to skip this page in future
-          await sharedPrefs.setPermissionsComplete();
-          final displayName = context.read<ProfileCubit>().displayName;
-          final wallets =
-              await context.read<WalletConnectCubit>().getAvailableWallets();
-          // If displayName is not set, continue onboarding
-          if (displayName == null) {
-            // Web3 onboarding
-            if (wallets.isNotEmpty) {
-              await Navigator.of(context).pushNamedAndRemoveUntil(
-                '/onboarding/readyWeb3',
-                ModalRoute.withName('onboarding/'),
-              );
-              // Web2 onboarding
-            } else {
-              await Navigator.of(context).pushNamedAndRemoveUntil(
-                '/onboarding/terms',
-                ModalRoute.withName('/onboarding'),
-              );
-            }
-            // If display name is not null, profile is complete.
-            // Navigate to final setup page.
-          } else {
-            await Navigator.of(context).pushNamedAndRemoveUntil(
-              '/onboarding/finalSetup',
-              ModalRoute.withName('onboarding/'),
-            );
-          }
+      child: BlocBuilder<ProfileCubit, Profile>(
+        builder: (context, profile) {
+          return OnboardingOutlineButton(
+            onPressed: () async {
+              // Set flag for routing to skip this page in future
+              await sharedPrefs.setPermissionsComplete();
+              final wallets = await context
+                  .read<WalletConnectCubit>()
+                  .getAvailableWallets();
+              // If displayName is not set, continue onboarding
+              if (profile.displayName == null) {
+                // Web3 onboarding
+                if (wallets.isNotEmpty) {
+                  await Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/onboarding/readyWeb3',
+                    ModalRoute.withName('onboarding/'),
+                  );
+                  // Web2 onboarding
+                } else {
+                  await Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/onboarding/terms',
+                    ModalRoute.withName('/onboarding'),
+                  );
+                }
+                // If display name is not null, profile is complete.
+                // Navigate to final setup page.
+              } else {
+                await Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/onboarding/finalSetup',
+                  ModalRoute.withName('onboarding/'),
+                );
+              }
+            },
+            text: "Continue",
+          );
         },
-        text: "Continue",
       ),
     );
   }
