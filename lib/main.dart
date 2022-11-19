@@ -34,7 +34,7 @@ void main() async {
     // Change this to IP of Firebase emulator server (or localhost)
     _emulatorEndpoint = "192.168.12.152";
     // _emulatorEndpoint = null;
-    _setupTestEnvironment = true;
+    _setupTestEnvironment = false;
   }
   await initialize(emulatorEndpoint: _emulatorEndpoint);
   if ((null != _emulatorEndpoint) && (true == _setupTestEnvironment)) {
@@ -104,7 +104,6 @@ Future<void> initialize({String? emulatorEndpoint}) async {
     // that may be saved from previous emulator instance
     if (Platform.isIOS) {
       await getLocalNetworkAccess();
-      await FirebaseAuth.instance.signOut();
     }
   }
 }
@@ -159,7 +158,7 @@ Future<Profile> setupTestEnvironment({
   debugPrint("Phone number verified");
   // Generate test Profile with auth token as id
   const ethAddress = "0x0123456789abcdef0123456789abcdef01234567";
-  const displayName = "testuser";
+  const displayName = "test-user";
   final avatar = randomAvatarString(displayName, trBackground: true);
   final profile = Profile(
     id: uid,

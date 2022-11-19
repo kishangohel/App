@@ -21,7 +21,9 @@ class ProfileCubit extends HydratedCubit<Profile> {
     this._userLocationRepository,
     this._wifiRepository,
   ) : super(const Profile(id: '')) {
-    getProfile(userId);
+    if (userId != '') {
+      getProfile(userId);
+    }
   }
 
   /// Get the profile information for a user by uid.
@@ -102,6 +104,7 @@ class ProfileCubit extends HydratedCubit<Profile> {
 
   Future<void> createProfile() async {
     await _userProfileRepository.createProfile(state);
+    getProfile(userId);
     return;
   }
 
