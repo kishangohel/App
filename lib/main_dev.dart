@@ -15,12 +15,12 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:random_avatar/random_avatar.dart';
-import 'package:verifi/access_point_callbacks.dart';
+import 'package:verifi/access_point_callbacks_dev.dart';
 import 'package:verifi/blocs/image_utils.dart';
 import 'package:verifi/blocs/logging_bloc_delegate.dart';
 import 'package:verifi/blocs/shared_prefs.dart';
 import 'package:verifi/blocs/svg_provider.dart';
-import 'package:verifi/firebase_options.dart';
+import 'package:verifi/firebase_options_dev.dart';
 import 'package:verifi/models/models.dart';
 import 'package:verifi/widgets/app.dart';
 
@@ -30,14 +30,11 @@ void main() async {
   String? _emulatorEndpoint;
   bool? _setupTestEnvironment;
   Profile? _profile;
-  if (kDebugMode) {
-    // Change this to IP of Firebase emulator server (or localhost)
-    _emulatorEndpoint = "192.168.12.152";
-    // _emulatorEndpoint = null;
-    _setupTestEnvironment = false;
-  }
+  // Change this to IP of Firebase emulator server (or localhost)
+  _emulatorEndpoint = "192.168.12.152";
+  _setupTestEnvironment = true;
   await initialize(emulatorEndpoint: _emulatorEndpoint);
-  if ((null != _emulatorEndpoint) && (true == _setupTestEnvironment)) {
+  if ((true == _setupTestEnvironment)) {
     _profile = await setupTestEnvironment(
       emulatorEndpoint: _emulatorEndpoint,
     );
@@ -54,7 +51,7 @@ void main() async {
   // Run the app
   // If release mode or [_signInTestUser] is false, profile will be null and
   // user will go through standard onboarding process.
-  runApp(VeriFi(_profile));
+  runApp(VeriFi(testProfile: _profile));
 }
 
 /// Initialize various dependencies.
@@ -126,7 +123,7 @@ Future<Profile> setupTestEnvironment({
   // if you restart the emulator and a new auth token gets created.
   // Sign in to Firebase via test phone number
   final verificationCodesEndpoint =
-      "http://$emulatorEndpoint:9099/emulator/v1/projects/bionic-water-366401/verificationCodes";
+      "http://$emulatorEndpoint:9099/emulator/v1/projects/verifi-dev/verificationCodes";
   final authCompleter = Completer<String>();
   final fbAuth = FirebaseAuth.instance;
   debugPrint("Verifying phone number");

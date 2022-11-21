@@ -1,13 +1,13 @@
-import auto_connect
-import CoinbaseWalletSDK
+ import auto_connect
+ import CoinbaseWalletSDK
 import Flutter
 import GoogleMaps
 import UIKit
 
 // Need this to register auto_connect headless runner
-func registerPlugins(_ registry: FlutterPluginRegistry) {
+ func registerPlugins(_ registry: FlutterPluginRegistry) {
     GeneratedPluginRegistrant.register(with: registry)
-}
+ }
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {

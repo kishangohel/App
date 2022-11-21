@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "599936681223",
+    "project_id": "verifi-dev",
+    "storage_bucket": "verifi-dev.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:599936681223:android:c0d545fe795983fb8731a2",
+        "android_client_info": {
+          "package_name": "world.verifi.app.dev"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "599936681223-cb7l67nkvr5fo94ianc7h9f7itdopovc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCzuovuEMxgoaDIBlfAHvO1mO_4y2_fAFU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "599936681223-cb7l67nkvr5fo94ianc7h9f7itdopovc.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "599936681223-7unvv6bt18vec5h8kvt1m241rv8shr0r.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "world.verifi.app.dev"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -60,6 +60,25 @@ android {
         versionName flutterVersionName
     }
 
+    flavorDimensions "app"
+    productFlavors {
+        development {
+            dimension "app"
+            applicationIdSuffix ".dev"
+            manifestPlaceholders = [appName: "[DEV] VeriFi"]
+        }
+        staging {
+            dimension "app"
+            applicationIdSuffix ".stg"
+            manifestPlaceholders = [appName: "[STG] VeriFi"]
+        }
+        production {
+            dimension "app"
+            applicationIdSuffix ""
+            manifestPlaceholders = [appName: "VeriFi"]
+        }
+    }
+
     signingConfigs {
         release {
             keyAlias keystoreProperties['keyAlias']

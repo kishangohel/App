@@ -3,13 +3,12 @@ import 'dart:io';
 import 'package:auto_connect/auto_connect.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:verifi/blocs/blocs.dart';
-import 'package:verifi/firebase_options.dart';
-import 'package:verifi/main.dart';
+import 'package:verifi/firebase_options_prod.dart';
+import 'package:verifi/main_prod.dart';
 import 'package:verifi/models/models.dart';
 import 'package:verifi/repositories/repositories.dart';
 import 'package:verifi/utils/geoflutterfire/geoflutterfire.dart';
@@ -18,9 +17,7 @@ import 'package:verifi/utils/geoflutterfire/geoflutterfire.dart';
 ///
 Future<void> updateNearbyAccessPoints(double lat, double lng) async {
   debugPrint("Updating nearby access points");
-  await initialize(
-    emulatorEndpoint: (kDebugMode) ? "192.168.12.152" : null,
-  );
+  await initialize();
   final permissionGranted = await Permission.location.isGranted;
   if (permissionGranted == false) {
     return;

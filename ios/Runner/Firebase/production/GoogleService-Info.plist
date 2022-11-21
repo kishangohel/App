@@ -3,21 +3,23 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>962492866083-h6s45er82kfpvu2mg189vra8o00f9bah.apps.googleusercontent.com</string>
+	<string>629088905005-9l4vt43sp337ne7nq2arsnvmmb2vccrt.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.962492866083-h6s45er82kfpvu2mg189vra8o00f9bah</string>
+	<string>com.googleusercontent.apps.629088905005-9l4vt43sp337ne7nq2arsnvmmb2vccrt</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>629088905005-qfl72u3t5qu43rf0cdvl45vcsgn0iefd.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyBIBlO4yfG0lRGFO_uiAWwi1vuNV122z7U</string>
+	<string>AIzaSyDG-YS0daZzGspQdS7u00hATT3VCTFa2KM</string>
 	<key>GCM_SENDER_ID</key>
-	<string>962492866083</string>
+	<string>629088905005</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>world.verifi.app.stg</string>
+	<string>world.verifi.app</string>
 	<key>PROJECT_ID</key>
-	<string>staging-verifi</string>
+	<string>bionic-water-366401</string>
 	<key>STORAGE_BUCKET</key>
-	<string>staging-verifi.appspot.com</string>
+	<string>bionic-water-366401.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:962492866083:ios:3247215a489694dc99db96</string>
+	<string>1:629088905005:ios:d24403e8fa9ec9d4e015a4</string>
 </dict>
 </plist>

@@ -31,7 +31,7 @@ import 'package:verifi/widgets/home_page.dart';
 /// the app and initializes the [MaterialApp].
 class VeriFi extends StatefulWidget {
   final Profile? testProfile;
-  const VeriFi(this.testProfile);
+  const VeriFi({this.testProfile});
 
   @override
   State<StatefulWidget> createState() => VeriFiState();
