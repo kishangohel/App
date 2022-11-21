@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "962492866083",
+    "project_id": "staging-verifi",
+    "storage_bucket": "staging-verifi.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:962492866083:android:60de38107f8020bf99db96",
+        "android_client_info": {
+          "package_name": "world.verifi.app.stg"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "962492866083-498sidjipeu8gkeijdj5e2ag66bk9oob.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCWLLnWe7YPU8EbUmoEI_dNxrv-OvTuvac"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "962492866083-498sidjipeu8gkeijdj5e2ag66bk9oob.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:verifi/access_point_callbacks.dart';
-import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/screens/profile_screen/profile_screen.dart';
 import 'package:verifi/screens/map_screen/add_network/add_network_fab.dart';
 import 'package:verifi/screens/map_screen/map_screen.dart';
@@ -27,37 +23,22 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocListener(
-      listeners: [
-        BlocListener<LocationCubit, Position?>(
-          listener: (context, location) async {
-            if (location != null) {
-              context.read<ProfileCubit>().updateLocation(location);
-              updateNearbyAccessPoints(location.latitude, location.longitude);
-            }
-          },
-          listenWhen: (_, current) {
-            return current != null;
-          },
-        ),
-      ],
-      child: Scaffold(
-        appBar: buildAppBar(),
-        body: IndexedStack(
-          index: _currentIndex,
-          children: _bodyChildren,
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          items: buildBottomNavBarItems(),
-          onTap: (index) {
-            setState(() => _currentIndex = index);
-          },
-        ),
-        floatingActionButton: _buildFab(),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        extendBodyBehindAppBar: (_currentIndex == 0) ? true : false,
+    return Scaffold(
+      appBar: buildAppBar(),
+      body: IndexedStack(
+        index: _currentIndex,
+        children: _bodyChildren,
       ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        items: buildBottomNavBarItems(),
+        onTap: (index) {
+          setState(() => _currentIndex = index);
+        },
+      ),
+      floatingActionButton: _buildFab(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      extendBodyBehindAppBar: (_currentIndex == 0) ? true : false,
     );
   }
 
