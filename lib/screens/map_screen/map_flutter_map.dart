@@ -5,6 +5,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:verifi/blocs/blocs.dart';
 import 'package:verifi/screens/map_screen/widgets/cluster_layer.dart';
 import 'package:verifi/screens/map_screen/widgets/mapbox_tile_layer.dart';
+import 'package:verifi/screens/map_screen/widgets/user_marker_layer.dart';
 
 class MapFlutterMap extends StatefulWidget {
   static const maxZoom = 19.0;
@@ -42,6 +43,7 @@ class _MapFlutterMapState extends State<MapFlutterMap>
       children: [
         MapboxTileLayer(),
         ClusterLayer(),
+        UserMarkerLayer(),
       ],
     );
   }
