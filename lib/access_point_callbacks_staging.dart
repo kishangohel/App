@@ -34,7 +34,7 @@ Future<void> updateNearbyAccessPoints(double lat, double lng) async {
   );
   // Don't auto connect to UnVeriFied APs
   newAccessPoints
-      .removeWhere((ap) => ap.wifiDetails?.verifiedStatus == "UnVeriFied");
+      .removeWhere((ap) => ap.wifiDetails.verifiedStatus == "UnVeriFied");
   // Get pinned access points
   List<String> pinnedAccessPoints = await AutoConnect.getPinnedGeofences();
   // Shrink down geofence list to max amount allowed, minus pinned geofences
@@ -69,8 +69,8 @@ Future<void> updateNearbyAccessPoints(double lat, double lng) async {
   }
   // Register the new geofences
   for (AccessPoint ap in newAccessPoints) {
-    if (ap.wifiDetails == null || ap.placeDetails == null) {
-      debugPrint("Access point wifi or place details is null");
+    if (ap.placeDetails == null) {
+      debugPrint("Place details is null");
       return;
     }
     // If geofence is already registered, skip
@@ -80,12 +80,12 @@ Future<void> updateNearbyAccessPoints(double lat, double lng) async {
     AutoConnect.addAccessPointWithGeofence(
       id: ap.placeDetails!.placeId,
       geofence: Geofence(
-        lat: ap.wifiDetails!.location.latitude,
-        lng: ap.wifiDetails!.location.longitude,
+        lat: ap.wifiDetails.location.latitude,
+        lng: ap.wifiDetails.location.longitude,
       ),
       wifi: WiFi(
-        ssid: ap.wifiDetails!.ssid,
-        password: ap.wifiDetails!.password ?? "",
+        ssid: ap.wifiDetails.ssid,
+        password: ap.wifiDetails.password ?? "",
       ),
     );
   }

@@ -7,7 +7,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:verifi/blocs/wallet_connect/wallet_connect_cubit.dart';
 import 'package:verifi/blocs/wallet_connect/wallet_connect_state.dart';
-import 'package:verifi/models/wallet.dart';
 import 'package:walletconnect_dart/walletconnect_dart.dart';
 
 import '../mocks/hydrated_storage.dart';

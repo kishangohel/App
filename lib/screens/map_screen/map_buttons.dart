@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:verifi/blocs/blocs.dart';
 
 class MapButtons extends StatelessWidget {
@@ -26,9 +26,10 @@ class MapButtons extends StatelessWidget {
                 context.read<LocationCubit>().state!.latitude,
                 context.read<LocationCubit>().state!.longitude,
               );
-              BlocProvider.of<MapCubit>(context).mapController?.animateCamera(
-                    CameraUpdate.newLatLngZoom(location, 18),
-                  );
+              // TODO: animate
+              BlocProvider.of<MapCubit>(context)
+                  .mapController
+                  .move(location, 18);
             }
           },
         ),

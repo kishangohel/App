@@ -1,15 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:fluster/fluster.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_maps_webservice/places.dart';
-import 'package:verifi/blocs/map/map_markers_helper.dart';
 import 'package:verifi/entities/access_point_entity.dart';
 import 'package:verifi/models/models.dart';
 import 'package:verifi/repositories/repositories.dart';
 import 'package:verifi/utils/geoflutterfire/geoflutterfire.dart';
-import 'package:verifi/widgets/app.dart';
 
 class MapUtils {
   static Future<List<AccessPoint>> getNearbyAccessPointsWithPlaceDetails(
@@ -88,42 +81,6 @@ class MapUtils {
       accessPoints.add(AccessPoint(id: wifiDetail.id, wifiDetails: wifiDetail));
     }
     return accessPoints;
-  }
-
-  static Future<PlaceDetails> getPlaceDetails(
-    BuildContext context,
-    String placeId,
-  ) async {
-    final repo = context.read<PlaceRepository>();
-    final details = await repo.getPlaceDetails(placeId, false);
-    return details;
-  }
-
-  static Future<List<AccessPoint>> transformToClusters(
-    List<AccessPoint> accessPoints,
-    double zoom,
-    Map<String, BitmapDescriptor> wifiMarkers,
-    Color clusterTextColor,
-  ) async {
-    final pixelRatio = MediaQuery.of(
-      NavigationService.navigatorKey.currentContext!,
-    ).devicePixelRatio;
-    for (AccessPoint ap in accessPoints) {
-      ap.icon = wifiMarkers[ap.wifiDetails!.verifiedStatus];
-    }
-    Fluster<AccessPoint> clusterManager =
-        await MapMarkersHelper.initClusterManager(
-      accessPoints,
-      11, // min zoom
-      19, // max zoom
-    );
-    final updatedMarkers = await MapMarkersHelper.getClusterMarkers(
-      clusterManager,
-      zoom,
-      clusterTextColor,
-      (30 * pixelRatio).toInt(),
-    );
-    return updatedMarkers;
   }
 
   static String getVeriFiedStatus(DateTime? lastValidated) {

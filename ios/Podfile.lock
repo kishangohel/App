@@ -113,9 +113,6 @@ PODS:
   - FMDB/standard (2.7.5)
   - geolocator_apple (1.2.0):
     - Flutter
-  - google_maps_flutter_ios (0.0.1):
-    - Flutter
-    - GoogleMaps
   - GoogleAppMeasurement (10.2.0):
     - GoogleAppMeasurement/AdIdSupport (= 10.2.0)
     - GoogleUtilities/AppDelegateSwizzler (~> 7.8)
@@ -140,11 +137,6 @@ PODS:
     - GoogleUtilities/Environment (~> 7.7)
     - nanopb (< 2.30910.0, >= 2.30908.0)
     - PromisesObjC (< 3.0, >= 1.2)
-  - GoogleMaps (7.2.0):
-    - GoogleMaps/Maps (= 7.2.0)
-  - GoogleMaps/Base (7.2.0)
-  - GoogleMaps/Maps (7.2.0):
-    - GoogleMaps/Base
   - GoogleUtilities/AppDelegateSwizzler (7.10.0):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
@@ -202,7 +194,6 @@ DEPENDENCIES:
   - flutter_keyboard_visibility (from `.symlinks/plugins/flutter_keyboard_visibility/ios`)
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
-  - google_maps_flutter_ios (from `.symlinks/plugins/google_maps_flutter_ios/ios`)
   - network_info_plus (from `.symlinks/plugins/network_info_plus/ios`)
   - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
@@ -225,7 +216,6 @@ SPEC REPOS:
     - FMDB
     - GoogleAppMeasurement
     - GoogleDataTransport
-    - GoogleMaps
     - GoogleUtilities
     - GTMSessionFetcher
     - nanopb
@@ -261,8 +251,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_local_notifications/ios"
   geolocator_apple:
     :path: ".symlinks/plugins/geolocator_apple/ios"
-  google_maps_flutter_ios:
-    :path: ".symlinks/plugins/google_maps_flutter_ios/ios"
   network_info_plus:
     :path: ".symlinks/plugins/network_info_plus/ios"
   path_provider_ios:
@@ -301,17 +289,15 @@ SPEC CHECKSUMS:
   FirebaseCore: 813838072b797b64f529f3c2ee35e696e5641dd1
   FirebaseCoreInternal: 091bde13e47bb1c5e9fe397634f3593dc390430f
   FirebaseCrashlytics: df7406152189d48346deafb716806d7bd9ebb573
-  FirebaseFirestore: 410df999af5c53d4d289ed16a863940a116e1d35
+  FirebaseFirestore: 8efd95c87f0210125fbd50d1a894e2693053c9c9
   FirebaseInstallations: 004915af170935e3a583faefd5f8bc851afc220f
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_keyboard_visibility: 0339d06371254c3eb25eeb90ba8d17dca8f9c069
   flutter_local_notifications: 0c0b1ae97e741e1521e4c1629a459d04b9aec743
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   geolocator_apple: cc556e6844d508c95df1e87e3ea6fa4e58c50401
-  google_maps_flutter_ios: 66201f392bf62d500f07670a30488a247b9bb5b9
   GoogleAppMeasurement: 3bc3a6484b7bb20dd8489242c4dd3c92a3e5107b
   GoogleDataTransport: 1c8145da7117bd68bbbed00cf304edb6a24de00f
-  GoogleMaps: 65ce5426e2398bb81433c8076f2ab6419c2c5537
   GoogleUtilities: bad72cb363809015b1f7f19beb1f1cd23c589f95
   GTMSessionFetcher: c1edebe64e9fb4e8f6415d018edf1fd3eac074a1
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
