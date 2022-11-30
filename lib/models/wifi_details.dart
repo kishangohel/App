@@ -1,4 +1,4 @@
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:verifi/blocs/map/map.dart';
 import 'package:verifi/entities/access_point_entity.dart';
 

@@ -1,14 +1,16 @@
 import 'package:auto_connect/auto_connect.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:verifi/blocs/location/location_cubit.dart';
 import 'package:verifi/models/access_point.dart';
 import 'package:verifi/utils/geoflutterfire/geoflutterfire.dart';
 
 class MarkerInfoSheet extends StatefulWidget {
   final AccessPoint accessPoint;
+
   const MarkerInfoSheet(this.accessPoint);
+
   @override
   State<StatefulWidget> createState() => _MarkerInfoSheetState();
 }
@@ -54,7 +56,7 @@ class _MarkerInfoSheetState extends State<MarkerInfoSheet> {
                       child: const Icon(Icons.wifi),
                     ),
                     Text(
-                      widget.accessPoint.wifiDetails?.ssid ?? "Unknown network",
+                      widget.accessPoint.wifiDetails.ssid,
                     ),
                   ],
                 ),
@@ -70,18 +72,18 @@ class _MarkerInfoSheetState extends State<MarkerInfoSheet> {
                     Container(
                       padding: const EdgeInsets.only(right: 8.0),
                       child: Icon(
-                        (widget.accessPoint.wifiDetails?.password == null ||
-                                widget.accessPoint.wifiDetails?.password == "")
+                        (widget.accessPoint.wifiDetails.password == null ||
+                                widget.accessPoint.wifiDetails.password == "")
                             ? Icons.lock_open
                             : Icons.lock_outlined,
                       ),
                     ),
                     Text(
-                      (widget.accessPoint.wifiDetails?.password == null ||
-                              widget.accessPoint.wifiDetails?.password == "")
+                      (widget.accessPoint.wifiDetails.password == null ||
+                              widget.accessPoint.wifiDetails.password == "")
                           ? "Open"
                           : "\u2022" *
-                              widget.accessPoint.wifiDetails!.password!.length,
+                              widget.accessPoint.wifiDetails.password!.length,
                     ),
                   ],
                 ),
@@ -96,12 +98,12 @@ class _MarkerInfoSheetState extends State<MarkerInfoSheet> {
                   children: [
                     Container(
                       padding: const EdgeInsets.only(right: 8.0),
-                      child: (widget.accessPoint.wifiDetails!.verifiedStatus ==
+                      child: (widget.accessPoint.wifiDetails.verifiedStatus ==
                               "VeriFied")
                           ? const Icon(Icons.check)
                           : const Icon(Icons.question_mark),
                     ),
-                    Text(widget.accessPoint.wifiDetails!.verifiedStatus!),
+                    Text(widget.accessPoint.wifiDetails.verifiedStatus!),
                   ],
                 ),
               ),
@@ -138,7 +140,7 @@ class _MarkerInfoSheetState extends State<MarkerInfoSheet> {
           Visibility(
             visible: isWithinProximityOfAP(
               context,
-              widget.accessPoint.wifiDetails!.location,
+              widget.accessPoint.wifiDetails.location,
             ),
             child: Container(
               padding: const EdgeInsets.symmetric(
@@ -160,10 +162,9 @@ class _MarkerInfoSheetState extends State<MarkerInfoSheet> {
                           setState(() => _connecting = true);
                           final result = await AutoConnect.verifyAccessPoint(
                             wifi: WiFi(
-                              ssid: widget.accessPoint.wifiDetails!.ssid,
+                              ssid: widget.accessPoint.wifiDetails.ssid,
                               password:
-                                  widget.accessPoint.wifiDetails!.password ??
-                                      "",
+                                  widget.accessPoint.wifiDetails.password ?? "",
                             ),
                           );
                           setState(() => _connecting = false);
@@ -173,7 +174,7 @@ class _MarkerInfoSheetState extends State<MarkerInfoSheet> {
                           Navigator.of(context).pop();
                         },
                         child: Text(
-                          (widget.accessPoint.wifiDetails!.verifiedStatus! ==
+                          (widget.accessPoint.wifiDetails.verifiedStatus! ==
                                   "VeriFied")
                               ? "Connect"
                               : "Validate",
@@ -241,12 +242,12 @@ class _MarkerInfoSheetState extends State<MarkerInfoSheet> {
     await AutoConnect.addAccessPointWithGeofence(
       id: widget.accessPoint.placeDetails!.placeId,
       geofence: Geofence(
-        lat: widget.accessPoint.wifiDetails!.location.latitude,
-        lng: widget.accessPoint.wifiDetails!.location.longitude,
+        lat: widget.accessPoint.wifiDetails.location.latitude,
+        lng: widget.accessPoint.wifiDetails.location.longitude,
       ),
       wifi: WiFi(
-        ssid: widget.accessPoint.wifiDetails!.ssid,
-        password: widget.accessPoint.wifiDetails?.password ?? "",
+        ssid: widget.accessPoint.wifiDetails.ssid,
+        password: widget.accessPoint.wifiDetails.password ?? "",
       ),
     );
     final isPinned = await AutoConnect.isAccessPointPinned(

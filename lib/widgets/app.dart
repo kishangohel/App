@@ -11,16 +11,16 @@ import 'package:verifi/blocs/theme/theme_state.dart';
 import 'package:verifi/models/profile.dart';
 import 'package:verifi/repositories/nftport_repository.dart';
 import 'package:verifi/repositories/repositories.dart';
-import 'package:verifi/screens/onboarding/pfp_nft_screen.dart';
-import 'package:verifi/screens/onboarding/ready_web3_screen.dart';
 import 'package:verifi/screens/onboarding/connect_wallet_screen.dart';
 import 'package:verifi/screens/onboarding/display_name_screen.dart';
-import 'package:verifi/screens/onboarding/permissions_screen.dart';
-import 'package:verifi/screens/onboarding/phone_number_screen.dart';
 import 'package:verifi/screens/onboarding/final_setup_screen.dart';
+import 'package:verifi/screens/onboarding/intro_screen.dart';
+import 'package:verifi/screens/onboarding/permissions_screen.dart';
+import 'package:verifi/screens/onboarding/pfp_nft_screen.dart';
+import 'package:verifi/screens/onboarding/phone_number_screen.dart';
+import 'package:verifi/screens/onboarding/ready_web3_screen.dart';
 import 'package:verifi/screens/onboarding/sign_wallet_screen.dart';
 import 'package:verifi/screens/onboarding/sms_code_screen.dart';
-import 'package:verifi/screens/onboarding/intro_screen.dart';
 import 'package:verifi/screens/onboarding/terms_screen.dart';
 import 'package:verifi/widgets/home_page.dart';
 
@@ -31,6 +31,7 @@ import 'package:verifi/widgets/home_page.dart';
 /// the app and initializes the [MaterialApp].
 class VeriFi extends StatefulWidget {
   final Profile? testProfile;
+
   const VeriFi({this.testProfile});
 
   @override
@@ -90,7 +91,6 @@ class VeriFiState extends State<VeriFi> {
           BlocProvider<MapCubit>(
             create: (context) => MapCubit(
               RepositoryProvider.of<WifiRepository>(context),
-              RepositoryProvider.of<PlaceRepository>(context),
             ),
           ),
           BlocProvider<MapSearchCubit>(
