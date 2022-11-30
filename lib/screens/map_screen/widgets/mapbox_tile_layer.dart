@@ -6,6 +6,7 @@ import 'package:verifi/screens/map_screen/map_flutter_map.dart';
 class MapboxTileLayer extends StatefulWidget {
   static const _user = "bifrostyyy";
   static const _tileSize = "256"; // 256 or 512
+  // TODO: Replace with more restricted access token via dart-define
   static const _accessToken =
       "pk.eyJ1IjoiYmlmcm9zdHl5eSIsImEiOiJjbGIweHR0dGgwenVlM3dyejdheDc1aHBlIn0.rcH_qr3n01hJXmMsqaK-Rw";
   static const _userAgentPackageName = 'world.verifi.app';
