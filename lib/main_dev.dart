@@ -27,17 +27,19 @@ import 'package:verifi/widgets/app.dart';
 /// The entrypoint of the application.
 ///
 void main() async {
-  String? _emulatorEndpoint;
   bool? _setupTestEnvironment;
   Profile? _profile;
   // Change this to IP of Firebase emulator server (or localhost)
-  _emulatorEndpoint = "192.168.12.152";
+  const localIp =
+      String.fromEnvironment('VERIFI_DEV_LOCAL_IP', defaultValue: '');
+  if (localIp.isEmpty) {
+    throw "Must set VERIFI_DEV_LOCAL_IP to your computer's IP as follows:"
+        "flutter run -t lib/main_dev.dart --flavor development --dart-define=VERIFI_DEV_LOCAL_IP=[YOUR IP]";
+  }
   _setupTestEnvironment = true;
-  await initialize(emulatorEndpoint: _emulatorEndpoint);
+  await initialize(emulatorEndpoint: localIp);
   if ((true == _setupTestEnvironment)) {
-    _profile = await setupTestEnvironment(
-      emulatorEndpoint: _emulatorEndpoint,
-    );
+    _profile = await setupTestEnvironment(emulatorEndpoint: localIp);
   }
   // Setup auto connect
   await AutoConnect.initialize(
