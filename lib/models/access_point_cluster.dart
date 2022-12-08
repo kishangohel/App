@@ -1,25 +1,43 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_map_supercluster/flutter_map_supercluster.dart';
 import 'package:verifi/models/access_point.dart';
-import 'package:verifi/screens/map_screen/widgets/access_point_marker.dart';
 
+// A cluster displayed on the map.
 class AccessPointCluster extends ClusterDataBase {
-  final Color color;
+  final int verified;
+  final int unverified;
+  final int expired;
+  final int total;
 
-  AccessPointCluster({required this.color});
+  AccessPointCluster({
+    this.verified = 0,
+    this.unverified = 0,
+    this.expired = 0,
+  }) : total = verified + unverified + expired;
 
-  AccessPointCluster.fromAccessPoint(AccessPoint accessPoint)
-      : color = AccessPointMarker.colorFor(accessPoint);
-
-  @override
-  AccessPointCluster combine(covariant AccessPointCluster data) {
-    var color = Colors.red;
-    if (color == Colors.green || data.color == Colors.green) {
-      color = Colors.green;
-    } else if (color == Colors.orange || data.color == Colors.orange) {
-      color = Colors.orange;
+  factory AccessPointCluster.fromAccessPoint(AccessPoint accessPoint) {
+    switch (accessPoint.wifiDetails.verifiedStatus) {
+      case "VeriFied":
+        return AccessPointCluster(verified: 1);
+      case "UnVeriFied":
+        return AccessPointCluster(unverified: 1);
+      case "Expired":
+        return AccessPointCluster(expired: 1);
+      default:
+        throw "Unexpected verified status: ${accessPoint.wifiDetails.verifiedStatus}";
     }
+  }
 
-    return AccessPointCluster(color: color);
+  // Combines two clusters, used when building the map clusters which begins
+  // from the highest zoom level and moves down zoom levels. When
+  // clusters/markers are close enough to be clustered in a lower zoom level
+  // a new cluster is formed by combining them (AccessPoints are converted to a
+  // cluster and then combined).
+  @override
+  AccessPointCluster combine(AccessPointCluster data) {
+    return AccessPointCluster(
+      verified: verified + data.verified,
+      unverified: unverified + data.unverified,
+      expired: expired + data.expired,
+    );
   }
 }

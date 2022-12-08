@@ -26,10 +26,7 @@ class MapButtons extends StatelessWidget {
                 context.read<LocationCubit>().state!.latitude,
                 context.read<LocationCubit>().state!.longitude,
               );
-              // TODO: animate
-              BlocProvider.of<MapCubit>(context)
-                  .mapController
-                  .move(location, 18);
+              context.read<MapCubit>().move(location, 18);
             }
           },
         ),

@@ -22,12 +22,7 @@ class LocationCubit extends HydratedCubit<Position?> {
   }
 
   @override
-  Map<String, dynamic>? toJson(Position? state) {
-    if (state != null) {
-      return state.toJson();
-    }
-    return null;
-  }
+  Map<String, dynamic>? toJson(Position? state) => state?.toJson();
 
   @override
   Future<void> close() async {

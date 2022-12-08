@@ -6,16 +6,16 @@ import 'package:verifi/blocs/location/location_cubit.dart';
 import 'package:verifi/models/access_point.dart';
 import 'package:verifi/utils/geoflutterfire/geoflutterfire.dart';
 
-class MarkerInfoSheet extends StatefulWidget {
+class AccessPointInfoSheet extends StatefulWidget {
   final AccessPoint accessPoint;
 
-  const MarkerInfoSheet(this.accessPoint);
+  const AccessPointInfoSheet(this.accessPoint);
 
   @override
-  State<StatefulWidget> createState() => _MarkerInfoSheetState();
+  State<StatefulWidget> createState() => _AccessPointInfoSheetState();
 }
 
-class _MarkerInfoSheetState extends State<MarkerInfoSheet> {
+class _AccessPointInfoSheetState extends State<AccessPointInfoSheet> {
   bool _connecting = false;
 
   @override

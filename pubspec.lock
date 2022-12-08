@@ -71,6 +71,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.0"
+  badges:
+    dependency: "direct main"
+    description:
+      name: badges
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.3"
   bloc:
     dependency: "direct main"
     description:
@@ -612,7 +619,7 @@ packages:
       name: flutter_map_supercluster
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.1"
+    version: "2.1.1"
   flutter_picker:
     dependency: "direct main"
     description:

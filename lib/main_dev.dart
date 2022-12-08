@@ -167,6 +167,7 @@ Future<Profile> setupTestEnvironment({
     pfp: Pfp(
       id: displayName,
       name: displayName,
+      description: 'test-user for development',
       image: SvgProvider(avatar, source: SvgSource.raw),
       imageBitmap: await ImageUtils.rawVectorToBytes(avatar, 70.0),
     ),
