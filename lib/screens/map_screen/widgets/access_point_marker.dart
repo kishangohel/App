@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
 
 import '../../../models/access_point.dart';
 
@@ -11,7 +10,7 @@ class AccessPointMarker extends Marker {
       : super(
           width: 40,
           height: 40,
-          point: accessPoint.location ?? LatLng(-1.0, -1.0),
+          point: accessPoint.location,
           builder: (context) {
             return Icon(
               Icons.wifi,
@@ -22,7 +21,7 @@ class AccessPointMarker extends Marker {
         );
 
   static Color colorFor(AccessPoint accessPoint) {
-    final verifiedStatus = accessPoint.wifiDetails.verifiedStatus;
+    final verifiedStatus = accessPoint.verifiedStatus;
     switch (verifiedStatus) {
       case "Expired":
         return Colors.red;

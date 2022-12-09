@@ -13,13 +13,13 @@ import 'package:verifi/repositories/repositories.dart';
 class ProfileCubit extends HydratedCubit<Profile> {
   final UserProfileRepository _userProfileRepository;
   final UserLocationRepository _userLocationRepository;
-  final WifiRepository _wifiRepository;
+  final AccessPointRepository _accessPointRepository;
   StreamSubscription<Profile>? _profileStream;
 
   ProfileCubit(
     this._userProfileRepository,
     this._userLocationRepository,
-    this._wifiRepository,
+    this._accessPointRepository,
   ) : super(const Profile(id: '')) {
     if (userId != '') {
       getProfile(userId);
@@ -37,9 +37,9 @@ class ProfileCubit extends HydratedCubit<Profile> {
           .getProfileById(userId)
           .asyncMap((profile) async {
         final validated =
-            await _wifiRepository.getNetworkValidatedCount(profile.id);
-        final contributed =
-            await _wifiRepository.getNetworkContributionCount(profile.id);
+            await _accessPointRepository.getNetworkValidatedCount(profile.id);
+        final contributed = await _accessPointRepository
+            .getNetworkContributionCount(profile.id);
         final profileWithStats = profile.copyWith(
           validated: validated,
           contributed: contributed,
@@ -56,11 +56,17 @@ class ProfileCubit extends HydratedCubit<Profile> {
 
   // Getters
   String get userId => state.id;
+
   Pfp? get pfp => state.pfp;
+
   String? get ethAddress => state.ethAddress;
+
   String? get displayName => state.displayName;
+
   int? get veriPoints => state.veriPoints;
+
   int? get contributedCount => state.contributed;
+
   int? get validatedCount => state.validated;
 
   // Setters

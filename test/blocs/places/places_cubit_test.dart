@@ -1,34 +1,37 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_webservice/places.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:verifi/blocs/places/places_cubit.dart';
-import 'package:verifi/models/place.dart';
+import 'package:verifi/entities/feature_entity.dart';
+import 'package:verifi/models/models.dart';
 import 'package:verifi/repositories/place_repository.dart';
 
 class MockPlaceRepository extends Mock implements PlaceRepository {}
 
-class MockPrediction extends Mock implements Prediction {}
+class MockFeatureEntity extends Mock implements FeatureEntity {}
 
 class MockPosition extends Mock implements Position {}
 
-class MockLocation extends Mock implements Location {}
+class MockLatLng extends Mock implements LatLng {}
 
 void main() {
   group('PlacesCubit', () {
     late PlaceRepository placeRepository;
     late PlacesCubit placesCubit;
-    late Prediction prediction;
+    late FeatureEntity feature;
     late Position position;
 
     setUp(() {
       registerFallbackValue(MockPosition());
-      registerFallbackValue(MockLocation());
+      registerFallbackValue(MockLatLng());
       placeRepository = MockPlaceRepository();
-      prediction = MockPrediction();
-      when(() => prediction.description).thenReturn('description');
-      when(() => prediction.placeId).thenReturn('placeId');
+      feature = MockFeatureEntity();
+      when(() => feature.placeName).thenReturn('placeName');
+      when(() => feature.text).thenReturn('text');
+      when(() => feature.id).thenReturn('placeId');
+      when(() => feature.center).thenReturn(LatLng(1.0, 2.0));
       placesCubit = PlacesCubit(placeRepository);
       position = MockPosition();
       when(() => position.latitude).thenReturn(0.0);
@@ -46,7 +49,7 @@ void main() {
               any(),
               any(),
               any(),
-            )).thenAnswer((_) async => [prediction]);
+            )).thenAnswer((_) async => [feature]);
       },
       build: () => placesCubit,
       act: (placesCubit) => placesCubit.searchNearbyPlaces(
@@ -57,8 +60,10 @@ void main() {
       expect: () => [
         [
           Place(
-            name: prediction.description!,
-            placeId: prediction.placeId!,
+            id: feature.id,
+            title: feature.text,
+            address: feature.placeName,
+            location: feature.center,
           ),
         ],
       ],

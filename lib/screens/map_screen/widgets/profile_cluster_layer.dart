@@ -35,7 +35,9 @@ class _ProfileClusterLayerState extends State<ProfileClusterLayer> {
   Widget build(BuildContext context) {
     return BlocListener<MapCubit, MapState>(
       listenWhen: (oldState, newState) =>
-          oldState.center != newState.center || oldState.zoom != newState.zoom,
+          oldState.center != newState.center ||
+          oldState.zoom != newState.zoom ||
+          oldState.showProfiles != newState.showProfiles,
       listener: (context, state) => _updateUserMarker(state),
       child: SuperclusterLayer.mutable(
         minimumClusterSize: 3,
@@ -65,10 +67,14 @@ class _ProfileClusterLayerState extends State<ProfileClusterLayer> {
   }
 
   void _updateUserMarker([MapState? mapState]) {
-    if (mapState != null && mapState.zoom != null && mapState.zoom! <= 12.0) {
-      _clustersController.clear();
-      return;
+    if (mapState != null) {
+      if (!mapState.showProfiles ||
+          (mapState.zoom != null && mapState.zoom! <= 12.0)) {
+        _clustersController.clear();
+        return;
+      }
     }
+
     final locationState = context.read<LocationCubit>().state;
     final profile = context.read<ProfileCubit>().state;
 

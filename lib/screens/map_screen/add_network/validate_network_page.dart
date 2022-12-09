@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:verifi/blocs/add_network/add_network_cubit.dart';
 import 'package:verifi/blocs/profile/profile_cubit.dart';
-import 'package:verifi/models/place.dart';
+import 'package:verifi/models/models.dart';
 
 class ValidateNetworkPage extends StatefulWidget {
   final PageController controller;
@@ -28,6 +28,7 @@ class ValidateNetworkPage extends StatefulWidget {
 class _ValidateNetworkPageState extends State<ValidateNetworkPage> {
   bool _submitted = false;
   final validated = Completer<String>();
+
   @override
   Widget build(BuildContext context) {
     assert(widget.ssid != null && widget.place != null);
@@ -136,7 +137,7 @@ class _ValidateNetworkPageState extends State<ValidateNetworkPage> {
                       child: Container(
                         padding: const EdgeInsets.only(left: 4.0),
                         child: AutoSizeText(
-                          widget.place?.name ?? '',
+                          widget.place?.title ?? '',
                           maxLines: 2,
                           style: Theme.of(context).textTheme.titleLarge,
                         ),

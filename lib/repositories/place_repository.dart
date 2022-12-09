@@ -1,127 +1,74 @@
-import 'package:flutter/foundation.dart';
-import 'package:google_maps_webservice/places.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:sembast/sembast.dart';
-import 'package:sembast/sembast_io.dart';
-import 'package:uuid/uuid.dart';
+import 'dart:convert';
+import 'dart:math';
+
+import 'package:http/http.dart' as http;
+import 'package:latlong2/latlong.dart';
+import 'package:verifi/entities/feature_entity.dart';
 
 class PlaceRepository {
-  final googlePlacesDbFilename = 'places.db';
-  final store = stringMapStoreFactory.store();
-  var sessionToken = const Uuid().v4();
-  Database? googlePlacesDb;
-  late GoogleMapsPlaces _googleMapsPlaces;
+  static const _mapboxUser = "bifrostyyy";
 
-  PlaceRepository() {
-    _googleMapsPlaces = GoogleMapsPlaces(
-      apiKey: 'AIzaSyBgs18q9v_rpeJVM-dIg6ZKvajHxxglyN0',
-    );
-  }
+  // TODO: Replace with more restricted access token via dart-define
+  static const _mapboxToken =
+      'pk.eyJ1IjoiYmlmcm9zdHl5eSIsImEiOiJjbGIweHR0dGgwenVlM3dyejdheDc1aHBlIn0.rcH_qr3n01hJXmMsqaK-Rw';
 
-  Future<void> initLocalDbs() async {
-    final dir = await getApplicationSupportDirectory();
-    await dir.create(recursive: true);
-    final dbPath = join(dir.path, googlePlacesDbFilename);
-    googlePlacesDb = await databaseFactoryIo.openDatabase(dbPath);
-  }
+  static const _distanceCalculator = Distance(calculator: Haversine());
 
-  Future<void> addPlaceDetailsToCache(PlaceDetails place) async {
-    if (googlePlacesDb == null) {
-      await initLocalDbs();
-    }
-    await store.record(place.placeId).put(
-      googlePlacesDb!,
-      {
-        'formatted_address': place.formattedAddress,
-        'icon': place.icon,
-        'photos': place.photos
-            .map((photo) => {
-                  'photo_reference': photo.photoReference,
-                  'width': photo.width,
-                  'height': photo.height,
-                })
-            .toList(),
-        'geometry': _geometryToJson(place),
-        'place_id': place.placeId,
-        'name': place.name,
-      },
-    );
-  }
+  // We search for places within a square whose edges are this many meters from
+  // the search point.
+  static const _searchCenterOffsetMeters = 100;
 
-  Map<String, Object>? _geometryToJson(PlaceDetails place) {
-    if (place.geometry == null) {
-      return null;
-    }
-    return {
-      'location': {
-        'lat': place.geometry?.location.lat,
-        'lng': place.geometry?.location.lng,
-      }
-    };
-  }
+  // The distance from the search center to the corners of the search box, used
+  // for calculating the search box.
+  static final _searchCenterOffsetMeters45Degrees =
+      sqrt(2 * (pow(_searchCenterOffsetMeters, 2)));
 
-  Future<PlaceDetails> getPlaceDetails(
-    String placeId,
-    bool isAutocomplete,
-  ) async {
-    if (googlePlacesDb == null) {
-      await initLocalDbs();
-    }
-    PlaceDetails? placeDetails = await _getPlaceDetailsCache(placeId);
-    placeDetails ??= await _getPlaceDetailsRemote(placeId, isAutocomplete);
-    addPlaceDetailsToCache(placeDetails);
-    return placeDetails;
-  }
-
-  Future<PlaceDetails?> _getPlaceDetailsCache(String placeId) async {
-    RecordSnapshot<String, Map<String, Object?>>? result =
-        await store.findFirst(
-      googlePlacesDb!,
-      finder: Finder(filter: Filter.byKey(placeId)),
-    );
-    return (result != null) ? PlaceDetails.fromJson(result.value) : null;
-  }
-
-  Future<PlaceDetails> _getPlaceDetailsRemote(
-    String placeId,
-    bool isAutocomplete,
-  ) async {
-    final response = await _googleMapsPlaces.getDetailsByPlaceId(
-      placeId,
-      sessionToken: isAutocomplete ? sessionToken : null,
-      fields: [
-        "geometry",
-        "name",
-        "photos",
-        "icon",
-        "place_id",
-        "formatted_address",
-      ],
-    );
-    // generate new session token for follow-on autocomplete queries
-    if (isAutocomplete) {
-      sessionToken = const Uuid().v4();
-    }
-    debugPrint(response.status);
-    debugPrint("Places response: ${response.result.name}");
-    return response.result;
-  }
-
-  Future<List<Prediction>> searchNearbyPlaces(
-    Location location,
+  Future<List<FeatureEntity>> searchNearbyPlaces(
+    LatLng location,
     String input,
     int radius,
   ) async {
-    PlacesAutocompleteResponse response = await _googleMapsPlaces.autocomplete(
-      input,
-      sessionToken: sessionToken,
-      location: location,
-      radius: radius,
-      types: ["establishment"],
-      language: "en",
-      strictbounds: true,
+    final uri = Uri.https(
+      'api.mapbox.com',
+      '/geocoding/v5/mapbox.places/$input.json',
+      {
+        'bbox': _searchBox(location),
+        'proximity': '${location.latitude},${location.longitude}',
+        'types': 'poi',
+        'access_token': _mapboxToken,
+        'user': _mapboxUser,
+      },
     );
-    return response.predictions;
+    final response = await http.get(uri);
+    final responseBody = jsonDecode(utf8.decode(response.bodyBytes));
+
+    return (List.castFrom<dynamic, Map<String, dynamic>>(
+            responseBody['features']))
+        .map(_parseFeatureEntity)
+        .toList();
+  }
+
+  String _searchBox(LatLng location) {
+    final northWest = _distanceCalculator.offset(
+      location,
+      _searchCenterOffsetMeters45Degrees,
+      -45,
+    );
+    final southEast = _distanceCalculator.offset(
+      location,
+      _searchCenterOffsetMeters45Degrees,
+      135,
+    );
+
+    return '${northWest.longitude},${southEast.latitude},${southEast.longitude},${northWest.latitude}';
+  }
+
+  FeatureEntity _parseFeatureEntity(Map<String, dynamic> json) {
+    return FeatureEntity(
+      id: json['id'],
+      text: json['text'],
+      placeName: json['place_name'],
+      center: LatLng(json['center'][1], json['center'][0]),
+    );
   }
 }

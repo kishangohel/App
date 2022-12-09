@@ -44,7 +44,7 @@ class _ProfileBodyState extends State<ProfileBody> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              _profilePhoto(profile.pfp!, profile.displayName!),
+              _profilePhoto(profile.pfp, profile.displayName),
               Expanded(
                 child: _profileStats(profile),
               ),
@@ -57,7 +57,7 @@ class _ProfileBodyState extends State<ProfileBody> {
     );
   }
 
-  Widget _profilePhoto(Pfp nftPfp, String displayName) {
+  Widget _profilePhoto(Pfp? nftPfp, String? displayName) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -75,7 +75,7 @@ class _ProfileBodyState extends State<ProfileBody> {
                 child: CircleAvatar(
                   radius: 55,
                   // Show NFT if set, otherwise show Multiavatar
-                  backgroundImage: nftPfp.image,
+                  backgroundImage: nftPfp?.image,
                   backgroundColor: Theme.of(context).colorScheme.background,
                 ),
               ),

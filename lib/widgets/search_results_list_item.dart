@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_webservice/places.dart';
+import 'package:verifi/models/models.dart';
 
 class SearchResultsListItem extends StatelessWidget {
-  final Prediction searchResult;
+  final Place searchResult;
+
   const SearchResultsListItem(this.searchResult);
 
   @override
@@ -17,7 +18,7 @@ class SearchResultsListItem extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 4.0),
               child: Text(
-                searchResult.description ?? '',
+                searchResult.address,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(fontSize: 16),
               ),

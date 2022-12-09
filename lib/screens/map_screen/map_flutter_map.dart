@@ -24,9 +24,11 @@ class _MapFlutterMapState extends State<MapFlutterMap>
   void initState() {
     super.initState();
 
-    final cp = context.read<LocationCubit>().state;
-    if (cp != null) {
-      setState(() => _initialLocation = LatLng(cp.latitude, cp.longitude));
+    final location = context.read<LocationCubit>().state;
+    if (location != null) {
+      setState(() {
+        _initialLocation = LatLng(location.latitude, location.longitude);
+      });
     }
   }
 
@@ -38,15 +40,17 @@ class _MapFlutterMapState extends State<MapFlutterMap>
 
   @override
   Widget build(BuildContext context) {
+    final mapCubit = context.read<MapCubit>();
     return FlutterMap(
-      mapController: context.read<MapCubit>().mapController,
+      mapController: mapCubit.mapController,
       options: MapOptions(
           maxZoom: MapFlutterMap.maxZoom,
           interactiveFlags: InteractiveFlag.all - InteractiveFlag.rotate,
           center: _initialLocation,
           zoom: _initialZoom,
           onMapReady: () {
-            context.read<MapCubit>().associateMap(this);
+            mapCubit.associateMap(this);
+            mapCubit.update();
           }),
       children: [
         MapboxTileLayer(),

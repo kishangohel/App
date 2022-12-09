@@ -1,30 +1,40 @@
 import 'package:shared_preferences/shared_preferences.dart';
-
-const String isOnboardingComplete = "isOnboardingComplete";
-const String isPermissionsComplete = "isPermissionsComplete";
+import 'package:verifi/blocs/map/map_filter.dart';
 
 class SharedPrefs {
   static SharedPreferences? _sharedPrefs;
 
-  init() async {
+  static const String _isOnboardingComplete = "isOnboardingComplete";
+  static const String _isPermissionsComplete = "isPermissionsComplete";
+  static const String _mapFilterKey = "mapFilter";
+
+  Future<void> init() async {
     _sharedPrefs ??= await SharedPreferences.getInstance();
   }
 
-  /// Returns [false] if [isOnboardingComplete] exists
+  /// Returns [false] if [_isOnboardingComplete] exists
   /// [true] if key does not exist.
   bool get onboardingComplete =>
-      _sharedPrefs!.containsKey(isOnboardingComplete);
+      _sharedPrefs!.containsKey(_isOnboardingComplete);
 
   Future<void> setOnboardingComplete() async =>
-      _sharedPrefs!.setBool(isOnboardingComplete, true);
+      _sharedPrefs!.setBool(_isOnboardingComplete, true);
 
-  /// Returns [true] if [isPermissionsComplete] exists
+  /// Returns [true] if [_isPermissionsComplete] exists
   /// [false] if key does not exist.
   bool get permissionsComplete =>
-      _sharedPrefs!.containsKey(isPermissionsComplete);
+      _sharedPrefs!.containsKey(_isPermissionsComplete);
 
   Future<void> setPermissionsComplete() async =>
-      await _sharedPrefs!.setBool(isPermissionsComplete, true);
+      await _sharedPrefs!.setBool(_isPermissionsComplete, true);
+
+  MapFilter get mapFilter {
+    return MapFilter.parse(_sharedPrefs!.getString(_mapFilterKey));
+  }
+
+  Future<void> setMapFilter(MapFilter mapFilter) async {
+    await _sharedPrefs!.setString(_mapFilterKey, mapFilter.name);
+  }
 }
 
 final sharedPrefs = SharedPrefs();

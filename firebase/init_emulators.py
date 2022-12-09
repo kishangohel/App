@@ -102,6 +102,12 @@ def main():
                 "ssid": "Another Pixel",
                 "password": "random.password",
                 "name": f"Test Location {i}",
+                "feature": {
+                    "id": PLACE_ID,
+                    "title": f"Test Place {i}",
+                    "address": f"Test Place Address {i}",
+                    "location":{"coordinates":[coordinate[0], coordinate[1]]}
+                },
             }
         )
 
@@ -115,7 +121,7 @@ def main():
                         "geohash": ap["geohash"],
                         "geopoint": GeoPoint(ap["lat"], ap["lng"]),
                     },
-                    "PlaceId": PLACE_ID,
+                    "Feature": ap["feature"],
                     "Name": ap["name"],
                     "SSID": ap["ssid"],
                     "Password": ap["password"],

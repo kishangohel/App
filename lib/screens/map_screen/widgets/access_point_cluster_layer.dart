@@ -35,7 +35,8 @@ class _AccessPointClusterLayerState extends State<AccessPointClusterLayer> {
   Widget build(BuildContext context) {
     return BlocListener<MapCubit, MapState>(
       listenWhen: (oldState, newState) =>
-          oldState.accessPoints != newState.accessPoints,
+          oldState.accessPoints != newState.accessPoints ||
+          oldState.showAccessPoints != newState.showAccessPoints,
       listener: (context, state) => _updateMarkers(state),
       child: SuperclusterLayer.mutable(
         initialMarkers: _initialMarkers,
@@ -77,16 +78,15 @@ class _AccessPointClusterLayerState extends State<AccessPointClusterLayer> {
   void _updateMarkers([MapState? mapState]) {
     mapState ??= context.read<MapCubit>().state;
 
-    // Make sure access points are sorted stably otherwise clusters may move
-    // around slightly.
-    final sortedAccessPoints = mapState.accessPoints
-      ?..sort((ap1, ap2) => ap1.id.compareTo(ap2.id));
+    final accessPoints =
+        !mapState.showAccessPoints ? <AccessPoint>[] : mapState.accessPoints;
 
-    if (sortedAccessPoints != null) {
-      final accessPointMarkers =
-          sortedAccessPoints.map(AccessPointMarker.fromAccessPoint).toList();
-      _initialMarkers = accessPointMarkers;
-      _clustersController.replaceAll(accessPointMarkers);
-    }
+    // Sort AccessPoints stably otherwise clusters may move around slightly.
+    accessPoints.sort((ap1, ap2) => ap1.id.compareTo(ap2.id));
+
+    final accessPointMarkers =
+        accessPoints.map(AccessPointMarker.fromAccessPoint).toList();
+    _initialMarkers = accessPointMarkers;
+    _clustersController.replaceAll(accessPointMarkers);
   }
 }

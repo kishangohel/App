@@ -13,7 +13,7 @@ import 'package:verifi/repositories/repositories.dart';
 
 import '../mocks/hydrated_storage.dart';
 
-class MockWifiRepository extends Mock implements WifiRepository {}
+class MockWifiRepository extends Mock implements AccessPointRepository {}
 
 class MockUserProfileRepository extends Mock implements UserProfileRepository {}
 
@@ -33,7 +33,7 @@ void main() {
     late GeoPoint geoPoint;
     late Position position;
     late ProfileCubit profileCubit;
-    late WifiRepository wifiRepository;
+    late AccessPointRepository wifiRepository;
     late UserLocationRepository userLocationRepository;
     late UserProfileRepository userProfileRepository;
     late Profile testProfile;

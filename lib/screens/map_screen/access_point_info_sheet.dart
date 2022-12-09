@@ -35,12 +35,11 @@ class _AccessPointInfoSheetState extends State<AccessPointInfoSheet> {
               // Place name and address
               ListTile(
                 title: Text(
-                  widget.accessPoint.placeDetails?.name ?? "Unknown place",
+                  widget.accessPoint.place?.title ?? "Unknown place",
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 subtitle: Text(
-                  widget.accessPoint.placeDetails?.formattedAddress ??
-                      "Unknown address",
+                  widget.accessPoint.place?.address ?? "Unknown address",
                 ),
               ),
               // Network name
@@ -56,7 +55,7 @@ class _AccessPointInfoSheetState extends State<AccessPointInfoSheet> {
                       child: const Icon(Icons.wifi),
                     ),
                     Text(
-                      widget.accessPoint.wifiDetails.ssid,
+                      widget.accessPoint.ssid,
                     ),
                   ],
                 ),
@@ -72,18 +71,17 @@ class _AccessPointInfoSheetState extends State<AccessPointInfoSheet> {
                     Container(
                       padding: const EdgeInsets.only(right: 8.0),
                       child: Icon(
-                        (widget.accessPoint.wifiDetails.password == null ||
-                                widget.accessPoint.wifiDetails.password == "")
+                        (widget.accessPoint.password == null ||
+                                widget.accessPoint.password!.isEmpty)
                             ? Icons.lock_open
                             : Icons.lock_outlined,
                       ),
                     ),
                     Text(
-                      (widget.accessPoint.wifiDetails.password == null ||
-                              widget.accessPoint.wifiDetails.password == "")
+                      (widget.accessPoint.password == null ||
+                              widget.accessPoint.password == "")
                           ? "Open"
-                          : "\u2022" *
-                              widget.accessPoint.wifiDetails.password!.length,
+                          : "\u2022" * widget.accessPoint.password!.length,
                     ),
                   ],
                 ),
@@ -98,49 +96,21 @@ class _AccessPointInfoSheetState extends State<AccessPointInfoSheet> {
                   children: [
                     Container(
                       padding: const EdgeInsets.only(right: 8.0),
-                      child: (widget.accessPoint.wifiDetails.verifiedStatus ==
-                              "VeriFied")
+                      child: (widget.accessPoint.verifiedStatus == "VeriFied")
                           ? const Icon(Icons.check)
                           : const Icon(Icons.question_mark),
                     ),
-                    Text(widget.accessPoint.wifiDetails.verifiedStatus!),
+                    Text(widget.accessPoint.verifiedStatus!),
                   ],
                 ),
               ),
             ],
           ),
-          // // Save button
-          // Container(
-          //   padding: const EdgeInsets.symmetric(
-          //     vertical: 8.0,
-          //     horizontal: 8.0,
-          //   ),
-          //   child: Row(
-          //     mainAxisAlignment: MainAxisAlignment.center,
-          //     children: [
-          //       Expanded(child: Container()),
-          //       Expanded(
-          //         child: Container(
-          //           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          //           child: ElevatedButton(
-          //             onPressed: () async => _onSaveButtonPressed(),
-          //             child: const Text(
-          //               "Save",
-          //             ),
-          //           ),
-          //         ),
-          //       ),
-          //       Expanded(
-          //         child: Container(),
-          //       ),
-          //     ],
-          //   ),
-          // ),
           // Connect button
           Visibility(
             visible: isWithinProximityOfAP(
               context,
-              widget.accessPoint.wifiDetails.location,
+              widget.accessPoint.location,
             ),
             child: Container(
               padding: const EdgeInsets.symmetric(
@@ -162,9 +132,8 @@ class _AccessPointInfoSheetState extends State<AccessPointInfoSheet> {
                           setState(() => _connecting = true);
                           final result = await AutoConnect.verifyAccessPoint(
                             wifi: WiFi(
-                              ssid: widget.accessPoint.wifiDetails.ssid,
-                              password:
-                                  widget.accessPoint.wifiDetails.password ?? "",
+                              ssid: widget.accessPoint.ssid,
+                              password: widget.accessPoint.password ?? "",
                             ),
                           );
                           setState(() => _connecting = false);
@@ -174,8 +143,7 @@ class _AccessPointInfoSheetState extends State<AccessPointInfoSheet> {
                           Navigator.of(context).pop();
                         },
                         child: Text(
-                          (widget.accessPoint.wifiDetails.verifiedStatus! ==
-                                  "VeriFied")
+                          (widget.accessPoint.verifiedStatus! == "VeriFied")
                               ? "Connect"
                               : "Validate",
                         ),
@@ -236,62 +204,5 @@ class _AccessPointInfoSheetState extends State<AccessPointInfoSheet> {
     );
     // Return true if within 100m, false otherwise
     return distanceFromAP < 0.1;
-  }
-
-  Future<void> _onSaveButtonPressed() async {
-    await AutoConnect.addAccessPointWithGeofence(
-      id: widget.accessPoint.placeDetails!.placeId,
-      geofence: Geofence(
-        lat: widget.accessPoint.wifiDetails.location.latitude,
-        lng: widget.accessPoint.wifiDetails.location.longitude,
-      ),
-      wifi: WiFi(
-        ssid: widget.accessPoint.wifiDetails.ssid,
-        password: widget.accessPoint.wifiDetails.password ?? "",
-      ),
-    );
-    final isPinned = await AutoConnect.isAccessPointPinned(
-      widget.accessPoint.placeDetails!.placeId,
-    );
-    if (isPinned) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        _alreadySavedSnackbar(),
-      );
-    } else {
-      await AutoConnect.addPinAccessPoint(
-        widget.accessPoint.placeDetails!.placeId,
-      );
-      ScaffoldMessenger.of(context).showSnackBar(
-        _saveSnackbar(),
-      );
-    }
-    Navigator.of(context).pop();
-    return;
-  }
-
-  SnackBar _saveSnackbar() {
-    return SnackBar(
-      backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
-      content: Text(
-        "Saved succeesfully",
-        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-        textAlign: TextAlign.center,
-      ),
-    );
-  }
-
-  SnackBar _alreadySavedSnackbar() {
-    return SnackBar(
-      content: Text(
-        "Already saved",
-        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-        textAlign: TextAlign.center,
-      ),
-      backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
-    );
   }
 }

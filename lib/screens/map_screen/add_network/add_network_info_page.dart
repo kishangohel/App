@@ -8,8 +8,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:verifi/blocs/location/location_cubit.dart';
 import 'package:verifi/blocs/places/places_cubit.dart';
-import 'package:verifi/models/place.dart';
-import 'package:verifi/repositories/repositories.dart';
+import 'package:verifi/models/models.dart';
 
 class AddNetworkInfoPage extends StatefulWidget {
   final PageController controller;
@@ -286,15 +285,7 @@ class _AddNetworkInfoPageState extends State<AddNetworkInfoPage> {
         style: Theme.of(context).textTheme.bodyMedium,
       ),
       onSuggestionSelected: (place) async {
-        final placeDetails =
-            await context.read<PlaceRepository>().getPlaceDetails(
-                  place.placeId,
-                  true,
-                );
-        place = place.copyWith(
-          location: placeDetails.geometry!.location,
-        );
-        _placeController.text = place.name;
+        _placeController.text = place.title;
         setState(() {
           _isPlaceSelected = true;
           _selectedPlace = place;
@@ -303,7 +294,7 @@ class _AddNetworkInfoPageState extends State<AddNetworkInfoPage> {
       itemBuilder: (BuildContext context, Place place) {
         return ListTile(
           title: AutoSizeText(
-            place.name,
+            place.title,
             style: Theme.of(context).textTheme.bodyMedium,
           ),
         );
@@ -327,7 +318,7 @@ class _AddNetworkInfoPageState extends State<AddNetworkInfoPage> {
         if (value == null ||
             value.isEmpty ||
             !_isPlaceSelected ||
-            value != _selectedPlace?.name) {
+            value != _selectedPlace?.title) {
           debugPrint("Invalid place");
           return "Invalid place";
         }

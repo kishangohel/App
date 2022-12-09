@@ -1,0 +1,30 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:verifi/blocs/blocs.dart';
+
+class LocationMapButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.all(14),
+        shape: const CircleBorder(),
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+      ),
+      child: Icon(
+        Icons.my_location,
+        color: Theme.of(context).colorScheme.onPrimaryContainer,
+      ),
+      onPressed: () {
+        if (context.read<LocationCubit>().state != null) {
+          final location = LatLng(
+            context.read<LocationCubit>().state!.latitude,
+            context.read<LocationCubit>().state!.longitude,
+          );
+          context.read<MapCubit>().move(location, 18);
+        }
+      },
+    );
+  }
+}

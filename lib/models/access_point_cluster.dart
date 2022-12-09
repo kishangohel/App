@@ -15,7 +15,7 @@ class AccessPointCluster extends ClusterDataBase {
   }) : total = verified + unverified + expired;
 
   factory AccessPointCluster.fromAccessPoint(AccessPoint accessPoint) {
-    switch (accessPoint.wifiDetails.verifiedStatus) {
+    switch (accessPoint.verifiedStatus) {
       case "VeriFied":
         return AccessPointCluster(verified: 1);
       case "UnVeriFied":
@@ -23,7 +23,7 @@ class AccessPointCluster extends ClusterDataBase {
       case "Expired":
         return AccessPointCluster(expired: 1);
       default:
-        throw "Unexpected verified status: ${accessPoint.wifiDetails.verifiedStatus}";
+        throw "Unexpected verified status: ${accessPoint.verifiedStatus}";
     }
   }
 

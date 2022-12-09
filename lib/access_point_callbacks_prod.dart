@@ -25,16 +25,13 @@ Future<void> updateNearbyAccessPoints(double lat, double lng) async {
   // Get geofences already registered on app
   final registeredGeofences = await AutoConnect.getGeofences();
   // Get nearby access points from Firestore DB
-  List<AccessPoint> newAccessPoints =
-      await MapUtils.getNearbyAccessPointsWithPlaceDetails(
-    WifiRepository(),
-    PlaceRepository(),
-    GeoFirePoint(lat, lng),
-    5.0, // get everything within 5km
+  List<AccessPoint> newAccessPoints = await MapUtils.getNearbyAccessPoints(
+    accessPointRepo: AccessPointRepository(),
+    location: GeoFirePoint(lat, lng),
+    radiusInKm: 5.0,
   );
   // Don't auto connect to UnVeriFied APs
-  newAccessPoints
-      .removeWhere((ap) => ap.wifiDetails.verifiedStatus == "UnVeriFied");
+  newAccessPoints.removeWhere((ap) => ap.verifiedStatus == "UnVeriFied");
   // Get pinned access points
   List<String> pinnedAccessPoints = await AutoConnect.getPinnedGeofences();
   // Shrink down geofence list to max amount allowed, minus pinned geofences
@@ -55,7 +52,7 @@ Future<void> updateNearbyAccessPoints(double lat, double lng) async {
   }
   // Extract IDs from access points for filtering / searching
   List<String?> newAccessPointIds =
-      newAccessPoints.map((ap) => ap.placeDetails?.placeId).toList();
+      newAccessPoints.map((ap) => ap.place?.id).toList();
   // Get registered geofences that aren't in new access points
   List<String> geofencesToDelete = registeredGeofences
       .where((id) => !newAccessPointIds.contains(id))
@@ -69,23 +66,23 @@ Future<void> updateNearbyAccessPoints(double lat, double lng) async {
   }
   // Register the new geofences
   for (AccessPoint ap in newAccessPoints) {
-    if (ap.placeDetails == null) {
+    if (ap.place == null) {
       debugPrint("Place details is null");
       return;
     }
     // If geofence is already registered, skip
-    if (registeredGeofences.contains(ap.placeDetails!.placeId)) {
+    if (registeredGeofences.contains(ap.place!.id)) {
       continue;
     }
     AutoConnect.addAccessPointWithGeofence(
-      id: ap.placeDetails!.placeId,
+      id: ap.place!.id,
       geofence: Geofence(
-        lat: ap.wifiDetails.location.latitude,
-        lng: ap.wifiDetails.location.longitude,
+        lat: ap.location.latitude,
+        lng: ap.location.longitude,
       ),
       wifi: WiFi(
-        ssid: ap.wifiDetails.ssid,
-        password: ap.wifiDetails.password ?? "",
+        ssid: ap.ssid,
+        password: ap.password ?? "",
       ),
     );
   }
@@ -103,10 +100,10 @@ Future<void> notifyAccessPointConnectionResult(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   final user = FirebaseAuth.instance.currentUser;
-  final wifiRepo = WifiRepository();
+  final accessPointRepo = AccessPointRepository();
   if (user != null) {
     debugPrint("$ssid validated by $user");
-    await wifiRepo.networkValidatedByUser(accessPointId, user.uid);
+    await accessPointRepo.networkValidatedByUser(accessPointId, user.uid);
   } else {
     debugPrint("Unable to get user for validation event");
   }

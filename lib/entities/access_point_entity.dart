@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+import 'package:verifi/models/place.dart';
 
 class AccessPointEntity extends Equatable {
   final String id;
-  final String? placeId;
+  final Place? place;
   final String ssid;
   final String? password;
   final GeoPoint location;
@@ -13,7 +14,7 @@ class AccessPointEntity extends Equatable {
 
   const AccessPointEntity({
     required this.id,
-    this.placeId,
+    this.place,
     required this.ssid,
     this.password,
     required this.location,
@@ -27,24 +28,24 @@ class AccessPointEntity extends Equatable {
 
   @override
   String toString() =>
-      "AccessPointEntity { ID: $id, PlaceId: $placeId, SSID: $ssid }";
+      "AccessPointEntity { ID: $id, FeatureEntityId: ${place?.id}, SSID: $ssid }";
 
   static AccessPointEntity fromDocumentSnapshotWithDistance(
-    DocumentSnapshot snapshot,
-    double distance,
+      DocumentSnapshot snapshot,
+      double distance,
   ) {
     Map data = snapshot.data() as Map<String, dynamic>;
     return AccessPointEntity(
       id: snapshot.id,
-      placeId: data['PlaceId'],
+      place: (data['Feature'] == null) ? null : Place.fromJson(data['Feature']),
       password: data['Password'],
       ssid: data['SSID'],
       distance: distance,
       location: data['Location']['geopoint'],
       lastValidated: (data['LastValidated'] != null)
           ? DateTime.parse(
-              (data['LastValidated'] as Timestamp).toDate().toString(),
-            )
+        (data['LastValidated'] as Timestamp).toDate().toString(),
+      )
           : null,
       submittedBy: data['SubmittedBy'],
     );
@@ -54,7 +55,7 @@ class AccessPointEntity extends Equatable {
     Map data = snapshot.data() as Map;
     return AccessPointEntity(
       id: snapshot.id,
-      placeId: data['PlaceId'],
+      place: (data['feature'] == null) ? null : Place.fromJson(data['Feature']),
       password: data['Password'],
       ssid: data['SSID'],
       location: data['Location']['geopoint'],
