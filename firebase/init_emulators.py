@@ -83,7 +83,10 @@ def main():
 
     # Create user
     try:
-        user: UserRecord = auth.create_user(phone_number="+1 6505553434")
+        user: UserRecord = auth.create_user(
+            phone_number="+1 6505553434",
+            display_name="test_user",
+        )
     except:  # noqa: E722
         print(
             "Unable to create user. Are you sure Firebase emulator is running?"
@@ -106,7 +109,12 @@ def main():
                     "id": PLACE_ID,
                     "title": f"Test Place {i}",
                     "address": f"Test Place Address {i}",
-                    "location":{"coordinates":[coordinate[0], coordinate[1]]}
+                    "location": {
+                        "coordinates": [
+                            coordinate[0],
+                            coordinate[1],
+                        ]
+                    },
                 },
             }
         )
@@ -143,7 +151,7 @@ def main():
     db.collection("UserProfile").document(user.uid).set(
         {
             "CreatedOn": datetime.datetime.now(tz=datetime.timezone.utc),
-            "DisplayName": "test-user",
+            "DisplayName": "test_user",
             "EthAddress": "0x0123456789abcdef0123456789abcdef01234567",
             "PFP": None,
             "VeriPoints": 50,

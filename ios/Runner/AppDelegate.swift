@@ -1,5 +1,5 @@
- import auto_connect
- import CoinbaseWalletSDK
+import auto_connect
+import CoinbaseWalletSDK
 import Flutter
 import GoogleMaps
 import UIKit
