@@ -3,16 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phone_form_field/phone_form_field.dart';
+import 'package:verifi/src/features/authentication/presentation/widgets/onboarding_app_bar.dart';
 import 'package:verifi/src/routing/app_router.dart';
 import 'package:verifi/src/utils/async_value_ui.dart';
 
+import '../widgets/onboarding_outline_button.dart';
 import 'account_phone_form_field.dart';
 import 'phone_screen_controller.dart';
-import '../widgets/onboarding_app_bar.dart';
-import '../widgets/onboarding_outline_button.dart';
 
 class PhoneScreen extends StatelessWidget {
   static const submitButtonKey = Key('submit-button');
+
   const PhoneScreen({Key? key}) : super(key: key);
 
   @override

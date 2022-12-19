@@ -24,12 +24,11 @@ class ProfileRepository {
   late CollectionReference userCollection;
   UserProfile? _profile;
   final ProfileRepositoryRef ref;
+
   ProfileRepository(this.ref, {FirebaseFirestore? firestore}) {
     _firestore = firestore ?? FirebaseFirestore.instance;
     userCollection = _firestore.collection('UserProfile');
   }
-
-  UserProfile? get profile => _profile;
 
   /// Stream of the current user's profile.
   Stream<UserProfile?> userProfile(String userId) {
@@ -80,9 +79,8 @@ class ProfileRepository {
   /// Checks if the [username] is available.
   /// Returns true if the [username] is available.
   Future<bool> _validateDisplayNameAvailability(String displayName) async {
-    final snapshot = await userCollection
-        .where('DisplayName', isEqualTo: displayName)
-        .get();
+    final snapshot =
+        await userCollection.where('DisplayName', isEqualTo: displayName).get();
     return (snapshot.size == 0);
   }
 

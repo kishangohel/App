@@ -86,7 +86,7 @@ packages:
     source: hosted
     version: "2.0.3"
   bloc:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: bloc
       url: "https://pub.dartlang.org"
@@ -505,25 +505,11 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.1"
-  fluster:
-    dependency: "direct main"
-    description:
-      name: fluster
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.2.0"
   flutter:
     dependency: "direct main"
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_bloc:
-    dependency: "direct main"
-    description:
-      name: flutter_bloc
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "8.1.1"
   flutter_blurhash:
     dependency: transitive
     description:

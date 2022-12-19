@@ -6,10 +6,9 @@ import 'package:random_avatar/random_avatar.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:verifi/src/common/widgets/shimmer_widget.dart';
 import 'package:verifi/src/features/profile/data/profile_repository.dart';
+import 'package:verifi/src/features/profile/presentation/widgets/logout_button.dart';
 import 'package:verifi/src/features/profile/presentation/widgets/veripoints/veripoints_widget.dart';
 import 'package:verifi/src/utils/svg_provider.dart';
-
-import 'widgets/logout_button.dart';
 
 class ProfileBody extends StatefulWidget {
   @override

@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:verifi/models/models.dart';
+import 'package:verifi/src/features/access_points/domain/place_model.dart';
 
 void main() {
   group('Place', () {

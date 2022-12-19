@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'user_layer_controller.dart';
+part of 'authentication_repository.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -29,21 +29,14 @@ class _SystemHash {
   }
 }
 
-String $UserLayerControllerHash() =>
-    r'aeedd18043cc650de18e827da8508731bb71f821';
+String $authRepositoryHash() => r'370a8a302969bb832c8d64a7f763329ae48fd959';
 
-/// See also [UserLayerController].
-final userLayerControllerProvider =
-    AsyncNotifierProvider<UserLayerController, List<UserMarker>>(
-  UserLayerController.new,
-  name: r'userLayerControllerProvider',
+/// See also [authRepository].
+final authRepositoryProvider = Provider<AuthenticationRepository>(
+  authRepository,
+  name: r'authRepositoryProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : $UserLayerControllerHash,
+      : $authRepositoryHash,
 );
-typedef UserLayerControllerRef = AsyncNotifierProviderRef<List<UserMarker>>;
-
-abstract class _$UserLayerController extends AsyncNotifier<List<UserMarker>> {
-  @override
-  FutureOr<List<UserMarker>> build();
-}
+typedef AuthRepositoryRef = ProviderRef<AuthenticationRepository>;

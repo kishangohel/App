@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:verifi/src/features/authentication/data/authentication_repository.dart';
 import 'package:verifi/src/features/authentication/presentation/display_name/display_name_screen_controller.dart';
+import 'package:verifi/src/features/authentication/presentation/widgets/onboarding_app_bar.dart';
 
-import '../widgets/onboarding_app_bar.dart';
 import '../widgets/onboarding_outline_button.dart';
 
 class DisplayNameScreen extends ConsumerStatefulWidget {

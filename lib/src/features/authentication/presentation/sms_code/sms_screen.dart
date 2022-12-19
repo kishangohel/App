@@ -4,9 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:phone_form_field/phone_form_field.dart';
 import 'package:pinput/pinput.dart';
 import 'package:verifi/src/features/authentication/presentation/sms_code/sms_screen_controller.dart';
+import 'package:verifi/src/features/authentication/presentation/widgets/onboarding_app_bar.dart';
 import 'package:verifi/src/utils/async_value_ui.dart';
-
-import '../widgets/onboarding_app_bar.dart';
 
 class SmsScreen extends ConsumerStatefulWidget {
   const SmsScreen({
