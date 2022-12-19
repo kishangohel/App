@@ -152,9 +152,6 @@ def main():
         {
             "CreatedOn": datetime.datetime.now(tz=datetime.timezone.utc),
             "DisplayName": "test_user",
-            "EthAddress": "0x0123456789abcdef0123456789abcdef01234567",
-            "PFP": None,
-            "VeriPoints": 50,
         }
     )
 
