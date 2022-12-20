@@ -60,8 +60,12 @@ class MapService {
   }
 
   void updateMap() async {
-    ref.read(accessPointLayerControllerProvider.notifier).updateAccessPoints();
-    ref.read(userLayerControllerProvider.notifier).updateUsers();
+    await Future.wait([
+      ref
+          .read(accessPointLayerControllerProvider.notifier)
+          .updateAccessPoints(),
+      ref.read(userLayerControllerProvider.notifier).updateUsers(),
+    ]);
   }
 
   void moveMapToCenter(LatLng center, [double? zoom]) {

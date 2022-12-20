@@ -35,9 +35,11 @@ class LocationMapButton extends ConsumerWidget {
         color: Theme.of(context).colorScheme.onPrimaryContainer,
       ),
       onPressed: () {
-        if (ref.read(locationRepositoryProvider).currentLocation != null) {
+        final currentLocation =
+            ref.read(locationRepositoryProvider).currentLocation;
+        if (currentLocation != null) {
           ref.read(mapControllerProvider).move(
-                ref.read(locationRepositoryProvider).currentLocation!,
+                currentLocation,
                 18,
               );
         }

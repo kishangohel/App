@@ -78,7 +78,7 @@ class _MapFlutterMapState extends ConsumerState<MapFlutterMap>
           ref
               .read(mapInitialLocationControllerProvider.notifier)
               .update(currentState.value!);
-          ref.read(mapServiceProvider).moveMapToCenter(currentState.value!);
+          ref.read(mapControllerProvider).move(currentState.value!, 18);
         }
       },
     );
@@ -89,6 +89,7 @@ class _MapFlutterMapState extends ConsumerState<MapFlutterMap>
           interactiveFlags: InteractiveFlag.all - InteractiveFlag.rotate,
           center: initialLocation,
           zoom: _initialZoom,
+          keepAlive: true,
           onMapReady: () {
             ref.read(mapServiceProvider).associateMap(this);
             ref.read(mapServiceProvider).updateMap();

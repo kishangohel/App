@@ -25,10 +25,8 @@ class _MapboxTileLayerState extends State<MapboxTileLayer>
   @override
   void initState() {
     super.initState();
-
     // Used for dynamically changing map style for light/dark mode
     WidgetsBinding.instance.addObserver(this);
-
     _setMapStyle();
   }
 
