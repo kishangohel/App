@@ -1165,7 +1165,7 @@
 				DC2A913C25CA164B0048C013 /* Profile-staging */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Debug-development";
+			defaultConfigurationName = "Release-production";
 		};
 		97C147051CF9000F007C117D /* Build configuration list for PBXNativeTarget "Runner" */ = {
 			isa = XCConfigurationList;
@@ -1181,7 +1181,7 @@
 				DC2A913D25CA164B0048C013 /* Profile-staging */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Debug-development";
+			defaultConfigurationName = "Release-production";
 		};
 /* End XCConfigurationList section */
 	};
