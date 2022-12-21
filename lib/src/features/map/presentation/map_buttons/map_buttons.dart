@@ -8,14 +8,30 @@ class MapButtons extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Positioned(
-      top: MediaQuery.of(context).size.height * 0.15,
+      bottom: MediaQuery.of(context).size.height * 0.1,
       right: 0,
-      child: Column(
-        children: [
-          LocationMapButton(),
-          const SizedBox(height: 10),
-          FilterMapButton(),
-        ],
+      child: Container(
+        padding: const EdgeInsets.only(
+          left: 8.0,
+          // right: 4.0,
+          top: 32.0,
+          bottom: 32.0,
+        ),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.elliptical(140, 90),
+            bottomLeft: Radius.elliptical(140, 90),
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            LocationMapButton(),
+            const SizedBox(height: 20),
+            FilterMapButton(),
+          ],
+        ),
       ),
     );
   }
