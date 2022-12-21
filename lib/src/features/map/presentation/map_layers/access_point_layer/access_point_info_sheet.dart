@@ -1,4 +1,3 @@
-import 'package:auto_connect/auto_connect.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
@@ -130,16 +129,18 @@ class _AccessPointInfoSheetState extends State<AccessPointInfoSheet> {
                             return;
                           }
                           setState(() => _connecting = true);
-                          final result = await AutoConnect.verifyAccessPoint(
-                            wifi: WiFi(
-                              ssid: widget.accessPoint.ssid,
-                              password: widget.accessPoint.password ?? "",
-                            ),
-                          );
+                          // TODO: Uncomment when plugin is published
+                          // final result = await AutoConnect.verifyAccessPoint(
+                          //   wifi: WiFi(
+                          //     ssid: widget.accessPoint.ssid,
+                          //     password: widget.accessPoint.password ?? "",
+                          //   ),
+                          // );
                           setState(() => _connecting = false);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            _connectSnackbar(result),
-                          );
+                          // TODO: Uncomment when plugin is published
+                          // ScaffoldMessenger.of(context).showSnackBar(
+                          //   _connectSnackbar(result),
+                          // );
                           Navigator.of(context).pop();
                         },
                         child: Text(
@@ -170,18 +171,19 @@ class _AccessPointInfoSheetState extends State<AccessPointInfoSheet> {
     );
   }
 
-  SnackBar _connectSnackbar(String result) {
-    return SnackBar(
-      backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
-      content: Text(
-        result,
-        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-        textAlign: TextAlign.center,
-      ),
-    );
-  }
+  // TODO: Uncomment when plugin is published
+  // SnackBar _connectSnackbar(String result) {
+  //   return SnackBar(
+  //     backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+  //     content: Text(
+  //       result,
+  //       style: Theme.of(context).textTheme.titleMedium?.copyWith(
+  //             color: Theme.of(context).colorScheme.onSurfaceVariant,
+  //           ),
+  //       textAlign: TextAlign.center,
+  //     ),
+  //   );
+  // }
 
   bool isWithinProximityOfAP(BuildContext context, LatLng apPosition) {
     // Get current location

@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="world.verifi.app">
 
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -11,8 +12,6 @@
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
-    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
 
     <application
         android:name="${applicationName}"
@@ -36,28 +35,9 @@
             </intent-filter>
         </activity>
 
-        <receiver
-            android:name="world.verifi.auto_connect.GeofenceEventReceiver"
-            android:enabled="true" />
-        <receiver
-            android:name="world.verifi.auto_connect.ActivityTransitionBroadcastReceiver"
-            android:enabled="true" />
-        <receiver
-            android:name="world.verifi.auto_connect.WiFiConnectionBroadcastReceiver"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.net.wifi.action.WIFI_NETWORK_SUGGESTION_POST_CONNECTION" />
-            </intent-filter>
-        </receiver>
-
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyA8BzRbnT-JXpFtyYdPzOAtBVEmz14OqXc" />
 
     </application>
 

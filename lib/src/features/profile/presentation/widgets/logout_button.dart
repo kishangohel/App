@@ -1,4 +1,4 @@
-import 'package:auto_connect/auto_connect.dart';
+// import 'package:auto_connect/auto_connect.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -13,7 +13,8 @@ class LogoutButton extends ConsumerWidget {
         "Logout",
       ),
       onPressed: () async {
-        AutoConnect.removeAllGeofences();
+        // TODO: Uncomment when auto connect is a normal plugin
+        // AutoConnect.removeAllGeofences();
         ref.read(authRepositoryProvider).signOut();
         context.pushNamed(AppRoute.displayName.name);
       },
