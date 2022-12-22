@@ -16,6 +16,7 @@ import '../map_layers/user_layer/user_cluster_layer.dart';
 
 class MapFlutterMap extends ConsumerStatefulWidget {
   static const maxZoom = 19.0;
+  static const initialLocationMove = "initialLocationMove";
 
   @override
   ConsumerState<MapFlutterMap> createState() => _MapFlutterMapState();
@@ -70,7 +71,7 @@ class _MapFlutterMapState extends ConsumerState<MapFlutterMap>
         }
       },
     );
-    // When first location value is emitted,  move to current location
+    // When first location value is emitted, move to current location
     ref.listen<AsyncValue<LatLng?>>(
       locationStreamProvider,
       (previousState, currentState) {
@@ -78,7 +79,11 @@ class _MapFlutterMapState extends ConsumerState<MapFlutterMap>
           ref
               .read(mapInitialLocationControllerProvider.notifier)
               .update(currentState.value!);
-          ref.read(mapControllerProvider).move(currentState.value!, 18);
+          ref.read(mapControllerProvider).move(
+                currentState.value!,
+                18,
+                id: MapFlutterMap.initialLocationMove,
+              );
         }
       },
     );

@@ -14,6 +14,7 @@ import 'package:verifi/src/features/map/presentation/map_layers/user_layer/user_
 import 'package:verifi/src/features/profile/domain/user_profile_model.dart';
 import 'package:verifi/src/utils/geoflutterfire/geoflutterfire.dart';
 
+import '../presentation/flutter_map/map_flutter_map.dart';
 import 'center_zoom_controller.dart';
 
 part 'map_service.g.dart';
@@ -33,7 +34,9 @@ class MapService {
           event is MapEventDoubleTapZoomEnd ||
           event is MapEventRotateEnd ||
           (event is MapEventMove &&
-              event.id == CenterZoomAnimation.finished)) {
+              event.id == CenterZoomAnimation.finished) ||
+          (event is MapEventMove &&
+              event.id == MapFlutterMap.initialLocationMove)) {
         updateMap();
       }
     });

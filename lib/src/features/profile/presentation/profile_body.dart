@@ -68,7 +68,7 @@ class ProfilePhoto extends ConsumerWidget {
                   // Border around avatar
                   CircleAvatar(
                     radius: 60,
-                    backgroundColor: Theme.of(context).colorScheme.secondary,
+                    backgroundColor: Theme.of(context).colorScheme.onSurface,
                     // Profile picture avatar
                     child: CircleAvatar(
                       radius: 55,
@@ -89,15 +89,15 @@ class ProfilePhoto extends ConsumerWidget {
                     right: 30,
                     child: CircleAvatar(
                       radius: 12,
-                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                      backgroundColor: Theme.of(context).colorScheme.onSurface,
                       child: IconButton(
-                        color: Theme.of(context).colorScheme.onSecondary,
+                        color: Theme.of(context).colorScheme.surface,
                         padding: const EdgeInsets.all(0),
                         splashRadius: 20,
                         icon: Icon(
                           Icons.info,
                           size: 20,
-                          color: Theme.of(context).colorScheme.onSecondary,
+                          color: Theme.of(context).colorScheme.surface,
                         ),
                         onPressed: () {
                           showDialog(
@@ -143,9 +143,10 @@ class AboutProfilePictureDialog extends StatelessWidget {
           style: Theme.of(context).textTheme.titleMedium,
           children: [
             TextSpan(
-              text: 'Multiavatar project.',
+              text: 'Multiavatar project',
               style: TextStyle(
-                color: Theme.of(context).colorScheme.secondary,
+                color: Theme.of(context).colorScheme.primary,
+                decoration: TextDecoration.underline,
               ),
               recognizer: TapGestureRecognizer()
                 ..onTap = () {
@@ -155,7 +156,7 @@ class AboutProfilePictureDialog extends StatelessWidget {
                 },
             ),
             const TextSpan(
-              text: '\n\nIn a future update, you will be '
+              text: '.\n\nIn a future update, you will be '
                   'able to customize your profile '
                   'picture.',
             ),

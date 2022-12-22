@@ -18,13 +18,13 @@ class VeriFi extends ConsumerWidget {
       themeMode: ThemeMode.system,
       theme: ThemeData.from(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.purple,
+          seedColor: Colors.deepPurple,
         ),
         useMaterial3: true,
       ),
       darkTheme: ThemeData.from(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.purple,
+          seedColor: Colors.deepPurple,
           brightness: Brightness.dark,
         ),
         useMaterial3: true,
