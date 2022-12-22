@@ -1,0 +1,47 @@
+name: verifi
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/very_good_cli.yaml"
+      - "lib/**"
+      - "test/**"
+      - "pubspec.yaml"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/very_good_cli.yaml"
+      - "lib/**"
+      - "test/**"
+      - "pubspec.yaml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3.1.0
+
+      - uses: subosito/flutter-action@v2.8.0
+        with:
+          channel: 'stable'
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Format
+        run: flutter format --set-exit-if-changed .
+
+      - name: Analyze
+        run: flutter analyze lib test
+
+      - name: Verify Build
+        run: flutter pub run test --run-skipped -t pull-request-only
+
+      - name: Run Tests
+        run: |
+          flutter pub global activate coverage 1.6.0
+          flutter pub run test -j 1 -x pull-request-only -x e2e --coverage=coverage --test-randomize-ordering-seed random && dart pub global run coverage:format_coverage --lcov --in=coverage --out=coverage/lcov.info --packages=.dart_tool/package_config.json --report-on=lib
+      - name: Check Code Coverage
+        uses: VeryGoodOpenSource/very_good_coverage@v2.1.0
