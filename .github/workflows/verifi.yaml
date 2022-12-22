@@ -3,7 +3,7 @@ name: verifi
 on:
   pull_request:
     paths:
-      - ".github/workflows/very_good_cli.yaml"
+      - ".github/workflows/verifi.yaml"
       - "lib/**"
       - "test/**"
       - "pubspec.yaml"
@@ -11,7 +11,7 @@ on:
     branches:
       - main
     paths:
-      - ".github/workflows/very_good_cli.yaml"
+      - ".github/workflows/verifi.yaml"
       - "lib/**"
       - "test/**"
       - "pubspec.yaml"
