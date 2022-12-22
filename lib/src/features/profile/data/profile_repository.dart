@@ -61,14 +61,14 @@ class ProfileRepository {
   /// Otherwise, returns a [String] with the error message.
   Future<String?> validateDisplayName(String displayName) async {
     // First check if the username meets requirements
-    final _meetsRequirements =
+    final meetsRequirements =
         await _validateDisplayNameRequirements(displayName);
-    if (false == _meetsRequirements) {
+    if (false == meetsRequirements) {
       return _displayNameRequirements;
     }
     // Then check if the username is available
-    final _isAvailable = await _validateDisplayNameAvailability(displayName);
-    return _isAvailable ? null : "Username is not available";
+    final isAvailable = await _validateDisplayNameAvailability(displayName);
+    return isAvailable ? null : "Username is not available";
   }
 
   Future<bool> _validateDisplayNameRequirements(String displayName) async {

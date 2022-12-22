@@ -6,8 +6,8 @@ class OnboardingOutlineButton extends StatefulWidget {
 
   const OnboardingOutlineButton({
     Key? key,
-    required this.child,
     required this.onPressed,
+    required this.child,
   }) : super(key: key);
 
   @override
@@ -18,13 +18,13 @@ class _OnboardingOutlineButtonState extends State<OnboardingOutlineButton> {
   @override
   Widget build(BuildContext context) {
     return OutlinedButton(
-      child: widget.child,
       onPressed: widget.onPressed,
       style: OutlinedButton.styleFrom(
         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         alignment: Alignment.center,
         foregroundColor: Theme.of(context).colorScheme.onSurface,
       ),
+      child: widget.child,
     );
   }
 }

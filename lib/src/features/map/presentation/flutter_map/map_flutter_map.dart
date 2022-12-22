@@ -55,7 +55,8 @@ class _MapFlutterMapState extends ConsumerState<MapFlutterMap>
                           .read(
                               mapLocationPermissionsControllerProvider.notifier)
                           .requestPermission();
-                      Navigator.of(context).pop();
+                      if (!mounted) return;
+                      Navigator.pop(context);
                     },
                     child: const Text('Allow'),
                   ),
