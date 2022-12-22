@@ -12,7 +12,9 @@ class AppTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     Color fontColor = (appBar) ? Colors.white : Colors.black;
     final brightness = MediaQuery.of(context).platformBrightness;
-    if (brightness == Brightness.dark && !appBar) fontColor = Colors.white;
+    if (brightness == Brightness.dark && !appBar) {
+      fontColor = Colors.white;
+    }
     return Material(
       type: MaterialType.transparency,
       child: FittedBox(

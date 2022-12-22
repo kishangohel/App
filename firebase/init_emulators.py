@@ -10,6 +10,7 @@ from firebase_admin.auth import UserRecord
 from google.cloud.firestore import GeoPoint
 from google.api_core.retry import Retry
 
+USER_COUNT = 5
 MY_LOCATION = [-1.0, -1.0]
 PLACE_ID = ""
 
@@ -55,10 +56,10 @@ def create_geohash(lat, lng):
     return "".join(chars)
 
 
-def get_random_nearby_coordinate():
-    """Gets a random coordinate within approx. 100 meters of MY_LOCATION."""
-    lat_dist = random.randint(1, 10) / 10000.0
-    lng_dist = random.randint(1, 10) / 10000.0
+def get_random_nearby_coordinate(maxDistanceInM):
+    """Gets a random coordinate within approx. maxDistanceInM of MY_LOCATION."""
+    lat_dist = random.randint(1, 10) / (1000000.0 / maxDistanceInM)
+    lng_dist = random.randint(1, 10) / (1000000.0 / maxDistanceInM)
     lat_direction = random.randint(0, 1)
     lng_direction = random.randint(0, 1)
 
@@ -81,22 +82,28 @@ def main():
     firebase_admin.initialize_app(credential=cred)
     db = firestore.client()
 
-    # Create user
-    try:
-        user: UserRecord = auth.create_user(
-            phone_number="+1 6505553434",
-            display_name="test_user",
-        )
-    except:  # noqa: E722
-        print(
-            "Unable to create user. Are you sure Firebase emulator is running?"
-        )
-        sys.exit(1)
+    phone_number_start = 6505553434
+    users = []
+    for i in range(USER_COUNT):
+        user_phone_number = phone_number_start + i
+        display_name_suffix = "" if i == 0 else f"_{i}"
+
+        # Create user
+        try:
+            user: UserRecord = auth.create_user(
+                phone_number=f"+1 {user_phone_number}",
+                display_name=f"test_user{display_name_suffix}",
+            )
+            users.append(user)
+        except Exception as e:
+            print("Unable to create user. Is Firebase emulator running?")
+            print(str(e))
+            sys.exit(1)
 
     # Create access points
     access_points = []
     for i in range(5):
-        coordinate = get_random_nearby_coordinate()
+        coordinate = get_random_nearby_coordinate(100)
         access_points.append(
             {
                 "lat": coordinate[0],
@@ -134,7 +141,7 @@ def main():
                     "SSID": ap["ssid"],
                     "Password": ap["password"],
                     "LastValidated": time,
-                    "SubmittedBy": user.uid,
+                    "SubmittedBy": users[0].uid,
                     "SubmittedOn": time,
                     "ValidatedBy": [],
                 },
@@ -147,13 +154,22 @@ def main():
             )
             sys.exit(1)
 
-    # Create profile
-    db.collection("UserProfile").document(user.uid).set(
-        {
-            "CreatedOn": datetime.datetime.now(tz=datetime.timezone.utc),
-            "DisplayName": "test_user",
-        }
-    )
+
+    for i in range(USER_COUNT):
+        # Create profile
+        display_name_suffix = "" if i == 0 else f"_{i}"
+        coordinate = get_random_nearby_coordinate(2000)
+
+        db.collection("UserProfile").document(users[i].uid).set(
+            {
+                "CreatedOn": datetime.datetime.now(tz=datetime.timezone.utc),
+                "DisplayName": f"test_user{display_name_suffix}",
+                "LastLocation": {
+                    "geohash": create_geohash(coordinate[0], coordinate[1]),
+                    "geopoint": GeoPoint(coordinate[0], coordinate[1]),
+                },
+            }
+        )
 
 
 if __name__ == "__main__":
@@ -169,15 +185,16 @@ if __name__ == "__main__":
         print("It should most likely be set to 'localhost:8080'")
         sys.exit(1)
 
-    if len(sys.argv) != 4:
+    if len(sys.argv) != 5:
         print("Invalid arguments")
         print(
-            "Please pass the GPS coordinates and place ID, all seperated by "
-            "spaces (e.g. 12.3456 -7.8901 ChIJcVTyZY_S-YgMBGplVHWkw0c) of the "
-            "location to create fake WiFi access points and users."
+            "Please pass the user count, GPS coordinates and place ID, all "
+            "seperated by spaces (e.g. 25 12.3456 -7.8901 ChIJcVTyZY_S-YgMBGplVHWkw0c) "
+            "of the location to create fake WiFi access points and users."
         )
         sys.exit(1)
 
-    MY_LOCATION = [float(sys.argv[1]), float(sys.argv[2])]
-    PLACE_ID = sys.argv[3]
+    USER_COUNT = int(sys.argv[1])
+    MY_LOCATION = [float(sys.argv[2]), float(sys.argv[3])]
+    PLACE_ID = sys.argv[4]
     main()

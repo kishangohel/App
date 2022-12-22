@@ -1,7 +1,6 @@
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:random_avatar/random_avatar.dart';
-
 import 'package:verifi/src/features/map/domain/user_cluster.dart';
 import 'package:verifi/src/features/profile/domain/user_profile_model.dart';
 
@@ -46,9 +45,9 @@ class UserClusterMarker extends StatelessWidget {
       child: Stack(
         fit: StackFit.loose,
         children: [
+          _userImage(userCluster.userSample[2], iconSize, 10, 20.0),
+          _userImage(userCluster.userSample[1], iconSize, 21, 0),
           _userImage(userCluster.userSample[0], iconSize, -1, 0),
-          _userImage(userCluster.userSample[0], iconSize, 21, 0),
-          _userImage(userCluster.userSample[0], iconSize, 10, 20.0),
         ],
       ),
     );
@@ -62,10 +61,10 @@ class UserClusterMarker extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
+          _userImage(userCluster.userSample[3], iconSize, 12, 25),
+          _userImage(userCluster.userSample[2], iconSize, 27, 12),
+          _userImage(userCluster.userSample[1], iconSize, -2, 12),
           _userImage(userCluster.userSample[0], iconSize, 12, 0),
-          _userImage(userCluster.userSample[0], iconSize, -2, 12),
-          _userImage(userCluster.userSample[0], iconSize, 27, 12),
-          _userImage(userCluster.userSample[0], iconSize, 12, 25),
         ],
       ),
     );
@@ -79,11 +78,11 @@ class UserClusterMarker extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
+          _userImage(userCluster.userSample[4], iconSize, 12, 13),
+          _userImage(userCluster.userSample[3], iconSize, 12, 25),
+          _userImage(userCluster.userSample[2], iconSize, 27, 13),
+          _userImage(userCluster.userSample[1], iconSize, -2, 13),
           _userImage(userCluster.userSample[0], iconSize, 12, 0),
-          _userImage(userCluster.userSample[0], iconSize, -2, 13),
-          _userImage(userCluster.userSample[0], iconSize, 27, 13),
-          _userImage(userCluster.userSample[0], iconSize, 12, 25),
-          _userImage(userCluster.userSample[0], iconSize, 12, 13),
         ],
       ),
     );
@@ -100,6 +99,7 @@ class UserClusterMarker extends StatelessWidget {
       left: left,
       child: randomAvatar(
         profile.displayName,
+        trBackground: true,
         width: size,
         height: size,
       ),

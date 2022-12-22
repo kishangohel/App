@@ -15,6 +15,9 @@ class UserLayerController extends _$UserLayerController {
   Future<void> updateUsers() async {
     state = await AsyncValue.guard<List<UserMarker>>(() async {
       final users = await mapService.getNearbyUsers();
+      // Sort UserProfiles stably otherwise clusters may move around slightly.
+      users.sort((user1, user2) => user1.id.compareTo(user2.id));
+
       return users
           .where((user) => user.lastLocation != null)
           .map((user) => UserMarker(point: user.lastLocation!, profile: user))
