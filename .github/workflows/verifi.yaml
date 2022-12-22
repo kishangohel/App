@@ -41,8 +41,4 @@ jobs:
 
       - name: Run Tests
         run: |
-          flutter pub global activate coverage
-          flutter test --coverage --test-randomize-ordering-seed random && flutter pub run coverage:format_coverage --lcov --in=coverage --out=coverage/lcov.info --packages=.dart_tool/package_config.json --report-on=lib
-
-      - name: Check Code Coverage
-        uses: VeryGoodOpenSource/very_good_coverage@v2.1.0
+          flutter test
