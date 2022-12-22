@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:verifi/src/features/access_points/domain/access_point_model.dart';
-import 'package:verifi/src/features/map/data/location/current_location_provider.dart';
+import 'package:verifi/src/features/map/data/location/location_repository.dart';
 import 'package:verifi/src/utils/geoflutterfire/geoflutterfire.dart';
 
 class AccessPointInfoSheet extends StatefulWidget {

@@ -12,7 +12,6 @@ import 'package:verifi/src/features/map/data/nearby_users/nearby_users_repositor
 import 'package:verifi/src/features/map/presentation/map_layers/access_point_layer/access_point_layer_controller.dart';
 import 'package:verifi/src/features/map/presentation/map_layers/user_layer/user_layer_controller.dart';
 import 'package:verifi/src/features/profile/domain/user_profile_model.dart';
-import 'package:verifi/src/utils/geoflutterfire/geoflutterfire.dart';
 
 import '../presentation/flutter_map/map_flutter_map.dart';
 import 'center_zoom_controller.dart';
@@ -21,13 +20,16 @@ part 'map_service.g.dart';
 
 class MapService {
   final Ref ref;
-  final _mapController = MapController();
+  final MapController _mapController;
   CenterZoomController? _centerZoomController;
   late final StreamSubscription<MapEvent> _mapEventSubscription;
 
   MapController get mapController => _mapController;
 
-  MapService(this.ref) {
+  MapService(
+    this.ref, {
+    @visibleForTesting MapController? mapController,
+  }) : _mapController = mapController ?? MapController() {
     _mapEventSubscription = _mapController.mapEventStream.listen((event) {
       if (event is MapEventMoveEnd ||
           event is MapEventFlingAnimationEnd ||
@@ -45,15 +47,19 @@ class MapService {
     });
   }
 
-  void associateMap(TickerProvider vsync) {
-    _centerZoomController = CenterZoomController(
-      vsync: vsync,
-      mapController: _mapController,
-      animationOptions: const AnimationOptions.animate(
-        curve: Curves.linear,
-        velocity: 1,
-      ),
-    );
+  void associateMap(
+    TickerProvider vsync, {
+    @visibleForTesting CenterZoomController? centerZoomController,
+  }) {
+    _centerZoomController = centerZoomController ??
+        CenterZoomController(
+          vsync: vsync,
+          mapController: _mapController,
+          animationOptions: const AnimationOptions.animate(
+            curve: Curves.linear,
+            velocity: 1,
+          ),
+        );
   }
 
   void disassociateMap() {
@@ -70,7 +76,7 @@ class MapService {
     ]);
   }
 
-  void moveMapToCenter(LatLng center, [double? zoom]) {
+  void moveMapToCenter(LatLng center, {double? zoom}) {
     if (_centerZoomController != null) {
       _centerZoomController!.moveTo(
         CenterZoom(
@@ -87,46 +93,30 @@ class MapService {
     if (_mapController.zoom < 12) {
       return <AccessPoint>[];
     }
-    final accessPointRepo = ref.read(accessPointRepositoryProvider);
+    final center = _mapController.center;
     final bounds = _mapController.bounds!;
-    final GeoFirePoint currentGeoPoint = accessPointRepo.geo.point(
-      latitude: _mapController.center.latitude,
-      longitude: _mapController.center.longitude,
-    );
-    final radiusInKm = currentGeoPoint.haversineDistance(
-      lat: bounds.northEast!.latitude,
-      lng: bounds.northEast!.longitude,
-    );
-    final docs = await accessPointRepo
-        .getAccessPointsWithinRadiusStream(currentGeoPoint, radiusInKm)
-        .first;
+    final radiusInKm =
+        const Haversine().distance(center, bounds.northEast!) / 1000.0;
 
-    return docs
-        .map<AccessPoint>((doc) => AccessPoint.fromDocumentSnapshot(doc))
-        .toList();
+    return await ref
+        .read(accessPointRepositoryProvider)
+        .getAccessPointsWithinRadiusStream(center, radiusInKm)
+        .first;
   }
 
   Future<List<UserProfile>> getNearbyUsers() async {
     if (_mapController.zoom < 12) {
       return <UserProfile>[];
     }
-    final nearbyUsersRepo = ref.read(nearbyUsersRepositoryProvider);
+    final center = _mapController.center;
     final bounds = _mapController.bounds!;
-    final GeoFirePoint currentGeoPoint = nearbyUsersRepo.geo.point(
-      latitude: _mapController.center.latitude,
-      longitude: _mapController.center.longitude,
-    );
-    final radiusInKm = currentGeoPoint.haversineDistance(
-      lat: bounds.northEast!.latitude,
-      lng: bounds.northEast!.longitude,
-    );
-    final docs = await nearbyUsersRepo
-        .getUsersWithinRadiusStream(currentGeoPoint, radiusInKm)
-        .first;
+    final radiusInKm =
+        const Haversine().distance(center, bounds.northEast!) / 1000.0;
 
-    return docs
-        .map<UserProfile>((doc) => UserProfile.fromDocumentSnapshot(doc))
-        .toList();
+    return await ref
+        .read(nearbyUsersRepositoryProvider)
+        .getUsersWithinRadiusStream(center, radiusInKm)
+        .first;
   }
 }
 

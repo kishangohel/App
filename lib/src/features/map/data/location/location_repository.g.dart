@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'current_location_provider.dart';
+part of 'location_repository.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -29,7 +29,7 @@ class _SystemHash {
   }
 }
 
-String $locationRepositoryHash() => r'1f6008f11be9f1436938192824f95be6e7e5d985';
+String $locationRepositoryHash() => r'd03c9f6d91e8cb5a0db7c2a36f4d5817f1effd9a';
 
 /// See also [locationRepository].
 final locationRepositoryProvider = Provider<LocationRepository>(

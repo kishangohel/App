@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pinput/pinput.dart';
 import 'package:verifi/src/features/authentication/presentation/widgets/onboarding_outline_button.dart';
 
 import '../auth_robot.dart';
@@ -49,8 +48,9 @@ void main() {
         final r = AuthRobot(tester);
         await r.pumpPhoneInputScreen();
         await r.enterPhoneNumber(testPhoneNumber);
+        r.mockRequestSmsCode(result: true);
         await r.tapSubmitButton();
-        expect(find.byType(Pinput), findsOneWidget);
+        r.verifyNavigationToSmsPage();
       });
     });
   });

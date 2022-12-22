@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'map_filter_controller.dart';
+part of 'geolocator_service.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -29,21 +29,14 @@ class _SystemHash {
   }
 }
 
-String $MapFilterControllerHash() =>
-    r'86e7aa35f363fdf413de19028dd3f9c0e07ec585';
+String $geolocatorServiceHash() => r'966a5e1c3784315e0fcf32afd373b075fc6fd99b';
 
-/// See also [MapFilterController].
-final mapFilterControllerProvider =
-    AsyncNotifierProvider<MapFilterController, MapFilter>(
-  MapFilterController.new,
-  name: r'mapFilterControllerProvider',
+/// See also [geolocatorService].
+final geolocatorServiceProvider = AutoDisposeProvider<GeolocatorService>(
+  geolocatorService,
+  name: r'geolocatorServiceProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : $MapFilterControllerHash,
+      : $geolocatorServiceHash,
 );
-typedef MapFilterControllerRef = AsyncNotifierProviderRef<MapFilter>;
-
-abstract class _$MapFilterController extends AsyncNotifier<MapFilter> {
-  @override
-  FutureOr<MapFilter> build();
-}
+typedef GeolocatorServiceRef = AutoDisposeProviderRef<GeolocatorService>;

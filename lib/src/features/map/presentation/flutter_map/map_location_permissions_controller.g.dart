@@ -30,7 +30,7 @@ class _SystemHash {
 }
 
 String $MapLocationPermissionsControllerHash() =>
-    r'5bac0f0a04c9b0fa1edd78e70503196179d88f15';
+    r'c3504e6b7122441549825384bd98e42ce9668635';
 
 /// See also [MapLocationPermissionsController].
 final mapLocationPermissionsControllerProvider =
