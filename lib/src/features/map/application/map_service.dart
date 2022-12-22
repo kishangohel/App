@@ -33,8 +33,7 @@ class MapService {
           event is MapEventFlingAnimationEnd ||
           event is MapEventDoubleTapZoomEnd ||
           event is MapEventRotateEnd ||
-          (event is MapEventMove &&
-              event.id == CenterZoomAnimation.finished) ||
+          (event is MapEventMove && event.id == CenterZoomAnimation.finished) ||
           (event is MapEventMove &&
               event.id == MapFlutterMap.initialLocationMove)) {
         updateMap();

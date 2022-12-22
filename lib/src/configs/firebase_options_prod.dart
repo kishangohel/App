@@ -63,8 +63,10 @@ class DefaultFirebaseOptions {
     messagingSenderId: '629088905005',
     projectId: 'bionic-water-366401',
     storageBucket: 'bionic-water-366401.appspot.com',
-    androidClientId: '629088905005-qfl72u3t5qu43rf0cdvl45vcsgn0iefd.apps.googleusercontent.com',
-    iosClientId: '629088905005-9l4vt43sp337ne7nq2arsnvmmb2vccrt.apps.googleusercontent.com',
+    androidClientId:
+        '629088905005-qfl72u3t5qu43rf0cdvl45vcsgn0iefd.apps.googleusercontent.com',
+    iosClientId:
+        '629088905005-9l4vt43sp337ne7nq2arsnvmmb2vccrt.apps.googleusercontent.com',
     iosBundleId: 'world.verifi.app',
   );
 }

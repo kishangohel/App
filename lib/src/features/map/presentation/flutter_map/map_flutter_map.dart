@@ -52,8 +52,8 @@ class _MapFlutterMapState extends ConsumerState<MapFlutterMap>
                   TextButton(
                     onPressed: () async {
                       await ref
-                          .read(mapLocationPermissionsControllerProvider
-                              .notifier)
+                          .read(
+                              mapLocationPermissionsControllerProvider.notifier)
                           .requestPermission();
                       Navigator.of(context).pop();
                     },

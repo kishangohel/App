@@ -130,8 +130,7 @@ class CenterZoomController {
     final screenSize =
         _mapController.latLngToScreenPoint(_mapController.bounds!.southEast)!;
     final screenSizeAverage = (screenSize.x + screenSize.y) / 2;
-    final numberOfScreenWidthsTranslated =
-        pixelsTranslated / screenSizeAverage;
+    final numberOfScreenWidthsTranslated = pixelsTranslated / screenSizeAverage;
     final translateDuration = (numberOfScreenWidthsTranslated *
             _translateDurationMultiplierInMs *
             velocity)

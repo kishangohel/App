@@ -63,7 +63,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '962492866083',
     projectId: 'staging-verifi',
     storageBucket: 'staging-verifi.appspot.com',
-    iosClientId: '962492866083-h6s45er82kfpvu2mg189vra8o00f9bah.apps.googleusercontent.com',
+    iosClientId:
+        '962492866083-h6s45er82kfpvu2mg189vra8o00f9bah.apps.googleusercontent.com',
     iosBundleId: 'world.verifi.app.stg',
   );
 }
