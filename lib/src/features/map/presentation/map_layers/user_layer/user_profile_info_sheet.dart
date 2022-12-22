@@ -15,6 +15,8 @@ class UserProfileInfoSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
+            width: 120,
+            height: 120,
             padding:
                 const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
             child: randomAvatar(
@@ -33,7 +35,7 @@ class UserProfileInfoSheet extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Contributed: ${profile.veriPoints}",
+                    "VeriPoints: ${profile.veriPoints}",
                   ),
                 ],
               ),
