@@ -36,9 +36,6 @@ jobs:
       - name: Analyze
         run: flutter analyze lib test
 
-      - name: Verify Build
-        run: flutter pub run test --run-skipped -t pull-request-only
-
       - name: Run Tests
         run: |
           flutter pub global activate coverage 1.6.0
