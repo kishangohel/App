@@ -8,6 +8,7 @@ import 'package:verifi/src/features/authentication/presentation/sms_code/sms_scr
 import 'package:verifi/src/features/map/presentation/map_screen.dart';
 import 'package:verifi/src/features/profile/presentation/profile_screen.dart';
 import 'package:verifi/src/home_screen.dart';
+import 'package:verifi/src/home_screen_controller.dart';
 
 part 'app_router.g.dart';
 
@@ -33,7 +34,7 @@ GoRouter goRouter(GoRouterRef ref) {
   final authStateChanges = ref.watch(authStateChangesProvider);
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
-    initialLocation: '/profile',
+    initialLocation: ref.read(homeScreenControllerProvider),
     debugLogDiagnostics: true,
     redirect: (context, routerState) async {
       String? redirect;

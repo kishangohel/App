@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'user_layer_controller.dart';
+part of 'home_screen_controller.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -29,21 +29,21 @@ class _SystemHash {
   }
 }
 
-String $UserLayerControllerHash() =>
-    r'2b93a0b2dc4595c975c1347de60c6edee4d69d91';
+String $HomeScreenControllerHash() =>
+    r'a7bf24c3ea23aabbb098ce534205c607c1f30c92';
 
-/// See also [UserLayerController].
-final userLayerControllerProvider =
-    AsyncNotifierProvider<UserLayerController, List<UserMarker>>(
-  UserLayerController.new,
-  name: r'userLayerControllerProvider',
+/// See also [HomeScreenController].
+final homeScreenControllerProvider =
+    NotifierProvider<HomeScreenController, String>(
+  HomeScreenController.new,
+  name: r'homeScreenControllerProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : $UserLayerControllerHash,
+      : $HomeScreenControllerHash,
 );
-typedef UserLayerControllerRef = AsyncNotifierProviderRef<List<UserMarker>>;
+typedef HomeScreenControllerRef = NotifierProviderRef<String>;
 
-abstract class _$UserLayerController extends AsyncNotifier<List<UserMarker>> {
+abstract class _$HomeScreenController extends Notifier<String> {
   @override
-  FutureOr<List<UserMarker>> build();
+  String build();
 }

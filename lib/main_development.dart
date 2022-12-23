@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:appspector/appspector.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -57,6 +58,9 @@ Future<void> initialize({String? emulatorEndpoint}) async {
   await FirebaseAppCheck.instance.activate();
   // Pass all uncaught errors from the framework to Crashlytics
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+
+  // Setup AppSpector
+  initializeAppSpector();
   // Use emulator if [emulatorEndpoint] is set
   if (emulatorEndpoint != null) {
     FirebaseAuth.instance.useAuthEmulator(
@@ -68,6 +72,14 @@ Future<void> initialize({String? emulatorEndpoint}) async {
       8080,
     );
   }
+}
+
+void initializeAppSpector() {
+  final config = Config()
+    ..iosApiKey = "ios_MTk1NDViNmQtNzYzMy00MDlhLWE5NDQtNjBkMGUxMGFhZGYx"
+    ..androidApiKey =
+        "android_ZjUwMWU1ZmMtNmI4Mi00MDc5LTllNWEtNTA2NDRhYjJkY2Vl";
+  AppSpectorPlugin.run(config);
 }
 
 /// Sign in to test_user.

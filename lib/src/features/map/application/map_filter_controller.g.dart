@@ -30,7 +30,7 @@ class _SystemHash {
 }
 
 String $MapFilterControllerHash() =>
-    r'86e7aa35f363fdf413de19028dd3f9c0e07ec585';
+    r'8880d7352aa185dc53b9daedf170036691d8cffe';
 
 /// See also [MapFilterController].
 final mapFilterControllerProvider =
