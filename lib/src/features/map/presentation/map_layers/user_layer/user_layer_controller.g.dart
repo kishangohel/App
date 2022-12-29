@@ -29,7 +29,7 @@ class _SystemHash {
   }
 }
 
-String $UserLayerControllerHash() =>
+String _$UserLayerControllerHash() =>
     r'2b93a0b2dc4595c975c1347de60c6edee4d69d91';
 
 /// See also [UserLayerController].
@@ -39,7 +39,7 @@ final userLayerControllerProvider =
   name: r'userLayerControllerProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : $UserLayerControllerHash,
+      : _$UserLayerControllerHash,
 );
 typedef UserLayerControllerRef = AsyncNotifierProviderRef<List<UserMarker>>;
 

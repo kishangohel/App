@@ -29,23 +29,24 @@ class _SystemHash {
   }
 }
 
-String $mapServiceHash() => r'f6f8a95e9e008b95c283c8aac51ccfbc6fc93e98';
+String _$mapServiceHash() => r'f6f8a95e9e008b95c283c8aac51ccfbc6fc93e98';
 
 /// See also [mapService].
 final mapServiceProvider = Provider<MapService>(
   mapService,
   name: r'mapServiceProvider',
   debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : $mapServiceHash,
+      const bool.fromEnvironment('dart.vm.product') ? null : _$mapServiceHash,
 );
 typedef MapServiceRef = ProviderRef<MapService>;
-String $mapControllerHash() => r'64b16e3e841f648f85f0b6c74f010204dca088dc';
+String _$mapControllerHash() => r'64b16e3e841f648f85f0b6c74f010204dca088dc';
 
 /// See also [mapController].
 final mapControllerProvider = Provider<MapController>(
   mapController,
   name: r'mapControllerProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : $mapControllerHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$mapControllerHash,
 );
 typedef MapControllerRef = ProviderRef<MapController>;

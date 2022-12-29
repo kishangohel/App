@@ -29,7 +29,7 @@ class _SystemHash {
   }
 }
 
-String $AccessPointLayerControllerHash() =>
+String _$AccessPointLayerControllerHash() =>
     r'fa59202427dadb75bf16c38ee0e715c46f375957';
 
 /// See also [AccessPointLayerController].
@@ -39,7 +39,7 @@ final accessPointLayerControllerProvider =
   name: r'accessPointLayerControllerProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : $AccessPointLayerControllerHash,
+      : _$AccessPointLayerControllerHash,
 );
 typedef AccessPointLayerControllerRef
     = AsyncNotifierProviderRef<List<AccessPointMarker>>;

@@ -1,5 +1,6 @@
 import 'package:flutter_map_supercluster/flutter_map_supercluster.dart';
 import 'package:verifi/src/features/access_points/domain/access_point_model.dart';
+import 'package:verifi/src/features/access_points/domain/verified_status.dart';
 
 // A cluster displayed on the map.
 class AccessPointCluster extends ClusterDataBase {
@@ -16,14 +17,12 @@ class AccessPointCluster extends ClusterDataBase {
 
   factory AccessPointCluster.fromAccessPoint(AccessPoint accessPoint) {
     switch (accessPoint.verifiedStatus) {
-      case "VeriFied":
+      case VerifiedStatus.verified:
         return AccessPointCluster(verified: 1);
-      case "UnVeriFied":
+      case VerifiedStatus.unverified:
         return AccessPointCluster(unverified: 1);
-      case "Expired":
+      case VerifiedStatus.expired:
         return AccessPointCluster(expired: 1);
-      default:
-        throw "Unexpected verified status: ${accessPoint.verifiedStatus}";
     }
   }
 

@@ -29,7 +29,7 @@ class _SystemHash {
   }
 }
 
-String $accessPointRepositoryHash() =>
+String _$accessPointRepositoryHash() =>
     r'86ed2d22230dd96a0f6e47e7453014db2f5ebdad';
 
 /// See also [accessPointRepository].
@@ -38,6 +38,6 @@ final accessPointRepositoryProvider = Provider<AccessPointRepository>(
   name: r'accessPointRepositoryProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : $accessPointRepositoryHash,
+      : _$accessPointRepositoryHash,
 );
 typedef AccessPointRepositoryRef = ProviderRef<AccessPointRepository>;

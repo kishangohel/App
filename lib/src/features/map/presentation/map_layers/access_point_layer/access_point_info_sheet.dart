@@ -95,11 +95,11 @@ class _AccessPointInfoSheetState extends State<AccessPointInfoSheet> {
                   children: [
                     Container(
                       padding: const EdgeInsets.only(right: 8.0),
-                      child: (widget.accessPoint.verifiedStatus == "VeriFied")
+                      child: widget.accessPoint.isVerified
                           ? const Icon(Icons.check)
                           : const Icon(Icons.question_mark),
                     ),
-                    Text(widget.accessPoint.verifiedStatus!),
+                    Text(widget.accessPoint.verifiedStatusLabel),
                   ],
                 ),
               ),
@@ -144,7 +144,7 @@ class _AccessPointInfoSheetState extends State<AccessPointInfoSheet> {
                           Navigator.of(context).pop();
                         },
                         child: Text(
-                          (widget.accessPoint.verifiedStatus! == "VeriFied")
+                          widget.accessPoint.isVerified
                               ? "Connect"
                               : "Validate",
                         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:verifi/src/features/access_points/domain/access_point_model.dart';
+import 'package:verifi/src/features/access_points/domain/verified_status.dart';
 
 class AccessPointMarker extends Marker {
   final AccessPoint accessPoint;
@@ -20,16 +21,13 @@ class AccessPointMarker extends Marker {
         );
 
   static Color colorFor(AccessPoint accessPoint) {
-    final verifiedStatus = accessPoint.verifiedStatus;
-    switch (verifiedStatus) {
-      case "Expired":
+    switch (accessPoint.verifiedStatus) {
+      case VerifiedStatus.expired:
         return Colors.red;
-      case "UnVeriFied":
+      case VerifiedStatus.unverified:
         return Colors.orange;
-      case "VeriFied":
+      case VerifiedStatus.verified:
         return Colors.green;
-      default:
-        throw "Unexpected verified status: $verifiedStatus";
     }
   }
 }

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:verifi/src/features/access_points/domain/place_model.dart';
+import 'package:verifi/src/features/access_points/domain/verified_status.dart';
 
 /// A single WiFi access point.
 class AccessPoint {
@@ -11,7 +12,7 @@ class AccessPoint {
   final String ssid;
   final String? password;
   final String submittedBy;
-  final String? verifiedStatus;
+  final VerifiedStatus verifiedStatus;
 
   AccessPoint({
     required this.id,
@@ -20,7 +21,7 @@ class AccessPoint {
     required this.ssid,
     this.password,
     required this.submittedBy,
-    this.verifiedStatus,
+    required this.verifiedStatus,
   });
 
   factory AccessPoint.fromDocumentSnapshot(DocumentSnapshot snapshot) {
@@ -29,11 +30,11 @@ class AccessPoint {
     }
     final data = snapshot.data()! as Map<String, dynamic>;
     final location = data['Location']['geopoint'] as GeoPoint;
-    final lastValidated = (data['LastValidated'] as Timestamp).toDate();
+    final lastValidated = (data['LastValidated'] as Timestamp?)?.toDate();
     return AccessPoint(
       id: snapshot.id,
       location: LatLng(location.latitude, location.longitude),
-      place: Place.fromJson(data['Feature']),
+      place: data['Feature'] == null ? null : Place.fromJson(data['Feature']),
       ssid: data['SSID'],
       password: data['Password'],
       submittedBy: data['SubmittedBy'],
@@ -41,19 +42,23 @@ class AccessPoint {
     );
   }
 
+  bool get isVerified => verifiedStatus.isVerified;
+
+  String get verifiedStatusLabel => verifiedStatus.label;
+
   @override
   String toString() => "AccessPoint: { id: $id, location: $location }";
 
-  static String _getVeriFiedStatus(DateTime? lastValidated) {
+  static VerifiedStatus _getVeriFiedStatus(DateTime? lastValidated) {
     if (lastValidated == null) {
-      return "UnVeriFied";
+      return VerifiedStatus.unverified;
     }
     final lastValidatedDuration = _getLastValidatedDuration(lastValidated);
     // AP stays VeriFied for 30 days
     if (lastValidatedDuration < 30) {
-      return "VeriFied";
+      return VerifiedStatus.verified;
     } else {
-      return "UnVeriFied";
+      return VerifiedStatus.expired;
     }
   }
 
