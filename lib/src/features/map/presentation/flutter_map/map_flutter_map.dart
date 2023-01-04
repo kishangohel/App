@@ -9,6 +9,7 @@ import 'package:verifi/src/features/map/data/location/location_repository.dart';
 import 'package:verifi/src/features/map/presentation/flutter_map/location_permission_dialog.dart';
 import 'package:verifi/src/features/map/presentation/flutter_map/map_initial_location_controller.dart';
 import 'package:verifi/src/features/map/presentation/flutter_map/map_location_permissions_controller.dart';
+import 'package:verifi/src/features/map/presentation/map_layers/attribution_layer.dart';
 
 import '../map_layers/access_point_layer/access_point_cluster_layer.dart';
 import '../map_layers/mapbox_layer/mapbox_tile_layer.dart';
@@ -46,7 +47,10 @@ class _MapFlutterMapState extends ConsumerState<MapFlutterMap>
       ),
       children: ref.watch(mapFilterControllerProvider).when<List<Widget>>(
             data: (filter) {
-              final layers = <Widget>[MapboxTileLayer()];
+              final layers = <Widget>[
+                MapboxTileLayer(),
+                AttributionLayer(),
+              ];
               if (filter.showAccessPoints) {
                 layers.add(AccessPointClusterLayer());
               }
@@ -57,12 +61,14 @@ class _MapFlutterMapState extends ConsumerState<MapFlutterMap>
             },
             loading: () => [
               MapboxTileLayer(),
+              AttributionLayer(),
             ],
             error: (error, stacktrace) {
               debugPrint(error.toString());
               debugPrintStack(stackTrace: stacktrace);
               return [
                 MapboxTileLayer(),
+                AttributionLayer(),
               ];
             },
           ),
