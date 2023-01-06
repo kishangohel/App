@@ -25,6 +25,7 @@ dependencies:
   flutter_map_supercluster: ^2.1.1
   flutter_riverpod: ^2.1.3
   flutter_svg: ^1.1.6
+  font_awesome_flutter: ^10.3.0
   geolocator: ^9.0.2
   google_fonts: ^3.0.1
   go_router: ^6.0.0

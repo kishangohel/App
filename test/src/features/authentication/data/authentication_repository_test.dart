@@ -6,7 +6,7 @@ import 'package:verifi/src/features/authentication/data/authentication_repositor
 void main() {
   late FirebaseAuth firebaseAuth;
 
-  group('AuthenticationRepository', () {
+  group(AuthenticationRepository, () {
     firebaseAuth = MockFirebaseAuth();
     final authRepository = AuthenticationRepository(
       firebaseAuth: firebaseAuth,

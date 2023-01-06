@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:verifi/src/features/profile/domain/current_user_model.dart';
 import 'package:verifi/src/utils/geoflutterfire/geoflutterfire.dart';
 
 import '../../authentication/data/authentication_repository.dart';
@@ -22,7 +24,7 @@ const _displayNameRegex =
 class ProfileRepository {
   late FirebaseFirestore _firestore;
   late CollectionReference userCollection;
-  UserProfile? _profile;
+  CurrentUser? _currentUser;
   final ProfileRepositoryRef ref;
 
   ProfileRepository(this.ref, {FirebaseFirestore? firestore}) {
@@ -30,12 +32,22 @@ class ProfileRepository {
     userCollection = _firestore.collection('UserProfile');
   }
 
-  /// Stream of the current user's profile.
-  Stream<UserProfile?> userProfile(String userId) {
-    return userCollection.doc(userId).snapshots().map((snapshot) {
-      if (snapshot.exists) {
-        _profile = UserProfile.fromDocumentSnapshot(snapshot);
-        return _profile;
+  /// Stream of the CurrentUser which contains the firebase authentication user
+  /// as well as VeriFi UserProfile.
+  Stream<CurrentUser?> currentUser(User? user) {
+    return userCollection.doc(user?.uid).snapshots().map((snapshot) {
+      if (user != null && snapshot.exists) {
+        final twitterUserInfoIndex = user.providerData.indexWhere((userInfo) =>
+            userInfo.providerId == TwitterAuthProvider.PROVIDER_ID);
+
+        _currentUser = CurrentUser(
+          profile: UserProfile.fromDocumentSnapshot(snapshot),
+          twitterAccount: twitterUserInfoIndex == -1
+              ? null
+              : LinkedTwitterAccount.fromUserInfo(
+                  user.providerData[twitterUserInfoIndex]),
+        );
+        return _currentUser;
       } else {
         return null;
       }
@@ -100,14 +112,15 @@ class ProfileRepository {
   }
 
   Future<void> updateUserLocation(LatLng location) async {
-    if (_profile == null || (false == await profileExists(_profile!.id))) {
+    if (_currentUser == null ||
+        (false == await profileExists(_currentUser!.id))) {
       return;
     }
     final geoFirePoint = Geoflutterfire().point(
       latitude: location.latitude,
       longitude: location.longitude,
     );
-    await userCollection.doc(_profile!.id).update({
+    await userCollection.doc(_currentUser!.id).update({
       "LastLocation": geoFirePoint.data,
     });
   }
@@ -118,6 +131,8 @@ ProfileRepository profileRepository(ProfileRepositoryRef ref) {
   return ProfileRepository(ref);
 }
 
-final userProfileProvider = StreamProvider<UserProfile?>((ref) => ref
-    .watch(profileRepositoryProvider)
-    .userProfile(ref.watch(authStateChangesProvider).value?.uid ?? ''));
+final userProfileProvider = StreamProvider<CurrentUser?>((ref) {
+  return ref
+      .watch(profileRepositoryProvider)
+      .currentUser(ref.watch(authStateChangesProvider).value);
+});

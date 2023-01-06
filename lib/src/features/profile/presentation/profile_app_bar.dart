@@ -20,10 +20,10 @@ class ProfileAppBar extends ConsumerWidget implements PreferredSizeWidget {
           ),
         );
       },
-      data: (profile) {
+      data: (currentUser) {
         return AppBar(
           centerTitle: true,
-          title: Text(profile?.displayName ?? ''),
+          title: Text(currentUser?.displayName ?? ''),
         );
       },
       error: (err, stack) {

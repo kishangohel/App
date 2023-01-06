@@ -6,16 +6,17 @@ import 'package:random_avatar/random_avatar.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:verifi/src/common/widgets/shimmer_widget.dart';
 import 'package:verifi/src/features/profile/data/profile_repository.dart';
+import 'package:verifi/src/features/profile/presentation/profile_twitter_connection.dart';
 import 'package:verifi/src/features/profile/presentation/widgets/logout_button.dart';
 import 'package:verifi/src/features/profile/presentation/widgets/veripoints/veripoints_widget.dart';
 import 'package:verifi/src/utils/svg_provider.dart';
 
-class ProfileBody extends StatefulWidget {
+class ProfileBody extends ConsumerStatefulWidget {
   @override
-  State<StatefulWidget> createState() => _ProfileBodyState();
+  ConsumerState<ProfileBody> createState() => _ProfileBodyState();
 }
 
-class _ProfileBodyState extends State<ProfileBody> {
+class _ProfileBodyState extends ConsumerState<ProfileBody> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -28,6 +29,7 @@ class _ProfileBodyState extends State<ProfileBody> {
         children: [
           ProfilePhoto(),
           VeriPointsWidget(),
+          ProfileTwitterConnection(),
           Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -55,7 +57,7 @@ class ProfilePhoto extends ConsumerWidget {
           ],
         );
       },
-      data: (profile) {
+      data: (currentUser) {
         return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -75,7 +77,7 @@ class ProfilePhoto extends ConsumerWidget {
                       // Show NFT if set, otherwise show Multiavatar
                       backgroundImage: SvgProvider(
                         randomAvatarString(
-                          profile!.displayName,
+                          currentUser!.displayName,
                           trBackground: true,
                         ),
                         source: SvgSource.raw,

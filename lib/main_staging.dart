@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:verifi/src/app.dart';
 import 'package:verifi/src/configs/firebase_options_staging.dart';
 
@@ -19,7 +20,11 @@ void main() async {
   // Run the app
   // If release mode or [_signInTestUser] is false, profile will be null and
   // user will go through standard onboarding process.
-  runApp(VeriFi());
+  runApp(
+    ProviderScope(
+      child: VeriFi(),
+    ),
+  );
 }
 
 /// Initialize various dependencies.

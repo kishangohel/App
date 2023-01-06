@@ -66,6 +66,16 @@ class AuthenticationRepository {
     );
   }
 
+  /// Link a Twitter account with the current account.
+  Future<void> linkTwitterAccount() async {
+    await _fbAuth.currentUser!.linkWithProvider(TwitterAuthProvider());
+  }
+
+  /// Unlink the current user's Twitter account.
+  Future<void> unlinkTwitterAccount() async {
+    await _fbAuth.currentUser!.unlink(TwitterAuthProvider.PROVIDER_ID);
+  }
+
   /// Submit the SMS code to verify the phone number.
   Future<void> submitSmsCode(String smsCode) async {
     try {
