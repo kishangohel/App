@@ -29,7 +29,7 @@ class _SystemHash {
   }
 }
 
-String _$profileRepositoryHash() => r'a725a414b51ac9b27063736faf1a3ff0eb9f79f7';
+String $profileRepositoryHash() => r'a725a414b51ac9b27063736faf1a3ff0eb9f79f7';
 
 /// See also [profileRepository].
 final profileRepositoryProvider = Provider<ProfileRepository>(
@@ -37,6 +37,6 @@ final profileRepositoryProvider = Provider<ProfileRepository>(
   name: r'profileRepositoryProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$profileRepositoryHash,
+      : $profileRepositoryHash,
 );
 typedef ProfileRepositoryRef = ProviderRef<ProfileRepository>;

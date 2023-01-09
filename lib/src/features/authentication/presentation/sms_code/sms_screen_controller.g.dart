@@ -29,7 +29,7 @@ class _SystemHash {
   }
 }
 
-String _$SmsScreenControllerHash() =>
+String $SmsScreenControllerHash() =>
     r'd7c99c4f383e274d0b93eba29e5601bc8f43b82f';
 
 /// See also [SmsScreenController].
@@ -39,7 +39,7 @@ final smsScreenControllerProvider =
   name: r'smsScreenControllerProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$SmsScreenControllerHash,
+      : $SmsScreenControllerHash,
 );
 typedef SmsScreenControllerRef = AutoDisposeAsyncNotifierProviderRef<void>;
 

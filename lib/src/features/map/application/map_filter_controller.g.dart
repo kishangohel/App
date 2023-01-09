@@ -29,7 +29,7 @@ class _SystemHash {
   }
 }
 
-String _$MapFilterControllerHash() =>
+String $MapFilterControllerHash() =>
     r'8880d7352aa185dc53b9daedf170036691d8cffe';
 
 /// See also [MapFilterController].
@@ -39,7 +39,7 @@ final mapFilterControllerProvider =
   name: r'mapFilterControllerProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$MapFilterControllerHash,
+      : $MapFilterControllerHash,
 );
 typedef MapFilterControllerRef = AsyncNotifierProviderRef<MapFilter>;
 

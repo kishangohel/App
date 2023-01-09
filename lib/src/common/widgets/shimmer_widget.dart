@@ -4,13 +4,10 @@ import 'package:shimmer/shimmer.dart';
 class VShimmerWidget extends StatelessWidget {
   final double width;
   final double height;
-  final EdgeInsets? margin;
-
   const VShimmerWidget({
     Key? key,
     required this.width,
     required this.height,
-    this.margin,
   }) : super(key: key);
 
   @override
@@ -24,7 +21,6 @@ class VShimmerWidget extends StatelessWidget {
           ? Colors.grey[350]!
           : Colors.grey[850]!,
       child: Card(
-        margin: margin,
         elevation: 1.0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8.0),

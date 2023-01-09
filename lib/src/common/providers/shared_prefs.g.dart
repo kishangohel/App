@@ -29,13 +29,13 @@ class _SystemHash {
   }
 }
 
-String _$sharedPrefsHash() => r'b96dfa2fa6cbae073c31860457b07bacd49ab6c1';
+String $sharedPrefsHash() => r'b96dfa2fa6cbae073c31860457b07bacd49ab6c1';
 
 /// See also [sharedPrefs].
 final sharedPrefsProvider = FutureProvider<SharedPreferences>(
   sharedPrefs,
   name: r'sharedPrefsProvider',
   debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$sharedPrefsHash,
+      const bool.fromEnvironment('dart.vm.product') ? null : $sharedPrefsHash,
 );
 typedef SharedPrefsRef = FutureProviderRef<SharedPreferences>;

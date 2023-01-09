@@ -46,26 +46,6 @@ class AccessPoint {
 
   String get verifiedStatusLabel => verifiedStatus.label;
 
-  AccessPoint copyWith({
-    String? id,
-    LatLng? location,
-    Place? place,
-    String? ssid,
-    String? password,
-    String? submittedBy,
-    VerifiedStatus? verifiedStatus,
-  }) {
-    return AccessPoint(
-      id: id ?? this.id,
-      location: location ?? this.location,
-      place: place ?? this.place,
-      ssid: ssid ?? this.ssid,
-      password: password ?? this.password,
-      submittedBy: submittedBy ?? this.submittedBy,
-      verifiedStatus: verifiedStatus ?? this.verifiedStatus,
-    );
-  }
-
   @override
   String toString() => "AccessPoint: { id: $id, location: $location }";
 

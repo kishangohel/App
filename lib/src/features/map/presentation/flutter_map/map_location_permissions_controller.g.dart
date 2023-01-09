@@ -29,7 +29,7 @@ class _SystemHash {
   }
 }
 
-String _$MapLocationPermissionsControllerHash() =>
+String $MapLocationPermissionsControllerHash() =>
     r'c3504e6b7122441549825384bd98e42ce9668635';
 
 /// See also [MapLocationPermissionsController].
@@ -39,7 +39,7 @@ final mapLocationPermissionsControllerProvider =
   name: r'mapLocationPermissionsControllerProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$MapLocationPermissionsControllerHash,
+      : $MapLocationPermissionsControllerHash,
 );
 typedef MapLocationPermissionsControllerRef
     = AsyncNotifierProviderRef<LocationPermission>;

@@ -29,7 +29,7 @@ class _SystemHash {
   }
 }
 
-String _$geolocatorServiceHash() => r'966a5e1c3784315e0fcf32afd373b075fc6fd99b';
+String $geolocatorServiceHash() => r'966a5e1c3784315e0fcf32afd373b075fc6fd99b';
 
 /// See also [geolocatorService].
 final geolocatorServiceProvider = AutoDisposeProvider<GeolocatorService>(
@@ -37,6 +37,6 @@ final geolocatorServiceProvider = AutoDisposeProvider<GeolocatorService>(
   name: r'geolocatorServiceProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$geolocatorServiceHash,
+      : $geolocatorServiceHash,
 );
 typedef GeolocatorServiceRef = AutoDisposeProviderRef<GeolocatorService>;

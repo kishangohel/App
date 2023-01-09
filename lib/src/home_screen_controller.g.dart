@@ -29,22 +29,17 @@ class _SystemHash {
   }
 }
 
-String _$HomeScreenControllerHash() =>
+String $HomeScreenControllerHash() =>
     r'a7bf24c3ea23aabbb098ce534205c607c1f30c92';
 
-/// We need to keep track of current page in order to ensure auth token
-/// refreshes don't redirect user. By having `initialLocation` in
-/// app_router.dart set to the state of this `Notifier`, auth token refreshes
-/// won't interrupt the user.
-///
-/// Copied from [HomeScreenController].
+/// See also [HomeScreenController].
 final homeScreenControllerProvider =
     NotifierProvider<HomeScreenController, String>(
   HomeScreenController.new,
   name: r'homeScreenControllerProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$HomeScreenControllerHash,
+      : $HomeScreenControllerHash,
 );
 typedef HomeScreenControllerRef = NotifierProviderRef<String>;
 
