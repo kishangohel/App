@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:pinput/pinput.dart';
 import 'package:verifi/src/features/authentication/presentation/phone_number/account_phone_form_field.dart';
@@ -12,9 +11,8 @@ import 'package:verifi/src/features/authentication/presentation/phone_number/pho
 import 'package:verifi/src/features/authentication/presentation/widgets/onboarding_outline_button.dart';
 import 'package:verifi/src/routing/app_router.dart';
 
+import '../../../test_helper/go_router_mock.dart';
 import 'presentation/phone_number/phone_screen_controller_stub.dart';
-
-class GoRouterMock extends Mock implements GoRouter {}
 
 class AuthRobot {
   final WidgetTester tester;
@@ -54,8 +52,8 @@ class AuthRobot {
               .overrideWith(() => _phoneScreenControllerStub),
         ],
         child: MaterialApp(
-          home: InheritedGoRouter(
-            goRouter: _goRouterMock,
+          home: mockGoRouter(
+            _goRouterMock,
             child: const PhoneScreen(),
           ),
         ),

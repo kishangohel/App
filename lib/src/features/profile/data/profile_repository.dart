@@ -131,8 +131,11 @@ ProfileRepository profileRepository(ProfileRepositoryRef ref) {
   return ProfileRepository(ref);
 }
 
-final userProfileProvider = StreamProvider<CurrentUser?>((ref) {
-  return ref
-      .watch(profileRepositoryProvider)
-      .currentUser(ref.watch(authStateChangesProvider).value);
-});
+final currentUserProvider = StreamProvider<UserProfile?>((ref) => ref
+    .watch(profileRepositoryProvider)
+    .userProfile(ref.watch(authStateChangesProvider).value?.uid ?? ''));
+
+final userProfileFamily =
+    StreamProvider.autoDispose.family<UserProfile?, String>(
+  (ref, uid) => ref.watch(profileRepositoryProvider).userProfile(uid),
+);

@@ -29,7 +29,7 @@ class _SystemHash {
   }
 }
 
-String $placeRepositoryHash() => r'ec5f72361a032fc0f78e02b734f74b23beede297';
+String _$placeRepositoryHash() => r'ec5f72361a032fc0f78e02b734f74b23beede297';
 
 /// See also [placeRepository].
 final placeRepositoryProvider = Provider<PlaceRepository>(
@@ -37,6 +37,6 @@ final placeRepositoryProvider = Provider<PlaceRepository>(
   name: r'placeRepositoryProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : $placeRepositoryHash,
+      : _$placeRepositoryHash,
 );
 typedef PlaceRepositoryRef = ProviderRef<PlaceRepository>;

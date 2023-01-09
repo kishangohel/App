@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'geolocator_service.dart';
+part of 'access_point_connection_controller.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -29,14 +29,24 @@ class _SystemHash {
   }
 }
 
-String _$geolocatorServiceHash() => r'966a5e1c3784315e0fcf32afd373b075fc6fd99b';
+String _$AccessPointConnectionControllerHash() =>
+    r'ca1b6ba1b7dd292208f553020edab950ff1b5f8e';
 
-/// See also [geolocatorService].
-final geolocatorServiceProvider = AutoDisposeProvider<GeolocatorService>(
-  geolocatorService,
-  name: r'geolocatorServiceProvider',
+/// See also [AccessPointConnectionController].
+final accessPointConnectionControllerProvider =
+    AutoDisposeAsyncNotifierProvider<AccessPointConnectionController,
+        AccessPointConnectionState>(
+  AccessPointConnectionController.new,
+  name: r'accessPointConnectionControllerProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$geolocatorServiceHash,
+      : _$AccessPointConnectionControllerHash,
 );
-typedef GeolocatorServiceRef = AutoDisposeProviderRef<GeolocatorService>;
+typedef AccessPointConnectionControllerRef
+    = AutoDisposeAsyncNotifierProviderRef<AccessPointConnectionState>;
+
+abstract class _$AccessPointConnectionController
+    extends AutoDisposeAsyncNotifier<AccessPointConnectionState> {
+  @override
+  FutureOr<AccessPointConnectionState> build();
+}
