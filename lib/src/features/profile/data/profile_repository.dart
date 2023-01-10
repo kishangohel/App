@@ -54,6 +54,17 @@ class ProfileRepository {
     });
   }
 
+  /// Stream of the User with the given uid.
+  Stream<UserProfile?> userWithUid(String? uid) {
+    return userCollection.doc(uid).snapshots().map((snapshot) {
+      if (uid != null && snapshot.exists) {
+        return UserProfile.fromDocumentSnapshot(snapshot);
+      } else {
+        return null;
+      }
+    });
+  }
+
   Future<bool> profileExists(String userId) async {
     return (await userCollection.doc(userId).get()).exists;
   }
@@ -131,8 +142,13 @@ ProfileRepository profileRepository(ProfileRepositoryRef ref) {
   return ProfileRepository(ref);
 }
 
-final userProfileProvider = StreamProvider<CurrentUser?>((ref) {
+final currentUserProvider = StreamProvider<CurrentUser?>((ref) {
   return ref
       .watch(profileRepositoryProvider)
       .currentUser(ref.watch(authStateChangesProvider).value);
 });
+
+final userProfileFamily =
+    StreamProvider.autoDispose.family<UserProfile?, String>(
+  (ref, uid) => ref.watch(profileRepositoryProvider).userWithUid(uid),
+);

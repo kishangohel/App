@@ -29,7 +29,7 @@ class _SystemHash {
   }
 }
 
-String $VeriPointsControllerHash() =>
+String _$VeriPointsControllerHash() =>
     r'5156db4a9f2d664c7243e62083fd1ab7ef87724e';
 
 /// See also [VeriPointsController].
@@ -39,7 +39,7 @@ final veriPointsControllerProvider =
   name: r'veriPointsControllerProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : $VeriPointsControllerHash,
+      : _$VeriPointsControllerHash,
 );
 typedef VeriPointsControllerRef = AutoDisposeAsyncNotifierProviderRef<int>;
 

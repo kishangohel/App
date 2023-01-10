@@ -35,7 +35,7 @@ void main() {
       overrides: [
         authRepositoryProvider
             .overrideWith((ref) => authenticationRepositoryMock),
-        userProfileProvider
+        currentUserProvider
             .overrideWith((ref) => userProfileProviderController.stream),
       ],
     );

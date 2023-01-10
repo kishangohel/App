@@ -29,7 +29,7 @@ class _SystemHash {
   }
 }
 
-String $nearbyUsersRepositoryHash() =>
+String _$nearbyUsersRepositoryHash() =>
     r'dd02eb1b37d4799895e818e2f530935de0a492f8';
 
 /// See also [nearbyUsersRepository].
@@ -38,6 +38,6 @@ final nearbyUsersRepositoryProvider = Provider<NearbyUsersRepository>(
   name: r'nearbyUsersRepositoryProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : $nearbyUsersRepositoryHash,
+      : _$nearbyUsersRepositoryHash,
 );
 typedef NearbyUsersRepositoryRef = ProviderRef<NearbyUsersRepository>;

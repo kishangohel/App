@@ -9,7 +9,7 @@ class ProfileAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final profile = ref.watch(userProfileProvider);
+    final profile = ref.watch(currentUserProvider);
     return profile.when(
       loading: () {
         return AppBar(

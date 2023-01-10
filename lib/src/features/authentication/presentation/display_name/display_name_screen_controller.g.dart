@@ -29,7 +29,7 @@ class _SystemHash {
   }
 }
 
-String $DisplayNameScreenControllerHash() =>
+String _$DisplayNameScreenControllerHash() =>
     r'27a965ab290670bf74a731aadad707ac7d357ac9';
 
 /// See also [DisplayNameScreenController].
@@ -39,7 +39,7 @@ final displayNameScreenControllerProvider =
   name: r'displayNameScreenControllerProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : $DisplayNameScreenControllerHash,
+      : _$DisplayNameScreenControllerHash,
 );
 typedef DisplayNameScreenControllerRef
     = AutoDisposeAsyncNotifierProviderRef<String?>;
