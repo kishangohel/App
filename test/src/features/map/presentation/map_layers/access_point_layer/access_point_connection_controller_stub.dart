@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:verifi/src/features/access_points/domain/access_point_model.dart';
 import 'package:verifi/src/features/map/domain/access_point_connection_state.dart';
 import 'package:verifi/src/features/map/presentation/map_layers/access_point_layer/access_point_connection_controller.dart';
 
@@ -10,8 +11,9 @@ import 'package:verifi/src/features/map/presentation/map_layers/access_point_lay
 /// is not possible.
 class AccessPointConnectionControllerStub
     extends AccessPointConnectionController {
-  bool connectCalled = false;
   FutureOr<AccessPointConnectionState>? _initialValue;
+
+  List<AccessPoint> accessPointsConnectedTo = [];
 
   @override
   FutureOr<AccessPointConnectionState> build() async {
@@ -28,7 +30,7 @@ class AccessPointConnectionControllerStub
   }
 
   @override
-  Future<void> connect() async {
-    connectCalled = true;
+  Future<void> connect(AccessPoint accessPoint) async {
+    accessPointsConnectedTo.add(accessPoint);
   }
 }

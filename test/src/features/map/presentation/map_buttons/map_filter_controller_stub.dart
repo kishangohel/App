@@ -8,12 +8,13 @@ import 'package:verifi/src/features/map/application/map_filter_controller.dart';
 /// trigger subsequent notifications without a dedicated stub but right now this
 /// is not possible.
 class MapFilterControllerStub extends MapFilterController {
-  FutureOr<MapFilter>? _initialValue;
+  // A future that never finishes to simulate loading.
+  FutureOr<MapFilter> _initialValue = Completer<MapFilter>().future;
 
   @override
   FutureOr<MapFilter> build() async {
     // A future that never finishes to simulate loading.
-    return _initialValue ?? Completer<MapFilter>().future;
+    return _initialValue;
   }
 
   void setInitialValue(FutureOr<MapFilter> initialValue) {

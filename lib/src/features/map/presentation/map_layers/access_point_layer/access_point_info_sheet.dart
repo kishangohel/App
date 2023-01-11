@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:random_avatar/random_avatar.dart';
 import 'package:verifi/src/common/widgets/shimmer_widget.dart';
 import 'package:verifi/src/features/access_points/domain/access_point_model.dart';
+import 'package:verifi/src/features/access_points/presentation/report_access_point_dialog.dart';
 import 'package:verifi/src/features/map/data/location/location_repository.dart';
 import 'package:verifi/src/features/map/domain/access_point_connection_state.dart';
 import 'package:verifi/src/features/map/presentation/map_layers/access_point_layer/access_point_connection_controller.dart';
 import 'package:verifi/src/features/profile/data/profile_repository.dart';
 import 'package:verifi/src/features/profile/domain/user_profile_model.dart';
-import 'package:verifi/src/utils/geoflutterfire/geoflutterfire.dart';
+import 'package:verifi/src/utils/geoflutterfire/src/models/point.dart';
 
 class AccessPointInfoSheet extends ConsumerWidget {
   final AccessPoint accessPoint;
@@ -43,7 +43,7 @@ class AccessPointInfoSheet extends ConsumerWidget {
           _networkPassword(),
           _verifiedStatus(),
           _contributor(contributorProfile),
-          if (_isWithinProximityOfAP(ref, accessPoint.location))
+          if (_isWithinProximityOfAP(ref) && _apAddedByDifferentUser(ref))
             _connectButton(
               context,
               ref,
@@ -55,14 +55,39 @@ class AccessPointInfoSheet extends ConsumerWidget {
   }
 
   Widget _nameAndAddress(BuildContext context) {
-    return ListTile(
-      title: Text(
-        accessPoint.place?.title ?? "Unknown place",
-        style: Theme.of(context).textTheme.headlineSmall,
-      ),
-      subtitle: Text(
-        accessPoint.place?.address ?? "Unknown address",
-      ),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: ListTile(
+            title: Text(
+              accessPoint.place?.name ?? "Unknown place",
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            subtitle: Text(
+              accessPoint.place?.address ?? "Unknown address",
+            ),
+          ),
+        ),
+        Container(
+          alignment: Alignment.topRight,
+          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+          child: IconButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) =>
+                    ReportAccessPointDialog(accessPoint: accessPoint),
+              );
+            },
+            icon: const Icon(
+              Icons.report,
+              size: 26,
+              color: Color.fromRGBO(196, 175, 175, 1),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -166,7 +191,7 @@ class AccessPointInfoSheet extends ConsumerWidget {
             : () {
                 ref
                     .read(accessPointConnectionControllerProvider.notifier)
-                    .connect();
+                    .connect(accessPoint);
               },
         child: Row(mainAxisSize: MainAxisSize.min, children: [
           if (connectionState.valueOrNull?.connecting == true)
@@ -178,7 +203,9 @@ class AccessPointInfoSheet extends ConsumerWidget {
                 color: Theme.of(context).primaryColor.withOpacity(0.5),
               ),
             ),
-          Text(accessPoint.isVerified ? "Connect" : "Validate"),
+          accessPoint.isVerified
+              ? const Text("Connect")
+              : const Text("Validate"),
           if (connectionState.valueOrNull?.connecting == true)
             const SizedBox(width: 29),
         ]),
@@ -199,7 +226,7 @@ class AccessPointInfoSheet extends ConsumerWidget {
     );
   }
 
-  bool _isWithinProximityOfAP(WidgetRef ref, LatLng apPosition) {
+  bool _isWithinProximityOfAP(WidgetRef ref) {
     // Get current location
     final currentLocation =
         ref.read(locationRepositoryProvider).currentLocation;
@@ -207,7 +234,10 @@ class AccessPointInfoSheet extends ConsumerWidget {
 
     // Convert current position to LatLng
     // Convert AP location to GeoPoint so we can use haversineDistance func
-    final apGeoPoint = GeoFirePoint(apPosition.latitude, apPosition.longitude);
+    final apGeoPoint = GeoFirePoint(
+      accessPoint.location.latitude,
+      accessPoint.location.longitude,
+    );
     // Calculate distance via haversineDistance in km
     final distanceFromAP = apGeoPoint.haversineDistance(
       lat: currentLocation.latitude,
@@ -216,4 +246,7 @@ class AccessPointInfoSheet extends ConsumerWidget {
     // Return true if within 100m, false otherwise
     return distanceFromAP < 0.1;
   }
+
+  bool _apAddedByDifferentUser(WidgetRef ref) =>
+      ref.watch(currentUserProvider).value?.id != accessPoint.submittedBy;
 }

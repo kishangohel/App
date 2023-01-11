@@ -11,6 +11,7 @@ class LocationMapButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
+        elevation: 4.0,
         padding: const EdgeInsets.all(14),
         shape: const CircleBorder(),
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,

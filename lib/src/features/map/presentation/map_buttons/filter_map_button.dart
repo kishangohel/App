@@ -9,6 +9,7 @@ class FilterMapButton extends ConsumerWidget {
     final mapFilter = ref.watch(mapFilterControllerProvider);
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
+        elevation: 4.0,
         padding: const EdgeInsets.all(14),
         shape: const CircleBorder(),
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,

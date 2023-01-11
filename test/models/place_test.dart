@@ -7,7 +7,7 @@ void main() {
     test('json serialization', () {
       final place = Place(
         id: 'testId',
-        title: 'testTitle',
+        name: 'testName',
         address: 'testTitle, test Address',
         location: LatLng(1.0, 2.0),
       );

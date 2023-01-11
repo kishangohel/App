@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:meta/meta.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -70,10 +71,13 @@ void riverpodTest<T>(
 /// debugging purposes.
 Future<ProviderContainer> makeWidgetWithRiverpod(
   WidgetTester tester, {
-  required Widget Function() widget,
+  Widget Function()? widget,
   List<Override> overrides = const [],
   bool logProviders = false,
+  GoRouter? goRouter,
 }) async {
+  assert((widget == null) ^ (goRouter == null));
+
   final container = ProviderContainer(
     overrides: overrides,
     observers: logProviders ? [_Logger()] : [],
@@ -82,7 +86,11 @@ Future<ProviderContainer> makeWidgetWithRiverpod(
   await tester.pumpWidget(
     UncontrolledProviderScope(
       container: container,
-      child: MaterialApp(home: widget()),
+      child: widget != null
+          ? MaterialApp(home: widget())
+          : MaterialApp.router(
+              routerConfig: goRouter!,
+            ),
     ),
   );
 

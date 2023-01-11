@@ -141,7 +141,7 @@ void main() {
           },
           'Feature': {
             'id': 'placeId123',
-            'title': 'placeTitle123',
+            'name': 'placeName123',
             'address': 'placeAddress123',
             'location': LatLng(2, 3).toJson(),
           },
@@ -153,7 +153,7 @@ void main() {
         accessPoint.place,
         Place(
           id: 'placeId123',
-          title: 'placeTitle123',
+          name: 'placeName123',
           address: 'placeAddress123',
           location: LatLng(2, 3),
         ),

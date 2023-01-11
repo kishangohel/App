@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'access_point_connection_controller.dart';
+part of 'connectivity_repository.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -29,24 +29,15 @@ class _SystemHash {
   }
 }
 
-String _$AccessPointConnectionControllerHash() =>
-    r'010229fbb32d0e49967af0d07473e87591c982e6';
+String $connectivityRepositoryHash() =>
+    r'f4afa500ac4fffa16d658e3d4d7f0a2a5ffa434d';
 
-/// See also [AccessPointConnectionController].
-final accessPointConnectionControllerProvider =
-    AutoDisposeAsyncNotifierProvider<AccessPointConnectionController,
-        AccessPointConnectionState>(
-  AccessPointConnectionController.new,
-  name: r'accessPointConnectionControllerProvider',
+/// See also [connectivityRepository].
+final connectivityRepositoryProvider = Provider<ConnectivityRepository>(
+  connectivityRepository,
+  name: r'connectivityRepositoryProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$AccessPointConnectionControllerHash,
+      : $connectivityRepositoryHash,
 );
-typedef AccessPointConnectionControllerRef
-    = AutoDisposeAsyncNotifierProviderRef<AccessPointConnectionState>;
-
-abstract class _$AccessPointConnectionController
-    extends AutoDisposeAsyncNotifier<AccessPointConnectionState> {
-  @override
-  FutureOr<AccessPointConnectionState> build();
-}
+typedef ConnectivityRepositoryRef = ProviderRef<ConnectivityRepository>;

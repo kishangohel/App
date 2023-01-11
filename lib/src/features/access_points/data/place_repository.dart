@@ -27,11 +27,13 @@ class PlaceRepository {
   static final _searchCenterOffsetMeters45Degrees =
       sqrt(2 * (pow(_searchCenterOffsetMeters, 2)));
 
-  Future<List<Place>> searchNearbyPlaces(
-    LatLng location,
-    String input,
-    int radius,
-  ) async {
+  /// Retrieve a list of nearby points of interest using MapBox Geocoding API.
+  ///
+  /// The bounding box is a 200m x 200m square with the user's current location
+  /// at the center of the square.
+  ///
+  /// Only point of interest (POI) places are returned.
+  Future<List<Place>> searchNearbyPlaces(LatLng location, String input) async {
     final uri = Uri.https(
       'api.mapbox.com',
       '/geocoding/v5/mapbox.places/$input.json',
@@ -45,7 +47,6 @@ class PlaceRepository {
     );
     final response = await http.get(uri);
     final responseBody = jsonDecode(utf8.decode(response.bodyBytes));
-
     return List.castFrom<dynamic, Map<String, dynamic>>(
       responseBody['features'],
     ).map(Place.fromMapboxResponse).toList();

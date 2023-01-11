@@ -115,7 +115,7 @@ def main():
                 "name": f"Test Location {i}",
                 "feature": {
                     "id": PLACE_ID,
-                    "title": f"Test Place {i}",
+                    "name": f"Test Place {i}",
                     "address": f"Test Place Address {i}",
                     "location": {
                         "coordinates": [

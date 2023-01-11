@@ -1,4 +1,6 @@
+import 'package:auto_connect/auto_connect.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:verifi/src/features/access_points/domain/access_point_model.dart';
 import 'package:verifi/src/features/map/application/map_service.dart';
 import 'package:verifi/src/features/map/domain/access_point_connection_state.dart';
 
@@ -13,7 +15,7 @@ class AccessPointConnectionController
 
   MapService get mapService => ref.read(mapServiceProvider);
 
-  Future<void> connect() async {
+  Future<void> connect(AccessPoint accessPoint) async {
     if (!state.hasValue) return;
     final value = state.value!;
 
@@ -22,15 +24,12 @@ class AccessPointConnectionController
     state = AsyncData(value.copyWith(connecting: true));
 
     state = await AsyncValue.guard(() async {
-      // TODO: Uncomment when plugin is published and add result to state.
-      // final result = await AutoConnect.verifyAccessPoint(
-      //   wifi: WiFi(
-      //     ssid: value.accessPoint.ssid,
-      //     password: value.accessPoint.password ?? "",
-      //   ),
-      // );
-      await Future.delayed(const Duration(seconds: 2));
-      const result = 'A FAKE CONNECTION RESULT';
+      final result = await AutoConnect.verifyAccessPoint(
+        wifi: WiFi(
+          ssid: accessPoint.ssid,
+          password: accessPoint.password ?? "",
+        ),
+      );
       return value.copyWith(connecting: false, connectionResult: result);
     });
   }

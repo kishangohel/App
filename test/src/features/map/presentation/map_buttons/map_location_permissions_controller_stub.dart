@@ -10,12 +10,13 @@ import 'package:verifi/src/features/map/presentation/flutter_map/map_location_pe
 /// is not possible.
 class MapLocationPermissionsControllerStub
     extends MapLocationPermissionsController {
-  FutureOr<LocationPermission>? _initialValue;
+  // A future that never finishes to simulate loading.
+  FutureOr<LocationPermission> _initialValue =
+      Completer<LocationPermission>().future;
 
   @override
   FutureOr<LocationPermission> build() async {
-    // A future that never finishes to simulate loading.
-    return _initialValue ?? Completer<LocationPermission>().future;
+    return _initialValue;
   }
 
   void setInitialValue(FutureOr<LocationPermission> initialValue) {

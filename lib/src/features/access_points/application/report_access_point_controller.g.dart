@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'access_point_connection_controller.dart';
+part of 'report_access_point_controller.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -29,24 +29,23 @@ class _SystemHash {
   }
 }
 
-String _$AccessPointConnectionControllerHash() =>
-    r'010229fbb32d0e49967af0d07473e87591c982e6';
+String _$ReportAccessPointControllerHash() =>
+    r'5b1b813e8b77c7d3f2e8692ce390aa8c32dd65a0';
 
-/// See also [AccessPointConnectionController].
-final accessPointConnectionControllerProvider =
-    AutoDisposeAsyncNotifierProvider<AccessPointConnectionController,
-        AccessPointConnectionState>(
-  AccessPointConnectionController.new,
-  name: r'accessPointConnectionControllerProvider',
+/// See also [ReportAccessPointController].
+final reportAccessPointControllerProvider = AutoDisposeAsyncNotifierProvider<
+    ReportAccessPointController, AccessPointReport?>(
+  ReportAccessPointController.new,
+  name: r'reportAccessPointControllerProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$AccessPointConnectionControllerHash,
+      : _$ReportAccessPointControllerHash,
 );
-typedef AccessPointConnectionControllerRef
-    = AutoDisposeAsyncNotifierProviderRef<AccessPointConnectionState>;
+typedef ReportAccessPointControllerRef
+    = AutoDisposeAsyncNotifierProviderRef<AccessPointReport?>;
 
-abstract class _$AccessPointConnectionController
-    extends AutoDisposeAsyncNotifier<AccessPointConnectionState> {
+abstract class _$ReportAccessPointController
+    extends AutoDisposeAsyncNotifier<AccessPointReport?> {
   @override
-  FutureOr<AccessPointConnectionState> build();
+  FutureOr<AccessPointReport?> build();
 }

@@ -3,13 +3,13 @@ import 'package:latlong2/latlong.dart';
 
 class Place extends Equatable {
   final String id;
-  final String title;
+  final String name;
   final String address;
   final LatLng location;
 
   const Place({
     required this.id,
-    required this.title,
+    required this.name,
     required this.address,
     required this.location,
   });
@@ -17,16 +17,16 @@ class Place extends Equatable {
   factory Place.fromMapboxResponse(Map<String, dynamic> json) {
     return Place(
       id: json['id'],
-      title: json['text'],
-      address: json['placeName'],
-      location: LatLng.fromJson(json['center']),
+      name: json['text'],
+      address: json['place_name'],
+      location: LatLng(json['center'][1], json['center'][0]),
     );
   }
 
   factory Place.fromJson(Map<String, dynamic> json) {
     return Place(
       id: json['id'],
-      title: json['title'],
+      name: json['name'],
       address: json['address'],
       location: LatLng.fromJson(json['location']),
     );
@@ -35,7 +35,7 @@ class Place extends Equatable {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'title': title,
+      'name': name,
       'address': address,
       'location': location.toJson(),
     };
@@ -43,18 +43,18 @@ class Place extends Equatable {
 
   Place copyWith({
     String? id,
-    String? title,
+    String? name,
     String? address,
     LatLng? location,
   }) {
     return Place(
       id: id ?? this.id,
-      title: title ?? this.title,
+      name: name ?? this.name,
       address: address ?? this.address,
       location: location ?? this.location,
     );
   }
 
   @override
-  List<Object?> get props => [id, title, address, location];
+  List<Object?> get props => [id, name, address, location];
 }
