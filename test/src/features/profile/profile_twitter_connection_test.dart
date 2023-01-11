@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:mocktail_image_network/mocktail_image_network.dart';
 import 'package:verifi/src/common/widgets/shimmer_widget.dart';
 import 'package:verifi/src/features/authentication/data/authentication_repository.dart';
-import 'package:verifi/src/features/map/presentation/map_buttons/filter_map_button.dart';
 import 'package:verifi/src/features/profile/data/profile_repository.dart';
 import 'package:verifi/src/features/profile/domain/current_user_model.dart';
 import 'package:verifi/src/features/profile/presentation/profile_twitter_connection.dart';
@@ -41,7 +41,7 @@ void main() {
     );
   }
 
-  group(FilterMapButton, () {
+  group(ProfileTwitterConnection, () {
     testWidgets('loading', (tester) async {
       createProviderMocks();
       await makeWidget(tester);
@@ -79,14 +79,14 @@ void main() {
       verify(() => authenticationRepositoryMock.linkTwitterAccount()).called(1);
     });
 
-    testWidgets('current user with twitter account', (tester) async {
+    testWidgets('current user with twitter account, no profile photo',
+        (tester) async {
       createProviderMocks();
       await makeWidget(tester);
       final currentUserMock = CurrentUserMock();
       when(() => currentUserMock.twitterAccount).thenReturn(
         const LinkedTwitterAccount(
-          uid: '',
-          photoUrl: 'photourl',
+          uid: 'photoUrl',
           displayName: 'TwitterDisplayName',
         ),
       );
@@ -95,6 +95,10 @@ void main() {
 
       // Shows button to link Twitter account
       expect(find.text('TwitterDisplayName'), findsOneWidget);
+      expect(
+        find.widgetWithIcon(CircleAvatar, Icons.account_circle),
+        findsOneWidget,
+      );
       final unlinkTwitterAccountButtonFinder =
           find.widgetWithText(ElevatedButton, 'Unlink Twitter account');
       expect(unlinkTwitterAccountButtonFinder, findsOneWidget);
@@ -104,6 +108,39 @@ void main() {
       await tester.tap(unlinkTwitterAccountButtonFinder);
       verify(() => authenticationRepositoryMock.unlinkTwitterAccount())
           .called(1);
+    });
+
+    testWidgets('current user with twitter account, has profile photo',
+        (tester) async {
+      createProviderMocks();
+      await mockNetworkImages(() async {
+        await makeWidget(tester);
+        final currentUserMock = CurrentUserMock();
+        when(() => currentUserMock.twitterAccount).thenReturn(
+          const LinkedTwitterAccount(
+            uid: 'photoUid',
+            displayName: 'TwitterDisplayName',
+            photoUrl: 'fake_photo_url.png',
+          ),
+        );
+        userProfileProviderController.add(currentUserMock);
+        await tester.pump();
+
+        // Shows button to link Twitter account
+        expect(find.text('TwitterDisplayName'), findsOneWidget);
+        final circleAvatar =
+            tester.widget(find.byType(CircleAvatar)) as CircleAvatar;
+        expect(circleAvatar.backgroundImage, isNotNull);
+        final unlinkTwitterAccountButtonFinder =
+            find.widgetWithText(ElevatedButton, 'Unlink Twitter account');
+        expect(unlinkTwitterAccountButtonFinder, findsOneWidget);
+
+        when(() => authenticationRepositoryMock.unlinkTwitterAccount())
+            .thenAnswer((_) => Future.value());
+        await tester.tap(unlinkTwitterAccountButtonFinder);
+        verify(() => authenticationRepositoryMock.unlinkTwitterAccount())
+            .called(1);
+      });
     });
   });
 }

@@ -5,6 +5,7 @@ import 'package:verifi/src/common/widgets/shimmer_widget.dart';
 import 'package:verifi/src/features/authentication/data/authentication_repository.dart';
 import 'package:verifi/src/features/profile/data/profile_repository.dart';
 import 'package:verifi/src/features/profile/domain/current_user_model.dart';
+import 'package:verifi/src/features/profile/presentation/widgets/twitter_profile.dart';
 
 class ProfileTwitterConnection extends ConsumerWidget {
   @override
@@ -14,7 +15,7 @@ class ProfileTwitterConnection extends ConsumerWidget {
       const Divider(endIndent: 80, indent: 80, color: Colors.black26),
       const SizedBox(height: 8),
       _title(context),
-      const SizedBox(height: 8),
+      const SizedBox(height: 12),
       _body(context, ref),
     ]);
   }
@@ -59,11 +60,8 @@ class ProfileTwitterConnection extends ConsumerWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          twitterAccount.displayName,
-          style: Theme.of(context).textTheme.bodyLarge,
-        ),
-        const SizedBox(height: 8),
+        TwitterProfile(twitterAccount: twitterAccount),
+        const SizedBox(height: 12),
         ElevatedButton(
           onPressed: () {
             ref.read(authRepositoryProvider).unlinkTwitterAccount();
