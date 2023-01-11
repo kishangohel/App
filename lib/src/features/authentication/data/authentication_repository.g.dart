@@ -29,7 +29,7 @@ class _SystemHash {
   }
 }
 
-String $authRepositoryHash() => r'370a8a302969bb832c8d64a7f763329ae48fd959';
+String _$authRepositoryHash() => r'370a8a302969bb832c8d64a7f763329ae48fd959';
 
 /// See also [authRepository].
 final authRepositoryProvider = Provider<AuthenticationRepository>(
@@ -37,6 +37,6 @@ final authRepositoryProvider = Provider<AuthenticationRepository>(
   name: r'authRepositoryProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : $authRepositoryHash,
+      : _$authRepositoryHash,
 );
 typedef AuthRepositoryRef = ProviderRef<AuthenticationRepository>;

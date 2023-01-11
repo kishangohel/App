@@ -47,7 +47,7 @@ class _ProfileBodyState extends ConsumerState<ProfileBody> {
 class ProfilePhoto extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final profile = ref.watch(userProfileProvider);
+    final profile = ref.watch(currentUserProvider);
     return profile.when<Widget>(
       loading: () {
         return Row(

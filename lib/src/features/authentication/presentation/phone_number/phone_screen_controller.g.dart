@@ -29,7 +29,7 @@ class _SystemHash {
   }
 }
 
-String $PhoneScreenControllerHash() =>
+String _$PhoneScreenControllerHash() =>
     r'd36bfb3ae4561fced3d5584faa2c243957833a5c';
 
 /// See also [PhoneScreenController].
@@ -39,7 +39,7 @@ final phoneScreenControllerProvider =
   name: r'phoneScreenControllerProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : $PhoneScreenControllerHash,
+      : _$PhoneScreenControllerHash,
 );
 typedef PhoneScreenControllerRef = AutoDisposeAsyncNotifierProviderRef<bool>;
 

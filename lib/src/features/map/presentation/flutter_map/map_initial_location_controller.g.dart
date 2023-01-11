@@ -29,7 +29,7 @@ class _SystemHash {
   }
 }
 
-String $MapInitialLocationControllerHash() =>
+String _$MapInitialLocationControllerHash() =>
     r'78d4764415ef314e82c051869b0d8f8b3bd76262';
 
 /// See also [MapInitialLocationController].
@@ -39,7 +39,7 @@ final mapInitialLocationControllerProvider =
   name: r'mapInitialLocationControllerProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : $MapInitialLocationControllerHash,
+      : _$MapInitialLocationControllerHash,
 );
 typedef MapInitialLocationControllerRef = NotifierProviderRef<LatLng>;
 

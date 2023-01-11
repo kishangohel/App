@@ -37,7 +37,7 @@ class ProfileTwitterConnection extends ConsumerWidget {
   }
 
   Widget _body(BuildContext context, WidgetRef ref) {
-    final userProfileState = ref.watch(userProfileProvider);
+    final userProfileState = ref.watch(currentUserProvider);
 
     if (userProfileState.isLoading || userProfileState.valueOrNull == null) {
       return const VShimmerWidget(width: 180, height: 80);
