@@ -63,7 +63,9 @@ class _AccessPointClusterLayerState
           (marker as AccessPointMarker).accessPoint,
         );
       },
-      builder: (context, count, clusterData) => AccessPointClusterMarker(
+      builder: (context, location, count, clusterData) =>
+          AccessPointClusterMarker(
+        location: location,
         count: count,
         accessPointCluster: clusterData as AccessPointCluster,
       ),

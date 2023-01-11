@@ -1,36 +1,48 @@
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:random_avatar/random_avatar.dart';
-import 'package:verifi/src/features/map/domain/user_cluster.dart';
+import 'package:verifi/src/features/map/application/map_service.dart';
+import 'package:verifi/src/features/map/domain/user_profile_cluster.dart';
+import 'package:verifi/src/features/map/presentation/map_layers/user_layer/user_cluster_sheet.dart';
 import 'package:verifi/src/features/profile/domain/user_profile_model.dart';
 
-class UserClusterMarker extends StatelessWidget {
+class UserClusterMarker extends ConsumerWidget {
   static const size = 50.0;
 
+  final LatLng location;
   final int count;
-  final UserCluster userCluster;
+  final UserProfileCluster userCluster;
 
   const UserClusterMarker({
+    required this.location,
     required this.count,
     required this.userCluster,
   });
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.black12,
+  Widget build(BuildContext context, WidgetRef ref) {
+    return GestureDetector(
+      onTap: () {
+        ref.read(mapServiceProvider).moveMapToCenter(location);
+        _showClusterSheet(context);
+      },
+      child: Container(
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.black12,
+        ),
+        child: _userStack(),
       ),
-      child: _userStack(),
     );
   }
 
   Widget _userStack() {
-    final pfpSampleLength = userCluster.userSample.length;
-    if (pfpSampleLength <= 3) {
+    final numberOfUsers = userCluster.userProfiles.length;
+    if (numberOfUsers <= 3) {
       return _userStack3();
-    } else if (pfpSampleLength == 4) {
+    } else if (numberOfUsers == 4) {
       return _userStack4();
     } else {
       return _userStack5();
@@ -45,9 +57,9 @@ class UserClusterMarker extends StatelessWidget {
       child: Stack(
         fit: StackFit.loose,
         children: [
-          _userImage(userCluster.userSample[2], iconSize, 10, 20.0),
-          _userImage(userCluster.userSample[1], iconSize, 21, 0),
-          _userImage(userCluster.userSample[0], iconSize, -1, 0),
+          _userImage(userCluster.userProfiles[2], iconSize, 10, 20.0),
+          _userImage(userCluster.userProfiles[1], iconSize, 21, 0),
+          _userImage(userCluster.userProfiles[0], iconSize, -1, 0),
         ],
       ),
     );
@@ -61,10 +73,10 @@ class UserClusterMarker extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          _userImage(userCluster.userSample[3], iconSize, 12, 25),
-          _userImage(userCluster.userSample[2], iconSize, 27, 12),
-          _userImage(userCluster.userSample[1], iconSize, -2, 12),
-          _userImage(userCluster.userSample[0], iconSize, 12, 0),
+          _userImage(userCluster.userProfiles[3], iconSize, 12, 25),
+          _userImage(userCluster.userProfiles[2], iconSize, 27, 12),
+          _userImage(userCluster.userProfiles[1], iconSize, -2, 12),
+          _userImage(userCluster.userProfiles[0], iconSize, 12, 0),
         ],
       ),
     );
@@ -78,11 +90,11 @@ class UserClusterMarker extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          _userImage(userCluster.userSample[4], iconSize, 12, 13),
-          _userImage(userCluster.userSample[3], iconSize, 12, 25),
-          _userImage(userCluster.userSample[2], iconSize, 27, 13),
-          _userImage(userCluster.userSample[1], iconSize, -2, 13),
-          _userImage(userCluster.userSample[0], iconSize, 12, 0),
+          _userImage(userCluster.userProfiles[4], iconSize, 12, 13),
+          _userImage(userCluster.userProfiles[3], iconSize, 12, 25),
+          _userImage(userCluster.userProfiles[2], iconSize, 27, 13),
+          _userImage(userCluster.userProfiles[1], iconSize, -2, 13),
+          _userImage(userCluster.userProfiles[0], iconSize, 12, 0),
         ],
       ),
     );
@@ -130,6 +142,15 @@ class UserClusterMarker extends StatelessWidget {
         style: const TextStyle(color: Colors.white, fontSize: 16),
       ),
       child: child,
+    );
+  }
+
+  void _showClusterSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => UserClusterSheet(userCluster.userProfiles),
+      useRootNavigator: true,
+      backgroundColor: Colors.transparent,
     );
   }
 }

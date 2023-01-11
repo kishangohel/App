@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map_supercluster/flutter_map_supercluster.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:verifi/src/features/map/application/map_service.dart';
-import 'package:verifi/src/features/map/domain/user_cluster.dart';
+import 'package:verifi/src/features/map/domain/user_profile_cluster.dart';
 import 'package:verifi/src/features/profile/domain/user_profile_model.dart';
 
 import 'user_cluster_marker.dart';
@@ -41,7 +41,7 @@ class _UserClusterLayerState extends ConsumerState<UserClusterLayer> {
     return SuperclusterLayer.mutable(
       minimumClusterSize: 3,
       initialMarkers: _initialMarkers ?? [],
-      clusterDataExtractor: (marker) => UserCluster.fromUser(
+      clusterDataExtractor: (marker) => UserProfileCluster.fromUser(
         (marker as UserMarker).profile,
       ),
       // Prevent creation from occurring in an isolate which is unnecessary
@@ -61,9 +61,10 @@ class _UserClusterLayerState extends ConsumerState<UserClusterLayer> {
           (marker as UserMarker).profile,
         );
       },
-      builder: (context, count, clusterData) => UserClusterMarker(
+      builder: (context, location, count, clusterData) => UserClusterMarker(
+        location: location,
         count: count,
-        userCluster: clusterData as UserCluster,
+        userCluster: clusterData as UserProfileCluster,
       ),
     );
   }

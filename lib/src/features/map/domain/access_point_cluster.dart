@@ -4,12 +4,14 @@ import 'package:verifi/src/features/access_points/domain/verified_status.dart';
 
 // A cluster displayed on the map.
 class AccessPointCluster extends ClusterDataBase {
+  List<AccessPoint> accessPoints;
   final int verified;
   final int unverified;
   final int expired;
   final int total;
 
   AccessPointCluster({
+    required this.accessPoints,
     this.verified = 0,
     this.unverified = 0,
     this.expired = 0,
@@ -18,11 +20,20 @@ class AccessPointCluster extends ClusterDataBase {
   factory AccessPointCluster.fromAccessPoint(AccessPoint accessPoint) {
     switch (accessPoint.verifiedStatus) {
       case VerifiedStatus.verified:
-        return AccessPointCluster(verified: 1);
+        return AccessPointCluster(
+          accessPoints: [accessPoint],
+          verified: 1,
+        );
       case VerifiedStatus.unverified:
-        return AccessPointCluster(unverified: 1);
+        return AccessPointCluster(
+          accessPoints: [accessPoint],
+          unverified: 1,
+        );
       case VerifiedStatus.expired:
-        return AccessPointCluster(expired: 1);
+        return AccessPointCluster(
+          accessPoints: [accessPoint],
+          expired: 1,
+        );
     }
   }
 
@@ -34,6 +45,7 @@ class AccessPointCluster extends ClusterDataBase {
   @override
   AccessPointCluster combine(AccessPointCluster data) {
     return AccessPointCluster(
+      accessPoints: List.from(accessPoints)..addAll(data.accessPoints),
       verified: verified + data.verified,
       unverified: unverified + data.unverified,
       expired: expired + data.expired,

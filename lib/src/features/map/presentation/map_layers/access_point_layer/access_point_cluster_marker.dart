@@ -1,30 +1,53 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:latlong2/latlong.dart' show LatLng;
+import 'package:verifi/src/features/map/application/map_service.dart';
 import 'package:verifi/src/features/map/domain/access_point_cluster.dart';
+import 'package:verifi/src/features/map/presentation/map_layers/access_point_layer/access_point_cluster_sheet.dart';
 
-class AccessPointClusterMarker extends StatelessWidget {
+class AccessPointClusterMarker extends ConsumerWidget {
   static const radius = 55.0;
+  final LatLng location;
   final int count;
   final AccessPointCluster accessPointCluster;
 
   const AccessPointClusterMarker({
+    required this.location,
     required this.count,
     required this.accessPointCluster,
   });
 
   @override
-  Widget build(BuildContext context) {
-    return CustomPaint(
-      painter: _AccessPointCirclePainter(
-          context: context, cluster: accessPointCluster),
-      size: const Size(radius, radius),
-      child: Center(
-        child: Text(
-          count.toString(),
-          style: const TextStyle(fontSize: 16),
+  Widget build(BuildContext context, WidgetRef ref) {
+    return GestureDetector(
+      onTap: () {
+        ref.read(mapServiceProvider).moveMapToCenter(location);
+        _showClusterSheet(context);
+      },
+      child: CustomPaint(
+        painter: _AccessPointCirclePainter(
+            context: context, cluster: accessPointCluster),
+        size: const Size(radius, radius),
+        child: Center(
+          child: Text(
+            count.toString(),
+            style: const TextStyle(fontSize: 16),
+          ),
         ),
       ),
+    );
+  }
+
+  void _showClusterSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => AccessPointClusterSheet(
+        accessPointCluster.accessPoints,
+      ),
+      useRootNavigator: true,
+      backgroundColor: Colors.transparent,
     );
   }
 }
