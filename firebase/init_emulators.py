@@ -10,9 +10,10 @@ from firebase_admin.auth import UserRecord
 from google.cloud.firestore import GeoPoint
 from google.api_core.retry import Retry
 
+ACCESS_POINT_COUNT = 25
 USER_COUNT = 5
 MY_LOCATION = [-1.0, -1.0]
-PLACE_ID = ""
+PLACE_ID = "poi.1234"
 
 BASE32_CODES = "0123456789bcdefghjkmnpqrstuvwxyz"
 
@@ -102,7 +103,7 @@ def main():
 
     # Create access points
     access_points = []
-    for i in range(5):
+    for i in range(ACCESS_POINT_COUNT):
         coordinate = get_random_nearby_coordinate(100)
         access_points.append(
             {
@@ -185,16 +186,14 @@ if __name__ == "__main__":
         print("It should most likely be set to 'localhost:8080'")
         sys.exit(1)
 
-    if len(sys.argv) != 5:
+    if len(sys.argv) != 3:
         print("Invalid arguments")
         print(
-            "Please pass the user count, GPS coordinates and place ID, all "
-            "seperated by spaces (e.g. 25 12.3456 -7.8901 ChIJcVTyZY_S-YgMBGplVHWkw0c) "
-            "of the location to create fake WiFi access points and users."
+            "Please pass the latitude and longitude close to which the "
+            "access_points points and users should be placed, seperated by "
+            "spaces (e.g. 12.3456 -7.8901)"
         )
         sys.exit(1)
 
-    USER_COUNT = int(sys.argv[1])
-    MY_LOCATION = [float(sys.argv[2]), float(sys.argv[3])]
-    PLACE_ID = sys.argv[4]
+    MY_LOCATION = [float(sys.argv[1]), float(sys.argv[2])]
     main()

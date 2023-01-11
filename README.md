@@ -25,3 +25,7 @@ the beautiful world we are blessed to experience every day.
   src="https://cdn.rawgit.com/steverichey/google-play-badge-svg/master/img/en_get.svg"
   "width" = "40%">
 </a>
+
+## Contributing
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md)
