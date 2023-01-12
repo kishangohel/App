@@ -10,8 +10,10 @@ from firebase_admin.auth import UserRecord
 from google.cloud.firestore import GeoPoint
 from google.api_core.retry import Retry
 
-ACCESS_POINT_COUNT = 25
-USER_COUNT = 5
+ACCESS_POINT_COUNT = 20
+ACCESS_POINT_SPREAD_IN_M = 200
+USER_COUNT = 20
+USER_SPREAD_IN_M = 2000
 MY_LOCATION = [-1.0, -1.0]
 PLACE_ID = "poi.1234"
 
@@ -104,7 +106,7 @@ def main():
     # Create access points
     access_points = []
     for i in range(ACCESS_POINT_COUNT):
-        coordinate = get_random_nearby_coordinate(100)
+        coordinate = get_random_nearby_coordinate(ACCESS_POINT_SPREAD_IN_M)
         access_points.append(
             {
                 "lat": coordinate[0],
@@ -159,7 +161,7 @@ def main():
     for i in range(USER_COUNT):
         # Create profile
         display_name_suffix = "" if i == 0 else f"_{i}"
-        coordinate = get_random_nearby_coordinate(2000)
+        coordinate = get_random_nearby_coordinate(USER_SPREAD_IN_M)
 
         db.collection("UserProfile").document(users[i].uid).set(
             {
