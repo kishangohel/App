@@ -21,7 +21,12 @@ class LocationPermissionDialogState
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Location permission'),
-      content: const Text('Please allow location access to use the map'),
+      content: const Text(
+        'VeriFi collects location data for the following features:\n\n'
+        '  \u2022 Display nearby WiFi access points on the map\n'
+        '  \u2022 Connect to nearby WiFi access points\n'
+        '  \u2022 Display your avatar on the map\n',
+      ),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
