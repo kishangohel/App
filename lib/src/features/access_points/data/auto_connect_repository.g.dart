@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'connectivity_repository.dart';
+part of 'auto_connect_repository.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -29,15 +29,17 @@ class _SystemHash {
   }
 }
 
-String _$connectivityRepositoryHash() =>
-    r'f4afa500ac4fffa16d658e3d4d7f0a2a5ffa434d';
+String _$autoConnectRepositoryHash() =>
+    r'96164f579d94f0e78859aee1d2ebe1ee1f159a39';
 
-/// See also [connectivityRepository].
-final connectivityRepositoryProvider = Provider<ConnectivityRepository>(
-  connectivityRepository,
-  name: r'connectivityRepositoryProvider',
+/// See also [autoConnectRepository].
+final autoConnectRepositoryProvider =
+    AutoDisposeProvider<AutoConnectRepository>(
+  autoConnectRepository,
+  name: r'autoConnectRepositoryProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$connectivityRepositoryHash,
+      : _$autoConnectRepositoryHash,
 );
-typedef ConnectivityRepositoryRef = ProviderRef<ConnectivityRepository>;
+typedef AutoConnectRepositoryRef
+    = AutoDisposeProviderRef<AutoConnectRepository>;

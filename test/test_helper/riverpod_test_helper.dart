@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_test/flutter_test.dart' as flutter_test;
 import 'package:go_router/go_router.dart';
 import 'package:meta/meta.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 /// A generic Listener class, used to keep track of when a provider notifies
 /// its listeners.
-class Listener<T> extends Mock {
-  void call(T? previous, T next);
+class _StateListener<T> {
+  final List<T> emitted = [];
+  void call(T? previous, T next) {
+    emitted.add(next);
+  }
 }
 
 /// Simplifies testing of code which relies on riverpod.
@@ -30,13 +32,16 @@ void riverpodTest<T>(
   /// Interact with the provider and its dependencies before verification.
   FutureOr<void> Function(ProviderContainer)? act,
 
-  /// Check the behaviour.
-  FutureOr<void> Function(Listener<T>)? verify,
+  /// Check the emitted states.
+  required List<dynamic> expect,
+
+  /// Run optional verifications (e.g. for called repositories)
+  FutureOr<void> Function()? verify,
 
   /// Set [logProviders] to true to print out provider states for debugging.
   bool logProviders = false,
 }) {
-  test(
+  flutter_test.test(
     description,
     () async {
       // Run setup
@@ -47,10 +52,10 @@ void riverpodTest<T>(
         overrides: overrides == null ? [] : await overrides(),
         observers: logProviders ? [_Logger()] : [],
       );
-      addTearDown(container.dispose);
+      flutter_test.addTearDown(container.dispose);
 
       // Setup listener
-      final listener = Listener<T>();
+      final listener = _StateListener<T>();
       container.listen(
         providerListenable,
         listener,
@@ -60,8 +65,8 @@ void riverpodTest<T>(
       // Perform testing actions
       if (act != null) await act(container);
 
-      // Run verifications.
-      if (verify != null) await verify(listener);
+      // Check emitted states.
+      flutter_test.expect(listener.emitted, flutter_test.wrapMatcher(expect));
     },
   );
 }
@@ -70,7 +75,7 @@ void riverpodTest<T>(
 /// [overrides]. Set [logProviders] to true to print out provider states for
 /// debugging purposes.
 Future<ProviderContainer> makeWidgetWithRiverpod(
-  WidgetTester tester, {
+  flutter_test.WidgetTester tester, {
   Widget Function()? widget,
   List<Override> overrides = const [],
   bool logProviders = false,

@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map_supercluster/flutter_map_supercluster.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:verifi/src/features/access_points/domain/access_point_model.dart';
+import 'package:verifi/src/features/access_points/presentation/access_point_info_sheet.dart';
 import 'package:verifi/src/features/map/application/map_service.dart';
 import 'package:verifi/src/features/map/domain/access_point_cluster.dart';
 import 'package:verifi/src/features/map/presentation/map_layers/access_point_layer/access_point_layer_controller.dart';
 
 import 'access_point_cluster_marker.dart';
-import 'access_point_info_sheet.dart';
 import 'access_point_marker.dart';
 
 class AccessPointClusterLayer extends ConsumerStatefulWidget {

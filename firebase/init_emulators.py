@@ -60,7 +60,9 @@ def create_geohash(lat, lng):
 
 
 def get_random_nearby_coordinate(maxDistanceInM):
-    """Gets a random coordinate within approx. maxDistanceInM of MY_LOCATION."""
+    """
+    Gets a random coordinate within approx. maxDistanceInM of MY_LOCATION.
+    """
     lat_dist = random.randint(1, 10) / (1000000.0 / maxDistanceInM)
     lng_dist = random.randint(1, 10) / (1000000.0 / maxDistanceInM)
     lat_direction = random.randint(0, 1)
@@ -78,6 +80,15 @@ def get_random_nearby_coordinate(maxDistanceInM):
     result[0] = round(result[0], 4)
     result[1] = round(result[1], 4)
     return result
+
+
+def get_random_user_index_except(excluded_user_index):
+    """Gets a random user, excluding the user at the specified index"""
+    random_user_index = random.randint(0, USER_COUNT - 1)
+    while random_user_index == excluded_user_index:
+        random_user_index = random.randint(0, USER_COUNT - 1)
+
+    return random_user_index
 
 
 def main():
@@ -106,6 +117,31 @@ def main():
     # Create access points
     access_points = []
     for i in range(ACCESS_POINT_COUNT):
+        if i < 5:
+            submitted_by_index = 0
+        else:
+            submitted_by_index = get_random_user_index_except(0)
+
+        submitted_by = users[submitted_by_index].uid
+
+        time = datetime.datetime.now(tz=datetime.timezone.utc)
+        if i % 3 == 0:  # Unverified
+            submitted_on = time
+            last_validated = None
+            validated_by = []
+        elif i % 3 == 1:  # Verified
+            submitted_on = time - datetime.timedelta(days=2)
+            last_validated = time - datetime.timedelta(days=1)
+            validated_by = [
+                users[get_random_user_index_except(submitted_by_index)].uid,
+            ]
+        else:  # Expired
+            submitted_on = time - datetime.timedelta(days=40)
+            last_validated = time - datetime.timedelta(days=35)
+            validated_by = [
+                users[get_random_user_index_except(submitted_by_index)].uid,
+            ]
+
         coordinate = get_random_nearby_coordinate(ACCESS_POINT_SPREAD_IN_M)
         access_points.append(
             {
@@ -115,6 +151,10 @@ def main():
                 "ssid": "Another Pixel",
                 "password": "random.password",
                 "name": f"Test Location {i}",
+                "submittedOn": submitted_on,
+                "submittedBy": submitted_by,
+                "validatedBy": validated_by,
+                "lastValidated": last_validated,
                 "feature": {
                     "id": PLACE_ID,
                     "name": f"Test Place {i}",
@@ -132,7 +172,6 @@ def main():
     # Add access points
     for ap in access_points:
         try:
-            time = datetime.datetime.now(tz=datetime.timezone.utc)
             db.collection("AccessPoint").add(
                 {
                     "Location": {
@@ -143,10 +182,10 @@ def main():
                     "Name": ap["name"],
                     "SSID": ap["ssid"],
                     "Password": ap["password"],
-                    "LastValidated": time,
-                    "SubmittedBy": users[0].uid,
-                    "SubmittedOn": time,
-                    "ValidatedBy": [],
+                    "LastValidated": ap["lastValidated"],
+                    "SubmittedBy": ap["submittedBy"],
+                    "SubmittedOn": ap["submittedOn"],
+                    "ValidatedBy": ap["validatedBy"],
                 },
                 retry=Retry(deadline=5.0),
             )
@@ -156,7 +195,6 @@ def main():
                 "running?"
             )
             sys.exit(1)
-
 
     for i in range(USER_COUNT):
         # Create profile
@@ -171,7 +209,9 @@ def main():
                     "geohash": create_geohash(coordinate[0], coordinate[1]),
                     "geopoint": GeoPoint(coordinate[0], coordinate[1]),
                 },
-                "LastLocationUpdate": datetime.datetime.now(tz=datetime.timezone.utc),
+                "LastLocationUpdate": datetime.datetime.now(
+                    tz=datetime.timezone.utc
+                ),
             }
         )
 

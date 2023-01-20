@@ -30,12 +30,11 @@ class _SystemHash {
 }
 
 String _$AccessPointConnectionControllerHash() =>
-    r'010229fbb32d0e49967af0d07473e87591c982e6';
+    r'a5da9962b0aab70ac55932b35718865cdce6829a';
 
 /// See also [AccessPointConnectionController].
 final accessPointConnectionControllerProvider =
-    AutoDisposeAsyncNotifierProvider<AccessPointConnectionController,
-        AccessPointConnectionState>(
+    AutoDisposeAsyncNotifierProvider<AccessPointConnectionController, String?>(
   AccessPointConnectionController.new,
   name: r'accessPointConnectionControllerProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -43,10 +42,10 @@ final accessPointConnectionControllerProvider =
       : _$AccessPointConnectionControllerHash,
 );
 typedef AccessPointConnectionControllerRef
-    = AutoDisposeAsyncNotifierProviderRef<AccessPointConnectionState>;
+    = AutoDisposeAsyncNotifierProviderRef<String?>;
 
 abstract class _$AccessPointConnectionController
-    extends AutoDisposeAsyncNotifier<AccessPointConnectionState> {
+    extends AutoDisposeAsyncNotifier<String?> {
   @override
-  FutureOr<AccessPointConnectionState> build();
+  FutureOr<String?> build();
 }

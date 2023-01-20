@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:verifi/src/common/widgets/expandable_page_view.dart';
 import 'package:verifi/src/features/access_points/domain/access_point_model.dart';
-import 'package:verifi/src/features/map/presentation/map_layers/access_point_layer/access_point_info_sheet.dart';
+import 'package:verifi/src/features/access_points/presentation/access_point_info_sheet.dart';
 
 class AccessPointClusterSheet extends StatelessWidget {
   final List<AccessPoint> accessPoints;

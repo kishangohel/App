@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:appspector/appspector.dart';
+import 'package:auto_connect/auto_connect.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -29,6 +30,20 @@ void main() async {
   if (localIp != null) {
     await _logInAsTestUser(emulatorEndpoint: localIp);
   }
+
+  // Initialize AutoConnect
+  await AutoConnect.initialize(
+    locationEventCallback: (lat, lon) {
+      debugPrint(
+        'AutoConnect locationEventCallback triggered: {lat: $lat, lon: $lon}',
+      );
+    },
+    accessPointEventCallback: (accessPointId, ssid, connectionResult) {
+      debugPrint(
+        'AutoConnect accessPointEventCallback triggered: {accessPointId: $accessPointId, ssid: $ssid, connectionResult: $connectionResult}',
+      );
+    },
+  );
 
   // Run the app
   runApp(

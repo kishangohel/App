@@ -3,11 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:random_avatar/random_avatar.dart';
 import 'package:verifi/src/common/widgets/shimmer_widget.dart';
+import 'package:verifi/src/features/access_points/application/access_point_connection_controller.dart';
 import 'package:verifi/src/features/access_points/domain/access_point_model.dart';
 import 'package:verifi/src/features/access_points/presentation/report_access_point_dialog.dart';
 import 'package:verifi/src/features/map/data/location/location_repository.dart';
-import 'package:verifi/src/features/map/domain/access_point_connection_state.dart';
-import 'package:verifi/src/features/map/presentation/map_layers/access_point_layer/access_point_connection_controller.dart';
 import 'package:verifi/src/features/profile/data/profile_repository.dart';
 import 'package:verifi/src/features/profile/domain/user_profile_model.dart';
 import 'package:verifi/src/utils/geoflutterfire/src/models/point.dart';
@@ -19,12 +18,19 @@ class AccessPointInfoSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.listen<AsyncValue<AccessPointConnectionState>>(
-        accessPointConnectionControllerProvider, (previous, next) {
-      if (previous?.value?.connectionResult == null &&
-          next.valueOrNull?.connectionResult != null) {
+    ref.listen<AsyncValue<String?>>(accessPointConnectionControllerProvider,
+        (previous, next) {
+      if (previous?.valueOrNull == null && next.valueOrNull != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          _connectSnackBar(context, next.value!.connectionResult!),
+          _connectSnackBar(context, next.value!),
+        );
+        context.pop();
+      } else if (next.hasError) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          _connectSnackBar(
+            context,
+            next.error!.toString(),
+          ),
         );
         context.pop();
       }
@@ -71,7 +77,10 @@ class AccessPointInfoSheet extends ConsumerWidget {
         ),
         Container(
           alignment: Alignment.topRight,
-          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 10.0,
+            vertical: 10.0,
+          ),
           child: IconButton(
             onPressed: () {
               showDialog(
@@ -177,7 +186,7 @@ class AccessPointInfoSheet extends ConsumerWidget {
   Widget _connectButton(
     BuildContext context,
     WidgetRef ref, {
-    required AsyncValue<AccessPointConnectionState> connectionState,
+    required AsyncValue<String?> connectionState,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -185,16 +194,18 @@ class AccessPointInfoSheet extends ConsumerWidget {
         horizontal: 8.0,
       ),
       child: ElevatedButton(
-        style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(45)),
-        onPressed: connectionState.valueOrNull?.connecting != false
+        style: ElevatedButton.styleFrom(
+          minimumSize: const Size.fromHeight(45),
+        ),
+        onPressed: connectionState.isLoading
             ? null
             : () {
                 ref
                     .read(accessPointConnectionControllerProvider.notifier)
-                    .connect(accessPoint);
+                    .connectOrVerify(accessPoint);
               },
         child: Row(mainAxisSize: MainAxisSize.min, children: [
-          if (connectionState.valueOrNull?.connecting == true)
+          if (connectionState.isLoading)
             Container(
               padding: const EdgeInsets.only(right: 8),
               width: 29,
@@ -206,8 +217,7 @@ class AccessPointInfoSheet extends ConsumerWidget {
           accessPoint.isVerified
               ? const Text("Connect")
               : const Text("Validate"),
-          if (connectionState.valueOrNull?.connecting == true)
-            const SizedBox(width: 29),
+          if (connectionState.isLoading) const SizedBox(width: 29),
         ]),
       ),
     );

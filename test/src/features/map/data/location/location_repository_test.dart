@@ -46,12 +46,9 @@ void main() {
       act: (ProviderContainer container) async {
         await geolocatorServiceMock.dispose();
       },
-      verify: (listener) {
-        verifyInOrder([
-          () => listener(null, const AsyncLoading()),
-        ]);
-        verifyNoMoreInteractions(listener);
-      },
+      expect: [
+        const AsyncLoading<LatLng>(),
+      ],
     );
 
     riverpodTest<AsyncValue<LatLng>>(
@@ -73,17 +70,15 @@ void main() {
         // Make sure the stream finishes sending events.
         await geolocatorServiceMock.dispose();
       },
-      verify: (listener) {
+      expect: [
+        const AsyncLoading<LatLng>(),
+        AsyncData(LatLng(42.1, 10.3)),
+      ],
+      verify: () {
         verifyInOrder([
           () => profileRepositoryMock.updateUserLocation(LatLng(42.1, 10.3)),
         ]);
         verifyNoMoreInteractions(profileRepositoryMock);
-
-        verifyInOrder([
-          () => listener(null, const AsyncLoading()),
-          () => listener(const AsyncLoading(), AsyncData(LatLng(42.1, 10.3)))
-        ]);
-        verifyNoMoreInteractions(listener);
       },
     );
   });

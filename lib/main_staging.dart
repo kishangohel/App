@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:auto_connect/auto_connect.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -17,6 +18,21 @@ void main() async {
   if (kReleaseMode) {
     debugPrint = (String? message, {int? wrapWidth}) {};
   }
+
+  // Initialize AutoConnect
+  await AutoConnect.initialize(
+    locationEventCallback: (lat, lon) {
+      debugPrint(
+        'AutoConnect locationEventCallback triggered: {lat: $lat, lon: $lon}',
+      );
+    },
+    accessPointEventCallback: (accessPointId, ssid, connectionResult) {
+      debugPrint(
+        'AutoConnect accessPointEventCallback triggered: {accessPointId: $accessPointId, ssid: $ssid, connectionResult: $connectionResult}',
+      );
+    },
+  );
+
   // Run the app
   // If release mode or [_signInTestUser] is false, profile will be null and
   // user will go through standard onboarding process.

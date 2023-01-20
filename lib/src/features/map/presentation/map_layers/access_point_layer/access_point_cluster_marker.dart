@@ -3,9 +3,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart' show LatLng;
+import 'package:verifi/src/features/access_points/presentation/access_point_cluster_sheet.dart';
 import 'package:verifi/src/features/map/application/map_service.dart';
 import 'package:verifi/src/features/map/domain/access_point_cluster.dart';
-import 'package:verifi/src/features/map/presentation/map_layers/access_point_layer/access_point_cluster_sheet.dart';
 
 class AccessPointClusterMarker extends ConsumerWidget {
   static const radius = 55.0;

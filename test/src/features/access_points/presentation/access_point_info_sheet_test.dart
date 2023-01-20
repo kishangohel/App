@@ -7,20 +7,19 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:verifi/src/common/widgets/shimmer_widget.dart';
+import 'package:verifi/src/features/access_points/application/access_point_connection_controller.dart';
 import 'package:verifi/src/features/access_points/domain/access_point_model.dart';
 import 'package:verifi/src/features/access_points/domain/place_model.dart';
 import 'package:verifi/src/features/access_points/domain/verified_status.dart';
+import 'package:verifi/src/features/access_points/presentation/access_point_info_sheet.dart';
 import 'package:verifi/src/features/access_points/presentation/report_access_point_dialog.dart';
 import 'package:verifi/src/features/map/data/location/location_repository.dart';
-import 'package:verifi/src/features/map/domain/access_point_connection_state.dart';
-import 'package:verifi/src/features/map/presentation/map_layers/access_point_layer/access_point_connection_controller.dart';
-import 'package:verifi/src/features/map/presentation/map_layers/access_point_layer/access_point_info_sheet.dart';
 import 'package:verifi/src/features/profile/data/profile_repository.dart';
 import 'package:verifi/src/features/profile/domain/current_user_model.dart';
 import 'package:verifi/src/features/profile/domain/user_profile_model.dart';
 
-import '../../../../../../test_helper/go_router_mock.dart';
-import '../../../../../../test_helper/riverpod_test_helper.dart';
+import '../../../../test_helper/go_router_mock.dart';
+import '../../../../test_helper/riverpod_test_helper.dart';
 import 'access_point_connection_controller_stub.dart';
 
 class LocationRepositoryMock extends Mock implements LocationRepository {}
@@ -161,8 +160,7 @@ void main() {
       createProviderMocks();
       when(() => locationRepositoryMock.currentLocation)
           .thenReturn(accessPoint.location);
-      accessPointConnectionControllerStub
-          .setInitialValue(const AccessPointConnectionState(connecting: false));
+      accessPointConnectionControllerStub.setInitialValue(Future.value(null));
       await makeWidget(tester);
 
       currentUserController.add(
@@ -183,9 +181,9 @@ void main() {
       createProviderMocks();
       when(() => locationRepositoryMock.currentLocation)
           .thenReturn(accessPoint.location);
-      accessPointConnectionControllerStub
-          .setInitialValue(const AccessPointConnectionState(connecting: false));
+      accessPointConnectionControllerStub.setInitialValue(Future.value(null));
       await makeWidget(tester);
+      await tester.pump();
 
       expect(find.widgetWithText(ElevatedButton, 'Connect'), findsOneWidget);
       expect(find.byType(CircularProgressIndicator), findsNothing);
@@ -201,9 +199,9 @@ void main() {
       );
       when(() => locationRepositoryMock.currentLocation)
           .thenReturn(accessPoint.location);
-      accessPointConnectionControllerStub
-          .setInitialValue(const AccessPointConnectionState(connecting: false));
+      accessPointConnectionControllerStub.setInitialValue(Future.value(null));
       await makeWidget(tester);
+      await tester.pump();
 
       expect(find.widgetWithText(ElevatedButton, 'Validate'), findsOneWidget);
       expect(find.byType(CircularProgressIndicator), findsNothing);
@@ -214,9 +212,10 @@ void main() {
       createProviderMocks();
       when(() => locationRepositoryMock.currentLocation)
           .thenReturn(accessPoint.location);
+      final container = await makeWidget(tester);
       accessPointConnectionControllerStub
-          .setInitialValue(const AccessPointConnectionState(connecting: true));
-      await makeWidget(tester);
+          .triggerUpdate(const AsyncLoading<String?>());
+      await container.pump();
       await tester.pump();
 
       final connectButton =
@@ -230,8 +229,7 @@ void main() {
       createProviderMocks();
       when(() => locationRepositoryMock.currentLocation)
           .thenReturn(accessPoint.location);
-      accessPointConnectionControllerStub
-          .setInitialValue(const AccessPointConnectionState(connecting: false));
+      accessPointConnectionControllerStub.setInitialValue(Future.value(null));
       await makeWidget(tester);
       await tester.pump();
 
@@ -246,17 +244,25 @@ void main() {
       createProviderMocks();
       await makeWidget(tester);
       accessPointConnectionControllerStub.triggerUpdate(
-        const AsyncData(
-          AccessPointConnectionState(
-            connecting: false,
-            connectionResult: 'A CONNECTION MESSAGE',
-          ),
-        ),
+        const AsyncData('A CONNECTION MESSAGE'),
       );
       await tester.pump();
 
       expect(find.widgetWithText(SnackBar, 'A CONNECTION MESSAGE'),
           findsOneWidget);
+      verify(() => goRouterMock.pop()).called(1);
+    });
+
+    testWidgets('connection error', (tester) async {
+      createProviderMocks();
+      await makeWidget(tester);
+      accessPointConnectionControllerStub.triggerUpdate(
+        AsyncError('A simulated error', StackTrace.current),
+      );
+      await tester.pump();
+
+      expect(
+          find.widgetWithText(SnackBar, 'A simulated error'), findsOneWidget);
       verify(() => goRouterMock.pop()).called(1);
     });
 

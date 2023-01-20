@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:verifi/src/features/map/application/map_filter_controller.dart';
 
@@ -18,7 +17,7 @@ void main() {
     registerFallbacks();
   });
 
-  group('LocationRepository', () {
+  group(MapFilterController, () {
     riverpodTest<AsyncValue<MapFilter>>(
       'no filter stored',
       providerListenable: mapFilterControllerProvider,
@@ -28,13 +27,10 @@ void main() {
       act: (container) async {
         await container.read(mapFilterControllerProvider.future);
       },
-      verify: (listener) {
-        verifyInOrder([
-          () => listener(null, const AsyncLoading()),
-          () => listener(const AsyncLoading(), const AsyncData(MapFilter.none)),
-        ]);
-        verifyNoMoreInteractions(listener);
-      },
+      expect: [
+        const AsyncLoading<MapFilter>(),
+        const AsyncData(MapFilter.none),
+      ],
     );
 
     riverpodTest<AsyncValue<MapFilter>>(
@@ -46,14 +42,10 @@ void main() {
       act: (container) async {
         await container.read(mapFilterControllerProvider.future);
       },
-      verify: (listener) {
-        verifyInOrder([
-          () => listener(null, const AsyncLoading()),
-          () => listener(
-              const AsyncLoading(), const AsyncData(MapFilter.excludeProfiles)),
-        ]);
-        verifyNoMoreInteractions(listener);
-      },
+      expect: [
+        const AsyncLoading<MapFilter>(),
+        const AsyncData(MapFilter.excludeProfiles),
+      ],
     );
 
     riverpodTest<AsyncValue<MapFilter>>(
@@ -68,20 +60,11 @@ void main() {
             .applyFilter(MapFilter.excludeAll);
         await container.read(mapFilterControllerProvider.future);
       },
-      verify: (listener) {
-        verifyInOrder([
-          () => listener(null, const AsyncLoading()),
-          () => listener(
-                const AsyncLoading(),
-                const AsyncData(MapFilter.none),
-              ),
-          () => listener(
-                const AsyncData(MapFilter.none),
-                const AsyncData(MapFilter.excludeAll),
-              ),
-        ]);
-        verifyNoMoreInteractions(listener);
-      },
+      expect: [
+        const AsyncLoading<MapFilter>(),
+        const AsyncData(MapFilter.none),
+        const AsyncData(MapFilter.excludeAll),
+      ],
     );
   });
 }

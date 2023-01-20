@@ -4,6 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:verifi/src/features/access_points/domain/access_point_model.dart';
 import 'package:verifi/src/features/access_points/domain/access_point_report_model.dart';
 import 'package:verifi/src/features/add_network/domain/new_access_point_model.dart';
+import 'package:verifi/src/features/profile/domain/current_user_model.dart';
 import 'package:verifi/src/utils/geoflutterfire/geoflutterfire.dart';
 
 part 'access_point_repository.g.dart';
@@ -84,11 +85,12 @@ class AccessPointRepository {
   }
 
   Future<void> networkValidatedByUser(
-    String accessPointId,
-    String userId,
+    AccessPoint accessPoint,
+    CurrentUser user,
   ) async =>
-      _accessPointCollection.doc(accessPointId).update({
-        "ValidatedBy": FieldValue.arrayUnion([userId])
+      _accessPointCollection.doc(accessPoint.id).update({
+        "ValidatedBy": FieldValue.arrayUnion([user.id]),
+        "LastValidated": Timestamp.now(),
       });
 }
 
