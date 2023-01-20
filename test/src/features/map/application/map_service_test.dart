@@ -15,48 +15,11 @@ import 'package:verifi/src/features/map/application/map_service.dart';
 import 'package:verifi/src/features/map/data/nearby_users/nearby_users_repository.dart';
 import 'package:verifi/src/features/map/presentation/map_layers/access_point_layer/access_point_layer_controller.dart';
 import 'package:verifi/src/features/map/presentation/map_layers/user_layer/user_layer_controller.dart';
+import 'package:verifi/src/features/profile/data/profile_repository.dart';
+import 'package:verifi/src/features/profile/domain/current_user_model.dart';
 import 'package:verifi/src/features/profile/domain/user_profile_model.dart';
 
 import '../../../../test_helper/register_fallbacks.dart';
-
-class MapControllerMock extends Mock implements MapController {
-  final StreamController<MapEvent> _mapEventController;
-
-  MapControllerMock() : _mapEventController = StreamController<MapEvent>();
-
-  void emitMapEvent(MapEvent mapEvent) {
-    _mapEventController.add(mapEvent);
-  }
-
-  @override
-  Stream<MapEvent> get mapEventStream => _mapEventController.stream;
-
-  Future<void> waitForEvents() {
-    return _mapEventController.sink.close();
-  }
-
-  @override
-  void dispose() {
-    _mapEventController.close();
-  }
-}
-
-class AccessPointLayerControllerMock extends Mock
-    implements AccessPointLayerController {}
-
-class UserLayerControllerMock extends Mock implements UserLayerController {}
-
-class TickerProviderMock extends Mock implements TickerProvider {}
-
-class CenterZoomControllerMock extends Mock implements CenterZoomController {}
-
-class AccessPointRepositoryMock extends Mock implements AccessPointRepository {}
-
-class NearbyUsersRepositoryMock extends Mock implements NearbyUsersRepository {}
-
-class AccessPointMock extends Mock implements AccessPoint {}
-
-class UserProfileMock extends Mock implements UserProfile {}
 
 void main() {
   setUpAll(() {
@@ -64,6 +27,7 @@ void main() {
   });
 
   group(MapService, () {
+    late StreamController<CurrentUser> currentUserController;
     late MapControllerMock mapControllerMock;
     late MapService mapService;
     late UserLayerControllerMock userLayerControllerMock;
@@ -72,6 +36,7 @@ void main() {
     late NearbyUsersRepositoryMock nearbyUsersRepositoryMock;
 
     void makeProviderMocks() {
+      currentUserController = StreamController<CurrentUser>();
       mapControllerMock = MapControllerMock();
       userLayerControllerMock = UserLayerControllerMock();
       accessPointLayerControllerMock = AccessPointLayerControllerMock();
@@ -83,10 +48,10 @@ void main() {
       // Create container
       final container = ProviderContainer(
         overrides: [
+          currentUserProvider
+              .overrideWith((ref) => currentUserController.stream),
           userLayerControllerProvider
               .overrideWith(() => userLayerControllerMock),
-          accessPointLayerControllerProvider
-              .overrideWith(() => accessPointLayerControllerMock),
           accessPointLayerControllerProvider
               .overrideWith(() => accessPointLayerControllerMock),
           nearbyUsersRepositoryProvider
@@ -245,36 +210,121 @@ void main() {
           LatLng(1.0, 2.0), 15.741630674803882));
     });
 
-    test('getNearbyUsers when zoom is < 12', () async {
-      makeProviderMocks();
-      makeContainerWithMapService();
+    group('getNearbyUsers', () {
+      UserProfile userProfile({
+        required String id,
+        required bool hideOnMap,
+        required DateTime lastLocationUpdate,
+      }) =>
+          UserProfile(
+            id: id,
+            displayName: 'testDisplayName',
+            hideOnMap: hideOnMap,
+            lastLocationUpdate: lastLocationUpdate,
+          );
 
-      when(() => mapControllerMock.zoom).thenReturn(11.99);
+      test('when zoom is < 12', () async {
+        makeProviderMocks();
+        makeContainerWithMapService();
 
-      final result = await mapService.getNearbyUsers();
-      expect(result, isEmpty);
-    });
+        when(() => mapControllerMock.zoom).thenReturn(11.99);
 
-    test('getNearbyUsers when zoom is >= 12', () async {
-      makeProviderMocks();
-      makeContainerWithMapService();
-
-      when(() => mapControllerMock.zoom).thenReturn(12.0);
-      when(() => mapControllerMock.center).thenReturn(LatLng(1.0, 2.0));
-      when(() => mapControllerMock.bounds)
-          .thenReturn(LatLngBounds(LatLng(0.9, 1.9), LatLng(1.1, 2.1)));
-
-      final userProfileMock = UserProfileMock();
-      when(() => nearbyUsersRepositoryMock.getUsersWithinRadiusStream(
-          any(), any())).thenAnswer((_) async* {
-        yield [userProfileMock];
+        final result = await mapService.getNearbyUsers();
+        expect(result, isEmpty);
       });
 
-      final result = await mapService.getNearbyUsers();
-      expect(result, isNotEmpty);
+      test('when zoom is >= 12', () async {
+        makeProviderMocks();
+        final container = makeContainerWithMapService();
 
-      verify(() => nearbyUsersRepositoryMock.getUsersWithinRadiusStream(
-          LatLng(1.0, 2.0), 15.741630674803882));
+        final currentUser = CurrentUser(
+          profile: userProfile(
+            id: '0',
+            hideOnMap: true,
+            lastLocationUpdate:
+                DateTime.now().subtract(MapService.hideUsersInactiveSince),
+          ),
+        );
+        currentUserController.add(currentUser);
+        await container.read(currentUserProvider.stream).first; // Skip loading
+        when(() => mapControllerMock.zoom).thenReturn(12.0);
+        when(() => mapControllerMock.center).thenReturn(LatLng(1.0, 2.0));
+        when(() => mapControllerMock.bounds)
+            .thenReturn(LatLngBounds(LatLng(0.9, 1.9), LatLng(1.1, 2.1)));
+
+        when(() => nearbyUsersRepositoryMock.getUsersWithinRadiusStream(
+            any(), any())).thenAnswer((_) async* {
+          yield [
+            // Current user, should be visible even if hidden or not recentlyupdate
+            // updated
+            currentUser.profile,
+            // Not hidden and recently updated, should be visible
+            userProfile(
+              id: '1',
+              hideOnMap: false,
+              lastLocationUpdate: DateTime.now(),
+            ),
+            // Hidden, should not be visible
+            userProfile(
+              id: '2',
+              hideOnMap: true,
+              lastLocationUpdate: DateTime.now(),
+            ),
+            // Not recently updated, should not be visible
+            userProfile(
+              id: '3',
+              hideOnMap: false,
+              lastLocationUpdate:
+                  DateTime.now().subtract(MapService.hideUsersInactiveSince),
+            ),
+          ];
+        });
+
+        final result = await mapService.getNearbyUsers();
+        expect(result.map((profile) => profile.id).toList(), ['0', '1']);
+
+        verify(() => nearbyUsersRepositoryMock.getUsersWithinRadiusStream(
+            LatLng(1.0, 2.0), 15.741630674803882));
+      });
     });
   });
 }
+
+class AccessPointLayerControllerMock extends Mock
+    implements AccessPointLayerController {}
+
+class AccessPointMock extends Mock implements AccessPoint {}
+
+class AccessPointRepositoryMock extends Mock implements AccessPointRepository {}
+
+class CenterZoomControllerMock extends Mock implements CenterZoomController {}
+
+class MapControllerMock extends Mock implements MapController {
+  final StreamController<MapEvent> _mapEventController;
+
+  MapControllerMock() : _mapEventController = StreamController<MapEvent>();
+
+  @override
+  Stream<MapEvent> get mapEventStream => _mapEventController.stream;
+
+  @override
+  void dispose() {
+    _mapEventController.close();
+  }
+
+  void emitMapEvent(MapEvent mapEvent) {
+    _mapEventController.add(mapEvent);
+  }
+
+  Future<void> waitForEvents() {
+    return _mapEventController.sink.close();
+  }
+}
+
+class NearbyUsersRepositoryMock extends Mock implements NearbyUsersRepository {}
+
+class ProfileRepositoryMock extends Mock implements ProfileRepository {}
+
+class TickerProviderMock extends Mock implements TickerProvider {}
+
+class UserLayerControllerMock extends Mock implements UserLayerController {}

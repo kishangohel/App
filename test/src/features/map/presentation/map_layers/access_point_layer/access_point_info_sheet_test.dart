@@ -136,6 +136,7 @@ void main() {
         const UserProfile(
           id: 'userId123',
           displayName: 'userDisplayName',
+          hideOnMap: false,
         ),
       );
       await container.pump();
@@ -166,7 +167,11 @@ void main() {
 
       currentUserController.add(
         CurrentUser(
-          profile: UserProfile(id: accessPoint.submittedBy, displayName: ''),
+          profile: UserProfile(
+            id: accessPoint.submittedBy,
+            displayName: '',
+            hideOnMap: false,
+          ),
         ),
       );
       await tester.pump();

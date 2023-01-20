@@ -133,7 +133,13 @@ class ProfileRepository {
     );
     await userCollection.doc(_currentUser!.id).update({
       "LastLocation": geoFirePoint.data,
+      "LastLocationUpdate": Timestamp.now(),
     });
+  }
+
+  Future<void> updateHideOnMap({required bool hideOnMap}) async {
+    if (_currentUser == null) return;
+    await userCollection.doc(_currentUser!.id).update({'HideOnMap': hideOnMap});
   }
 }
 

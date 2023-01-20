@@ -11,6 +11,7 @@ import 'package:verifi/src/features/access_points/domain/access_point_model.dart
 import 'package:verifi/src/features/map/data/nearby_users/nearby_users_repository.dart';
 import 'package:verifi/src/features/map/presentation/map_layers/access_point_layer/access_point_layer_controller.dart';
 import 'package:verifi/src/features/map/presentation/map_layers/user_layer/user_layer_controller.dart';
+import 'package:verifi/src/features/profile/data/profile_repository.dart';
 import 'package:verifi/src/features/profile/domain/user_profile_model.dart';
 
 import '../presentation/flutter_map/map_flutter_map.dart';
@@ -19,6 +20,8 @@ import 'center_zoom_controller.dart';
 part 'map_service.g.dart';
 
 class MapService {
+  static const hideUsersInactiveSince = Duration(hours: 1);
+
   final Ref ref;
   final MapController _mapController;
   CenterZoomController? _centerZoomController;
@@ -113,11 +116,23 @@ class MapService {
     final radiusInKm =
         const Haversine().distance(center, bounds.northEast!) / 1000.0;
 
+    final currentUserId = ref.read(currentUserProvider).valueOrNull?.id;
+
     return await ref
         .read(nearbyUsersRepositoryProvider)
         .getUsersWithinRadiusStream(center, radiusInKm)
-        .first;
+        .first
+        .then((nearby) => nearby
+            .where((userProfile) =>
+                userProfile.id == currentUserId ||
+                (!userProfile.hideOnMap && _recentlyActive(userProfile)))
+            .toList());
   }
+
+  bool _recentlyActive(UserProfile userProfile) =>
+      userProfile.lastLocationUpdate
+          ?.isAfter(DateTime.now().subtract(hideUsersInactiveSince)) ==
+      true;
 }
 
 @Riverpod(keepAlive: true)

@@ -29,6 +29,7 @@ class _ProfileBodyState extends ConsumerState<ProfileBody> {
         children: [
           ProfilePhoto(),
           VeriPointsWidget(),
+          HideOnMapSwitch(),
           ProfileTwitterConnection(),
           Expanded(
             child: Column(
@@ -175,6 +176,25 @@ class AboutProfilePictureDialog extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class HideOnMapSwitch extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return SwitchListTile(
+      title: const Text("Hidden on map"),
+      subtitle: const Text(
+        "Prevent other users from seeing your profile on the map.",
+      ),
+      value:
+          ref.watch(currentUserProvider).valueOrNull?.profile.hideOnMap == true,
+      onChanged: (newValue) {
+        ref
+            .read(profileRepositoryProvider)
+            .updateHideOnMap(hideOnMap: newValue);
+      },
     );
   }
 }

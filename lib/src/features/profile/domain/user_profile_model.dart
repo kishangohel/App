@@ -6,18 +6,23 @@ import 'package:latlong2/latlong.dart';
 class UserProfile extends Equatable {
   final String id;
   final String displayName;
+  final bool hideOnMap;
   final int? veriPoints;
   final LatLng? lastLocation;
+  final DateTime? lastLocationUpdate;
 
   const UserProfile({
     required this.id,
     required this.displayName,
+    required this.hideOnMap,
     this.veriPoints,
     this.lastLocation,
+    this.lastLocationUpdate,
   });
 
   @override
-  List<Object?> get props => [id, displayName];
+  List<Object?> get props =>
+      [id, displayName, hideOnMap, veriPoints, lastLocation];
 
   /// Convert the Firestore snapshot into a [UserProfile].
   factory UserProfile.fromDocumentSnapshot(DocumentSnapshot snapshot) {
@@ -29,13 +34,18 @@ class UserProfile extends Equatable {
     if (data['LastLocation'] != null) {
       location = data['LastLocation']['geopoint'] as GeoPoint;
     }
+
+    final Timestamp? lastLocationUpdate = data['LastLocationUpdate'];
+
     return UserProfile(
       id: snapshot.id,
       displayName: data['DisplayName'],
+      hideOnMap: data['HideOnMap'] == true,
       veriPoints: data['VeriPoints'] ?? 0,
       lastLocation: (location != null)
           ? LatLng(location.latitude, location.longitude)
           : null,
+      lastLocationUpdate: lastLocationUpdate?.toDate(),
     );
   }
 }

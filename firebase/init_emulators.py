@@ -171,6 +171,7 @@ def main():
                     "geohash": create_geohash(coordinate[0], coordinate[1]),
                     "geopoint": GeoPoint(coordinate[0], coordinate[1]),
                 },
+                "LastLocationUpdate": datetime.datetime.now(tz=datetime.timezone.utc),
             }
         )
 
