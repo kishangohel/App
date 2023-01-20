@@ -25,7 +25,8 @@ jobs:
 
       - uses: subosito/flutter-action@v2.8.0
         with:
-          channel: 'stable'
+          channel: "stable"
+          cache: true
 
       - name: Clean
         run: flutter clean
