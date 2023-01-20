@@ -9,7 +9,7 @@ on:
       - "pubspec.yaml"
   push:
     branches:
-      - main
+      - develop
     paths:
       - ".github/workflows/verifi.yaml"
       - "lib/**"
