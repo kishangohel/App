@@ -59,6 +59,12 @@ linked_*.ds
 unlinked.ds
 unlinked_spec.ds
 
+# Fastlane related
+**/fastlane/report.xml
+**/fastlane/Preview.xml
+**/fastlane/screenshots
+**/fastlane/test_output
+
 # Android related
 **/android/**/gradle-wrapper.jar
 .gradle/
@@ -99,6 +105,7 @@ unlinked_spec.ds
 **/ios/Flutter/flutter_export_environment.sh
 **/ios/ServiceDefinitions.json
 **/ios/Runner/GeneratedPluginRegistrant.*
+**/ios/Runner/GoogleService-Info.plist
 
 # macOS
 **/Flutter/ephemeral/

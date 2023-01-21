@@ -1,6 +1,6 @@
 name: verifi
 description: Connect Without Limits
-version: 0.0.1+13
+version: 1.0.0
 publish_to: none
 
 environment:
@@ -19,6 +19,7 @@ dependencies:
   cached_network_image: ^3.2.3
   cloud_firestore: ^4.3.0
   connectivity_plus: ^3.0.0
+  cupertino_icons: ^1.0.5
   equatable: ^2.0.5
   firebase_analytics: ^10.0.8
   firebase_app_check: ^0.1.1+7

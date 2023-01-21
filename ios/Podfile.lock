@@ -1,9 +1,18 @@
 PODS:
-  - cloud_firestore (4.2.0):
+  - appspector (0.0.1):
+    - AppSpectorSDK
+    - Flutter
+  - AppSpectorSDK (1.4.7)
+  - auto_connect (0.0.1):
+    - Flutter
+  - cloud_firestore (4.3.0):
     - Firebase/Firestore (= 10.3.0)
     - firebase_core
     - Flutter
     - nanopb (< 2.30910.0, >= 2.30908.0)
+  - connectivity_plus (0.0.1):
+    - Flutter
+    - ReachabilitySwift
   - Firebase/Analytics (10.3.0):
     - Firebase/Core
   - Firebase/Auth (10.3.0):
@@ -20,23 +29,23 @@ PODS:
   - Firebase/Firestore (10.3.0):
     - Firebase/CoreOnly
     - FirebaseFirestore (~> 10.3.0)
-  - firebase_analytics (10.0.7):
+  - firebase_analytics (10.0.8):
     - Firebase/Analytics (= 10.3.0)
     - firebase_core
     - Flutter
-  - firebase_app_check (0.1.1-6):
+  - firebase_app_check (0.1.1-7):
     - Firebase/CoreOnly (~> 10.3.0)
     - firebase_core
     - FirebaseAppCheck (~> 10.3.0-beta)
     - Flutter
-  - firebase_auth (4.2.1):
+  - firebase_auth (4.2.3):
     - Firebase/Auth (= 10.3.0)
     - firebase_core
     - Flutter
   - firebase_core (2.4.0):
     - Firebase/CoreOnly (= 10.3.0)
     - Flutter
-  - firebase_crashlytics (3.0.7):
+  - firebase_crashlytics (3.0.8):
     - Firebase/Crashlytics (= 10.3.0)
     - firebase_core
     - Flutter
@@ -94,6 +103,8 @@ PODS:
     - GoogleUtilities/UserDefaults (~> 7.8)
     - PromisesObjC (~> 2.1)
   - Flutter (1.0.0)
+  - flutter_keyboard_visibility (0.0.1):
+    - Flutter
   - FMDB (2.7.5):
     - FMDB/standard (= 2.7.5)
   - FMDB/standard (2.7.5)
@@ -148,9 +159,12 @@ PODS:
     - nanopb/encode (= 2.30909.0)
   - nanopb/decode (2.30909.0)
   - nanopb/encode (2.30909.0)
+  - network_info_plus (0.0.1):
+    - Flutter
   - path_provider_ios (0.0.1):
     - Flutter
   - PromisesObjC (2.1.1)
+  - ReachabilitySwift (5.0.0)
   - shared_preferences_ios (0.0.1):
     - Flutter
   - smart_auth (0.0.1):
@@ -162,7 +176,10 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
+  - appspector (from `.symlinks/plugins/appspector/ios`)
+  - auto_connect (from `.symlinks/plugins/auto_connect/ios`)
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
+  - connectivity_plus (from `.symlinks/plugins/connectivity_plus/ios`)
   - firebase_analytics (from `.symlinks/plugins/firebase_analytics/ios`)
   - firebase_app_check (from `.symlinks/plugins/firebase_app_check/ios`)
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
@@ -170,7 +187,9 @@ DEPENDENCIES:
   - firebase_crashlytics (from `.symlinks/plugins/firebase_crashlytics/ios`)
   - FirebaseFirestore (from `https://github.com/invertase/firestore-ios-sdk-frameworks.git`, tag `10.3.0`)
   - Flutter (from `Flutter`)
+  - flutter_keyboard_visibility (from `.symlinks/plugins/flutter_keyboard_visibility/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
+  - network_info_plus (from `.symlinks/plugins/network_info_plus/ios`)
   - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
   - shared_preferences_ios (from `.symlinks/plugins/shared_preferences_ios/ios`)
   - smart_auth (from `.symlinks/plugins/smart_auth/ios`)
@@ -179,6 +198,7 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - AppSpectorSDK
     - Firebase
     - FirebaseAnalytics
     - FirebaseAppCheck
@@ -194,10 +214,17 @@ SPEC REPOS:
     - GTMSessionFetcher
     - nanopb
     - PromisesObjC
+    - ReachabilitySwift
 
 EXTERNAL SOURCES:
+  appspector:
+    :path: ".symlinks/plugins/appspector/ios"
+  auto_connect:
+    :path: ".symlinks/plugins/auto_connect/ios"
   cloud_firestore:
     :path: ".symlinks/plugins/cloud_firestore/ios"
+  connectivity_plus:
+    :path: ".symlinks/plugins/connectivity_plus/ios"
   firebase_analytics:
     :path: ".symlinks/plugins/firebase_analytics/ios"
   firebase_app_check:
@@ -213,8 +240,12 @@ EXTERNAL SOURCES:
     :tag: 10.3.0
   Flutter:
     :path: Flutter
+  flutter_keyboard_visibility:
+    :path: ".symlinks/plugins/flutter_keyboard_visibility/ios"
   geolocator_apple:
     :path: ".symlinks/plugins/geolocator_apple/ios"
+  network_info_plus:
+    :path: ".symlinks/plugins/network_info_plus/ios"
   path_provider_ios:
     :path: ".symlinks/plugins/path_provider_ios/ios"
   shared_preferences_ios:
@@ -232,22 +263,27 @@ CHECKOUT OPTIONS:
     :tag: 10.3.0
 
 SPEC CHECKSUMS:
-  cloud_firestore: cf019e947a49ebb56ddf4ae7f6f2ca13469da1b1
+  appspector: 329416dd93c1d6140148a6ade72718a5d2b8566d
+  AppSpectorSDK: c8bcf789d66907a1e6ca9885e5afde741abec200
+  auto_connect: d50dcbc3540a07cb8c5e79b746ea5ed0a5a31a1c
+  cloud_firestore: e6d4d16c6af7ecebd7254f12c3c1bb9bc87e5aca
+  connectivity_plus: 413a8857dd5d9f1c399a39130850d02fe0feaf7e
   Firebase: f92fc551ead69c94168d36c2b26188263860acd9
-  firebase_analytics: fd9cc19a31206f636cb3f7775b4b2ad41f4503d2
-  firebase_app_check: 80ec709babb30beb25863b80971a38885dd07dc0
-  firebase_auth: 30cbdb28d5c38f572c331a8590a93e2a1201d75c
+  firebase_analytics: b55d5b87440d85c7850067c2fec4e49748aa3291
+  firebase_app_check: 8fd21148c4e4d664a265ae56d776461c90e256a5
+  firebase_auth: 7ad9a5c696d502d5bda096ea8dc996761456dc7d
   firebase_core: 6f2f753e316765799d88568232ed59e300ff53db
-  firebase_crashlytics: 4aecad95b85802572a72804e4ca57385357e5255
+  firebase_crashlytics: d92ba7149a9cc098b1157ccb39154b83851f7d1f
   FirebaseAnalytics: 036232b6a1e2918e5f67572417be1173576245f3
   FirebaseAppCheck: edbc4d99f30a2762603d618330f28046a47c031d
   FirebaseAuth: 0e415d29d846c1dce2fb641e46f35e9888d9bec6
   FirebaseCore: 988754646ab3bd4bdcb740f1bfe26b9f6c0d5f2a
   FirebaseCoreInternal: 29b76f784d607df8b2a1259d73c3f04f1210137b
   FirebaseCrashlytics: f20d956f8229010b645e534693c39e0b7843c268
-  FirebaseFirestore: f16ed5e8e5b024eff4928bc33605df9526bda650
+  FirebaseFirestore: ef5e47e1489c03dc978f94e8b43ad5f67a77df8c
   FirebaseInstallations: e2f26126089dcf41e215f7b8925af8d953c7d602
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  flutter_keyboard_visibility: 0339d06371254c3eb25eeb90ba8d17dca8f9c069
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   geolocator_apple: cc556e6844d508c95df1e87e3ea6fa4e58c50401
   GoogleAppMeasurement: c7d6fff39bf2d829587d74088d582e32d75133c3
@@ -255,8 +291,10 @@ SPEC CHECKSUMS:
   GoogleUtilities: bad72cb363809015b1f7f19beb1f1cd23c589f95
   GTMSessionFetcher: c1edebe64e9fb4e8f6415d018edf1fd3eac074a1
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
+  network_info_plus: b78876159360f5580608c2cea620d6ceffabd0ad
   path_provider_ios: 14f3d2fd28c4fdb42f44e0f751d12861c43cee02
   PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
+  ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
   shared_preferences_ios: 548a61f8053b9b8a49ac19c1ffbc8b92c50d68ad
   smart_auth: 4bedbc118723912d0e45a07e8ab34039c19e04f2
   sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904

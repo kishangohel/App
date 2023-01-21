@@ -14,8 +14,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
-        android:name="${applicationName}"
-        android:label="VeriFi"
+        android:label="${appName}"
         tools:ignore="GoogleAppIndexingWarning"
         android:icon="@mipmap/app_icon">
         <activity

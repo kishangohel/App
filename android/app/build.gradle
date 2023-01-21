@@ -66,16 +66,19 @@ android {
             dimension "app"
             applicationIdSuffix ".dev"
             manifestPlaceholders = [appName: "[DEV] VeriFi"]
+            flutter.target "lib/main_development.dart"
         }
         staging {
             dimension "app"
             applicationIdSuffix ".stg"
             manifestPlaceholders = [appName: "[STG] VeriFi"]
+            flutter.target "lib/main_staging.dart"
         }
         production {
             dimension "app"
             applicationIdSuffix ""
             manifestPlaceholders = [appName: "VeriFi"]
+            flutter.target "lib/main_prod.dart"
         }
     }
 

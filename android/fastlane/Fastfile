@@ -1,0 +1,39 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+
+  desc "Get Android build number"
+  lane :getAndroidBuildNumber do
+    latest_release = firebase_app_distribution_get_latest_release(
+      app: ENV["FIREBASE_ANDROID_APP_ID_STG"],
+      firebase_cli_token: ENV["FIREBASE_TOKEN"],
+    )
+    sh("echo ANDROID_BUILD_NUMBER=#{latest_release[:buildVersion].to_i + 1} >> $GITHUB_ENV")
+  end
+
+  desc "Distribute Android apk to staging environment"
+  lane :distributeAndroidStaging do
+    firebase_app_distribution(
+      app: ENV["FIREBASE_ANDROID_APP_ID_STG"],
+      firebase_cli_token: ENV["FIREBASE_TOKEN"],
+      android_artifact_type: "APK",
+      groups: "testers",
+      android_artifact_path: "../build/app/outputs/apk/staging/release/app-staging-release.apk",
+    )
+  end
+end

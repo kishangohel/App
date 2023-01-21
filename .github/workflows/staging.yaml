@@ -1,0 +1,148 @@
+---
+name: staging
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - "releases/**"
+
+  push:
+    branches:
+      - "releases/**"
+
+jobs:
+  ios-staging:
+    name: Distribute iOS app to staging environment
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+          cache: true
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.0"
+          bundler-cache: true
+          working-directory: ios
+
+      - name: Flutter clean and flutter pub get
+        run: |
+          flutter clean
+          flutter pub get
+
+      - name: Setup Pods cache
+        uses: actions/cache@v3
+        id: pods-cache
+        with:
+          path: ios/Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock') }}
+
+      - name: Setup staging
+        uses: maierj/fastlane-action@v3.0.0
+        with:
+          lane: setupStaging
+          subdirectory: ios
+        env:
+          GIT_AUTHORIZATION_B64: ${{ secrets.GIT_AUTHORIZATION_B64 }}
+          MATCH_PASSWORD: "${{ secrets.MATCH_PASSWORD }}"
+
+      - name: Increment build number
+        uses: maierj/fastlane-action@v3.0.0
+        with:
+          lane: incrementIOSBuildNumber
+          subdirectory: ios
+        env:
+          FIREBASE_IOS_APP_ID_STG: ${{ secrets.FIREBASE_IOS_APP_ID_STG }}
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+
+      - name: Build ipa
+        run: flutter build ipa --flavor staging --release -t lib/main_staging.dart --export-options-plist=ios/Runner/exportOptionsStaging.plist
+
+      - name: Distribute ipa
+        uses: maierj/fastlane-action@v3.0.0
+        with:
+          lane: distributeIOSStaging
+          subdirectory: ios
+        env:
+          FIREBASE_IOS_APP_ID_STG: ${{ secrets.FIREBASE_IOS_APP_ID_STG }}
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+
+  android-staging:
+    name: Distribute Android app to staging environment
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: "11"
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+          cache: true
+
+      - name: Decode release keystore
+        run: |
+          echo "${{ secrets.ANDROID_RELEASE_KEYSTORE }}" > release.keystore.asc
+          gpg -d --passphrase ${{ secrets.RELEASE_KEYSTORE_GPG_PASSPHRASE }} --batch release.keystore.asc > release.jks
+
+      - name: Create key.properties
+        run: |
+          pwd
+          touch android/key.properties
+          echo "storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          keyPassword=${{ secrets.ANDROID_KEYSTORE_KEY_PASSWORD }}
+          keyAlias=${{ secrets.ANDROID_KEYSTORE_KEY_ALIAS }}
+          storeFile=/home/runner/work/App/App/release.jks
+          " > android/key.properties
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.0"
+          bundler-cache: true
+          working-directory: android
+
+      - name:
+        uses: maierj/fastlane-action@v3.0.0
+        with:
+          lane: getAndroidBuildNumber
+          subdirectory: android
+        env:
+          FIREBASE_ANDROID_APP_ID_STG: ${{ secrets.FIREBASE_ANDROID_APP_ID_STG }}
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+
+      - name: Get build number
+        run: echo $ANDROID_BUILD_NUMBER
+
+      - name: Build apk
+        run: >
+          flutter build apk -t lib/main_staging.dart --flavor staging \
+          --release --build-name=1.0.0 \
+          --build-number=${{ env.ANDROID_BUILD_NUMBER }}
+
+      - name: Distribute Android apk
+        uses: maierj/fastlane-action@v3.0.0
+        with:
+          lane: distributeAndroidStaging
+          subdirectory: android
+        env:
+          FIREBASE_ANDROID_APP_ID_STG: ${{ secrets.FIREBASE_ANDROID_APP_ID_STG }}
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
