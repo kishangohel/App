@@ -46,6 +46,8 @@ void main() {
   late ReportAccessPointControllerStub reportAccessPointControllerStub;
   final accessPoint = AccessPoint(
     id: 'testAccessPointId',
+    address: 'testAccessPointAddress',
+    name: 'testAccessPointName',
     ssid: 'testAccessPointSsid',
     location: LatLng(1.0, 2.0),
     submittedBy: 'testUserId',

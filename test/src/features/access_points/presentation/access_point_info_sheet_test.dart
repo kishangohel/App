@@ -9,7 +9,6 @@ import 'package:mocktail/mocktail.dart';
 import 'package:verifi/src/common/widgets/shimmer_widget.dart';
 import 'package:verifi/src/features/access_points/application/access_point_connection_controller.dart';
 import 'package:verifi/src/features/access_points/domain/access_point_model.dart';
-import 'package:verifi/src/features/access_points/domain/place_model.dart';
 import 'package:verifi/src/features/access_points/domain/verified_status.dart';
 import 'package:verifi/src/features/access_points/presentation/access_point_info_sheet.dart';
 import 'package:verifi/src/features/access_points/presentation/report_access_point_dialog.dart';
@@ -35,6 +34,8 @@ void main() {
   AccessPoint createAccessPoint() {
     return AccessPoint(
       id: 'accessPointId123',
+      address: '123 test address',
+      name: 'Test Place',
       location: LatLng(1.0, 2.0),
       ssid: 'AFakeWifi',
       submittedBy: 'userId123',
@@ -77,8 +78,8 @@ void main() {
     testWidgets('initial state', (tester) async {
       createProviderMocks();
       await makeWidget(tester);
-      expect(find.text('Unknown place'), findsOneWidget);
-      expect(find.text('Unknown address'), findsOneWidget);
+      expect(find.text('Test Place'), findsOneWidget);
+      expect(find.text('123 test address'), findsOneWidget);
       expect(find.text(accessPoint.ssid), findsOneWidget);
       expect(find.text('Open'), findsOneWidget);
       expect(find.byIcon(Icons.check), findsOneWidget);
@@ -112,22 +113,6 @@ void main() {
       expect(find.text('\u2022' * 'AFakePassword'.length), findsOneWidget);
     });
 
-    testWidgets('with place', (tester) async {
-      createProviderMocks(
-        initialAccessPoint: createAccessPoint().copyWith(
-          place: Place(
-            id: 'placeId123',
-            name: 'placeName',
-            address: 'placeAddress',
-            location: LatLng(1.1, 2.2),
-          ),
-        ),
-      );
-      await makeWidget(tester);
-      expect(find.text('placeName'), findsOneWidget);
-      expect(find.text('placeAddress'), findsOneWidget);
-    });
-
     testWidgets('with contributor', (tester) async {
       createProviderMocks();
       final container = await makeWidget(tester);
@@ -152,8 +137,9 @@ void main() {
       await container.pump();
       await tester.pump();
 
-      expect(find.byType(SvgPicture), findsOneWidget);
-      expect(find.text('Unknown'), findsOneWidget);
+      // These should not be visible via Visibility widget
+      expect(find.byType(SvgPicture), findsNothing);
+      expect(find.text('Unknown'), findsNothing);
     });
 
     testWidgets('close to AP but AP from same user', (tester) async {

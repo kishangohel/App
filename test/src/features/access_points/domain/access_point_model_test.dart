@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:verifi/src/features/access_points/domain/access_point_model.dart';
-import 'package:verifi/src/features/access_points/domain/place_model.dart';
 import 'package:verifi/src/features/access_points/domain/verified_status.dart';
 
 // ignore: subtype_of_sealed_class
@@ -59,6 +58,8 @@ void main() {
         id: 'abc123',
         exists: true,
         data: {
+          'Address': '123 test address',
+          'Name': 'Test Place',
           'Location': {
             'geopoint': const GeoPoint(1.0, 2.0),
           },
@@ -68,11 +69,15 @@ void main() {
       );
       expect(accessPoint.id, 'abc123');
       expect(accessPoint.location, LatLng(1.0, 2.0));
-      expect(accessPoint.place, isNull);
+      expect(accessPoint.name, 'Test Place');
+      expect(accessPoint.address, '123 test address');
       expect(accessPoint.ssid, 'ssid123');
       expect(accessPoint.submittedBy, 'userId123');
-      expect(accessPoint.toString(),
-          'AccessPoint: { id: abc123, location: LatLng(latitude:1.0, longitude:2.0) }');
+      expect(
+        accessPoint.toString(),
+        'AccessPoint: { id: abc123, name: Test Place, '
+        'location: LatLng(latitude:1.0, longitude:2.0) }',
+      );
     });
 
     test('DocumentSnapshot exists and validated recently', () {
@@ -80,6 +85,8 @@ void main() {
         id: 'abc123',
         exists: true,
         data: {
+          'Address': '123 test address',
+          'Name': 'Test Place',
           'Location': {
             'geopoint': const GeoPoint(1.0, 2.0),
           },
@@ -98,6 +105,8 @@ void main() {
         id: 'abc123',
         exists: true,
         data: {
+          'Address': '123 test address',
+          'Name': 'Test Place',
           'Location': {
             'geopoint': const GeoPoint(1.0, 2.0),
           },
@@ -118,6 +127,8 @@ void main() {
         id: 'abc123',
         exists: true,
         data: {
+          'Address': '123 test address',
+          'Name': 'Test Place',
           'Location': {
             'geopoint': const GeoPoint(1.0, 2.0),
           },
@@ -129,35 +140,6 @@ void main() {
       expect(accessPoint.verifiedStatus, VerifiedStatus.unverified);
       expect(accessPoint.isVerified, isFalse);
       expect(accessPoint.verifiedStatusLabel, 'UnVeriFied');
-    });
-
-    test('DocumentSnapshot exists, has a Place', () {
-      final accessPoint = createAccessPoint(
-        id: 'abc123',
-        exists: true,
-        data: {
-          'Location': {
-            'geopoint': const GeoPoint(1.0, 2.0),
-          },
-          'Feature': {
-            'id': 'placeId123',
-            'name': 'placeName123',
-            'address': 'placeAddress123',
-            'location': LatLng(2, 3).toJson(),
-          },
-          'SSID': 'ssid123',
-          'SubmittedBy': 'userId123',
-        },
-      );
-      expect(
-        accessPoint.place,
-        Place(
-          id: 'placeId123',
-          name: 'placeName123',
-          address: 'placeAddress123',
-          location: LatLng(2, 3),
-        ),
-      );
     });
   });
 }

@@ -48,6 +48,7 @@ class _UserClusterLayerState extends ConsumerState<UserClusterLayer> {
       // given the small size of the clusters and takes extra time to create an
       // isolate.
       wrapIndexCreation: (config) => Future.value(createSupercluster(config)),
+      maxClusterRadius: (UserClusterMarker.size * 2.5).toInt(),
       loadingOverlayBuilder: (_) => const SizedBox.shrink(),
       controller: _clustersController,
       clusterWidgetSize: const Size(

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'place_repository.dart';
+part of 'radar_search_repository.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -29,14 +29,15 @@ class _SystemHash {
   }
 }
 
-String _$placeRepositoryHash() => r'ec5f72361a032fc0f78e02b734f74b23beede297';
+String _$radarSearchRepositoryHash() =>
+    r'ce521dd358560d66b7a248d9ad9a3d0633cfed8d';
 
-/// See also [placeRepository].
-final placeRepositoryProvider = Provider<PlaceRepository>(
-  placeRepository,
-  name: r'placeRepositoryProvider',
+/// See also [radarSearchRepository].
+final radarSearchRepositoryProvider = Provider<RadarSearchRepository>(
+  radarSearchRepository,
+  name: r'radarSearchRepositoryProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$placeRepositoryHash,
+      : _$radarSearchRepositoryHash,
 );
-typedef PlaceRepositoryRef = ProviderRef<PlaceRepository>;
+typedef RadarSearchRepositoryRef = ProviderRef<RadarSearchRepository>;

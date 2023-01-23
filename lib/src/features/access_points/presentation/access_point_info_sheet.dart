@@ -67,11 +67,11 @@ class AccessPointInfoSheet extends ConsumerWidget {
         Expanded(
           child: ListTile(
             title: Text(
-              accessPoint.place?.name ?? "Unknown place",
+              accessPoint.name,
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             subtitle: Text(
-              accessPoint.place?.address ?? "Unknown address",
+              accessPoint.address,
             ),
           ),
         ),
@@ -147,17 +147,20 @@ class AccessPointInfoSheet extends ConsumerWidget {
         padding: padding,
       );
     }
-    final displayName = profile.valueOrNull?.displayName ?? "Unknown";
+    final displayName = profile.valueOrNull?.displayName;
 
-    return _detailsRow(
-      leading: randomAvatar(
-        displayName,
-        trBackground: true,
-        width: 24,
-        height: 24,
+    return Visibility(
+      visible: displayName != null,
+      child: _detailsRow(
+        leading: randomAvatar(
+          displayName ?? "Unknown",
+          trBackground: true,
+          width: 24,
+          height: 24,
+        ),
+        label: Text(displayName ?? "Unknown"),
+        padding: padding,
       ),
-      label: Text(displayName),
-      padding: padding,
     );
   }
 

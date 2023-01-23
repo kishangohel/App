@@ -9,8 +9,8 @@ import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:verifi/src/common/providers/wifi_connected_stream_provider.dart';
-import 'package:verifi/src/features/access_points/data/place_repository.dart';
-import 'package:verifi/src/features/access_points/domain/place_model.dart';
+import 'package:verifi/src/features/access_points/data/radar_search_repository.dart';
+import 'package:verifi/src/features/access_points/domain/radar_address_model.dart';
 import 'package:verifi/src/features/add_network/application/add_access_point_controller.dart';
 import 'package:verifi/src/features/add_network/domain/new_access_point_model.dart';
 import 'package:verifi/src/features/add_network/presentation/add_access_point_dialog.dart';
@@ -24,19 +24,19 @@ import 'add_access_point_controller_stub.dart';
 
 class LocationRepositoryMock extends Mock implements LocationRepository {}
 
-class PlaceRepositoryMock extends Mock implements PlaceRepository {}
+class RadarSearchRepositoryMock extends Mock implements RadarSearchRepository {}
 
 void main() {
   late AddAccessPointControllerStub addAccessPointControllerStub;
   late LocationRepositoryMock locationRepositoryMock;
-  late PlaceRepositoryMock placeRepositoryMock;
+  late RadarSearchRepositoryMock radarSearchRepositoryMock;
   late StreamController<bool> isConnectedToWifiProviderStub;
   late GoRouterMock goRouterMock;
 
   void createProviderMocks() {
     addAccessPointControllerStub = AddAccessPointControllerStub();
     locationRepositoryMock = LocationRepositoryMock();
-    placeRepositoryMock = PlaceRepositoryMock();
+    radarSearchRepositoryMock = RadarSearchRepositoryMock();
     isConnectedToWifiProviderStub = StreamController();
     goRouterMock = GoRouterMock();
   }
@@ -58,7 +58,8 @@ void main() {
             .overrideWith(() => addAccessPointControllerStub),
         locationRepositoryProvider
             .overrideWith((ref) => locationRepositoryMock),
-        placeRepositoryProvider.overrideWith((ref) => placeRepositoryMock),
+        radarSearchRepositoryProvider
+            .overrideWith((ref) => radarSearchRepositoryMock),
         isConnectedToWiFiProvider
             .overrideWith((ref) => isConnectedToWifiProviderStub.stream),
       ],
@@ -68,7 +69,8 @@ void main() {
   Finder ssidFieldFinder() => find.widgetWithText(TextField, 'SSID');
   Finder passwordFieldFinder() => find.byType(TextFormField);
   Finder passwordSwitchFinder() => find.byType(Switch);
-  Finder placeFieldFinder() => find.byType(TypeAheadFormField<Place>);
+  Finder radarAddressFieldFinder() =>
+      find.byType(TypeAheadFormField<RadarAddress>);
   Finder progressIndicatorFinder() => find.byType(CircularProgressIndicator);
   Finder submitButtonFinder() => find.widgetWithText(ElevatedButton, 'Submit');
 
@@ -77,8 +79,8 @@ void main() {
       tester.widget(passwordFieldFinder());
   Switch passwordSwitch(WidgetTester tester) =>
       tester.widget(passwordSwitchFinder());
-  TypeAheadFormField<Place> placeField(WidgetTester tester) =>
-      tester.widget(placeFieldFinder());
+  TypeAheadFormField<RadarAddress> radarAddressField(WidgetTester tester) =>
+      tester.widget(radarAddressFieldFinder());
   ElevatedButton submitButton(WidgetTester tester) =>
       tester.widget(submitButtonFinder());
 
@@ -125,8 +127,7 @@ void main() {
 
       final newAccessPoint = NewAccessPoint(
         ssid: 'testSsid',
-        place: Place(
-          id: 'placeId',
+        radarAddress: RadarAddress(
           name: 'placeName',
           location: LatLng(1.0, 2.0),
           address: 'placeAddress',
@@ -148,7 +149,7 @@ void main() {
       expect(ssidField(tester).enabled, isFalse);
       expect(passwordField(tester).enabled, isFalse);
       expect(passwordSwitch(tester).onChanged, isNull);
-      expect(placeField(tester).enabled, isFalse);
+      expect(radarAddressField(tester).enabled, isFalse);
       expect(progressIndicatorFinder(), findsOneWidget);
       expect(submitButton(tester).enabled, isFalse);
     });
@@ -164,13 +165,13 @@ void main() {
         FocusScope.of(tester.element(find.byType(AddAccessPointDialog)))
             .focusedChild
             ?.debugLabel,
-        'placeFocusNode',
+        'radarAddressFocusNode',
       );
       expect(ssidField(tester).enabled, isFalse);
       expect(passwordField(tester).enabled, isFalse);
       expect(passwordSwitch(tester).value, isFalse);
       expect(passwordSwitch(tester).onChanged, isNotNull);
-      expect(placeField(tester).enabled, isTrue);
+      expect(radarAddressField(tester).enabled, isTrue);
       expect(progressIndicatorFinder(), findsNothing);
       expect(submitButton(tester).enabled, isFalse);
     });
@@ -196,7 +197,7 @@ void main() {
       expect(passwordField(tester).enabled, isTrue);
       expect(passwordSwitch(tester).value, isTrue);
       expect(passwordSwitch(tester).onChanged, isNotNull);
-      expect(placeField(tester).enabled, isTrue);
+      expect(radarAddressField(tester).enabled, isTrue);
       expect(progressIndicatorFinder(), findsNothing);
       expect(submitButton(tester).enabled, isFalse);
     });
@@ -221,30 +222,29 @@ void main() {
     testWidgets('submit place with no password', (tester) async {
       // Setup
       createProviderMocks();
-      final place = Place(
-        id: 'testPlaceId',
-        name: 'testPlaceName',
+      final radarAddress = RadarAddress(
+        name: 'Test Place',
         location: LatLng(1.0, 2.0),
-        address: 'testAddress',
+        address: '123 test address',
       );
       when(() => locationRepositoryMock.currentLocation)
           .thenReturn(LatLng(1.0, 2.0));
-      when(() => placeRepositoryMock.searchNearbyPlaces(any(), any()))
+      when(() => radarSearchRepositoryMock.searchNearbyPlaces(any(), any()))
           .thenAnswer((invocation) {
-        return Future.value([place]);
+        return Future.value([radarAddress]);
       });
       addAccessPointControllerStub.setInitialValue(null);
       final container = await makeWidget(tester);
       await container.pump();
       await tester.pump();
 
-      // Enter the place search text
-      tester.testTextInput.enterText('testPlace');
-      await tester.pumpAndSettle(const Duration(seconds: 2));
-      expect(find.text(place.name), findsOneWidget);
+      // Enter part of the place search text
+      tester.testTextInput.enterText('Test');
+      await tester.pumpAndSettle(const Duration(seconds: 1));
+      expect(find.text(radarAddress.name), findsOneWidget);
 
       // Tap the result
-      await tester.tap(find.text(place.name));
+      await tester.tap(find.text(radarAddress.name));
       await tester.pump();
 
       // Submit
@@ -257,7 +257,7 @@ void main() {
           NewAccessPoint(
             ssid: 'testSsid',
             password: null,
-            place: place,
+            radarAddress: radarAddress,
           )
         ],
       );
@@ -266,17 +266,16 @@ void main() {
     testWidgets('submit place with password', (tester) async {
       // Setup
       createProviderMocks();
-      final place = Place(
-        id: 'testPlaceId',
-        name: 'testPlaceName',
+      final radarAddress = RadarAddress(
+        name: 'Test Place',
         location: LatLng(1.0, 2.0),
-        address: 'testAddress',
+        address: '123 test address',
       );
       when(() => locationRepositoryMock.currentLocation)
           .thenReturn(LatLng(1.0, 2.0));
-      when(() => placeRepositoryMock.searchNearbyPlaces(any(), any()))
+      when(() => radarSearchRepositoryMock.searchNearbyPlaces(any(), any()))
           .thenAnswer((invocation) {
-        return Future.value([place]);
+        return Future.value([radarAddress]);
       });
       addAccessPointControllerStub.setInitialValue(null);
       final container = await makeWidget(tester);
@@ -294,15 +293,15 @@ void main() {
       );
       tester.testTextInput.enterText('aTestPassword');
 
-      // Enter the place search text
-      await tester.tap(placeFieldFinder());
+      // Enter part of the place search text
+      await tester.tap(radarAddressFieldFinder());
       await tester.pump();
-      tester.testTextInput.enterText('testPlace');
+      tester.testTextInput.enterText('Test');
       await tester.pumpAndSettle(const Duration(seconds: 2));
-      expect(find.text(place.name), findsOneWidget);
+      expect(find.text(radarAddress.name), findsOneWidget);
 
       // Tap the result
-      await tester.tap(find.text(place.name));
+      await tester.tap(find.text(radarAddress.name));
       await tester.pump();
 
       // Submit
@@ -315,7 +314,7 @@ void main() {
           NewAccessPoint(
             ssid: 'testSsid',
             password: 'aTestPassword',
-            place: place,
+            radarAddress: radarAddress,
           )
         ],
       );

@@ -8,12 +8,12 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:go_router/go_router.dart';
 import 'package:verifi/src/common/providers/wifi_connected_stream_provider.dart';
 import 'package:verifi/src/common/widgets/verifi_dialog.dart';
-import 'package:verifi/src/features/access_points/data/place_repository.dart';
-import 'package:verifi/src/features/access_points/domain/place_model.dart';
-import 'package:verifi/src/features/add_network/domain/new_access_point_model.dart';
+import 'package:verifi/src/features/access_points/data/radar_search_repository.dart';
+import 'package:verifi/src/features/access_points/domain/radar_address_model.dart';
 import 'package:verifi/src/features/map/data/location/location_repository.dart';
 
 import '../application/add_access_point_controller.dart';
+import '../domain/new_access_point_model.dart';
 
 class AddAccessPointDialog extends ConsumerStatefulWidget {
   final String ssid;
@@ -32,9 +32,9 @@ class AddAccessPointDialogState extends ConsumerState<AddAccessPointDialog> {
   final ssidController = TextEditingController();
   final passwordController = TextEditingController();
   final placeController = TextEditingController();
-  Place? selectedPlace;
+  RadarAddress? selectedRadarAddress;
   final _passwordFocusNode = FocusNode(debugLabel: 'passwordFocusNode');
-  final _placeFocusNode = FocusNode(debugLabel: 'placeFocusNode');
+  final _radarAddressFocusNode = FocusNode(debugLabel: 'radarAddressFocusNode');
   bool _isPasswordRequired = false;
 
   @override
@@ -63,34 +63,40 @@ class AddAccessPointDialogState extends ConsumerState<AddAccessPointDialog> {
   @override
   void dispose() {
     _passwordFocusNode.dispose();
-    _placeFocusNode.dispose();
+    _radarAddressFocusNode.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     // Dismiss dialog and show snackbar when we are no longer connected to WiFi
-    ref.listen<AsyncValue<bool>>(isConnectedToWiFiProvider, (previous, next) {
-      if (previous?.valueOrNull != false && next.valueOrNull == false) {
-        final goRouter = GoRouter.of(context);
-        if (goRouter.canPop()) {
-          goRouter.pop(const CreateAccessPointDialogResult.wifiDisconnected());
+    ref.listen<AsyncValue<bool>>(
+      isConnectedToWiFiProvider,
+      (previous, next) {
+        if (previous?.valueOrNull != false && next.valueOrNull == false) {
+          final goRouter = GoRouter.of(context);
+          if (goRouter.canPop()) {
+            goRouter
+                .pop(const CreateAccessPointDialogResult.wifiDisconnected());
+          }
         }
-      }
-    });
-    ref.listen<AsyncValue<NewAccessPoint?>>(addAccessPointControllerProvider,
-        (previous, next) {
-      if (next.valueOrNull != null) {
-        final goRouter = GoRouter.of(context);
-        if (goRouter.canPop()) {
-          goRouter.pop(CreateAccessPointDialogResult.success(next.value!));
+      },
+    );
+    ref.listen<AsyncValue<NewAccessPoint?>>(
+      addAccessPointControllerProvider,
+      (previous, next) {
+        if (next.valueOrNull != null) {
+          final goRouter = GoRouter.of(context);
+          if (goRouter.canPop()) {
+            goRouter.pop(CreateAccessPointDialogResult.success(next.value!));
+          }
+        } else if ((previous == null || previous.isLoading) &&
+            next.hasValue &&
+            next.value == null) {
+          _requestFocus(_radarAddressFocusNode);
         }
-      } else if ((previous == null || previous.isLoading) &&
-          next.hasValue &&
-          next.value == null) {
-        _requestFocus(_placeFocusNode);
-      }
-    });
+      },
+    );
 
     final addNetworkState = ref.watch(addAccessPointControllerProvider);
     final bool loading = addNetworkState.isLoading;
@@ -101,7 +107,7 @@ class AddAccessPointDialogState extends ConsumerState<AddAccessPointDialog> {
           _title(),
           _ssidTextField(),
           _passwordRow(loading: loading),
-          _placeSearchFormField(loading: loading),
+          _radarSearchFormField(loading: loading),
           if (addNetworkState.hasError) _errorSection(addNetworkState.error!),
           _submitButton(loading: loading),
         ],
@@ -201,13 +207,14 @@ class AddAccessPointDialogState extends ConsumerState<AddAccessPointDialog> {
     );
   }
 
-  Widget _placeSearchFormField({required bool loading}) {
-    return TypeAheadFormField<Place>(
+  Widget _radarSearchFormField({required bool loading}) {
+    return TypeAheadFormField<RadarAddress>(
       enabled: !loading,
-      onSuggestionSelected: (place) async {
-        placeController.text = place.name;
+      debounceDuration: const Duration(milliseconds: 500),
+      onSuggestionSelected: (radarAddress) async {
+        placeController.text = radarAddress.name;
         setState(() {
-          selectedPlace = place;
+          selectedRadarAddress = radarAddress;
         });
       },
       itemBuilder: (context, place) {
@@ -226,6 +233,12 @@ class AddAccessPointDialogState extends ConsumerState<AddAccessPointDialog> {
           ),
         );
       },
+      errorBuilder: (context, error) {
+        return ListTile(
+          title: const Text("Error"),
+          subtitle: Text(error.toString()),
+        );
+      },
       suggestionsCallback: (query) async {
         if (query == '') {
           return [];
@@ -234,14 +247,14 @@ class AddAccessPointDialogState extends ConsumerState<AddAccessPointDialog> {
             ref.read(locationRepositoryProvider).currentLocation;
         if (currentLocation != null) {
           return await ref
-              .read(placeRepositoryProvider)
+              .read(radarSearchRepositoryProvider)
               .searchNearbyPlaces(currentLocation, query);
         } else {
           return [];
         }
       },
       textFieldConfiguration: TextFieldConfiguration(
-        focusNode: _placeFocusNode,
+        focusNode: _radarAddressFocusNode,
         enabled: !loading,
         autofocus: true,
         controller: placeController,
@@ -284,14 +297,14 @@ class AddAccessPointDialogState extends ConsumerState<AddAccessPointDialog> {
             child: loading ? const CircularProgressIndicator() : null,
           ),
           ElevatedButton(
-            onPressed: loading || selectedPlace == null
+            onPressed: loading || selectedRadarAddress == null
                 ? null
                 : () async {
                     final newAccessPoint = NewAccessPoint(
                       ssid: ssidController.text,
                       password:
                           _isPasswordRequired ? passwordController.text : null,
-                      place: selectedPlace!,
+                      radarAddress: selectedRadarAddress!,
                     );
                     ref
                         .read(addAccessPointControllerProvider.notifier)

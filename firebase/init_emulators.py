@@ -10,12 +10,11 @@ from firebase_admin.auth import UserRecord
 from google.cloud.firestore import GeoPoint
 from google.api_core.retry import Retry
 
-ACCESS_POINT_COUNT = 20
+ACCESS_POINT_COUNT = 10
 ACCESS_POINT_SPREAD_IN_M = 200
-USER_COUNT = 20
-USER_SPREAD_IN_M = 2000
+USER_COUNT = 10
+USER_SPREAD_IN_M = 1000
 MY_LOCATION = [-1.0, -1.0]
-PLACE_ID = "poi.1234"
 
 BASE32_CODES = "0123456789bcdefghjkmnpqrstuvwxyz"
 
@@ -148,24 +147,14 @@ def main():
                 "lat": coordinate[0],
                 "lng": coordinate[1],
                 "geohash": create_geohash(coordinate[0], coordinate[1]),
-                "ssid": "Another Pixel",
+                "ssid": "Test SSID",
                 "password": "random.password",
-                "name": f"Test Location {i}",
+                "name": f"Test Place {i}",
+                "address": f"Test Address {i}",
                 "submittedOn": submitted_on,
                 "submittedBy": submitted_by,
                 "validatedBy": validated_by,
                 "lastValidated": last_validated,
-                "feature": {
-                    "id": PLACE_ID,
-                    "name": f"Test Place {i}",
-                    "address": f"Test Place Address {i}",
-                    "location": {
-                        "coordinates": [
-                            coordinate[0],
-                            coordinate[1],
-                        ]
-                    },
-                },
             }
         )
 
@@ -178,7 +167,7 @@ def main():
                         "geohash": ap["geohash"],
                         "geopoint": GeoPoint(ap["lat"], ap["lng"]),
                     },
-                    "Feature": ap["feature"],
+                    "Address": ap["address"],
                     "Name": ap["name"],
                     "SSID": ap["ssid"],
                     "Password": ap["password"],

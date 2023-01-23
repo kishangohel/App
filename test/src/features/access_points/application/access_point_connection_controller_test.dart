@@ -31,6 +31,8 @@ void main() {
 
   final accessPointVerified = AccessPoint(
     id: 'testId',
+    name: 'Test Place',
+    address: '123 test address',
     location: LatLng(1, 2),
     ssid: 'testSsid',
     submittedBy: 'testSubmittedBy',
@@ -39,6 +41,8 @@ void main() {
 
   final accessPointUnverified = AccessPoint(
     id: 'testId',
+    name: 'Test Place',
+    address: '123 test address',
     location: LatLng(1, 2),
     ssid: 'testSsid',
     submittedBy: 'testSubmittedBy',

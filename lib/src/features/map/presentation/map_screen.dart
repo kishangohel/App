@@ -45,10 +45,10 @@ class MapScreenState extends ConsumerState<MapScreen> {
             },
           ).then((result) {
             if (result is CreateAccessPointDialogResult) {
-              result.handle((success) {
+              result.handle((newAP) {
                 ref
                     .read(mapServiceProvider)
-                    .moveMapToCenter(success.place.location);
+                    .moveMapToCenter(newAP.radarAddress.location);
                 ScaffoldMessenger.of(context)
                   ..hideCurrentSnackBar()
                   ..showSnackBar(

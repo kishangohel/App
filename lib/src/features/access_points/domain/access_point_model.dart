@@ -1,14 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:verifi/src/features/access_points/domain/place_model.dart';
 import 'package:verifi/src/features/access_points/domain/verified_status.dart';
 
 /// A single WiFi access point.
 class AccessPoint {
   final String id;
+  final String name;
+  final String address;
   final LatLng location;
-  final Place? place;
-
   final String ssid;
   final String? password;
   final String submittedBy;
@@ -16,8 +15,9 @@ class AccessPoint {
 
   AccessPoint({
     required this.id,
+    required this.name,
+    required this.address,
     required this.location,
-    this.place,
     required this.ssid,
     this.password,
     required this.submittedBy,
@@ -33,8 +33,9 @@ class AccessPoint {
     final lastValidated = (data['LastValidated'] as Timestamp?)?.toDate();
     return AccessPoint(
       id: snapshot.id,
+      name: data['Name'],
+      address: data['Address'],
       location: LatLng(location.latitude, location.longitude),
-      place: data['Feature'] == null ? null : Place.fromJson(data['Feature']),
       ssid: data['SSID'],
       password: data['Password'],
       submittedBy: data['SubmittedBy'],
@@ -48,8 +49,9 @@ class AccessPoint {
 
   AccessPoint copyWith({
     String? id,
+    String? name,
+    String? address,
     LatLng? location,
-    Place? place,
     String? ssid,
     String? password,
     String? submittedBy,
@@ -57,8 +59,9 @@ class AccessPoint {
   }) {
     return AccessPoint(
       id: id ?? this.id,
+      name: name ?? this.name,
+      address: address ?? this.address,
       location: location ?? this.location,
-      place: place ?? this.place,
       ssid: ssid ?? this.ssid,
       password: password ?? this.password,
       submittedBy: submittedBy ?? this.submittedBy,
@@ -67,7 +70,8 @@ class AccessPoint {
   }
 
   @override
-  String toString() => "AccessPoint: { id: $id, location: $location }";
+  String toString() =>
+      "AccessPoint: { id: $id, name: $name, location: $location }";
 
   static VerifiedStatus _getVeriFiedStatus(DateTime? lastValidated) {
     if (lastValidated == null) {

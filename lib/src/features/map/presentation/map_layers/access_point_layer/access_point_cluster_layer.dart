@@ -51,7 +51,7 @@ class _AccessPointClusterLayerState
       // isolate.
       wrapIndexCreation: (config) => Future.value(createSupercluster(config)),
       loadingOverlayBuilder: (_) => const SizedBox.shrink(),
-      maxClusterRadius: (AccessPointClusterMarker.radius * 1.66).toInt(),
+      maxClusterRadius: (AccessPointClusterMarker.radius * 2.5).toInt(),
       controller: _clustersController,
       clusterWidgetSize: const Size(
         AccessPointClusterMarker.radius,

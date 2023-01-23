@@ -18,6 +18,8 @@ void registerFallbacks() {
     AccessPoint(
       id: 'testId',
       location: LatLng(1, 2),
+      name: 'Test Place',
+      address: '123 test address',
       ssid: 'testSsid',
       submittedBy: 'testSubmittedBy',
       verifiedStatus: VerifiedStatus.verified,
