@@ -1,57 +1,79 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
+import { Statistics, UserProfile, userProfileConverter } from "./user-profile";
+import { UserRewardCalculator } from "./reward-user";
+import { fetchAchievements } from "./achievement";
 
 admin.initializeApp();
 const db = admin.firestore();
 
-export const apContributionToVeriPoints = functions.firestore
-    .document("AccessPoint/{apId}")
-    .onCreate(async (apSnap) => {
-      const apData = apSnap.data();
-      const submittedBy = apData.SubmittedBy;
+const userRewardCalculator = new UserRewardCalculator({
+  fetchAchievements: (statisticNames: Array<keyof Statistics>) =>
+    fetchAchievements(db, statisticNames),
+  log: functions.logger.log,
+});
 
-      const userSnap = await db.collection("UserProfile").doc(submittedBy).get();
-      const profileData = userSnap.data();
-      if (profileData) {
-        let veriPoints = profileData.VeriPoints;
-        if (veriPoints) {
-          veriPoints += 5;
-        } else {
-          veriPoints = 5;
-        }
-        return db
-            .collection("UserProfile")
-            .doc(submittedBy)
-            .update({VeriPoints: veriPoints});
-      }
-      return Promise.reject(Error("User not found"));
-    });
+export const accessPointCreated = functions.firestore
+  .document("AccessPoint/{apId}")
+  .onCreate(async (apSnap) => {
+    const submittedBy = apSnap.data().SubmittedBy;
 
-export const apVerificationToVeriPoints = functions.firestore
-    .document("AccessPoint/{apId}")
-    .onWrite(async (change, context) => {
-      const uid = context.auth?.uid;
-      if (uid == undefined) {
-        return Promise.reject(Error("Unauthenticated"));
-      }
-      if (
-        change.before.get("LastValidated") != change.after.get("LastValidated")
-      ) {
-        const userSnap = await db.collection("UserProfile").doc(uid).get();
-        const profileData = userSnap.data();
-        if (profileData) {
-          let veriPoints = profileData.VeriPoints;
-          if (veriPoints) {
-            veriPoints += 1;
-          } else {
-            veriPoints = 1;
-          }
-          return db
-              .collection("UserProfile")
-              .doc(uid)
-              .update({VeriPoints: veriPoints});
-        }
-        return Promise.reject(Error("User not found"));
-      }
+    // Find the user that created the AccessPoint
+    const userProfileCollection = db.
+      collection("UserProfile").
+      withConverter(userProfileConverter);
+    const userSnap = await userProfileCollection.doc(submittedBy).get();
+    const profileData = userSnap.data();
+    if (!profileData) return Promise.reject("User not found");
+
+    // Calculate changes to the profile
+    const changes = userRewardCalculator.calculateUserReward(
+      {
+        userProfile: profileData,
+        veriPoints: 5,
+        statistics: { "AccessPointsCreated": 1 },
+      },
+    );
+    const updatedUser: UserProfile = { ...profileData, ...changes, };
+
+    // Apply changes
+    return userProfileCollection
+      .doc(submittedBy)
+      .update(updatedUser);
+  });
+
+export const accessPointVerified = functions.firestore
+  .document("AccessPoint/{apId}")
+  .onUpdate(async (change, context) => {
+    const uid = context.auth?.uid;
+    if (uid == undefined) return Promise.reject("Unauthenticated");
+
+    // Only reward the user after a validation.
+    if (change.before.get("LastValidated") == change.after.get("LastValidated")) {
       return Promise.resolve();
-    });
+    }
+
+    // Find the user who made the change.
+    const userProfileCollection = db.
+      collection("UserProfile").
+      withConverter(userProfileConverter);
+    const userSnap = await userProfileCollection.doc(uid).get();
+    const profileData = userSnap.data();
+    if (!profileData) return Promise.reject("User not found");
+
+    // Calculate changes to the profile
+    const changes = userRewardCalculator.calculateUserReward(
+      {
+        userProfile: profileData,
+        veriPoints: 1,
+        statistics: { "AccessPointsValidated": 1 },
+      },
+    );
+    const updatedUser: UserProfile = { ...profileData, ...changes, };
+
+    // Apply changes
+    return userProfileCollection
+      .doc(uid)
+      .update(updatedUser);
+  });
+

@@ -18,6 +18,8 @@ class CurrentUser extends Equatable {
 
   String get displayName => profile.displayName;
 
+  Map<String, dynamic> get statistics => profile.statistics;
+
   @override
   List<Object?> get props => [profile, twitterAccount];
 }

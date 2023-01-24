@@ -7,6 +7,8 @@ class UserProfile extends Equatable {
   final String id;
   final String displayName;
   final bool hideOnMap;
+  final Map<String, int> statistics;
+  final Map<String, int> achievementProgresses;
   final int? veriPoints;
   final LatLng? lastLocation;
   final DateTime? lastLocationUpdate;
@@ -15,6 +17,8 @@ class UserProfile extends Equatable {
     required this.id,
     required this.displayName,
     required this.hideOnMap,
+    required this.statistics,
+    required this.achievementProgresses,
     this.veriPoints,
     this.lastLocation,
     this.lastLocationUpdate,
@@ -41,6 +45,12 @@ class UserProfile extends Equatable {
       id: snapshot.id,
       displayName: data['DisplayName'],
       hideOnMap: data['HideOnMap'] == true,
+      statistics: Map.castFrom<String, dynamic, String, int>(
+        data['Statistics'] ?? {},
+      ),
+      achievementProgresses: Map.castFrom<String, dynamic, String, int>(
+        data['AchievementProgresses'] ?? {},
+      ),
       veriPoints: data['VeriPoints'] ?? 0,
       lastLocation: (location != null)
           ? LatLng(location.latitude, location.longitude)

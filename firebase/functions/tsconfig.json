@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "esModuleInterop": true,
     "module": "commonjs",
     "noImplicitReturns": true,
     "noUnusedLocals": true,
@@ -15,6 +16,7 @@
   ],
   "exclude": [
     "node_modules",
-    "lib"
+    "lib",
+    "test"
   ]
 }

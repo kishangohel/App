@@ -26,6 +26,8 @@ void main() {
       id: 'testUserId',
       displayName: 'testUserName',
       hideOnMap: false,
+      statistics: {},
+      achievementProgresses: {},
     ),
   );
 

@@ -76,6 +76,7 @@ class ProfileRepository {
   }) async {
     await userCollection.doc(userId).set({
       'DisplayName': displayName,
+      'VeriPoints': 0,
     });
   }
 
@@ -122,6 +123,17 @@ class ProfileRepository {
     throw Exception('Error getting veripoints');
   }
 
+  /// Stream of a List of the highest ranked user profiles.
+  Stream<List<UserProfile>> userProfileRankings() {
+    return userCollection
+        .orderBy('VeriPoints', descending: true)
+        .limit(10)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map(UserProfile.fromDocumentSnapshot).toList();
+    });
+  }
+
   Future<void> updateUserLocation(LatLng location) async {
     if (_currentUser == null ||
         (false == await profileExists(_currentUser!.id))) {
@@ -158,3 +170,7 @@ final userProfileFamily =
     StreamProvider.autoDispose.family<UserProfile?, String>(
   (ref, uid) => ref.watch(profileRepositoryProvider).userWithUid(uid),
 );
+
+final userProfileRankingsProvider = StreamProvider<List<UserProfile>>((ref) {
+  return ref.watch(profileRepositoryProvider).userProfileRankings();
+});

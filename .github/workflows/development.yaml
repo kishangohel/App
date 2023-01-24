@@ -29,18 +29,50 @@ jobs:
           channel: "stable"
           cache: true
 
-      - name: Clean
+      - name: Flutter Clean
         run: flutter clean
 
-      - name: Install Dependencies
+      - name: Install Flutter Dependencies
         run: flutter pub get
 
-      - name: Format
+      - name: Flutter Format
         run: flutter format --set-exit-if-changed .
 
-      - name: Analyze
+      - name: Flutter Analyze
         run: flutter analyze lib test
 
-      - name: Run Tests
+      - name: Run Flutter Tests
+        id: flutterTest
         run: |
           flutter test
+
+      - uses: actions/upload-artifact@v3
+        if: always() && (steps.flutterTest.outcome == 'failure')
+        with:
+          name: flutter-test-goldens
+          path: test/**/failures/*.png
+
+      - name: Check If Firebase Changed
+        uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            firebase:
+              - 'firebase/**'
+
+      - name: Install Node
+        if: steps.changes.outputs.firebase == 'true'
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install Firebase Functions Dependencies
+        if: steps.changes.outputs.firebase == 'true'
+        working-directory: ./firebase/functions
+        run: npm install 
+
+      - name: Run Firebase Functions Tests
+        if: steps.changes.outputs.firebase == 'true'
+        working-directory: ./firebase/functions
+        run: npm run test 
+

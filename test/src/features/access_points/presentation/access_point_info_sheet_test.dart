@@ -121,6 +121,8 @@ void main() {
           id: 'userId123',
           displayName: 'userDisplayName',
           hideOnMap: false,
+          statistics: {},
+          achievementProgresses: {},
         ),
       );
       await container.pump();
@@ -155,6 +157,8 @@ void main() {
             id: accessPoint.submittedBy,
             displayName: '',
             hideOnMap: false,
+            statistics: const {},
+            achievementProgresses: const {},
           ),
         ),
       );

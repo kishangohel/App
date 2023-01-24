@@ -31,6 +31,8 @@ void registerFallbacks() {
         id: 'testUserId',
         displayName: 'testUserName',
         hideOnMap: false,
+        statistics: {},
+        achievementProgresses: {},
       ),
     ),
   );

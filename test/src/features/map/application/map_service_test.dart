@@ -220,6 +220,8 @@ void main() {
             id: id,
             displayName: 'testDisplayName',
             hideOnMap: hideOnMap,
+            statistics: const {},
+            achievementProgresses: const {},
             lastLocationUpdate: lastLocationUpdate,
           );
 

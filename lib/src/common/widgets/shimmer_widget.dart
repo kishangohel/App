@@ -4,12 +4,14 @@ import 'package:shimmer/shimmer.dart';
 class VShimmerWidget extends StatelessWidget {
   final double width;
   final double height;
+  final double borderRadius;
   final EdgeInsets? margin;
 
   const VShimmerWidget({
     Key? key,
     required this.width,
     required this.height,
+    this.borderRadius = 8.0,
     this.margin,
   }) : super(key: key);
 
@@ -27,7 +29,7 @@ class VShimmerWidget extends StatelessWidget {
         margin: margin,
         elevation: 1.0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
+          borderRadius: BorderRadius.circular(borderRadius),
         ),
         child: SizedBox(
           height: height,

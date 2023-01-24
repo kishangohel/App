@@ -10,7 +10,9 @@ from firebase_admin.auth import UserRecord
 from google.cloud.firestore import GeoPoint
 from google.api_core.retry import Retry
 
-ACCESS_POINT_COUNT = 10
+from create_achievements import create_achievements
+
+ACCESS_POINT_COUNT = 20
 ACCESS_POINT_SPREAD_IN_M = 200
 USER_COUNT = 10
 USER_SPREAD_IN_M = 1000
@@ -95,6 +97,10 @@ def main():
     firebase_admin.initialize_app(credential=cred)
     db = firestore.client()
 
+    # Create Achievements
+    create_achievements(db)
+
+    # Create users
     phone_number_start = 6505553434
     users = []
     for i in range(USER_COUNT):
@@ -112,6 +118,25 @@ def main():
             print("Unable to create user. Is Firebase emulator running?")
             print(str(e))
             sys.exit(1)
+
+    # Create user profiles
+    for i in range(USER_COUNT):
+        display_name_suffix = "" if i == 0 else f"_{i}"
+        coordinate = get_random_nearby_coordinate(USER_SPREAD_IN_M)
+
+        db.collection("UserProfile").document(users[i].uid).set(
+            {
+                "CreatedOn": datetime.datetime.now(tz=datetime.timezone.utc),
+                "DisplayName": f"test_user{display_name_suffix}",
+                "LastLocation": {
+                    "geohash": create_geohash(coordinate[0], coordinate[1]),
+                    "geopoint": GeoPoint(coordinate[0], coordinate[1]),
+                },
+                "LastLocationUpdate": datetime.datetime.now(
+                    tz=datetime.timezone.utc
+                ),
+            }
+        )
 
     # Create access points
     access_points = []
@@ -185,38 +210,16 @@ def main():
             )
             sys.exit(1)
 
-    for i in range(USER_COUNT):
-        # Create profile
-        display_name_suffix = "" if i == 0 else f"_{i}"
-        coordinate = get_random_nearby_coordinate(USER_SPREAD_IN_M)
-
-        db.collection("UserProfile").document(users[i].uid).set(
-            {
-                "CreatedOn": datetime.datetime.now(tz=datetime.timezone.utc),
-                "DisplayName": f"test_user{display_name_suffix}",
-                "LastLocation": {
-                    "geohash": create_geohash(coordinate[0], coordinate[1]),
-                    "geopoint": GeoPoint(coordinate[0], coordinate[1]),
-                },
-                "LastLocationUpdate": datetime.datetime.now(
-                    tz=datetime.timezone.utc
-                ),
-            }
-        )
-
 
 if __name__ == "__main__":
-    authEmulator = os.getenv("FIREBASE_AUTH_EMULATOR_HOST")
-    if authEmulator is None:
-        print("FIREBASE_AUTH_EMULATOR_HOST environment variable is not set")
-        print("It should most likely be set to 'localhost:9099'")
-        sys.exit(1)
-
-    firestoreEmulator = os.getenv("FIRESTORE_EMULATOR_HOST")
-    if firestoreEmulator is None:
-        print("FIRESTORE_EMULATOR_HOST environment varaible is not set")
-        print("It should most likely be set to 'localhost:8080'")
-        sys.exit(1)
+    os.environ["FIREBASE_AUTH_EMULATOR_HOST"] = os.getenv(
+        "FIREBASE_AUTH_EMULATOR_HOST",
+        "localhost:9099",
+    )
+    os.environ["FIRESTORE_EMULATOR_HOST"] = os.getenv(
+        "FIRESTORE_EMULATOR_HOST",
+        "localhost:8080",
+    )
 
     if len(sys.argv) != 3:
         print("Invalid arguments")

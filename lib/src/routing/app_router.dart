@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:verifi/src/features/achievement/presentation/achievements_screen.dart';
 import 'package:verifi/src/features/authentication/data/authentication_repository.dart';
 import 'package:verifi/src/features/authentication/presentation/display_name/display_name_screen.dart';
 import 'package:verifi/src/features/authentication/presentation/phone_number/phone_screen.dart';
@@ -20,6 +21,7 @@ enum AppRoute {
   profile,
   loading,
   error,
+  achievements,
 }
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
@@ -83,6 +85,13 @@ GoRouter goRouter(GoRouterRef ref) {
             name: AppRoute.profile.name,
             pageBuilder: (context, state) => NoTransitionPage(
               child: ProfileScreen(),
+            ),
+          ),
+          GoRoute(
+            path: '/achievements',
+            name: AppRoute.achievements.name,
+            pageBuilder: (context, state) => NoTransitionPage(
+              child: AchievementsScreen(),
             ),
           ),
         ],

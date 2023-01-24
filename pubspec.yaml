@@ -1,5 +1,5 @@
 name: verifi
-description: Connect Without Limits
+description: The future of global WiFi access
 version: 1.0.0
 publish_to: none
 
@@ -49,6 +49,10 @@ dependencies:
   shimmer: ^2.0.0
   url_launcher: ^6.1.7
 
+dependency_overrides:
+  font_awesome_flutter:
+    path: assets/font_awesome_flutter/
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -57,6 +61,7 @@ dev_dependencies:
   dependency_validator: ^3.2.2
   firebase_auth_mocks: ^0.9.2
   flutter_lints: ^2.0.1
+  golden_toolkit: ^0.14.0
   json_serializable: ^6.5.4
   meta: ^1.8.0
   mocktail: ^0.3.0
