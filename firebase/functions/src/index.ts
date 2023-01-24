@@ -19,27 +19,23 @@ export const accessPointCreated = functions.firestore
     const submittedBy = apSnap.data().SubmittedBy;
 
     // Find the user that created the AccessPoint
-    const userProfileCollection = db.
-      collection("UserProfile").
-      withConverter(userProfileConverter);
+    const userProfileCollection = db
+      .collection("UserProfile")
+      .withConverter(userProfileConverter);
     const userSnap = await userProfileCollection.doc(submittedBy).get();
     const profileData = userSnap.data();
     if (!profileData) return Promise.reject("User not found");
 
     // Calculate changes to the profile
-    const changes = userRewardCalculator.calculateUserReward(
-      {
-        userProfile: profileData,
-        veriPoints: 5,
-        statistics: { "AccessPointsCreated": 1 },
-      },
-    );
-    const updatedUser: UserProfile = { ...profileData, ...changes, };
+    const changes = userRewardCalculator.calculateUserReward({
+      userProfile: profileData,
+      veriPoints: 5,
+      statistics: { AccessPointsCreated: 1 },
+    });
+    const updatedUser: UserProfile = { ...profileData, ...changes };
 
     // Apply changes
-    return userProfileCollection
-      .doc(submittedBy)
-      .update(updatedUser);
+    return userProfileCollection.doc(submittedBy).update(updatedUser);
   });
 
 export const accessPointVerified = functions.firestore
@@ -49,31 +45,42 @@ export const accessPointVerified = functions.firestore
     if (uid == undefined) return Promise.reject("Unauthenticated");
 
     // Only reward the user after a validation.
-    if (change.before.get("LastValidated") == change.after.get("LastValidated")) {
+    if (
+      change.before.get("LastValidated") == change.after.get("LastValidated")
+    ) {
       return Promise.resolve();
     }
 
     // Find the user who made the change.
-    const userProfileCollection = db.
-      collection("UserProfile").
-      withConverter(userProfileConverter);
+    const userProfileCollection = db
+      .collection("UserProfile")
+      .withConverter(userProfileConverter);
     const userSnap = await userProfileCollection.doc(uid).get();
     const profileData = userSnap.data();
     if (!profileData) return Promise.reject("User not found");
 
     // Calculate changes to the profile
-    const changes = userRewardCalculator.calculateUserReward(
-      {
-        userProfile: profileData,
-        veriPoints: 1,
-        statistics: { "AccessPointsValidated": 1 },
-      },
-    );
-    const updatedUser: UserProfile = { ...profileData, ...changes, };
+    const changes = userRewardCalculator.calculateUserReward({
+      userProfile: profileData,
+      veriPoints: 1,
+      statistics: { AccessPointsValidated: 1 },
+    });
+    const updatedUser: UserProfile = { ...profileData, ...changes };
 
     // Apply changes
-    return userProfileCollection
-      .doc(uid)
-      .update(updatedUser);
+    return userProfileCollection.doc(uid).update(updatedUser);
   });
 
+export const checkForVeriFiedTweets = functions.pubsub
+  .schedule("every 20 minutes")
+  .onRun(async (context) => {
+    try {
+      // Get list of connected Twitter accounts from Firestore that have not
+      // yet been granted the VeriFied Tweep achievement
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log("Error checking tweets: ", error);
+        throw error;
+      }
+    }
+  });
