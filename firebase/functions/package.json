@@ -19,7 +19,8 @@
   "main": "lib/index.js",
   "dependencies": {
     "firebase-admin": "^11.5.0",
-    "firebase-functions": "^4.2.0"
+    "firebase-functions": "^4.2.0",
+    "twitter-api-sdk": "^1.2.1"
   },
   "devDependencies": {
     "@types/chai": "^4.3.4",

@@ -53,26 +53,26 @@ ACHIEVEMENTS = [
             },
         ],
     },
-    # {
-    #     "Identifier": "TwitterVeriFied",
-    #     "StatisticsKey": "TwitterVeriFied",
-    #     "Name": "Twitter VeriFied",
-    #     "ListPriority": 300,
-    #     "Tiers": [
-    #         {
-    #             "Identifier": "SilverTier",
-    #             "Description": "Connect your Twitter account",
-    #             "GoalTotal": 1,
-    #             "VeriPointsAward": 40,
-    #         },
-    #         {
-    #             "Identifier": "GoldTier",
-    #             "Description": "Post VeriFied tweet",
-    #             "GoalTotal": 2,
-    #             "VeriPointsAward": 60,
-    #         },
-    #     ],
-    # },
+    {
+        "Identifier": "TwitterVeriFied",
+        "StatisticsKey": "TwitterVeriFied",
+        "Name": "Twitter VeriFied",
+        "ListPriority": 300,
+        "Tiers": [
+            {
+                "Identifier": "SilverTier",
+                "Description": "Connect your Twitter account",
+                "GoalTotal": 1,
+                "VeriPointsAward": 40,
+            },
+            {
+                "Identifier": "GoldTier",
+                "Description": "Post VeriFied tweet",
+                "GoalTotal": 2,
+                "VeriPointsAward": 60,
+            },
+        ],
+    },
 ]
 
 
