@@ -3,11 +3,6 @@ import * as admin from "firebase-admin";
 import { Statistics, UserProfile, userProfileConverter } from "./user-profile";
 import { UserRewardCalculator } from "./reward-user";
 import { fetchAchievements } from "./achievement";
-import { UserRecord } from "firebase-admin/auth";
-
-import { Client } from "twitter-api-sdk";
-const TWITTER_BEARER_TOKEN =
-  "AAAAAAAAAAAAAAAAAAAAANM7lAEAAAAA5sDkmklFRMtc91NnTZgkQsONDXY%3DioTFQAqX7Ka2i2yy4iZZ6xmBvI8bXjIml4Q0LJXpfcwKPOqBm0";
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -76,57 +71,67 @@ export const accessPointVerified = functions.firestore
     return userProfileCollection.doc(uid).update(updatedUser);
   });
 
-export const checkForVeriFiedTweets = functions.pubsub
-  .schedule("every 20 minutes")
-  .onRun(async (context) => {
-    const twitterClient = new Client(
-      "AAAAAAAAAAAAAAAAAAAAANM7lAEAAAAA5sDkmklFRMtc91NnTZgkQsONDXY%3DioTFQAqX7Ka2i2yy4iZZ6xmBvI8bXjIml4Q0LJXpfcwKPOqBm0"
-    );
-    try {
-      // Get list of users with connected Twitter accounts from Firebase Auth
-      const tweeps: Map<string, string> = await getAllTweeps(
-        undefined,
-        new Map<string, string>()
-      );
-      // Filter out users who have already been rewarded for their tweet
-      const unrewardedTweeps = MapUtils.filter(tweeps, async (userId, _) => {
-        const userProfileCollection = db
-          .collection("UserProfile")
-          .withConverter(userProfileConverter);
-        const userSnap = await userProfileCollection.doc(userId).get();
-        const profileData = userSnap.data();
-        if (!profileData) return false;
-        // User has not already received second tier achievement
-        return profileData.AchievementProgresses?.TwitterVeriFied != 2;
-      });
-    } catch (error) {
-      if (error instanceof Error) {
-        console.log("Error checking tweets: ", error);
-        throw error;
-      }
+import express from "express";
+import basicAuth from "express-basic-auth";
+
+const expressApp = express();
+expressApp.use(
+  basicAuth({
+    users: { "cloudrun": "EDWfDTM3PX95x6Le" }
+  }),
+);
+
+// Receive a POST request from Cloud Run containing Twitter UID. If UID is 
+// linked to a Firebase Auth user, and that user already has Silver tier of the 
+// Twitter achievement, grant that user the Gold tier for Twitter achievement.
+export const listenForVeriFiedTweeps = functions.https.onRequest(async (req, resp) => {
+  try {
+
+    // Extract username from query
+    const twitterUID = req.query.uid;
+    if (typeof twitterUID !== "string") {
+      const result = `Invalid query parameter value for uid: ${twitterUID}`;
+      console.log(result);
+      resp.status(400).send(result);
+      return;
     }
-  });
+
+    // Get user from Firebase Auth lookup
+    const tweepUID = await getTweepByTwitterUID(twitterUID, undefined);
+    if (!tweepUID) {
+      const result = `No user found with linked Twitter UID: ${twitterUID}`;
+      console.log(result);
+      resp.status(400).send(result);
+      return;
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log("Error in listenForVeriFiedTweeps: ", error);
+      throw error;
+    }
+  }
+});
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////// Private Functions ///////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-// Recursively fetches all the users with a linked Twitter account.
+// Recursively fetches all Firebase Auth users with a linked Twitter account.
 const getAllTweeps = async (
   nextPageToken: string | undefined,
   linkedUsers: Map<string, string>
 ) => {
   try {
     const listUsersResult = await admin.auth().listUsers(1000, nextPageToken);
-    listUsersResult.users.forEach((userRecord) => {
+    for (let userRecord of listUsersResult.users) {
       if (userRecord.providerData.length > 0) {
-        userRecord.providerData.forEach((provider) => {
+        for (let provider of userRecord.providerData) {
           if (provider.providerId === "twitter.com") {
             linkedUsers.set(userRecord.uid, provider.uid);
           }
-        });
+        }
       }
-    });
+    }
     if (listUsersResult.pageToken) {
       // List next batch of users.
       // Recursively call getAllTweeps() until no more pages are left
@@ -139,19 +144,51 @@ const getAllTweeps = async (
   }
 };
 
-class MapUtils {
-  static filter<TKey, TValue>(
-    map: Map<TKey, TValue>,
-    filterFunction: (key: TKey, value: TValue) => Promise<boolean>
-  ): Map<TKey, TValue> {
-    const filteredMap: Map<TKey, TValue> = new Map<TKey, TValue>();
-
-    map.forEach(async (value, key) => {
-      if (await filterFunction(key, value)) {
-        filteredMap.set(key, value);
+// Recursively searches for a Firebase Auth user with a linked Twitter account
+// matching the given Twitter UID.
+async function getTweepByTwitterUID(
+  uid: string,
+  nextPageToken: string | undefined,
+): Promise<string | undefined> {
+  try {
+    const listUsersResult = await admin.auth().listUsers(1000, nextPageToken);
+    for (let userRecord of listUsersResult.users) {
+      if (userRecord.providerData.length > 0) {
+        for (let provider of userRecord.providerData) {
+          if (provider.providerId === "twitter.com") {
+            if (provider.uid === uid) {
+              return userRecord.uid;
+            }
+          }
+        }
       }
-    });
-
-    return filteredMap;
+    }
+    if (listUsersResult.pageToken) {
+      // List next batch of users.
+      // Recursively call getAllTweeps() until no more pages are left
+      return getTweepByTwitterUID(uid, listUsersResult.pageToken);
+    }
+    return undefined;
+  } catch (error) {
+    console.log("Unable to get user:", error);
+    return undefined;
   }
+
 }
+
+/* class MapUtils { */
+/*   static filter<TKey, TValue>( */
+/*     map: Map<TKey, TValue>, */
+/*     filterFunction: (key: TKey, value: TValue) => Promise<boolean> */
+/*   ): Map<TKey, TValue> { */
+/*     const filteredMap: Map<TKey, TValue> = new Map<TKey, TValue>(); */
+/**/
+/*     map.forEach(async (value, key) => { */
+/*       if (await filterFunction(key, value)) { */
+/*         filteredMap.set(key, value); */
+/*       } */
+/*     }); */
+/**/
+/*     return filteredMap; */
+/*   } */
+/* } */
