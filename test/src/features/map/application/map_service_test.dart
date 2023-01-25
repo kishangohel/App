@@ -50,16 +50,18 @@ void main() {
         overrides: [
           currentUserProvider
               .overrideWith((ref) => currentUserController.stream),
-          userLayerControllerProvider
-              .overrideWith(() => userLayerControllerMock),
-          accessPointLayerControllerProvider
-              .overrideWith(() => accessPointLayerControllerMock),
           nearbyUsersRepositoryProvider
               .overrideWith((ref) => nearbyUsersRepositoryMock),
           accessPointRepositoryProvider
               .overrideWith((ref) => accessPointRepositoryMock),
           mapServiceProvider.overrideWith((ref) {
-            mapService = MapService(ref, mapController: mapControllerMock);
+            mapService = MapService(
+              ref,
+              mapController: mapControllerMock,
+              accessPointLayerControllerOverride:
+                  accessPointLayerControllerMock,
+              userLayerControllerOverride: userLayerControllerMock,
+            );
             return mapService;
           })
         ],
@@ -174,8 +176,8 @@ void main() {
 
       verify(() => centerZoomControllerMock.moveTo(any(
           that: isA<CenterZoom>()
-            ..having((e) => e.center, 'center', equals(LatLng(1.0, 2.0)))
-            ..having((e) => e.zoom, 'zoom', 3.0)))).called(1);
+              .having((e) => e.center, 'center', equals(LatLng(1.0, 2.0)))
+              .having((e) => e.zoom, 'zoom', 3.0)))).called(1);
     });
 
     test('getNearbyAccessPoints when zoom is < 12', () async {

@@ -2,9 +2,9 @@ import { DocumentData, QueryDocumentSnapshot } from "firebase-admin/firestore";
 import { AchievementProgresses } from "./achievement";
 
 export type UserProfile = {
-  VeriPoints?: number;
-  Statistics?: Statistics;
-  AchievementProgresses?: AchievementProgresses;
+  VeriPoints: number;
+  Statistics: Statistics;
+  AchievementProgresses: AchievementProgresses;
 }
 
 export type Statistics = {
@@ -15,18 +15,16 @@ export type Statistics = {
 
 export const userProfileConverter = {
   toFirestore(userProfile: UserProfile): DocumentData {
-    return {
-      VeriPoints: userProfile.VeriPoints,
-      AchievementProgresses: userProfile.AchievementProgresses,
-    };
+    return userProfile;
   },
   fromFirestore(
     snapshot: QueryDocumentSnapshot,
   ): UserProfile {
     const data = snapshot.data()!;
     return {
-      VeriPoints: data.VeriPoints,
-      AchievementProgresses: data.AchievementProgresses,
+      VeriPoints: data.VeriPoints ?? 0,
+      Statistics: data.Statistics ?? {},
+      AchievementProgresses: data.AchievementProgresses ?? {},
     };
   }
 };

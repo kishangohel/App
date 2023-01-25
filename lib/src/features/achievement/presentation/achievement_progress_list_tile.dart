@@ -97,7 +97,7 @@ class AchievementProgressListTile extends StatelessWidget {
                   Expanded(
                     child: Text(
                       progress.description,
-                      style: Theme.of(context).textTheme.bodyText2?.copyWith(
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             fontSize: 15,
                             color: Colors.grey.shade600,
                           ),

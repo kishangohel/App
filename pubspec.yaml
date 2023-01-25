@@ -77,3 +77,10 @@ flutter:
     - assets/social_media_icons/
     - assets/wallet_logos/
     - assets/wifi_markers/
+  fonts:
+    - family:  FixedFontAwesomeIcons
+      fonts:
+        - asset: assets/fonts/FixedFontAwesomeIcons.ttf
+
+
+

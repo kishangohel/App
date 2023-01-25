@@ -92,7 +92,7 @@ class _DisplayNameScreenState extends ConsumerState<DisplayNameScreen> {
             color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
-        errorStyle: Theme.of(context).textTheme.caption?.copyWith(
+        errorStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
               fontWeight: FontWeight.w600,
             ),
         errorText: ref.watch(displayNameScreenControllerProvider).maybeWhen(
