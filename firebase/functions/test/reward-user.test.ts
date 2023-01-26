@@ -1,29 +1,30 @@
 import "mocha";
 import chai from "chai";
-import { UserRewardCalculator } from '../src/reward-user';
+import { UserRewardCalculator } from "../src/reward-user";
 import { Achievement } from "../src/achievement";
 import { Statistics, UserProfile } from "../src/user-profile";
 import _ from "lodash";
 const { expect } = chai;
 
-
 describe("rewardUser", () => {
   let loggedMessages: Array<string>;
 
-  const createUserRewardCalculator =
-    (achievements: Array<Achievement>): UserRewardCalculator => {
-      return new UserRewardCalculator({
-        fetchAchievements: (statisticNames: (keyof Statistics)[]) => {
-          return Promise.resolve(
-            achievements.filter((achievement) =>
-              statisticNames.includes(achievement.StatisticsKey,
-              )
-            ),
-          );
-        },
-        log: (message) => { loggedMessages.push(message); },
-      });
-    }
+  const createUserRewardCalculator = (
+    achievements: Array<Achievement>
+  ): UserRewardCalculator => {
+    return new UserRewardCalculator({
+      fetchAchievements: (statisticNames: (keyof Statistics)[]) => {
+        return Promise.resolve(
+          achievements.filter((achievement) =>
+            statisticNames.includes(achievement.StatisticsKey)
+          )
+        );
+      },
+      log: (message) => {
+        loggedMessages.push(message);
+      },
+    });
+  };
 
   beforeEach(() => {
     loggedMessages = [];
@@ -47,7 +48,7 @@ describe("rewardUser", () => {
 
     expect(output).deep.eq(expectArgs.expectedOutput);
     expect(expectArgs.input).deep.eq(inputCopy);
-  }
+  };
 
   it("no reward", async () => {
     const userProfile: UserProfile = {
@@ -63,9 +64,9 @@ describe("rewardUser", () => {
       expectedOutput: userProfile,
     });
 
-    expect(loggedMessages).deep.equals(
-      ["No change to achievements: no matching achievements exist"],
-    );
+    expect(loggedMessages).deep.equals([
+      "No change to achievements: no matching achievements exist",
+    ]);
   });
 
   it("only points awarded", async () => {
@@ -85,9 +86,9 @@ describe("rewardUser", () => {
         AchievementProgresses: {},
       },
     });
-    expect(loggedMessages).deep.equals(
-      ["No change to achievements: no matching achievements exist"],
-    );
+    expect(loggedMessages).deep.equals([
+      "No change to achievements: no matching achievements exist",
+    ]);
   });
 
   it("no previous veripoints or statistics, no achievements", async () => {
@@ -108,9 +109,9 @@ describe("rewardUser", () => {
       },
     });
 
-    expect(loggedMessages).deep.equals(
-      ["No change to achievements: no matching achievements exist"],
-    );
+    expect(loggedMessages).deep.equals([
+      "No change to achievements: no matching achievements exist",
+    ]);
   });
 
   it("previous veripoints and statistics, no matching achievement", async () => {
@@ -135,9 +136,9 @@ describe("rewardUser", () => {
       },
     });
 
-    expect(loggedMessages).deep.equals(
-      ["No change to achievements: no matching achievements exist"],
-    );
+    expect(loggedMessages).deep.equals([
+      "No change to achievements: no matching achievements exist",
+    ]);
   });
 
   it("no previous veripoints or statistics, achievement awarded", async () => {
@@ -148,11 +149,9 @@ describe("rewardUser", () => {
     };
     const rewardCalculator = createUserRewardCalculator([
       {
-        Identifier: 'AccessPointCreator',
-        StatisticsKey: 'AccessPointsCreated',
-        Tiers: [
-          { GoalTotal: 1, VeriPointsAward: 10 },
-        ],
+        Identifier: "AccessPointCreator",
+        StatisticsKey: "AccessPointsCreated",
+        Tiers: [{ GoalTotal: 1, VeriPointsAward: 10 }],
       },
     ]);
 
@@ -172,7 +171,6 @@ describe("rewardUser", () => {
     expect(loggedMessages).deep.equals([]);
   });
 
-
   it("matching achievement, not enough progress for next tier", async () => {
     const userProfile: UserProfile = {
       VeriPoints: 15,
@@ -181,8 +179,8 @@ describe("rewardUser", () => {
     };
     const rewardCalculator = createUserRewardCalculator([
       {
-        Identifier: 'AccessPointCreator',
-        StatisticsKey: 'AccessPointsCreated',
+        Identifier: "AccessPointCreator",
+        StatisticsKey: "AccessPointsCreated",
         Tiers: [
           { GoalTotal: 1, VeriPointsAward: 10 },
           { GoalTotal: 10, VeriPointsAward: 20 },
@@ -212,11 +210,9 @@ describe("rewardUser", () => {
     };
     const rewardCalculator = createUserRewardCalculator([
       {
-        Identifier: 'AccessPointCreator',
-        StatisticsKey: 'AccessPointsCreated',
-        Tiers: [
-          { GoalTotal: 100, VeriPointsAward: 10 },
-        ],
+        Identifier: "AccessPointCreator",
+        StatisticsKey: "AccessPointsCreated",
+        Tiers: [{ GoalTotal: 100, VeriPointsAward: 10 }],
       },
     ]);
     await expectReward({
@@ -241,11 +237,9 @@ describe("rewardUser", () => {
     };
     const rewardCalculator = createUserRewardCalculator([
       {
-        Identifier: 'AccessPointCreator',
-        StatisticsKey: 'AccessPointsCreated',
-        Tiers: [
-          { GoalTotal: 100, VeriPointsAward: 10 },
-        ],
+        Identifier: "AccessPointCreator",
+        StatisticsKey: "AccessPointsCreated",
+        Tiers: [{ GoalTotal: 100, VeriPointsAward: 10 }],
       },
     ]);
 
@@ -271,8 +265,8 @@ describe("rewardUser", () => {
     };
     const rewardCalculator = createUserRewardCalculator([
       {
-        Identifier: 'AccessPointCreator',
-        StatisticsKey: 'AccessPointsCreated',
+        Identifier: "AccessPointCreator",
+        StatisticsKey: "AccessPointsCreated",
         Tiers: [
           { GoalTotal: 1, VeriPointsAward: 10 },
           { GoalTotal: 10, VeriPointsAward: 20 },
