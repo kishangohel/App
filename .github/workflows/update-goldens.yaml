@@ -1,0 +1,31 @@
+name: update-goldens
+
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+          cache: true
+
+      - name: Flutter Clean
+        run: flutter clean
+
+      - name: Install Flutter Dependencies
+        run: flutter pub get
+
+      - name: Update Goldens
+        id: flutterTest
+        run: |
+          flutter test --update-goldens --tags=golden
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: flutter-test-goldens
+          path: test/**/goldens/*.png
+

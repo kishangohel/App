@@ -7,7 +7,7 @@ SnackBar errorSnackBar(BuildContext context, String message) => SnackBar(
         alignment: Alignment.center,
         child: AutoSizeText(
           message,
-          style: Theme.of(context).textTheme.button?.copyWith(
+          style: Theme.of(context).textTheme.labelLarge?.copyWith(
                 color: Theme.of(context).colorScheme.onSecondary,
               ),
           textAlign: TextAlign.center,

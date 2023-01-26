@@ -24,6 +24,8 @@ class MapService {
 
   final Ref ref;
   final MapController _mapController;
+  final AccessPointLayerController? _accessPointLayerControllerOverride;
+  final UserLayerController? _userLayerControllerOverride;
   CenterZoomController? _centerZoomController;
   late final StreamSubscription<MapEvent> _mapEventSubscription;
 
@@ -32,7 +34,13 @@ class MapService {
   MapService(
     this.ref, {
     @visibleForTesting MapController? mapController,
-  }) : _mapController = mapController ?? MapController() {
+    @visibleForTesting
+        AccessPointLayerController? accessPointLayerControllerOverride,
+    @visibleForTesting UserLayerController? userLayerControllerOverride,
+  })  : _mapController = mapController ?? MapController(),
+        _accessPointLayerControllerOverride =
+            accessPointLayerControllerOverride,
+        _userLayerControllerOverride = userLayerControllerOverride {
     _mapEventSubscription = _mapController.mapEventStream.listen((event) {
       if (event is MapEventMoveEnd ||
           event is MapEventFlingAnimationEnd ||
@@ -71,11 +79,15 @@ class MapService {
   }
 
   void updateMap() async {
+    // The overrides are a messy solution for mocking the provider's notifier
+    // in tests. At the time of writing a better solution is not available.
     await Future.wait([
-      ref
-          .read(accessPointLayerControllerProvider.notifier)
+      (_accessPointLayerControllerOverride ??
+              ref.read(accessPointLayerControllerProvider.notifier)!)
           .updateAccessPoints(),
-      ref.read(userLayerControllerProvider.notifier).updateUsers(),
+      (_userLayerControllerOverride ??
+              ref.read(userLayerControllerProvider.notifier)!)
+          .updateUsers(),
     ]);
   }
 

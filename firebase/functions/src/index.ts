@@ -1,6 +1,6 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
-import { Statistics, UserProfile, userProfileConverter } from "./user-profile";
+import { Statistics, userProfileConverter } from "./user-profile";
 import { UserRewardCalculator } from "./reward-user";
 import { fetchAchievements } from "./achievement";
 
@@ -18,24 +18,28 @@ export const accessPointCreated = functions.firestore
   .onCreate(async (apSnap) => {
     const submittedBy = apSnap.data().SubmittedBy;
 
-    // Find the user that created the AccessPoint
-    const userProfileCollection = db
-      .collection("UserProfile")
-      .withConverter(userProfileConverter);
-    const userSnap = await userProfileCollection.doc(submittedBy).get();
-    const profileData = userSnap.data();
-    if (!profileData) return Promise.reject("User not found");
+    const profileRef = db.
+      collection("UserProfile").
+      withConverter(userProfileConverter).
+      doc(submittedBy);
+    return await db.runTransaction(async (t) => {
+      // Find the user that created the AccessPoint
+      const userSnap = await t.get(profileRef);
+      const profileData = userSnap.data();
+      if (!profileData) return Promise.reject("User not found");
 
-    // Calculate changes to the profile
-    const changes = userRewardCalculator.calculateUserReward({
-      userProfile: profileData,
-      veriPoints: 5,
-      statistics: { AccessPointsCreated: 1 },
+      // Apply rewards
+      const rewardedProfile = await userRewardCalculator.withRewards(
+        {
+          userProfile: profileData,
+          veriPointsChange: 5,
+          statisticsChange: { "AccessPointsCreated": 1 },
+        },
+      );
+
+      // Apply changes
+      return t.update(profileRef, rewardedProfile);
     });
-    const updatedUser: UserProfile = { ...profileData, ...changes };
-
-    // Apply changes
-    return userProfileCollection.doc(submittedBy).update(updatedUser);
   });
 
 export const accessPointVerified = functions.firestore
@@ -51,24 +55,28 @@ export const accessPointVerified = functions.firestore
       return Promise.resolve();
     }
 
-    // Find the user who made the change.
-    const userProfileCollection = db
-      .collection("UserProfile")
-      .withConverter(userProfileConverter);
-    const userSnap = await userProfileCollection.doc(uid).get();
-    const profileData = userSnap.data();
-    if (!profileData) return Promise.reject("User not found");
+    const profileRef = db.
+      collection("UserProfile").
+      withConverter(userProfileConverter).
+      doc(uid);
+    return await db.runTransaction(async (t) => {
+      // Find the user who made the change.
+      const userSnap = await t.get(profileRef);
+      const profileData = userSnap.data();
+      if (!profileData) return Promise.reject("User not found");
 
-    // Calculate changes to the profile
-    const changes = userRewardCalculator.calculateUserReward({
-      userProfile: profileData,
-      veriPoints: 1,
-      statistics: { AccessPointsValidated: 1 },
+      // Apply rewards
+      const rewardedProfile = await userRewardCalculator.withRewards(
+        {
+          userProfile: profileData,
+          veriPointsChange: 1,
+          statisticsChange: { "AccessPointsValidated": 1 },
+        },
+      );
+
+      // Apply changes
+      return t.update(profileRef, rewardedProfile);
     });
-    const updatedUser: UserProfile = { ...profileData, ...changes };
-
-    // Apply changes
-    return userProfileCollection.doc(uid).update(updatedUser);
   });
 
 import express from "express";

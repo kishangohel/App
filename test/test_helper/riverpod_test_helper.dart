@@ -19,7 +19,6 @@ class _StateListener<T> {
 void riverpodTest<T>(
   /// The test description, usually a [String].
   Object description, {
-
   /// The target of the test.
   required ProviderListenable<T> providerListenable,
 

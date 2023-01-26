@@ -26,11 +26,7 @@ export type AchievementProgresses = {
 
 const achievementConverter = {
   toFirestore(achievement: Achievement): DocumentData {
-    return {
-      Identifier: achievement.Identifier,
-      StatisticsKey: achievement.StatisticsKey,
-      Tiers: achievement.Tiers,
-    };
+    return achievement;
   },
   fromFirestore(
     snapshot: QueryDocumentSnapshot,
