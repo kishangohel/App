@@ -2,21 +2,25 @@ import _ from "lodash";
 import { Achievement, Statistics, UserProfile } from "verifi-types";
 
 interface WithRewardProps {
-  userProfile: UserProfile,
-  veriPointsChange: number,
-  statisticsChange: Statistics,
+  userProfile: UserProfile;
+  veriPointsChange: number;
+  statisticsChange: Statistics;
 }
 
 export class UserRewardCalculator {
-  _fetchAchievements: (statisticNames: (keyof Statistics)[]) => Promise<Array<Achievement>>;
+  _fetchAchievements: (
+    statisticNames: (keyof Statistics)[]
+  ) => Promise<Array<Achievement>>;
   _log: (message: string) => any;
 
   constructor({
     fetchAchievements,
     log,
   }: {
-    fetchAchievements: (statisticNames: (keyof Statistics)[]) => Promise<Array<Achievement>>,
-    log: (message: string) => any,
+    fetchAchievements: (
+      statisticNames: (keyof Statistics)[]
+    ) => Promise<Array<Achievement>>;
+    log: (message: string) => any;
   }) {
     this._fetchAchievements = fetchAchievements;
     this._log = log;
@@ -26,7 +30,7 @@ export class UserRewardCalculator {
     withRewardProps: WithRewardProps
   ): Promise<UserProfile> => {
     const { userProfile, veriPointsChange, statisticsChange } = withRewardProps;
-    let result: UserProfile = _.cloneDeep(userProfile);
+    const result: UserProfile = _.cloneDeep(userProfile);
 
     // Apply the VeriPoints change
     result.VeriPoints += veriPointsChange;
@@ -38,25 +42,30 @@ export class UserRewardCalculator {
     await this.updateAchievementProgresses(this._fetchAchievements, result);
 
     return result;
-  }
+  };
 
   private updateStatistics(
     userProfile: UserProfile,
-    statisticsChange: Statistics,
+    statisticsChange: Statistics
   ) {
-    for (const statisticName of (Object.keys(statisticsChange) as Array<keyof Statistics>)) {
+    for (const statisticName of Object.keys(statisticsChange) as Array<
+      keyof Statistics
+    >) {
       userProfile.Statistics[statisticName] ??= 0;
-      userProfile.Statistics[statisticName]! += statisticsChange[statisticName]!;
+      userProfile.Statistics[statisticName]! +=
+        statisticsChange[statisticName]!;
     }
   }
 
   private async updateAchievementProgresses(
-    fetchAchievements: (statisticNames: (keyof Statistics)[]) => Promise<Array<Achievement>>,
-    userProfile: UserProfile,
+    fetchAchievements: (
+      statisticNames: (keyof Statistics)[]
+    ) => Promise<Array<Achievement>>,
+    userProfile: UserProfile
   ): Promise<void> {
     // Fetch achievements
     const matchingAchievements = await fetchAchievements(
-      Object.keys(userProfile.Statistics) as Array<keyof Statistics>,
+      Object.keys(userProfile.Statistics) as Array<keyof Statistics>
     );
     if (matchingAchievements.length == 0) {
       this._log("No change to achievements: no matching achievements exist");
@@ -70,7 +79,7 @@ export class UserRewardCalculator {
 
   private updateAchievementProgress = (
     userProfile: UserProfile,
-    achievement: Achievement,
+    achievement: Achievement
   ) => {
     // Find the relevant statistic value
     const statisticsKey: keyof Statistics = achievement.StatisticsKey;
@@ -94,6 +103,5 @@ export class UserRewardCalculator {
         userProfile.VeriPoints += achievement.Tiers[i].VeriPointsAward ?? 0;
       }
     }
-  }
+  };
 }
-

@@ -1,23 +1,26 @@
 import "mocha";
 import chai from "chai";
-import { UserRewardCalculator } from '../src/reward-user';
+import { UserRewardCalculator } from "../src/reward-user";
 import { Achievement, Statistics, UserProfile } from "verifi-types";
-import { createAchievement, createTier, createUserProfile, createUserRewardCalculator } from "./helper";
+import {
+  createAchievement,
+  createTier,
+  createUserProfile,
+  createUserRewardCalculator,
+} from "./helper";
 import _ from "lodash";
 const { expect } = chai;
-
 
 describe("rewardUser", () => {
   let loggedMessages: Array<string>;
 
   const createCalculator = (
-    achievements: Array<Achievement>,
+    achievements: Array<Achievement>
   ): UserRewardCalculator => {
-    return createUserRewardCalculator(
-      achievements,
-      (message) => loggedMessages.push(message),
+    return createUserRewardCalculator(achievements, (message) =>
+      loggedMessages.push(message)
     );
-  }
+  };
 
   beforeEach(() => {
     loggedMessages = [];
@@ -41,7 +44,7 @@ describe("rewardUser", () => {
 
     expect(output).deep.eq(expectArgs.expectedOutput);
     expect(expectArgs.input).deep.eq(inputCopy);
-  }
+  };
 
   it("no reward", async () => {
     await expectReward({
@@ -52,9 +55,9 @@ describe("rewardUser", () => {
       expectedOutput: createUserProfile(),
     });
 
-    expect(loggedMessages).deep.equals(
-      ["No change to achievements: no matching achievements exist"],
-    );
+    expect(loggedMessages).deep.equals([
+      "No change to achievements: no matching achievements exist",
+    ]);
   });
 
   it("only points awarded", async () => {
@@ -65,9 +68,9 @@ describe("rewardUser", () => {
       statisticsChange: {},
       expectedOutput: createUserProfile({ VeriPoints: 5 }),
     });
-    expect(loggedMessages).deep.equals(
-      ["No change to achievements: no matching achievements exist"],
-    );
+    expect(loggedMessages).deep.equals([
+      "No change to achievements: no matching achievements exist",
+    ]);
   });
 
   it("no previous veripoints or statistics, no achievements", async () => {
@@ -82,9 +85,9 @@ describe("rewardUser", () => {
       }),
     });
 
-    expect(loggedMessages).deep.equals(
-      ["No change to achievements: no matching achievements exist"],
-    );
+    expect(loggedMessages).deep.equals([
+      "No change to achievements: no matching achievements exist",
+    ]);
   });
 
   it("previous veripoints and statistics, no matching achievement", async () => {
@@ -105,16 +108,16 @@ describe("rewardUser", () => {
       }),
     });
 
-    expect(loggedMessages).deep.equals(
-      ["No change to achievements: no matching achievements exist"],
-    );
+    expect(loggedMessages).deep.equals([
+      "No change to achievements: no matching achievements exist",
+    ]);
   });
 
   it("no previous veripoints or statistics, achievement awarded", async () => {
     const rewardCalculator = createCalculator([
       createAchievement({
-        Identifier: 'AccessPointCreator',
-        StatisticsKey: 'AccessPointsCreated',
+        Identifier: "AccessPointCreator",
+        StatisticsKey: "AccessPointsCreated",
         Tiers: [
           {
             Identifier: "GoldTier",
@@ -141,12 +144,11 @@ describe("rewardUser", () => {
     expect(loggedMessages).deep.equals([]);
   });
 
-
   it("matching achievement, not enough progress for next tier", async () => {
     const rewardCalculator = createCalculator([
       createAchievement({
-        Identifier: 'AccessPointCreator',
-        StatisticsKey: 'AccessPointsCreated',
+        Identifier: "AccessPointCreator",
+        StatisticsKey: "AccessPointsCreated",
         Tiers: [
           createTier({ GoalTotal: 1, VeriPointsAward: 10 }),
           createTier({ GoalTotal: 10, VeriPointsAward: 20 }),
@@ -175,11 +177,9 @@ describe("rewardUser", () => {
   it("achievement is not downgraded if GoalTotal has been increased", async () => {
     const rewardCalculator = createCalculator([
       createAchievement({
-        Identifier: 'AccessPointCreator',
-        StatisticsKey: 'AccessPointsCreated',
-        Tiers: [
-          createTier({ GoalTotal: 100, VeriPointsAward: 10 }),
-        ],
+        Identifier: "AccessPointCreator",
+        StatisticsKey: "AccessPointsCreated",
+        Tiers: [createTier({ GoalTotal: 100, VeriPointsAward: 10 })],
       }),
     ]);
     await expectReward({
@@ -201,14 +201,11 @@ describe("rewardUser", () => {
   });
 
   it("achievement points are not rewarded if the tier has already been achieved", async () => {
-
     const rewardCalculator = createCalculator([
       createAchievement({
-        Identifier: 'AccessPointCreator',
-        StatisticsKey: 'AccessPointsCreated',
-        Tiers: [
-          createTier({ GoalTotal: 100, VeriPointsAward: 10 }),
-        ],
+        Identifier: "AccessPointCreator",
+        StatisticsKey: "AccessPointsCreated",
+        Tiers: [createTier({ GoalTotal: 100, VeriPointsAward: 10 })],
       }),
     ]);
 
@@ -233,8 +230,8 @@ describe("rewardUser", () => {
   it("multiple tiers achieved at once", async () => {
     const rewardCalculator = createCalculator([
       createAchievement({
-        Identifier: 'AccessPointCreator',
-        StatisticsKey: 'AccessPointsCreated',
+        Identifier: "AccessPointCreator",
+        StatisticsKey: "AccessPointsCreated",
         Tiers: [
           createTier({ GoalTotal: 1, VeriPointsAward: 10 }),
           createTier({ GoalTotal: 10, VeriPointsAward: 20 }),

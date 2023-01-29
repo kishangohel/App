@@ -1,6 +1,11 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
-import { Achievement, achievementCollection, Statistics, userProfileCollection } from "verifi-types";
+import {
+  Achievement,
+  achievementCollection,
+  Statistics,
+  userProfileCollection,
+} from "verifi-types";
 import { UserRewardCalculator } from "./reward-user";
 
 admin.initializeApp();
@@ -8,15 +13,16 @@ const db = admin.firestore();
 
 const fetchAchievements = async (
   db: admin.firestore.Firestore,
-  statisticNames: Array<string>,
+  statisticNames: Array<string>
 ): Promise<Achievement[]> => {
-  const achievementSnapshot = await achievementCollection(db).
-    where("StatisticsKey", "in", statisticNames).
-    get();
+  const achievementSnapshot = await achievementCollection(db)
+    .where("StatisticsKey", "in", statisticNames)
+    .get();
 
-  return achievementSnapshot.docs.map((achievementDoc) => achievementDoc.data());
-}
-
+  return achievementSnapshot.docs.map((achievementDoc) =>
+    achievementDoc.data()
+  );
+};
 
 const userRewardCalculator = new UserRewardCalculator({
   fetchAchievements: (statisticNames: Array<keyof Statistics>) =>
@@ -34,16 +40,14 @@ export const accessPointCreated = functions.firestore
       // Find the user that created the AccessPoint
       const userSnap = await t.get(profileRef);
       const profileData = userSnap.data();
-      if (!profileData) return Promise.reject("User not found");
+      if (!profileData) return Promise.reject(Error("User not found"));
 
       // Apply rewards
-      const rewardedProfile = await userRewardCalculator.withRewards(
-        {
-          userProfile: profileData,
-          veriPointsChange: 5,
-          statisticsChange: { "AccessPointsCreated": 1 },
-        },
-      );
+      const rewardedProfile = await userRewardCalculator.withRewards({
+        userProfile: profileData,
+        veriPointsChange: 5,
+        statisticsChange: { AccessPointsCreated: 1 },
+      });
 
       // Apply changes
       return t.update(profileRef, rewardedProfile);
@@ -54,10 +58,12 @@ export const accessPointVerified = functions.firestore
   .document("AccessPoint/{apId}")
   .onUpdate(async (change, context) => {
     const uid = context.auth?.uid;
-    if (uid == undefined) return Promise.reject("Unauthenticated");
+    if (uid == undefined) return Promise.reject(Error("Unauthenticated"));
 
     // Only reward the user after a validation.
-    if (change.before.get("LastValidated") == change.after.get("LastValidated")) {
+    if (
+      change.before.get("LastValidated") == change.after.get("LastValidated")
+    ) {
       return Promise.resolve();
     }
 
@@ -66,19 +72,16 @@ export const accessPointVerified = functions.firestore
       // Find the user who made the change.
       const userSnap = await t.get(profileRef);
       const profileData = userSnap.data();
-      if (!profileData) return Promise.reject("User not found");
+      if (!profileData) return Promise.reject(Error("User not found"));
 
       // Apply rewards
-      const rewardedProfile = await userRewardCalculator.withRewards(
-        {
-          userProfile: profileData,
-          veriPointsChange: 1,
-          statisticsChange: { "AccessPointsValidated": 1 },
-        },
-      );
+      const rewardedProfile = await userRewardCalculator.withRewards({
+        userProfile: profileData,
+        veriPointsChange: 1,
+        statisticsChange: { AccessPointsValidated: 1 },
+      });
 
       // Apply changes
       return t.update(profileRef, rewardedProfile);
     });
   });
-
