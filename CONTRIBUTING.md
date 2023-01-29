@@ -6,8 +6,9 @@
 2. `flutter pub get`
 3. Install [Firebase CLI](https://firebase.google.com/docs/cli).
 4. Install [Firebase emulator suite](https://firebase.google.com/docs/emulator-suite/install_and_configure).
-5. Build firebase functions: `cd firebase/functions/; npm install; npm run build`.
-6. Add your development machine's signing certificate SHA256 to Play Integrity / Safety Net as [described below](#play-integrity--safety-net) .
+5. Build firebase related node packages: `bin/npm_build_all.sh`.
+6. Install firebase related node packages: `bin/npm_install_all.sh`.
+7. Add your development machine's signing certificate SHA256 to Play Integrity / Safety Net as [described below](#play-integrity--safety-net) .
 
 ### Play Integrity / Safety Net
 
@@ -19,15 +20,9 @@ Play integrity is the replacement for Safety Net and they are both services whic
 ## Running the app
 
 1. Start firebase emulator: `cd firebase; firebase emulators:start`.
-<<<<<<< HEAD
-2. Build firebase functions: `cd firebase/functions/; npm install; npm run build`.
-3. Run the script to populate firestore: `FIREBASE_AUTH_EMULATOR_HOST=localhost:9099 FIRESTORE_EMULATOR_HOST=localhost:8080 python3 init_emulators.py [your latitude] [your longitude]` setting the latitude and longitude to the location where you want the users and access points to be created, probably your location.
-4. Start an emulator, this can be done through your IDE or via `flutter emulators --launch [emulator id]`.
-5. Run the app either via `./run.sh development` or `flutter run --target="lib/main_development.dart" --flavor development --dart-define=VERIFI_DEV_LOCAL_IP=[your local network ip address]`.
-=======
-2. Run the script to populate firestore: `FIREBASE_AUTH_EMULATOR_HOST=localhost:9099 FIRESTORE_EMULATOR_HOST=localhost:8080 python3 init_emulators.py [your latitude] [your longitude]` setting the latitude and longitude to the location where you want the users and access points to be created, probably your location.
+2. Run the script to populate firestore: `cd firebase/verifi-bootstrap; npm run bootstrap [your latitude] [your longitude]` setting the latitude and longitude to the location where you want the users and access points to be created, probably your location.
 3. Start an emulator, this can be done through your IDE or via `flutter emulators --launch [emulator id]`.
-4. Run the app either via `./run.sh development` or `flutter run --target="lib/main_development.dart" --flavor development --dart-define=VERIFI_DEV_LOCAL_IP=[your local network ip address]`.
+4. Run the app either via `bin/run.sh development` or `flutter run --target="lib/main_development.dart" --flavor development --dart-define=VERIFI_DEV_LOCAL_IP=[your local network ip address]`.
 
 ## Running tests
 
@@ -40,4 +35,3 @@ To re-record goldens: `flutter test --update-goldens --tags=golden`
 ### Firebase functions test
 
 `cd firebase/functions/; npm run test`
->>>>>>> f65cd3ce9f84b080486963513dbaf62f1858e08d

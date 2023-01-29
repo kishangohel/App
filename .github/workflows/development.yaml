@@ -8,6 +8,7 @@ on:
       - ".github/workflows/development.yaml"
       - "lib/**"
       - "test/**"
+      - "firebase/**"
       - "pubspec.yaml"
   push:
     branches:
@@ -16,10 +17,11 @@ on:
       - ".github/workflows/development.yaml"
       - "lib/**"
       - "test/**"
+      - "firebase/**"
       - "pubspec.yaml"
 
 jobs:
-  build:
+  flutter:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -35,7 +37,7 @@ jobs:
       - name: Install Flutter Dependencies
         run: flutter pub get
 
-      - name: Flutter Format
+      - name: Dart Format
         run: dart format --set-exit-if-changed .
 
       - name: Flutter Analyze
@@ -52,6 +54,11 @@ jobs:
           name: flutter-test-goldens
           path: test/**/failures/*.png
 
+  firebase:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
       - name: Check If Firebase Changed
         uses: dorny/paths-filter@v2
         id: changes
@@ -66,10 +73,13 @@ jobs:
         with:
           node-version: 18
 
-      - name: Install Firebase Functions Dependencies
+      - name: Install Dependencies
         if: steps.changes.outputs.firebase == 'true'
-        working-directory: ./firebase/functions
-        run: npm install 
+        run: bin/npm_install_all.sh
+
+      - name: Build Packages
+        if: steps.changes.outputs.firebase == 'true'
+        run: bin/npm_build_all.sh
 
       - name: Run Firebase Functions Tests
         if: steps.changes.outputs.firebase == 'true'

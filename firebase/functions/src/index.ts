@@ -1,12 +1,29 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
-import { Statistics, userProfileConverter } from "./user-profile";
+import {
+  Achievement,
+  achievementCollection,
+  Statistics,
+  userProfileCollection,
+} from "verifi-types";
 import { UserRewardCalculator } from "./reward-user";
-import { fetchAchievements } from "./achievement";
 import { getTweepByTwitterUID } from "./tweeps";
 
 admin.initializeApp();
 const db = admin.firestore();
+
+const fetchAchievements = async (
+  db: admin.firestore.Firestore,
+  statisticNames: Array<string>
+): Promise<Achievement[]> => {
+  const achievementSnapshot = await achievementCollection(db)
+    .where("StatisticsKey", "in", statisticNames)
+    .get();
+
+  return achievementSnapshot.docs.map((achievementDoc) =>
+    achievementDoc.data()
+  );
+};
 
 const userRewardCalculator = new UserRewardCalculator({
   fetchAchievements: (statisticNames: Array<keyof Statistics>) =>
@@ -19,10 +36,7 @@ export const accessPointCreated = functions.firestore
   .onCreate(async (apSnap) => {
     const submittedBy = apSnap.data().SubmittedBy;
 
-    const profileRef = db
-      .collection("UserProfile")
-      .withConverter(userProfileConverter)
-      .doc(submittedBy);
+    const profileRef = userProfileCollection(db).doc(submittedBy);
     return await db.runTransaction(async (t) => {
       // Find the user that created the AccessPoint
       const userSnap = await t.get(profileRef);
@@ -54,10 +68,7 @@ export const accessPointVerified = functions.firestore
       return Promise.resolve();
     }
 
-    const profileRef = db
-      .collection("UserProfile")
-      .withConverter(userProfileConverter)
-      .doc(uid);
+    const profileRef = userProfileCollection(db).doc(uid);
     return await db.runTransaction(async (t) => {
       // Find the user who made the change.
       const userSnap = await t.get(profileRef);
