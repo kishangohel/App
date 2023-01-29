@@ -1,6 +1,5 @@
 import _ from "lodash";
-import { Achievement } from "./achievement";
-import { Statistics, UserProfile } from "./user-profile";
+import { Achievement, Statistics, UserProfile } from "verifi-types";
 
 interface WithRewardProps {
   userProfile: UserProfile,

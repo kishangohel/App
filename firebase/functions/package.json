@@ -21,7 +21,8 @@
     "@types/lodash": "^4.14.191",
     "firebase-admin": "^11.5.0",
     "firebase-functions": "^4.2.0",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "verifi-types": "../verifi-types"
   },
   "devDependencies": {
     "@types/chai": "^4.3.4",
