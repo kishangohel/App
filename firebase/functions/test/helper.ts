@@ -1,14 +1,7 @@
 import { Timestamp } from "firebase-admin/firestore";
-import {
-  Achievement,
-  AchievementIdentifier,
-  AchievementProgresses,
-  AchievementTier,
-  Statistics,
-  UserProfile,
-} from "verifi-types";
-import { TierIdentifier } from "verifi-types/lib/achievement";
 import { UserRewardCalculator } from "../src/reward-user";
+import { Achievement, AchievementIdentifier, AchievementProgresses, AchievementTier, Statistics, UserProfile } from "../src/types";
+import { TierIdentifier } from "../src/types/achievement";
 
 type CreateUserProfileProps = {
   VeriPoints?: number;

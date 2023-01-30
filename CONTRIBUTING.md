@@ -20,7 +20,7 @@ Play integrity is the replacement for Safety Net and they are both services whic
 ## Running the app
 
 1. Start firebase emulator: `cd firebase; firebase emulators:start`.
-2. Run the script to populate firestore: `cd firebase/verifi-bootstrap; npm run bootstrap [your latitude] [your longitude]` setting the latitude and longitude to the location where you want the users and access points to be created, probably your location.
+2. Run the script to populate firestore: `cd firebase/bootstrap; npm run bootstrap [your latitude] [your longitude]` setting the latitude and longitude to the location where you want the users and access points to be created, probably your location.
 3. Start an emulator, this can be done through your IDE or via `flutter emulators --launch [emulator id]`.
 4. Run the app either via `bin/run.sh development` or `flutter run --target="lib/main_development.dart" --flavor development --dart-define=VERIFI_DEV_LOCAL_IP=[your local network ip address]`.
 

@@ -1,12 +1,13 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
+import { UserRewardCalculator } from "./reward-user";
 import {
   Achievement,
   achievementCollection,
   Statistics,
   userProfileCollection,
-} from "verifi-types";
-import { UserRewardCalculator } from "./reward-user";
+} from "./types";
+
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -85,3 +86,5 @@ export const accessPointVerified = functions.firestore
       return t.update(profileRef, rewardedProfile);
     });
   });
+
+export * from "./types";

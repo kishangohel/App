@@ -1,7 +1,6 @@
 import "mocha";
 import chai from "chai";
 import { UserRewardCalculator } from "../src/reward-user";
-import { Achievement, Statistics, UserProfile } from "verifi-types";
 import {
   createAchievement,
   createTier,
@@ -9,10 +8,13 @@ import {
   createUserRewardCalculator,
 } from "./helper";
 import _ from "lodash";
+import { Achievement, Statistics, UserProfile } from "../src/types";
+import { useFakeTimers } from "sinon";
 const { expect } = chai;
 
 describe("rewardUser", () => {
   let loggedMessages: Array<string>;
+  let clock: sinon.SinonFakeTimers;
 
   const createCalculator = (
     achievements: Array<Achievement>
@@ -24,6 +26,11 @@ describe("rewardUser", () => {
 
   beforeEach(() => {
     loggedMessages = [];
+    clock = useFakeTimers();
+  });
+
+  afterEach(() => {
+    clock.restore();
   });
 
   interface ExpectArgs {

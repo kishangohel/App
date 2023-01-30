@@ -1,5 +1,5 @@
-import { Achievement, achievementCollection } from "verifi-types";
 import * as admin from "firebase-admin";
+import { Achievement, achievementCollection } from "functions";
 
 const achievements: Array<Achievement> = [
   {
