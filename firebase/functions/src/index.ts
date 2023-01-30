@@ -1,13 +1,13 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
+import { getTweepByTwitterUID } from "./tweeps";
+import { UserRewardCalculator } from "./reward-user";
 import {
   Achievement,
   achievementCollection,
   Statistics,
   userProfileCollection,
-} from "verifi-types";
-import { UserRewardCalculator } from "./reward-user";
-import { getTweepByTwitterUID } from "./tweeps";
+} from "./types";
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -128,3 +128,5 @@ export const listenForVeriFiedTweeps = functions.https.onRequest(
     }
   }
 );
+
+export * from "./types";

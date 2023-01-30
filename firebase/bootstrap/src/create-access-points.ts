@@ -2,7 +2,7 @@ import * as geohash from "ngeohash";
 import { Firestore, GeoPoint, Timestamp } from "firebase-admin/firestore";
 import { nDaysAgo, randomElementExcept, randomNearbyLatLng } from "./util";
 import { LatLng } from "./types";
-import { accessPointCollection } from "verifi-types";
+import { accessPointCollection } from "functions";
 
 type AccessPointValidationState = {
   submittedBy: string,
@@ -83,3 +83,4 @@ export const createAccessPoints = async (
 
   await batch.commit();
 }
+

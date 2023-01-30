@@ -1,3 +1,4 @@
+/* eslint-disable spaced-comment */
 import * as admin from "firebase-admin";
 import { createAccessPoints } from "./create-access-points";
 import { createAchievements } from "./create-achievements";
@@ -28,7 +29,7 @@ const bootstrap = async (centeredAround: LatLng): Promise<void> => {
 }
 
 
-///////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 /// Entrypoint
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -48,8 +49,8 @@ if (process.argv.length != 4) {
   process.exit(1);
 }
 const centeredAround: LatLng = {
-  lat: parseFloat(process.argv[2]!),
-  lon: parseFloat(process.argv[3]!),
+  lat: parseFloat(process.argv[2]),
+  lon: parseFloat(process.argv[3]),
 };
 
 (async () => await bootstrap(centeredAround))();

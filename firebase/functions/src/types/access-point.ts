@@ -26,7 +26,7 @@ const converter = {
   fromFirestore(
     snapshot: QueryDocumentSnapshot,
   ): AccessPoint {
-    const data = snapshot.data()!;
+    const data = snapshot.data();
     return {
       Name: data.Name,
       Address: data.Address,

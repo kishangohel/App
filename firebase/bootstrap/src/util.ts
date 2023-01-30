@@ -31,7 +31,7 @@ export const randomElementExcept = <T>(
     if (element !== excluded) return element;
   }
 
-  throw "No permitted elements";
+  throw Error("No permitted elements");
 }
 
 // Generate a Timestamp n days ago

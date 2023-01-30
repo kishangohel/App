@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { Achievement, Statistics, UserProfile } from "verifi-types";
+import { Achievement, Statistics, UserProfile } from "./types";
 
 interface WithRewardProps {
   userProfile: UserProfile;
@@ -11,7 +11,7 @@ export class UserRewardCalculator {
   _fetchAchievements: (
     statisticNames: (keyof Statistics)[]
   ) => Promise<Array<Achievement>>;
-  _log: (message: string) => any;
+  _log: (message: string) => void;
 
   constructor({
     fetchAchievements,
@@ -20,7 +20,7 @@ export class UserRewardCalculator {
     fetchAchievements: (
       statisticNames: (keyof Statistics)[]
     ) => Promise<Array<Achievement>>;
-    log: (message: string) => any;
+    log: (message: string) => void;
   }) {
     this._fetchAchievements = fetchAchievements;
     this._log = log;
@@ -52,8 +52,9 @@ export class UserRewardCalculator {
       keyof Statistics
     >) {
       userProfile.Statistics[statisticName] ??= 0;
-      userProfile.Statistics[statisticName]! +=
-        statisticsChange[statisticName]!;
+      userProfile.Statistics[statisticName] =
+        (userProfile.Statistics[statisticName] ?? 0) +
+        (statisticsChange[statisticName] ?? 0);
     }
   }
 
@@ -83,7 +84,7 @@ export class UserRewardCalculator {
   ) => {
     // Find the relevant statistic value
     const statisticsKey: keyof Statistics = achievement.StatisticsKey;
-    const statisticValue: number = userProfile.Statistics[statisticsKey]!;
+    const statisticValue: number = userProfile.Statistics[statisticsKey] ?? 0;
 
     // Calculate the achievement tier with the new statistics
     const previousTierIndex: number =

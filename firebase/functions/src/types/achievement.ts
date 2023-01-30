@@ -2,9 +2,9 @@ import { CollectionReference, DocumentData, Firestore, QueryDocumentSnapshot } f
 import { Statistics } from "./user-profile";
 
 const achievementIdentifiers = [
-  'AccessPointCreator',
-  'AccessPointValidator',
-  'TwitterVeriFied',
+  "AccessPointCreator",
+  "AccessPointValidator",
+  "TwitterVeriFied",
 ] as const;
 export type AchievementIdentifier = typeof achievementIdentifiers[number];
 
@@ -18,9 +18,9 @@ export type Achievement = {
 }
 
 const tierIdentifiers = [
-  'BronzeTier',
-  'SilverTier',
-  'GoldTier',
+  "BronzeTier",
+  "SilverTier",
+  "GoldTier",
 ] as const;
 export type TierIdentifier = typeof tierIdentifiers[number];
 export type AchievementTier = {
@@ -46,7 +46,7 @@ const converter = {
   fromFirestore(
     snapshot: QueryDocumentSnapshot,
   ): Achievement {
-    const data = snapshot.data()!;
+    const data = snapshot.data();
     return {
       Identifier: data.Identifier,
       Name: data.Name,

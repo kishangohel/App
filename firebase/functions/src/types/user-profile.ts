@@ -30,7 +30,7 @@ const converter = {
   fromFirestore(
     snapshot: QueryDocumentSnapshot,
   ): UserProfile {
-    const data = snapshot.data()!;
+    const data = snapshot.data();
     return {
       DisplayName: data.DisplayName,
       CreatedOn: data.CreatedOn,
