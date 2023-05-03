@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:verifi/src/features/authentication/presentation/widgets/hero_verifi_title.dart';
 
 class OnboardingAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const OnboardingAppBar({
+    Key? key,
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return AppBar(

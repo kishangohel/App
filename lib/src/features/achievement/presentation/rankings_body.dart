@@ -37,7 +37,7 @@ class RankingsBody extends ConsumerWidget {
 
         return _RankingRow(
           ranking: i + 1,
-          avatar: randomAvatar(
+          avatar: RandomAvatar(
             profile.displayName,
             width: 50,
             height: 50,

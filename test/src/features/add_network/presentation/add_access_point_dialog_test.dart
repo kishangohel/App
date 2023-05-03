@@ -4,320 +4,337 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:verifi/src/common/providers/wifi_connected_stream_provider.dart';
+import 'package:verifi/src/features/access_points/data/access_point_repository.dart';
 import 'package:verifi/src/features/access_points/data/radar_search_repository.dart';
 import 'package:verifi/src/features/access_points/domain/radar_address_model.dart';
-import 'package:verifi/src/features/add_network/application/add_access_point_controller.dart';
-import 'package:verifi/src/features/add_network/domain/new_access_point_model.dart';
 import 'package:verifi/src/features/add_network/presentation/add_access_point_dialog.dart';
-import 'package:verifi/src/features/map/data/location/location_repository.dart';
-import 'package:verifi/src/features/map/presentation/map_buttons/filter_map_button.dart';
+import 'package:verifi/src/features/authentication/domain/current_user_model.dart';
+import 'package:verifi/src/features/map/data/location_repository.dart';
+import 'package:verifi/src/features/profile/data/profile_repository.dart';
 
 import '../../../../test_helper/go_router_mock.dart';
 import '../../../../test_helper/register_fallbacks.dart';
-import '../../../../test_helper/riverpod_test_helper.dart';
-import 'add_access_point_controller_stub.dart';
-
-class LocationRepositoryMock extends Mock implements LocationRepository {}
-
-class RadarSearchRepositoryMock extends Mock implements RadarSearchRepository {}
+import '../../../mocks.dart';
+import '../../profile/helper.dart';
+import '../add_network_robot.dart';
 
 void main() {
-  late AddAccessPointControllerStub addAccessPointControllerStub;
-  late LocationRepositoryMock locationRepositoryMock;
-  late RadarSearchRepositoryMock radarSearchRepositoryMock;
-  late StreamController<bool> isConnectedToWifiProviderStub;
-  late GoRouterMock goRouterMock;
-
-  void createProviderMocks() {
-    addAccessPointControllerStub = AddAccessPointControllerStub();
-    locationRepositoryMock = LocationRepositoryMock();
-    radarSearchRepositoryMock = RadarSearchRepositoryMock();
-    isConnectedToWifiProviderStub = StreamController();
-    goRouterMock = GoRouterMock();
-  }
-
-  Future<ProviderContainer> makeWidget(
-    WidgetTester tester, {
-    String ssid = "testSsid",
-  }) {
-    return makeWidgetWithRiverpod(
-      tester,
-      widget: () => Scaffold(
-        body: InheritedGoRouter(
-          goRouter: goRouterMock,
-          child: AddAccessPointDialog(ssid: ssid),
-        ),
-      ),
+  ProviderContainer makeProviderContainer(
+    TextEditingController ssidController,
+    TextEditingController passwordController,
+    TextEditingController placeController,
+    AccessPointRepository accessPointRepository,
+    LocationRepository locationRepository,
+    RadarSearchRepository radarSearchRepository,
+    StreamController<CurrentUser?> currentUserStreamController,
+    StreamController<bool> isConnectedToWiFiStreamController,
+  ) {
+    final container = ProviderContainer(
       overrides: [
-        addAccessPointControllerProvider
-            .overrideWith(() => addAccessPointControllerStub),
-        locationRepositoryProvider
-            .overrideWith((ref) => locationRepositoryMock),
-        radarSearchRepositoryProvider
-            .overrideWith((ref) => radarSearchRepositoryMock),
-        isConnectedToWiFiProvider
-            .overrideWith((ref) => isConnectedToWifiProviderStub.stream),
+        accessPointRepositoryProvider.overrideWithValue(accessPointRepository),
+        locationRepositoryProvider.overrideWithValue(locationRepository),
+        radarSearchRepositoryProvider.overrideWithValue(radarSearchRepository),
+        currentUserProvider.overrideWith(
+          (ref) => currentUserStreamController.stream,
+        ),
+        isConnectedToWiFiProvider.overrideWith(
+          (ref) => isConnectedToWiFiStreamController.stream,
+        ),
       ],
     );
+    addTearDown(container.dispose);
+    return container;
   }
 
-  Finder ssidFieldFinder() => find.widgetWithText(TextField, 'SSID');
-  Finder passwordFieldFinder() => find.byType(TextFormField);
-  Finder passwordSwitchFinder() => find.byType(Switch);
-  Finder radarAddressFieldFinder() =>
-      find.byType(TypeAheadFormField<RadarAddress>);
-  Finder progressIndicatorFinder() => find.byType(CircularProgressIndicator);
-  Finder submitButtonFinder() => find.widgetWithText(ElevatedButton, 'Submit');
-
-  TextField ssidField(WidgetTester tester) => tester.widget(ssidFieldFinder());
-  TextFormField passwordField(WidgetTester tester) =>
-      tester.widget(passwordFieldFinder());
-  Switch passwordSwitch(WidgetTester tester) =>
-      tester.widget(passwordSwitchFinder());
-  TypeAheadFormField<RadarAddress> radarAddressField(WidgetTester tester) =>
-      tester.widget(radarAddressFieldFinder());
-  ElevatedButton submitButton(WidgetTester tester) =>
-      tester.widget(submitButtonFinder());
-
-  group(FilterMapButton, () {
+  group(AddAccessPointDialog, () {
+    late TextEditingController ssidController;
+    late TextEditingController passwordController;
+    late TextEditingController placeController;
+    late AccessPointRepository accessPointRepository;
+    late LocationRepository locationRepository;
+    late RadarSearchRepository radarSearchRepository;
+    late StreamController<CurrentUser?> currentUserStreamController;
+    late StreamController<bool> isConnectedToWiFiStreamController;
+    late GoRouterMock goRouterMock;
+    late ProviderContainer container;
     setUpAll(() {
       registerFallbacks();
     });
 
-    testWidgets('removes quotes from ssid on android', (tester) async {
-      debugDefaultTargetPlatformOverride = TargetPlatform.android;
-      createProviderMocks();
-      await makeWidget(tester, ssid: '"ssid"');
-
-      expect(ssidField(tester).controller!.text, equals('ssid'));
-      debugDefaultTargetPlatformOverride = null;
-    });
-
-    testWidgets('does not remove quotes from ssid on iOS', (tester) async {
-      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-      createProviderMocks();
-      await makeWidget(tester, ssid: '"ssid"');
-
-      expect(ssidField(tester).controller!.text, equals('"ssid"'));
-      debugDefaultTargetPlatformOverride = null;
-    });
-
-    testWidgets('wifi disconnected', (tester) async {
-      createProviderMocks();
-      when(() => goRouterMock.canPop()).thenReturn(true);
-      await makeWidget(tester);
-      isConnectedToWifiProviderStub.add(false);
-      await isConnectedToWifiProviderStub.close();
-      await isConnectedToWifiProviderStub.done;
-
-      await tester.pump();
-      verify(() => goRouterMock.pop(
-          const CreateAccessPointDialogResult.wifiDisconnected())).called(1);
-    });
-
-    testWidgets('access point created', (tester) async {
-      createProviderMocks();
-      when(() => goRouterMock.canPop()).thenReturn(true);
-      await makeWidget(tester);
-
-      final newAccessPoint = NewAccessPoint(
-        ssid: 'testSsid',
-        radarAddress: RadarAddress(
-          name: 'placeName',
-          location: LatLng(1.0, 2.0),
-          address: 'placeAddress',
+    setUp(() {
+      ssidController = TextEditingController();
+      passwordController = TextEditingController();
+      placeController = TextEditingController();
+      accessPointRepository = MockAccessPointRepository();
+      locationRepository = MockLocationRepository();
+      radarSearchRepository = MockRadarSearchRepository();
+      currentUserStreamController = StreamController<CurrentUser?>();
+      currentUserStreamController.add(
+        CurrentUser(
+          profile: userProfileWithUsage,
         ),
       );
-      addAccessPointControllerStub
-          .triggerUpdate(AsyncValue.data(newAccessPoint));
-      await tester.pump();
-      verify(
-        () => goRouterMock
-            .pop(CreateAccessPointDialogResult.success(newAccessPoint)),
-      ).called(1);
-    });
-
-    testWidgets('loading state, fields not editable', (tester) async {
-      createProviderMocks();
-      await makeWidget(tester);
-
-      expect(ssidField(tester).enabled, isFalse);
-      expect(passwordField(tester).enabled, isFalse);
-      expect(passwordSwitch(tester).onChanged, isNull);
-      expect(radarAddressField(tester).enabled, isFalse);
-      expect(progressIndicatorFinder(), findsOneWidget);
-      expect(submitButton(tester).enabled, isFalse);
-    });
-
-    testWidgets('loaded, ssid not required', (tester) async {
-      createProviderMocks();
-      addAccessPointControllerStub.setInitialValue(null);
-      final container = await makeWidget(tester);
-      await container.pump();
-      await tester.pump();
-
-      expect(
-        FocusScope.of(tester.element(find.byType(AddAccessPointDialog)))
-            .focusedChild
-            ?.debugLabel,
-        'radarAddressFocusNode',
-      );
-      expect(ssidField(tester).enabled, isFalse);
-      expect(passwordField(tester).enabled, isFalse);
-      expect(passwordSwitch(tester).value, isFalse);
-      expect(passwordSwitch(tester).onChanged, isNotNull);
-      expect(radarAddressField(tester).enabled, isTrue);
-      expect(progressIndicatorFinder(), findsNothing);
-      expect(submitButton(tester).enabled, isFalse);
-    });
-
-    testWidgets('loaded, tap password required switch', (tester) async {
-      createProviderMocks();
-      addAccessPointControllerStub.setInitialValue(null);
-      final container = await makeWidget(tester);
-      await container.pump();
-      await tester.pump();
-      await tester.tap(passwordSwitchFinder());
-      await tester.pump();
-      await tester.pump();
-
-      // Check that password field is focused
-      expect(
-        FocusScope.of(tester.element(find.byType(AddAccessPointDialog)))
-            .focusedChild
-            ?.debugLabel,
-        'passwordFocusNode',
-      );
-      expect(ssidField(tester).enabled, isFalse);
-      expect(passwordField(tester).enabled, isTrue);
-      expect(passwordSwitch(tester).value, isTrue);
-      expect(passwordSwitch(tester).onChanged, isNotNull);
-      expect(radarAddressField(tester).enabled, isTrue);
-      expect(progressIndicatorFinder(), findsNothing);
-      expect(submitButton(tester).enabled, isFalse);
-    });
-
-    testWidgets('loaded, clears password when not required', (tester) async {
-      createProviderMocks();
-      addAccessPointControllerStub.setInitialValue(null);
-      final container = await makeWidget(tester);
-      await container.pump();
-      await tester.pump();
-      await tester.tap(passwordSwitchFinder());
-      await tester.pump();
-      await tester.pump();
-
-      // Check that password field is focused
-      await tester.enterText(passwordFieldFinder(), "ATestPassword");
-      expect(passwordField(tester).controller!.text, "ATestPassword");
-      await tester.tap(passwordSwitchFinder());
-      expect(passwordField(tester).controller!.text, isEmpty);
-    });
-
-    testWidgets('submit place with no password', (tester) async {
-      // Setup
-      createProviderMocks();
-      final radarAddress = RadarAddress(
-        name: 'Test Place',
-        location: LatLng(1.0, 2.0),
-        address: '123 test address',
-      );
-      when(() => locationRepositoryMock.currentLocation)
-          .thenReturn(LatLng(1.0, 2.0));
-      when(() => radarSearchRepositoryMock.searchNearbyPlaces(any(), any()))
-          .thenAnswer((invocation) {
-        return Future.value([radarAddress]);
-      });
-      addAccessPointControllerStub.setInitialValue(null);
-      final container = await makeWidget(tester);
-      await container.pump();
-      await tester.pump();
-
-      // Enter part of the place search text
-      tester.testTextInput.enterText('Test');
-      await tester.pumpAndSettle(const Duration(seconds: 1));
-      expect(find.text(radarAddress.name), findsOneWidget);
-
-      // Tap the result
-      await tester.tap(find.text(radarAddress.name));
-      await tester.pump();
-
-      // Submit
-      expect(submitButton(tester).enabled, isTrue);
-      await tester.tap(submitButtonFinder());
-
-      expect(
-        addAccessPointControllerStub.addedAccessPoints,
-        [
-          NewAccessPoint(
-            ssid: 'testSsid',
-            password: null,
-            radarAddress: radarAddress,
-          )
-        ],
+      isConnectedToWiFiStreamController = StreamController<bool>();
+      isConnectedToWiFiStreamController.add(true);
+      goRouterMock = GoRouterMock();
+      container = makeProviderContainer(
+        ssidController,
+        passwordController,
+        placeController,
+        accessPointRepository,
+        locationRepository,
+        radarSearchRepository,
+        currentUserStreamController,
+        isConnectedToWiFiStreamController,
       );
     });
 
-    testWidgets('submit place with password', (tester) async {
-      // Setup
-      createProviderMocks();
-      final radarAddress = RadarAddress(
-        name: 'Test Place',
-        location: LatLng(1.0, 2.0),
-        address: '123 test address',
-      );
-      when(() => locationRepositoryMock.currentLocation)
-          .thenReturn(LatLng(1.0, 2.0));
-      when(() => radarSearchRepositoryMock.searchNearbyPlaces(any(), any()))
-          .thenAnswer((invocation) {
-        return Future.value([radarAddress]);
-      });
-      addAccessPointControllerStub.setInitialValue(null);
-      final container = await makeWidget(tester);
-      await container.pump();
-      await tester.pump();
+    testWidgets(
+      '''
+      Given the current platform is Android,
+      When AddAccessPointDialog is created,
+      Then the quotes surrounding the ssid are removed.
+      ''',
+      (tester) async {
+        // Arrange
+        final r = AddNetworkRobot(tester);
+        const ssid = '"Test SSID"';
+        debugDefaultTargetPlatformOverride = TargetPlatform.android;
+        // Act
+        await r.pumpAddAccessPointDialog(
+          container,
+          goRouterMock,
+          ssid,
+          ssidController,
+          passwordController,
+          placeController,
+        );
+        // Assert
+        r.expectSsidText('Test SSID');
+        // Cleanup
+        debugDefaultTargetPlatformOverride = null;
+      },
+    );
 
-      // Enable password entry and enter a password.
-      await tester.tap(passwordSwitchFinder());
-      await tester.pump();
-      expect(
-        FocusScope.of(tester.element(find.byType(AddAccessPointDialog)))
-            .focusedChild
-            ?.debugLabel,
-        'passwordFocusNode',
-      );
-      tester.testTextInput.enterText('aTestPassword');
+    testWidgets(
+      '''
+      When wifi is disconnected,
+      Then `gorouter.pop` is called to dismiss the dialog.
+      ''',
+      (tester) async {
+        // Arrange
+        final r = AddNetworkRobot(tester);
+        const ssid = 'Test SSID';
+        when(() => goRouterMock.canPop()).thenReturn(true);
+        // Act
+        await r.pumpAddAccessPointDialog(
+          container,
+          goRouterMock,
+          ssid,
+          ssidController,
+          passwordController,
+          placeController,
+        );
+        isConnectedToWiFiStreamController.add(false);
+        await tester.pumpAndSettle();
+        // Assert
+        verify(
+          () => goRouterMock.pop<CreateAccessPointDialogResult>(any()),
+        ).called(1);
+      },
+    );
 
-      // Enter part of the place search text
-      await tester.tap(radarAddressFieldFinder());
-      await tester.pump();
-      tester.testTextInput.enterText('Test');
-      await tester.pumpAndSettle(const Duration(seconds: 2));
-      expect(find.text(radarAddress.name), findsOneWidget);
+    testWidgets(
+      '''
+      When AddAccessPointDialog is created,
+      Then the ssid field is disabled, i.e. it can't be edited.
+      ''',
+      (tester) async {
+        // Arrange
+        final r = AddNetworkRobot(tester);
+        const ssid = 'Test SSID';
+        // Act
+        await r.pumpAddAccessPointDialog(
+          container,
+          goRouterMock,
+          ssid,
+          ssidController,
+          passwordController,
+          placeController,
+        );
+        // Assert
+        r.expectSsidText(ssid);
+        final textField = r.getSsidTextFieldWidget();
+        expect(textField.enabled, false);
+      },
+    );
 
-      // Tap the result
-      await tester.tap(find.text(radarAddress.name));
-      await tester.pump();
+    testWidgets(
+      '''
+      Given the password required switch is off
+      When the password required switch is toggled on,
+      Then the password field is enabled and focused.
+      ''',
+      (tester) async {
+        // Arrange
+        final r = AddNetworkRobot(tester);
+        const ssid = 'Test SSID';
+        // Act
+        await r.pumpAddAccessPointDialog(
+          container,
+          goRouterMock,
+          ssid,
+          ssidController,
+          passwordController,
+          placeController,
+        );
+        r.expectPasswordRequiredSwitch();
+        r.expectPasswordRequiredSwitchIsOff(tester);
+        await r.togglePasswordRequiredSwitch(tester);
+        // Assert
+        r.expectPasswordRequiredSwitchIsOn(tester);
+        r.expectPasswordTextFieldIsEnabled(tester);
+        r.expectPasswordTextFieldHasFocus(tester);
+      },
+    );
 
-      // Submit
-      expect(submitButton(tester).enabled, isTrue);
-      await tester.tap(submitButtonFinder());
+    testWidgets(
+      '''
+      When password switch is toggled on,
+      Then the password field is focused.
+      ''',
+      (tester) async {
+        // Arrange
+        final r = AddNetworkRobot(tester);
+        const ssid = 'Test SSID';
+        // Act
+        await r.pumpAddAccessPointDialog(
+          container,
+          goRouterMock,
+          ssid,
+          ssidController,
+          passwordController,
+          placeController,
+        );
+        r.expectPasswordRequiredSwitch();
+        r.expectPasswordRequiredSwitchIsOff(tester);
+        await r.togglePasswordRequiredSwitch(tester);
+        // Assert
+        r.expectPasswordRequiredSwitchIsOn(tester);
+        r.expectPasswordTextFieldHasFocus(tester);
+      },
+    );
 
-      expect(
-        addAccessPointControllerStub.addedAccessPoints,
-        [
-          NewAccessPoint(
-            ssid: 'testSsid',
-            password: 'aTestPassword',
-            radarAddress: radarAddress,
-          )
-        ],
-      );
-    });
+    testWidgets(
+      '''
+      Given the place search has returned a result,
+      When the list item is tapped,
+      Then the place text field contains the list item place name.
+      ''',
+      (tester) async {
+        // Arrange
+        final r = AddNetworkRobot(tester);
+        const ssid = 'Test SSID';
+        when(
+          () => locationRepository.currentLocation,
+        ).thenAnswer(
+          (_) => Future.value(LatLng(1.0, 1.0)),
+        );
+        when(
+          () => radarSearchRepository.searchNearbyPlaces(any(), any()),
+        ).thenAnswer(
+          (_) => Future.value([
+            RadarAddress(
+              name: 'test place',
+              address: 'test address',
+              location: LatLng(1.0, 1.0),
+            ),
+          ]),
+        );
+        // Act
+        await r.pumpAddAccessPointDialog(
+          container,
+          goRouterMock,
+          ssid,
+          ssidController,
+          passwordController,
+          placeController,
+        );
+        await r.enterTextPlaceSearch(tester, 'test place');
+        r.expectPlaceSearchResultListTile(tester, 'test place');
+        await r.tapPlaceSearchResultListTile(tester, 'test place');
+        // Assert
+        expect(find.text('test place'), findsOneWidget);
+        expect(placeController.value.text, 'test place');
+      },
+    );
+
+    testWidgets(
+      '''
+      When the submit button is pressed,
+      Then `accessPointRepository.addAccessPoint` is called.
+      ''',
+      (tester) async {
+        await tester.runAsync(() async {
+          // Arrange
+          final r = AddNetworkRobot(tester);
+          const ssid = 'Test SSID';
+          when(() => goRouterMock.canPop()).thenReturn(true);
+          when(
+            () => locationRepository.currentLocation,
+          ).thenAnswer(
+            (_) => Future.value(LatLng(1.0, 1.0)),
+          );
+          when(
+            () => radarSearchRepository.searchNearbyPlaces(any(), any()),
+          ).thenAnswer(
+            (_) => Future.value([
+              RadarAddress(
+                name: 'test place',
+                address: 'test address',
+                location: LatLng(1.0, 1.0),
+              ),
+            ]),
+          );
+          when(
+            () => accessPointRepository.addAccessPoint(
+              userId: any(named: 'userId'),
+              newAccessPoint: any(named: 'newAccessPoint'),
+            ),
+          ).thenAnswer(
+            (_) => Future.value(),
+          );
+          expect(container.read(currentUserProvider).value, isNull);
+          currentUserStreamController.add(
+            CurrentUser(profile: userProfileWithUsage),
+          );
+          await Future.delayed(const Duration(milliseconds: 100));
+          expect(container.read(currentUserProvider).value, isNotNull);
+          // Act
+          await r.pumpAddAccessPointDialog(
+            container,
+            goRouterMock,
+            ssid,
+            ssidController,
+            passwordController,
+            placeController,
+          );
+          await r.enterTextPlaceSearch(tester, 'test place');
+          r.expectPlaceSearchResultListTile(tester, 'test place');
+          await r.tapPlaceSearchResultListTile(tester, 'test place');
+          await r.tapSubmitButton(tester);
+          // Assert
+          verify(
+            () => accessPointRepository.addAccessPoint(
+              userId: any(named: 'userId'),
+              newAccessPoint: any(named: 'newAccessPoint'),
+            ),
+          ).called(1);
+        });
+      },
+    );
   });
 }

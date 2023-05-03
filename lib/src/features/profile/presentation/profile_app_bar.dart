@@ -5,7 +5,7 @@ import 'package:verifi/src/features/profile/data/profile_repository.dart';
 
 class ProfileAppBar extends ConsumerWidget implements PreferredSizeWidget {
   @override
-  Size get preferredSize => const Size.fromHeight(56.0);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -15,7 +15,7 @@ class ProfileAppBar extends ConsumerWidget implements PreferredSizeWidget {
         return AppBar(
           centerTitle: true,
           title: VShimmerWidget(
-            height: 56,
+            height: kToolbarHeight,
             width: MediaQuery.of(context).size.width * 0.5,
           ),
         );

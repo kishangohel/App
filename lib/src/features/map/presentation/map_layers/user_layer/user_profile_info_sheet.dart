@@ -19,7 +19,7 @@ class UserProfileInfoSheet extends StatelessWidget {
             height: 120,
             padding:
                 const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
-            child: randomAvatar(
+            child: RandomAvatar(
               profile.displayName,
               trBackground: true,
             ),

@@ -3,7 +3,7 @@ import 'package:verifi/src/features/map/application/map_service.dart';
 
 import 'access_point_marker.dart';
 
-part 'access_point_layer_controller.g.dart';
+part '_generated/access_point_layer_controller.g.dart';
 
 @Riverpod(keepAlive: true)
 class AccessPointLayerController extends _$AccessPointLayerController {

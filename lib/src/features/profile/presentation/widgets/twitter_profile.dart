@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:verifi/src/features/profile/domain/current_user_model.dart';
+import 'package:verifi/src/features/authentication/domain/current_user_model.dart';
 
 class TwitterProfile extends StatelessWidget {
   static const _avatarSize = 20.0;

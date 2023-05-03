@@ -2,22 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:verifi/src/common/widgets/shimmer_widget.dart';
-import 'package:verifi/src/features/authentication/data/authentication_repository.dart';
+import 'package:verifi/src/features/authentication/data/firebase_auth_repository.dart';
 import 'package:verifi/src/features/profile/data/profile_repository.dart';
-import 'package:verifi/src/features/profile/domain/current_user_model.dart';
+import 'package:verifi/src/features/authentication/domain/current_user_model.dart';
 import 'package:verifi/src/features/profile/presentation/widgets/twitter_profile.dart';
 
 class ProfileTwitterConnection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Column(mainAxisSize: MainAxisSize.min, children: [
-      const SizedBox(height: 8),
-      const Divider(endIndent: 80, indent: 80, color: Colors.black26),
-      const SizedBox(height: 8),
-      _title(context),
-      const SizedBox(height: 12),
-      _body(context, ref),
-    ]);
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const SizedBox(height: 8),
+        const Divider(endIndent: 80, indent: 80, color: Colors.black26),
+        const SizedBox(height: 8),
+        _title(context),
+        const SizedBox(height: 12),
+        _body(context, ref),
+      ],
+    );
   }
 
   Widget _title(BuildContext context) {
@@ -46,7 +49,7 @@ class ProfileTwitterConnection extends ConsumerWidget {
 
     final currentUser = userProfileState.value!;
     if (currentUser.twitterAccount == null) {
-      return _linkToTwitter(ref, currentUser);
+      return _linkToTwitter(context, ref, currentUser);
     } else {
       return _twitterLinked(context, ref, currentUser.twitterAccount!);
     }
@@ -64,7 +67,7 @@ class ProfileTwitterConnection extends ConsumerWidget {
         const SizedBox(height: 12),
         ElevatedButton(
           onPressed: () {
-            ref.read(authRepositoryProvider).unlinkTwitterAccount();
+            ref.read(firebaseAuthRepositoryProvider).unlinkTwitterAccount();
           },
           child: const Text('Unlink Twitter account'),
         ),
@@ -72,10 +75,24 @@ class ProfileTwitterConnection extends ConsumerWidget {
     );
   }
 
-  Widget _linkToTwitter(WidgetRef ref, CurrentUser currentUser) {
+  Widget _linkToTwitter(
+    BuildContext context,
+    WidgetRef ref,
+    CurrentUser currentUser,
+  ) {
     return ElevatedButton(
-      onPressed: () {
-        ref.read(authRepositoryProvider).linkTwitterAccount();
+      onPressed: () async {
+        final errorMessage =
+            await ref.read(firebaseAuthRepositoryProvider).linkTwitterAccount();
+        if (null != errorMessage) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(ref.context).showSnackBar(
+              SnackBar(
+                content: Text(errorMessage),
+              ),
+            );
+          }
+        }
       },
       child: const Text("Link Twitter account"),
     );

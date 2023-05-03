@@ -1,26 +1,35 @@
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:equatable/equatable.dart';
 
 class AchievementTier extends Equatable {
-  final TierIdentifier identifier;
-  final int goalTotal;
-  final String? description;
+  final int requirement;
+  final int reward;
+  final String description;
 
   const AchievementTier({
-    required this.identifier,
-    required this.goalTotal,
-    this.description,
+    required this.requirement,
+    required this.reward,
+    required this.description,
   });
+
+  @override
+  List<Object?> get props => [requirement, reward, description];
 
   factory AchievementTier.fromJson(Map<String, dynamic> json) {
     return AchievementTier(
-      identifier: TierIdentifier.deserialize(json["Identifier"]),
-      goalTotal: json["GoalTotal"],
+      requirement: json["Requirement"],
+      reward: json["Reward"],
       description: json["Description"],
     );
   }
 
-  @override
-  List<Object?> get props => [identifier, goalTotal, description];
+  Map<String, dynamic> toJson() {
+    return {
+      "Requirement": requirement,
+      "Reward": reward,
+      "Description": description,
+    };
+  }
 }
 
 enum TierIdentifier {
@@ -28,16 +37,15 @@ enum TierIdentifier {
   silver,
   gold;
 
-  static TierIdentifier deserialize(String value) {
-    switch (value) {
-      case "BronzeTier":
-        return TierIdentifier.bronze;
-      case "SilverTier":
-        return TierIdentifier.silver;
-      case "GoldTier":
-        return TierIdentifier.gold;
-      default:
-        throw "Unknown tier identifier: $value";
+  factory TierIdentifier.encode(String value) {
+    final tierID = EnumToString.fromString(TierIdentifier.values, value);
+    if (null == tierID) {
+      throw Exception("Invalid TierIdentifier: $value");
     }
+    return tierID;
+  }
+
+  static String decode(TierIdentifier tierID) {
+    return EnumToString.convertToString(tierID, camelCase: true);
   }
 }

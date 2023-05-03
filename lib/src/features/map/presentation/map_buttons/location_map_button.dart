@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:verifi/src/features/map/application/geolocation_service.dart';
 import 'package:verifi/src/features/map/application/map_service.dart';
-import 'package:verifi/src/features/map/data/location/location_repository.dart';
 import 'package:verifi/src/features/map/presentation/flutter_map/location_permission_dialog.dart';
 import 'package:verifi/src/features/map/presentation/flutter_map/map_location_permissions_controller.dart';
 
@@ -25,7 +25,7 @@ class LocationMapButton extends ConsumerWidget {
   }
 
   VoidCallback? _onPressed(BuildContext context, WidgetRef ref) {
-    final location = ref.watch(locationStreamProvider).valueOrNull;
+    final location = ref.watch(currentLocationProvider).value;
 
     return ref.watch(mapLocationPermissionsControllerProvider).when(
       data: (data) {

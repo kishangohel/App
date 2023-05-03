@@ -209,7 +209,7 @@ class ReportAccessPointDialogState
                     if (!_formKey.currentState!.validate()) return;
 
                     final accessPointReport = AccessPointReport(
-                      accessPoint: widget.accessPoint,
+                      accessPointId: widget.accessPoint.id,
                       reason: _reportReason!,
                       description: _description,
                     );

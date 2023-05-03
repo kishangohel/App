@@ -1,21 +1,20 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:verifi/src/features/map/data/location/geolocator_service.dart';
 
-part 'map_location_permissions_controller.g.dart';
+part '_generated/map_location_permissions_controller.g.dart';
 
 @Riverpod(keepAlive: true)
 class MapLocationPermissionsController
     extends _$MapLocationPermissionsController {
   @override
   FutureOr<LocationPermission> build() async {
-    return await ref.read(geolocatorServiceProvider).checkPermission();
+    return await Geolocator.checkPermission();
   }
 
   Future<void> requestPermission() async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(
-      () async => await ref.read(geolocatorServiceProvider).requestPermission(),
+      () async => await Geolocator.requestPermission(),
     );
   }
 }

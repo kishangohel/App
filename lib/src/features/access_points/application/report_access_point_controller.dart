@@ -3,7 +3,7 @@ import 'package:verifi/src/features/access_points/data/access_point_repository.d
 import 'package:verifi/src/features/access_points/domain/access_point_report_model.dart';
 import 'package:verifi/src/features/profile/data/profile_repository.dart';
 
-part 'report_access_point_controller.g.dart';
+part '_generated/report_access_point_controller.g.dart';
 
 @riverpod
 class ReportAccessPointController extends _$ReportAccessPointController {

@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:verifi/src/common/providers/shared_prefs.dart';
 
-part 'map_filter_controller.g.dart';
+part '_generated/map_filter_controller.g.dart';
 
 enum MapFilter {
   none,
@@ -32,18 +32,18 @@ class MapFilterController extends _$MapFilterController {
 
   @override
   FutureOr<MapFilter> build() async {
-    return await ref.watch(sharedPrefsProvider.future).then((sharedPrefs) {
-      final savedFilter = sharedPrefs.getString(mapFilterKey);
-      return (savedFilter != null)
-          ? MapFilter.parse(savedFilter)
-          : MapFilter.none;
-    });
+    final sharedPrefs = await ref.read(sharedPrefsProvider.future);
+    final savedFilter = sharedPrefs.getString(mapFilterKey);
+    return (savedFilter != null)
+        ? MapFilter.parse(savedFilter)
+        : MapFilter.none;
   }
 
   Future<void> applyFilter(MapFilter filter) async {
     state = await AsyncValue.guard(() async {
       await ref.read(sharedPrefsProvider.future).then(
-          (sharedPrefs) => sharedPrefs.setString(mapFilterKey, filter.name));
+            (sharedPrefs) => sharedPrefs.setString(mapFilterKey, filter.name),
+          );
       return filter;
     });
   }

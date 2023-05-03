@@ -7,52 +7,53 @@ class FilterMapDialog extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ref
-            .watch(mapFilterControllerProvider)
-            .whenData<Widget>(
-              (filter) => AlertDialog(
-                title: const Text("Filter map"),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    CheckboxListTile(
-                      secondary: const Icon(Icons.person),
-                      title: const Text("Users"),
-                      value: filter.showProfiles,
-                      onChanged: (bool? value) {
-                        _setFilter(
-                          ref,
-                          showProfiles: value == true,
-                          showAccessPoints: filter.showAccessPoints,
-                        );
-                      },
-                    ),
-                    CheckboxListTile(
-                      secondary: const Icon(Icons.wifi),
-                      title: const Text("Wifi"),
-                      value: filter.showAccessPoints,
-                      onChanged: (bool? value) {
-                        _setFilter(
-                          ref,
-                          showProfiles: filter.showProfiles,
-                          showAccessPoints: value == true,
-                        );
-                      },
-                    )
-                  ],
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text('Close'),
-                  ),
-                ],
-              ),
-            )
-            .value ??
-        const SizedBox.shrink();
+    final filter = ref.watch(mapFilterControllerProvider);
+    return AlertDialog(
+      title: const Text("Filter map"),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CheckboxListTile(
+            key: const Key('filter_map_dialog_checkbox_profiles'),
+            secondary: const Icon(Icons.person),
+            title: const Text("Users"),
+            value: filter.value?.showProfiles ?? false,
+            onChanged: (filter.value != null)
+                ? (bool? value) {
+                    _setFilter(
+                      ref,
+                      showProfiles: value == true,
+                      showAccessPoints: filter.value!.showAccessPoints,
+                    );
+                  }
+                : null,
+          ),
+          CheckboxListTile(
+            key: const Key('filter_map_dialog_checkbox_access_points'),
+            secondary: const Icon(Icons.wifi),
+            title: const Text("Wifi"),
+            value: filter.value?.showAccessPoints ?? false,
+            onChanged: (filter.value != null)
+                ? (bool? value) {
+                    _setFilter(
+                      ref,
+                      showProfiles: filter.value!.showProfiles,
+                      showAccessPoints: value == true,
+                    );
+                  }
+                : null,
+          )
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text('Close'),
+        ),
+      ],
+    );
   }
 
   void _setFilter(

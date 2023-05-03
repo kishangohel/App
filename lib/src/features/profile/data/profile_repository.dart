@@ -1,15 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:verifi/src/features/profile/domain/current_user_model.dart';
+import 'package:verifi/src/features/authentication/data/firebase_auth_repository.dart';
+import 'package:verifi/src/features/authentication/domain/current_user_model.dart';
 import 'package:verifi/src/utils/geoflutterfire/geoflutterfire.dart';
 
-import '../../authentication/data/authentication_repository.dart';
 import '../domain/user_profile_model.dart';
 
-part 'profile_repository.g.dart';
+part '_generated/profile_repository.g.dart';
 
 const _displayNameRequirements =
     """Display name must meet the following requirements:
@@ -23,19 +24,19 @@ const _displayNameRegex =
 
 class ProfileRepository {
   late FirebaseFirestore _firestore;
-  late CollectionReference userCollection;
+  late CollectionReference _userProfileCollection;
   CurrentUser? _currentUser;
-  final ProfileRepositoryRef ref;
+  final _geo = Geoflutterfire();
 
-  ProfileRepository(this.ref, {FirebaseFirestore? firestore}) {
+  ProfileRepository({FirebaseFirestore? firestore}) {
     _firestore = firestore ?? FirebaseFirestore.instance;
-    userCollection = _firestore.collection('UserProfile');
+    _userProfileCollection = _firestore.collection('UserProfile');
   }
 
   /// Stream of the CurrentUser which contains the firebase authentication user
   /// as well as VeriFi UserProfile.
   Stream<CurrentUser?> currentUser(User? user) {
-    return userCollection.doc(user?.uid).snapshots().map((snapshot) {
+    return _userProfileCollection.doc(user?.uid).snapshots().map((snapshot) {
       if (user != null && snapshot.exists) {
         final twitterUserInfoIndex = user.providerData.indexWhere((userInfo) =>
             userInfo.providerId == TwitterAuthProvider.PROVIDER_ID);
@@ -54,9 +55,12 @@ class ProfileRepository {
     });
   }
 
+  @visibleForTesting
+  CurrentUser? get getCurrentUser => _currentUser;
+
   /// Stream of the User with the given uid.
   Stream<UserProfile?> userWithUid(String? uid) {
-    return userCollection.doc(uid).snapshots().map((snapshot) {
+    return _userProfileCollection.doc(uid).snapshots().map((snapshot) {
       if (uid != null && snapshot.exists) {
         return UserProfile.fromDocumentSnapshot(snapshot);
       } else {
@@ -66,7 +70,7 @@ class ProfileRepository {
   }
 
   Future<bool> profileExists(String userId) async {
-    return (await userCollection.doc(userId).get()).exists;
+    return (await _userProfileCollection.doc(userId).get()).exists;
   }
 
   /// Create a new user profile in the Firestore database.
@@ -74,10 +78,10 @@ class ProfileRepository {
     required String userId,
     required String displayName,
   }) async {
-    await userCollection.doc(userId).set({
-      'DisplayName': displayName,
-      'VeriPoints': 0,
-    });
+    await _userProfileCollection.doc(userId).set(
+      {'DisplayName': displayName, 'VeriPoints': 0},
+      SetOptions(merge: true),
+    );
   }
 
   /// Validates if the [username] is available and meets requirements.
@@ -103,9 +107,14 @@ class ProfileRepository {
   /// Checks if the [username] is available.
   /// Returns true if the [username] is available.
   Future<bool> _validateDisplayNameAvailability(String displayName) async {
-    final snapshot =
-        await userCollection.where('DisplayName', isEqualTo: displayName).get();
-    return (snapshot.size == 0);
+    try {
+      final result = await FirebaseFunctions.instance
+          .httpsCallable('isDisplayNameAvailable')
+          .call(displayName);
+      return (result.data as String) == 'Available';
+    } on FirebaseFunctionsException {
+      return false;
+    }
   }
 
   /// Get the number of VeriPoints for a user.
@@ -113,7 +122,7 @@ class ProfileRepository {
   /// If the document doesn't exist, or the VeriPoints field doesn't exist,
   /// an Exception is thrown.
   Future<int> getVeriPoints(String userId) async {
-    final doc = await userCollection.doc(userId).get();
+    final doc = await _firestore.collection('UserProfile').doc(userId).get();
     if (doc.exists) {
       final data = doc.data() as Map<String, dynamic>;
       if (data.containsKey('VeriPoints')) {
@@ -125,7 +134,8 @@ class ProfileRepository {
 
   /// Stream of a List of the highest ranked user profiles.
   Stream<List<UserProfile>> userProfileRankings() {
-    return userCollection
+    return _firestore
+        .collection('UserProfile')
         .orderBy('VeriPoints', descending: true)
         .limit(10)
         .snapshots()
@@ -134,36 +144,61 @@ class ProfileRepository {
     });
   }
 
+  Stream<List<UserProfile>> getUsersWithinRadiusStream(
+    LatLng center,
+    double radius,
+  ) {
+    return _geo
+        .collection(collectionRef: _firestore.collection('UserProfile'))
+        .within(
+          center: _geo.point(
+            latitude: center.latitude,
+            longitude: center.longitude,
+          ),
+          radius: radius,
+          field: 'LastLocation',
+        )
+        .map((docs) => docs.map(UserProfile.fromDocumentSnapshot).toList());
+  }
+
   Future<void> updateUserLocation(LatLng location) async {
-    if (_currentUser == null ||
-        (false == await profileExists(_currentUser!.id))) {
+    if (_currentUser == null) {
       return;
     }
-    final geoFirePoint = Geoflutterfire().point(
+    final geoFirePoint = _geo.point(
       latitude: location.latitude,
       longitude: location.longitude,
     );
-    await userCollection.doc(_currentUser!.id).update({
-      "LastLocation": geoFirePoint.data,
-      "LastLocationUpdate": Timestamp.now(),
-    });
+    if (_currentUser != null) {
+      await _firestore
+          .collection('UserProfile')
+          .doc(_currentUser!.profile.id)
+          .update({
+        "LastLocation": geoFirePoint.data,
+        "LastLocationUpdate": Timestamp.now(),
+      });
+    }
   }
 
-  Future<void> updateHideOnMap({required bool hideOnMap}) async {
-    if (_currentUser == null) return;
-    await userCollection.doc(_currentUser!.id).update({'HideOnMap': hideOnMap});
+  Future<void> updateHideOnMap(bool hideOnMap) async {
+    if (_currentUser != null) {
+      await _firestore
+          .collection('UserProfile')
+          .doc(_currentUser!.profile.id)
+          .update({'HideOnMap': hideOnMap});
+    }
   }
 }
 
 @Riverpod(keepAlive: true)
 ProfileRepository profileRepository(ProfileRepositoryRef ref) {
-  return ProfileRepository(ref);
+  return ProfileRepository();
 }
 
 final currentUserProvider = StreamProvider<CurrentUser?>((ref) {
   return ref
       .watch(profileRepositoryProvider)
-      .currentUser(ref.watch(authStateChangesProvider).value);
+      .currentUser(ref.watch(firebaseAuthStateChangesProvider).value);
 });
 
 final userProfileFamily =

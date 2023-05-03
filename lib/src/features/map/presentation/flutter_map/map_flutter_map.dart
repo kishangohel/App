@@ -3,9 +3,10 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:verifi/src/features/map/application/geolocation_service.dart';
 import 'package:verifi/src/features/map/application/map_filter_controller.dart';
 import 'package:verifi/src/features/map/application/map_service.dart';
-import 'package:verifi/src/features/map/data/location/location_repository.dart';
+import 'package:verifi/src/features/map/data/location_repository.dart';
 import 'package:verifi/src/features/map/presentation/flutter_map/location_permission_dialog.dart';
 import 'package:verifi/src/features/map/presentation/flutter_map/map_initial_location_controller.dart';
 import 'package:verifi/src/features/map/presentation/flutter_map/map_location_permissions_controller.dart';
@@ -87,28 +88,29 @@ class _MapFlutterMapState extends ConsumerState<MapFlutterMap>
         } else if (previousState?.value?.isAllowed != true &&
             currentState.value?.isAllowed == true) {
           // Start location stream if location permission granted
-          ref.read(locationRepositoryProvider).initLocationStream();
+          ref.read(geolocationServiceProvider).userLocationUpdates();
         }
       },
     );
   }
 
   void _listenToLocation() {
+    // TODO: Refactor
     // When first location value is emitted, move to current location.
-    ref.listen<AsyncValue<LatLng?>>(
-      locationStreamProvider,
-      (previousState, currentState) {
-        if (previousState?.value == null && currentState.value != null) {
-          ref
-              .read(mapInitialLocationControllerProvider.notifier)
-              .update(currentState.value!);
-          ref.read(mapControllerProvider).move(
-                currentState.value!,
-                18,
-                id: MapFlutterMap.initialLocationMove,
-              );
-        }
-      },
-    );
+    // ref.listen<AsyncValue<LatLng?>>(
+    //   geolocationServiceProvider,
+    //   (previousState, currentState) {
+    //     if (previousState?.value == null && currentState.value != null) {
+    //       ref
+    //           .read(mapInitialLocationControllerProvider.notifier)
+    //           .update(currentState.value!);
+    //       ref.read(mapControllerProvider).move(
+    //             currentState.value!,
+    //             18,
+    //             id: MapFlutterMap.initialLocationMove,
+    //           );
+    //     }
+    //   },
+    // );
   }
 }

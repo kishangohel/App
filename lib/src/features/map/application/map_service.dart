@@ -8,7 +8,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:verifi/src/features/access_points/data/access_point_repository.dart';
 import 'package:verifi/src/features/access_points/domain/access_point_model.dart';
-import 'package:verifi/src/features/map/data/nearby_users/nearby_users_repository.dart';
+import 'package:verifi/src/features/map/data/nearby_users_repository.dart';
 import 'package:verifi/src/features/map/presentation/map_layers/access_point_layer/access_point_layer_controller.dart';
 import 'package:verifi/src/features/map/presentation/map_layers/user_layer/user_layer_controller.dart';
 import 'package:verifi/src/features/profile/data/profile_repository.dart';
@@ -17,7 +17,7 @@ import 'package:verifi/src/features/profile/domain/user_profile_model.dart';
 import '../presentation/flutter_map/map_flutter_map.dart';
 import 'center_zoom_controller.dart';
 
-part 'map_service.g.dart';
+part '_generated/map_service.g.dart';
 
 class MapService {
   static const hideUsersInactiveSince = Duration(hours: 1);
@@ -132,7 +132,7 @@ class MapService {
 
     return await ref
         .read(nearbyUsersRepositoryProvider)
-        .getUsersWithinRadiusStream(center, radiusInKm)
+        .usersWithinRadius(center, radiusInKm)
         .first
         .then((nearby) => nearby
             .where((userProfile) =>

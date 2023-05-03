@@ -3,7 +3,7 @@ import 'package:verifi/src/features/map/application/map_service.dart';
 
 import 'user_marker.dart';
 
-part 'user_layer_controller.g.dart';
+part '_generated/user_layer_controller.g.dart';
 
 @Riverpod(keepAlive: true)
 class UserLayerController extends _$UserLayerController {

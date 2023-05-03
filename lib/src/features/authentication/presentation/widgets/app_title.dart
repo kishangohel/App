@@ -15,17 +15,14 @@ class AppTitle extends StatelessWidget {
     if (brightness == Brightness.dark && !appBar) {
       fontColor = Colors.white;
     }
-    return Material(
-      type: MaterialType.transparency,
-      child: FittedBox(
-        fit: BoxFit.fitWidth,
-        child: AutoSizeText(
-          "VeriFi",
-          style: GoogleFonts.quanticoTextTheme().titleLarge?.copyWith(
-                color: fontColor,
-              ),
-          textAlign: TextAlign.center,
-        ),
+    return FittedBox(
+      fit: BoxFit.contain,
+      child: AutoSizeText(
+        "VeriFi",
+        style: GoogleFonts.quanticoTextTheme().headlineSmall?.copyWith(
+              color: fontColor,
+            ),
+        textAlign: TextAlign.center,
       ),
     );
   }

@@ -1,4 +1,0 @@
-{
-  "include": [".eslintrc.js", "src", "test"],
-  "exclude": ["node_modules", "lib"]
-}
