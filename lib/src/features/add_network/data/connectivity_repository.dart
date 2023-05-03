@@ -1,8 +1,8 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-part 'connectivity_repository.g.dart';
+
+part '_generated/connectivity_repository.g.dart';
 
 class ConnectivityRepository {
   final networkInfo = NetworkInfo();

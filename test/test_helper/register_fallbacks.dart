@@ -2,9 +2,11 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:verifi/src/features/access_points/domain/access_point_model.dart';
+import 'package:verifi/src/features/access_points/domain/radar_address_model.dart';
 import 'package:verifi/src/features/access_points/domain/verified_status.dart';
+import 'package:verifi/src/features/add_network/domain/new_access_point_model.dart';
+import 'package:verifi/src/features/authentication/domain/current_user_model.dart';
 import 'package:verifi/src/features/map/application/map_filter_controller.dart';
-import 'package:verifi/src/features/profile/domain/current_user_model.dart';
 import 'package:verifi/src/features/profile/domain/user_profile_model.dart';
 
 /// Mocktail needs us to declare a fallback value for types which we want to
@@ -26,13 +28,24 @@ void registerFallbacks() {
     ),
   );
   registerFallbackValue(
+    NewAccessPoint(
+      ssid: 'testSSID',
+      radarAddress: RadarAddress(
+        name: 'test name',
+        address: 'test address',
+        location: LatLng(1.0, 1.0),
+      ),
+    ),
+  );
+  registerFallbackValue(
     const CurrentUser(
       profile: UserProfile(
         id: 'testUserId',
         displayName: 'testUserName',
+        veriPoints: 0,
         hideOnMap: false,
         statistics: {},
-        achievementProgresses: {},
+        achievementsProgress: {},
       ),
     ),
   );

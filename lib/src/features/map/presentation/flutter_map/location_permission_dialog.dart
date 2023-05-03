@@ -20,6 +20,7 @@ class LocationPermissionDialogState
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      backgroundColor: Theme.of(context).colorScheme.background,
       title: const Text('Location permission'),
       content: const Text(
         'VeriFi collects location data for the following features:\n\n'

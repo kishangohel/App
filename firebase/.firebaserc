@@ -1,8 +1,0 @@
-{
-  "projects": {
-    "default": "verifi-dev",
-    "dev": "verifi-dev",
-    "staging": "staging-verifi",
-    "prod": "bionic-water-366401"
-  }
-}

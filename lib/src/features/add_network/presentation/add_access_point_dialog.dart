@@ -8,20 +8,32 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:go_router/go_router.dart';
 import 'package:verifi/src/common/providers/wifi_connected_stream_provider.dart';
 import 'package:verifi/src/common/widgets/verifi_dialog.dart';
-import 'package:verifi/src/features/access_points/data/radar_search_repository.dart';
 import 'package:verifi/src/features/access_points/domain/radar_address_model.dart';
-import 'package:verifi/src/features/map/data/location/location_repository.dart';
+import 'package:verifi/src/features/map/data/location_repository.dart';
 
 import '../application/add_access_point_controller.dart';
 import '../domain/new_access_point_model.dart';
 
 class AddAccessPointDialog extends ConsumerStatefulWidget {
   final String ssid;
+  final TextEditingController ssidController;
+  final TextEditingController passwordController;
+  final TextEditingController placeController;
+  // Should only be set to false for testing
+  final bool debounce;
 
-  const AddAccessPointDialog({
+  AddAccessPointDialog({
     Key? key,
     required this.ssid,
-  }) : super(key: key);
+    TextEditingController? ssidController,
+    TextEditingController? passwordController,
+    TextEditingController? placeController,
+    bool? debounce,
+  })  : ssidController = ssidController ?? TextEditingController(),
+        passwordController = passwordController ?? TextEditingController(),
+        placeController = placeController ?? TextEditingController(),
+        debounce = debounce ?? true,
+        super(key: key);
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -29,9 +41,6 @@ class AddAccessPointDialog extends ConsumerStatefulWidget {
 }
 
 class AddAccessPointDialogState extends ConsumerState<AddAccessPointDialog> {
-  final ssidController = TextEditingController();
-  final passwordController = TextEditingController();
-  final placeController = TextEditingController();
   RadarAddress? selectedRadarAddress;
   final _passwordFocusNode = FocusNode(debugLabel: 'passwordFocusNode');
   final _radarAddressFocusNode = FocusNode(debugLabel: 'radarAddressFocusNode');
@@ -52,11 +61,11 @@ class AddAccessPointDialogState extends ConsumerState<AddAccessPointDialog> {
           widget.ssid.length - 1,
         );
       }
-      ssidController.text = ssid;
+      widget.ssidController.text = ssid;
     }
     // iOS
     else {
-      ssidController.text = widget.ssid;
+      widget.ssidController.text = widget.ssid;
     }
   }
 
@@ -76,8 +85,9 @@ class AddAccessPointDialogState extends ConsumerState<AddAccessPointDialog> {
         if (previous?.valueOrNull != false && next.valueOrNull == false) {
           final goRouter = GoRouter.of(context);
           if (goRouter.canPop()) {
-            goRouter
-                .pop(const CreateAccessPointDialogResult.wifiDisconnected());
+            goRouter.pop(
+              const CreateAccessPointDialogResult.wifiDisconnected(),
+            );
           }
         }
       },
@@ -88,7 +98,9 @@ class AddAccessPointDialogState extends ConsumerState<AddAccessPointDialog> {
         if (next.valueOrNull != null) {
           final goRouter = GoRouter.of(context);
           if (goRouter.canPop()) {
-            goRouter.pop(CreateAccessPointDialogResult.success(next.value!));
+            goRouter.pop(
+              CreateAccessPointDialogResult.success(next.value!),
+            );
           }
         } else if ((previous == null || previous.isLoading) &&
             next.hasValue &&
@@ -107,7 +119,7 @@ class AddAccessPointDialogState extends ConsumerState<AddAccessPointDialog> {
           _title(),
           _ssidTextField(),
           _passwordRow(loading: loading),
-          _radarSearchFormField(loading: loading),
+          _placeSearchFormField(loading: loading),
           if (addNetworkState.hasError) _errorSection(addNetworkState.error!),
           _submitButton(loading: loading),
         ],
@@ -129,6 +141,7 @@ class AddAccessPointDialogState extends ConsumerState<AddAccessPointDialog> {
 
   Widget _ssidTextField() {
     return TextField(
+      key: const Key('ssidTextField'),
       decoration: const InputDecoration(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.all(
@@ -142,7 +155,7 @@ class AddAccessPointDialogState extends ConsumerState<AddAccessPointDialog> {
         labelText: 'SSID',
       ),
       enabled: false,
-      controller: ssidController,
+      controller: widget.ssidController,
     );
   }
 
@@ -151,7 +164,8 @@ class AddAccessPointDialogState extends ConsumerState<AddAccessPointDialog> {
       children: [
         // Password text field
         Expanded(
-          child: TextFormField(
+          child: TextField(
+            key: const Key('passwordTextField'),
             decoration: const InputDecoration(
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.all(
@@ -166,7 +180,7 @@ class AddAccessPointDialogState extends ConsumerState<AddAccessPointDialog> {
             ),
             enabled: _isPasswordRequired,
             focusNode: _passwordFocusNode,
-            controller: passwordController,
+            controller: widget.passwordController,
           ),
         ),
         Container(
@@ -184,12 +198,13 @@ class AddAccessPointDialogState extends ConsumerState<AddAccessPointDialog> {
                 textAlign: TextAlign.center,
               ),
               Switch(
+                key: const Key('passwordRequiredSwitch'),
                 value: _isPasswordRequired,
                 onChanged: loading
                     ? null
                     : (value) {
                         if (value == false) {
-                          passwordController.clear();
+                          widget.passwordController.clear();
                         }
                         setState(() {
                           _isPasswordRequired = value;
@@ -207,18 +222,21 @@ class AddAccessPointDialogState extends ConsumerState<AddAccessPointDialog> {
     );
   }
 
-  Widget _radarSearchFormField({required bool loading}) {
+  Widget _placeSearchFormField({required bool loading}) {
     return TypeAheadFormField<RadarAddress>(
+      key: const Key('placeSearchFormField'),
       enabled: !loading,
-      debounceDuration: const Duration(milliseconds: 500),
+      debounceDuration:
+          (widget.debounce) ? const Duration(milliseconds: 500) : Duration.zero,
       onSuggestionSelected: (radarAddress) async {
-        placeController.text = radarAddress.name;
+        widget.placeController.text = radarAddress.name;
         setState(() {
           selectedRadarAddress = radarAddress;
         });
       },
       itemBuilder: (context, place) {
         return ListTile(
+          key: Key('placeSearchListTile-${place.name}'),
           title: AutoSizeText(
             place.name,
             maxLines: 1,
@@ -244,11 +262,10 @@ class AddAccessPointDialogState extends ConsumerState<AddAccessPointDialog> {
           return [];
         }
         final currentLocation =
-            ref.read(locationRepositoryProvider).currentLocation;
+            await ref.read(locationRepositoryProvider).currentLocation;
         if (currentLocation != null) {
-          return await ref
-              .read(radarSearchRepositoryProvider)
-              .searchNearbyPlaces(currentLocation, query);
+          //TODO: Implement place search
+          return [];
         } else {
           return [];
         }
@@ -257,7 +274,7 @@ class AddAccessPointDialogState extends ConsumerState<AddAccessPointDialog> {
         focusNode: _radarAddressFocusNode,
         enabled: !loading,
         autofocus: true,
-        controller: placeController,
+        controller: widget.placeController,
         decoration: const InputDecoration(
           border: OutlineInputBorder(
             borderRadius: BorderRadius.all(
@@ -285,6 +302,7 @@ class AddAccessPointDialogState extends ConsumerState<AddAccessPointDialog> {
 
   Widget _submitButton({required bool loading}) {
     return Container(
+      key: const Key('submitButton'),
       alignment: Alignment.bottomCenter,
       padding: const EdgeInsets.only(top: 16),
       child: Row(
@@ -301,12 +319,13 @@ class AddAccessPointDialogState extends ConsumerState<AddAccessPointDialog> {
                 ? null
                 : () async {
                     final newAccessPoint = NewAccessPoint(
-                      ssid: ssidController.text,
-                      password:
-                          _isPasswordRequired ? passwordController.text : null,
+                      ssid: widget.ssidController.text,
+                      password: _isPasswordRequired
+                          ? widget.passwordController.text
+                          : null,
                       radarAddress: selectedRadarAddress!,
                     );
-                    ref
+                    await ref
                         .read(addAccessPointControllerProvider.notifier)
                         .addAccessPoint(newAccessPoint);
                   },

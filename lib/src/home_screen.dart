@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:verifi/src/routing/app_router.dart';
 
 import 'home_screen_controller.dart';
 
@@ -9,6 +10,7 @@ import 'home_screen_controller.dart';
 /// Contains the BottomNavigationBar that is used for primary navigation.
 ///
 /// [child] is populated by GoRouter via [ShellRoute].
+///
 class HomeScreen extends ConsumerWidget {
   final Widget child;
   const HomeScreen({
@@ -21,33 +23,49 @@ class HomeScreen extends ConsumerWidget {
     return Scaffold(
       body: child,
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         iconSize: 20,
+        selectedFontSize: 12,
+        unselectedFontSize: 12,
+        unselectedItemColor:
+            Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             activeIcon: Icon(FontAwesomeIcons.solidTrophy),
-            icon: Icon(FontAwesomeIcons.trophy),
+            icon: Icon(FontAwesomeIcons.lightTrophy),
             label: 'Achievements',
           ),
           BottomNavigationBarItem(
             activeIcon: Icon(FontAwesomeIcons.solidMap),
-            icon: Icon(FontAwesomeIcons.map),
+            icon: Icon(FontAwesomeIcons.lightMap),
             label: 'VeriMap',
           ),
           BottomNavigationBarItem(
             activeIcon: Icon(FontAwesomeIcons.solidUser),
-            icon: Icon(FontAwesomeIcons.user),
+            icon: Icon(FontAwesomeIcons.lightUser),
             label: 'Profile',
+          ),
+          BottomNavigationBarItem(
+            activeIcon: Icon(FontAwesomeIcons.solidBars),
+            icon: Icon(FontAwesomeIcons.lightBars),
+            label: 'More',
           ),
         ],
         currentIndex: _getSelectedIndex(context),
-        onTap: (index) => _onItemTapped(index, context, ref),
+        onTap: (index) => _onItemTapped(
+          ref.read(homeScreenControllerProvider.notifier),
+          GoRouter.of(context),
+          index,
+        ),
       ),
     );
   }
 
-  int _getSelectedIndex(BuildContext context) {
-    final String location = GoRouterState.of(context).location;
-    if (location.startsWith('/achievements')) {
+  int _getSelectedIndex(
+    BuildContext context,
+  ) {
+    final String location = GoRouter.of(context).location;
+    if (location.contains('/achievements')) {
       return 0;
     }
     if (location.startsWith('/veriMap')) {
@@ -56,24 +74,33 @@ class HomeScreen extends ConsumerWidget {
     if (location.startsWith('/profile')) {
       return 2;
     }
+    if (location.startsWith('/menu')) {
+      return 3;
+    }
     return 0;
   }
 
-  void _onItemTapped(int index, BuildContext context, WidgetRef ref) {
+  void _onItemTapped(
+    HomeScreenController controller,
+    GoRouter router,
+    int index,
+  ) {
     switch (index) {
       case 0:
-        ref
-            .read(homeScreenControllerProvider.notifier)
-            .setPage('/achievements');
-        GoRouter.of(context).go('/achievements');
+        controller.setPage('/achievements');
+        router.goNamed(AppRoute.achievements.name);
         break;
       case 1:
-        ref.read(homeScreenControllerProvider.notifier).setPage('/veriMap');
-        GoRouter.of(context).go('/veriMap');
+        controller.setPage('/veriMap');
+        router.goNamed(AppRoute.veriMap.name);
         break;
       case 2:
-        ref.read(homeScreenControllerProvider.notifier).setPage('/profile');
-        GoRouter.of(context).go('/profile');
+        controller.setPage('/profile');
+        router.goNamed(AppRoute.profile.name);
+        break;
+      case 3:
+        controller.setPage('/menu');
+        router.goNamed(AppRoute.menu.name);
         break;
     }
   }

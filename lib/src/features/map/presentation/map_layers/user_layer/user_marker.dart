@@ -14,7 +14,7 @@ class UserMarker extends Marker {
           width: size.width,
           height: size.height,
           builder: (context) {
-            return randomAvatar(
+            return RandomAvatar(
               profile.displayName,
               trBackground: true,
               width: size.width,

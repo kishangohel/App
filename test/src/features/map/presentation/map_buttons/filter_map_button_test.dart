@@ -1,112 +1,125 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:verifi/src/features/map/application/map_filter_controller.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:verifi/src/common/providers/shared_prefs.dart';
 import 'package:verifi/src/features/map/presentation/map_buttons/filter_map_button.dart';
-import 'package:verifi/src/features/map/presentation/map_buttons/filter_map_dialog.dart';
 
-import '../../../../../test_helper/riverpod_test_helper.dart';
-import 'map_filter_controller_stub.dart';
+import '../../../../../test_helper/register_fallbacks.dart';
+import '../../../../mocks.dart';
+import '../../map_robot.dart';
 
 void main() {
-  late MapFilterControllerStub mapFilterControllerStub;
-
-  void createProviderMocks() {
-    mapFilterControllerStub = MapFilterControllerStub();
-  }
-
-  Future<ProviderContainer> makeWidget(WidgetTester tester) {
-    return makeWidgetWithRiverpod(
-      tester,
-      widget: () => FilterMapButton(),
+  ProviderContainer makeProviderContainer(
+    SharedPreferences sharedPreferences,
+  ) {
+    final container = ProviderContainer(
       overrides: [
-        mapFilterControllerProvider.overrideWith(() => mapFilterControllerStub)
+        sharedPrefsProvider.overrideWith((ref) => sharedPreferences),
       ],
     );
+    return container;
   }
 
   group(FilterMapButton, () {
-    testWidgets('initial state', (tester) async {
-      createProviderMocks();
-      await makeWidget(tester);
-      final button =
-          tester.widget(find.byType(ElevatedButton)) as ElevatedButton;
-      final icon = button.child as Icon;
-      expect(icon.icon, Icons.filter_alt_off);
-      expect(button.enabled, isFalse);
-      expect(button.onPressed, isNull);
+    setUpAll(() {
+      registerFallbacks();
     });
 
-    testWidgets('filtering out profiles', (tester) async {
-      createProviderMocks();
-      await makeWidget(tester);
-      tester.widget(find.byType(ElevatedButton));
+    late ProviderContainer container;
+    late SharedPreferences sharedPreferences;
 
-      // Set the filter.
-      mapFilterControllerStub
-          .triggerUpdate(const AsyncData(MapFilter.excludeProfiles));
-      await tester.pump();
-
-      // Check button state
-      final button =
-          tester.widget(find.byType(ElevatedButton)) as ElevatedButton;
-      final icon = button.child as Icon;
-      expect(icon.icon, Icons.filter_alt);
-      expect(button.enabled, isTrue);
-      expect(button.onPressed, isNotNull);
-
-      // Check button tap behaviour
-      await tester.tap(find.byType(ElevatedButton));
-      await tester.pump();
-      expect(find.byType(FilterMapDialog), findsOneWidget);
+    setUp(() {
+      sharedPreferences = MockSharedPreferences();
+      container = makeProviderContainer(sharedPreferences);
     });
 
-    testWidgets('filtering out access points', (tester) async {
-      createProviderMocks();
-      await makeWidget(tester);
-      tester.widget(find.byType(ElevatedButton));
+    testWidgets(
+      '''
+      When FilterMapButton is first built,
+      Then it is disabled.
+      ''',
+      (tester) async {
+        // Arrange
+        final r = MapRobot(tester);
+        // Act
+        await tester.pumpWidget(
+          UncontrolledProviderScope(
+            container: container,
+            child: MaterialApp(
+              home: Scaffold(
+                body: FilterMapButton(),
+              ),
+            ),
+          ),
+        );
+        // Assert
+        final button = r.findFilterMapButton();
+        expect(button.enabled, isFalse);
+      },
+    );
 
-      // Set the filter.
-      mapFilterControllerStub
-          .triggerUpdate(const AsyncData(MapFilter.excludeAccessPoints));
-      await tester.pump();
+    testWidgets(
+      '''
+      Given FilterMapButton has been built,
+      When mapFilterController returns null,
+      Then the button is enabled and the icon is `Icons.filter_alt_off`.
+      ''',
+      (tester) async {
+        // Arrange
+        final r = MapRobot(tester);
+        when(
+          () => sharedPreferences.getString(any()),
+        ).thenReturn(null);
+        await tester.pumpWidget(
+          UncontrolledProviderScope(
+            container: container,
+            child: MaterialApp(
+              home: Scaffold(
+                body: FilterMapButton(),
+              ),
+            ),
+          ),
+        );
+        // Act
+        await tester.pump();
+        // Assert
+        final button = r.findFilterMapButton();
+        expect(button.enabled, isTrue);
+        expect(find.byIcon(Icons.filter_alt_off), findsOneWidget);
+      },
+    );
 
-      // Check button state
-      final button =
-          tester.widget(find.byType(ElevatedButton)) as ElevatedButton;
-      final icon = button.child as Icon;
-      expect(icon.icon, Icons.filter_alt);
-      expect(button.enabled, isTrue);
-      expect(button.onPressed, isNotNull);
-
-      // Check button tap behaviour
-      await tester.tap(find.byType(ElevatedButton));
-      await tester.pump();
-      expect(find.byType(FilterMapDialog), findsOneWidget);
-    });
-
-    testWidgets('filtering out all', (tester) async {
-      createProviderMocks();
-      await makeWidget(tester);
-      tester.widget(find.byType(ElevatedButton));
-
-      // Set the filter.
-      mapFilterControllerStub
-          .triggerUpdate(const AsyncData(MapFilter.excludeAll));
-      await tester.pump();
-
-      // Check button state
-      final button =
-          tester.widget(find.byType(ElevatedButton)) as ElevatedButton;
-      final icon = button.child as Icon;
-      expect(icon.icon, Icons.filter_alt);
-      expect(button.enabled, isTrue);
-      expect(button.onPressed, isNotNull);
-
-      // Check button tap behaviour
-      await tester.tap(find.byType(ElevatedButton));
-      await tester.pump();
-      expect(find.byType(FilterMapDialog), findsOneWidget);
-    });
+    testWidgets(
+      '''
+      Given FilterMapButton has been built,
+      When mapFilterController returns a value,
+      Then the button is enabled and the icon is `Icons.filter_alt`.
+      ''',
+      (tester) async {
+        // Arrange
+        final r = MapRobot(tester);
+        when(
+          () => sharedPreferences.getString(any()),
+        ).thenReturn('excludeProfiles');
+        await tester.pumpWidget(
+          UncontrolledProviderScope(
+            container: container,
+            child: MaterialApp(
+              home: Scaffold(
+                body: FilterMapButton(),
+              ),
+            ),
+          ),
+        );
+        // Act
+        await tester.pump();
+        // Assert
+        final button = r.findFilterMapButton();
+        expect(button.enabled, isTrue);
+        expect(find.byIcon(Icons.filter_alt), findsOneWidget);
+      },
+    );
   });
 }

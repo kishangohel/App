@@ -167,7 +167,7 @@ void main() {
       await tester.tap(submitButtonFinder());
       expect(reportAccessPointControllerStub.accessPointReports, [
         AccessPointReport(
-          accessPoint: accessPoint,
+          accessPointId: accessPoint.id,
           reason: AccessPointReportReason.missingPassword,
         )
       ]);
@@ -231,7 +231,7 @@ void main() {
       await tester.tap(submitButtonFinder());
       expect(reportAccessPointControllerStub.accessPointReports, [
         AccessPointReport(
-            accessPoint: accessPoint,
+            accessPointId: accessPoint.id,
             reason: AccessPointReportReason.other,
             description: 'A test description')
       ]);
@@ -261,7 +261,7 @@ void main() {
       reportAccessPointControllerStub.triggerUpdate(
         AsyncData(
           AccessPointReport(
-            accessPoint: accessPoint,
+            accessPointId: accessPoint.id,
             reason: AccessPointReportReason.incorrectSsid,
           ),
         ),

@@ -10,16 +10,17 @@ import 'package:latlong2/latlong.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:verifi/src/features/access_points/data/access_point_repository.dart';
 import 'package:verifi/src/features/access_points/domain/access_point_model.dart';
+import 'package:verifi/src/features/authentication/domain/current_user_model.dart';
 import 'package:verifi/src/features/map/application/center_zoom_controller.dart';
 import 'package:verifi/src/features/map/application/map_service.dart';
-import 'package:verifi/src/features/map/data/nearby_users/nearby_users_repository.dart';
+import 'package:verifi/src/features/map/data/nearby_users_repository.dart';
 import 'package:verifi/src/features/map/presentation/map_layers/access_point_layer/access_point_layer_controller.dart';
 import 'package:verifi/src/features/map/presentation/map_layers/user_layer/user_layer_controller.dart';
 import 'package:verifi/src/features/profile/data/profile_repository.dart';
-import 'package:verifi/src/features/profile/domain/current_user_model.dart';
 import 'package:verifi/src/features/profile/domain/user_profile_model.dart';
 
 import '../../../../test_helper/register_fallbacks.dart';
+import '../../../mocks.dart';
 
 void main() {
   setUpAll(() {
@@ -221,9 +222,10 @@ void main() {
           UserProfile(
             id: id,
             displayName: 'testDisplayName',
+            veriPoints: 0,
             hideOnMap: hideOnMap,
             statistics: const {},
-            achievementProgresses: const {},
+            achievementsProgress: const {},
             lastLocationUpdate: lastLocationUpdate,
           );
 
@@ -256,8 +258,8 @@ void main() {
         when(() => mapControllerMock.bounds)
             .thenReturn(LatLngBounds(LatLng(0.9, 1.9), LatLng(1.1, 2.1)));
 
-        when(() => nearbyUsersRepositoryMock.getUsersWithinRadiusStream(
-            any(), any())).thenAnswer((_) async* {
+        when(() => nearbyUsersRepositoryMock.usersWithinRadius(any(), any()))
+            .thenAnswer((_) async* {
           yield [
             // Current user, should be visible even if hidden or not recentlyupdate
             // updated
@@ -287,48 +289,11 @@ void main() {
         final result = await mapService.getNearbyUsers();
         expect(result.map((profile) => profile.id).toList(), ['0', '1']);
 
-        verify(() => nearbyUsersRepositoryMock.getUsersWithinRadiusStream(
-            LatLng(1.0, 2.0), 15.741630674803882));
+        verify(() => nearbyUsersRepositoryMock.usersWithinRadius(
+              LatLng(1.0, 2.0),
+              15.741630674803882,
+            ));
       });
     });
   });
 }
-
-class AccessPointLayerControllerMock extends Mock
-    implements AccessPointLayerController {}
-
-class AccessPointMock extends Mock implements AccessPoint {}
-
-class AccessPointRepositoryMock extends Mock implements AccessPointRepository {}
-
-class CenterZoomControllerMock extends Mock implements CenterZoomController {}
-
-class MapControllerMock extends Mock implements MapController {
-  final StreamController<MapEvent> _mapEventController;
-
-  MapControllerMock() : _mapEventController = StreamController<MapEvent>();
-
-  @override
-  Stream<MapEvent> get mapEventStream => _mapEventController.stream;
-
-  @override
-  void dispose() {
-    _mapEventController.close();
-  }
-
-  void emitMapEvent(MapEvent mapEvent) {
-    _mapEventController.add(mapEvent);
-  }
-
-  Future<void> waitForEvents() {
-    return _mapEventController.sink.close();
-  }
-}
-
-class NearbyUsersRepositoryMock extends Mock implements NearbyUsersRepository {}
-
-class ProfileRepositoryMock extends Mock implements ProfileRepository {}
-
-class TickerProviderMock extends Mock implements TickerProvider {}
-
-class UserLayerControllerMock extends Mock implements UserLayerController {}

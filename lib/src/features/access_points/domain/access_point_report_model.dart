@@ -1,26 +1,39 @@
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:equatable/equatable.dart';
-import 'package:verifi/src/features/access_points/domain/access_point_model.dart';
 import 'package:verifi/src/features/access_points/domain/access_point_report_reason_model.dart';
 
 class AccessPointReport extends Equatable {
-  final AccessPoint accessPoint;
+  final String accessPointId;
   final AccessPointReportReason reason;
   final String? description;
 
   const AccessPointReport({
-    required this.accessPoint,
+    required this.accessPointId,
     required this.reason,
     this.description,
   });
 
+  factory AccessPointReport.fromFirestoreData(Map<String, dynamic> data) {
+    final reason = EnumToString.fromString(
+      AccessPointReportReason.values,
+      data["Reason"],
+    );
+    if (reason == null) throw Exception("Invalid reason");
+    return AccessPointReport(
+      accessPointId: data["AccessPointId"] as String,
+      reason: reason,
+      description: data["Description"] as String?,
+    );
+  }
+
   Map<String, dynamic> toFirestoreData() {
     return {
-      "AccessPointId": accessPoint.id,
+      "AccessPointId": accessPointId,
       "Reason": reason.name,
       "Description": description ?? "",
     };
   }
 
   @override
-  List<Object?> get props => [accessPoint, reason, description];
+  List<Object?> get props => [accessPointId, reason, description];
 }

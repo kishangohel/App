@@ -1,26 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:verifi/src/common/fonts/fixed_font_awesome_icons.dart';
-import 'package:verifi/src/features/achievement/domain/achievement_progress_model.dart';
+import 'package:verifi/src/features/achievement/domain/achievement_model.dart';
 import 'package:verifi/src/features/achievement/domain/achievement_tier_model.dart';
+import 'package:verifi/src/features/profile/domain/user_achievement_progress_model.dart';
 
 class AchievementProgressListTile extends StatelessWidget {
   static const height = 100.0;
   static const padding = 8.0;
 
-  final AchievementProgress progress;
+  final Achievement achievement;
+  final UserAchievementProgress? progress;
 
   const AchievementProgressListTile({
     super.key,
+    required this.achievement,
     required this.progress,
   });
 
   Color get _badgeBackgroundColor {
-    switch (progress.completedTier) {
-      case null:
-        return Colors.grey.shade200;
+    final tier = progress?.nextTier ?? achievement.initialTier;
+    switch (tier) {
       case TierIdentifier.bronze:
-        return Colors.orange.shade200;
+        return Colors.brown.shade200;
       case TierIdentifier.silver:
         return Colors.grey.shade300;
       case TierIdentifier.gold:
@@ -29,11 +31,10 @@ class AchievementProgressListTile extends StatelessWidget {
   }
 
   Color get _badgeIconEndColor {
-    switch (progress.completedTier) {
-      case null:
-        return Colors.grey.shade300;
+    final tier = progress?.nextTier ?? achievement.initialTier;
+    switch (tier) {
       case TierIdentifier.bronze:
-        return Colors.orange.shade500;
+        return Colors.brown.shade500;
       case TierIdentifier.silver:
         return Colors.grey.shade500;
       case TierIdentifier.gold:
@@ -42,11 +43,10 @@ class AchievementProgressListTile extends StatelessWidget {
   }
 
   Color get _badgeIconStartColor {
-    switch (progress.completedTier) {
-      case null:
-        return Colors.grey.shade300;
+    final tier = progress?.nextTier ?? achievement.initialTier;
+    switch (tier) {
       case TierIdentifier.bronze:
-        return Colors.orange.shade300;
+        return Colors.brown.shade300;
       case TierIdentifier.silver:
         return Colors.grey.shade400;
       case TierIdentifier.gold:
@@ -55,11 +55,10 @@ class AchievementProgressListTile extends StatelessWidget {
   }
 
   Color? get _badgeShadowColor {
-    switch (progress.completedTier) {
-      case null:
-        return null;
+    final tier = progress?.nextTier ?? achievement.initialTier;
+    switch (tier) {
       case TierIdentifier.bronze:
-        return Colors.orange.shade300.withOpacity(0.8);
+        return Colors.brown.shade300.withOpacity(0.8);
       case TierIdentifier.silver:
         return Colors.grey.shade400.withOpacity(0.8);
       case TierIdentifier.gold:
@@ -67,8 +66,23 @@ class AchievementProgressListTile extends StatelessWidget {
     }
   }
 
+  int calculateNextTierProgress() {
+    int tierProgress = 0;
+    if (achievement.cumulative) {
+      progress?.tiersProgress.forEach((tier, progress) {
+        tierProgress += progress;
+      });
+    } else {
+      tierProgress += progress?.tiersProgress[progress?.nextTier] ?? 0;
+    }
+    return tierProgress;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final int nextTierProgress = calculateNextTierProgress();
+    final int nextTierRequirement = achievement
+        .tiers[progress?.nextTier ?? achievement.initialTier]!.requirement;
     return SizedBox(
       height: height,
       child: Padding(
@@ -91,12 +105,12 @@ class AchievementProgressListTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    progress.title,
+                    achievement.name,
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   Expanded(
                     child: Text(
-                      progress.description,
+                      achievement.description,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             fontSize: 15,
                             color: Colors.grey.shade600,
@@ -109,16 +123,17 @@ class AchievementProgressListTile extends StatelessWidget {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(10),
                           child: LinearProgressIndicator(
-                            color:
-                                progress.isComplete ? _badgeIconEndColor : null,
+                            color: nextTierProgress == nextTierRequirement
+                                ? _badgeIconEndColor
+                                : null,
                             backgroundColor: Colors.grey.shade300,
-                            value: progress.progress / progress.total,
+                            value: nextTierProgress / nextTierRequirement,
                             minHeight: 10,
                           ),
                         ),
                       ),
                       const SizedBox(width: 8),
-                      Text("${progress.progress}/${progress.total}"),
+                      Text("$nextTierProgress/$nextTierRequirement"),
                     ],
                   ),
                 ],

@@ -4,16 +4,11 @@ import 'package:verifi/src/features/authentication/presentation/widgets/app_titl
 class HeroVerifiTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Hero(
+    return const Hero(
       tag: 'verifi-title',
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          vertical: 16.0,
-          horizontal: 16.0,
-        ),
+      child: SizedBox(
         height: kToolbarHeight,
-        width: MediaQuery.of(context).size.width * 0.5,
-        child: const AppTitle(appBar: true),
+        child: AppTitle(appBar: true),
       ),
     );
   }

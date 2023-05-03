@@ -109,7 +109,7 @@ class UserClusterMarker extends ConsumerWidget {
     return Positioned(
       top: top,
       left: left,
-      child: randomAvatar(
+      child: RandomAvatar(
         profile.displayName,
         trBackground: true,
         width: size,
@@ -132,11 +132,12 @@ class UserClusterMarker extends ConsumerWidget {
         top: topOffset,
         end: rightOffset,
       ),
-      shape: BadgeShape.square,
-      borderRadius: BorderRadius.circular(8),
-      padding: const EdgeInsets.symmetric(horizontal: 6),
-      badgeColor: Colors.pink.shade500,
-      toAnimate: false,
+      badgeStyle: BadgeStyle(
+        shape: BadgeShape.square,
+        borderRadius: BorderRadius.circular(8),
+        padding: const EdgeInsets.symmetric(horizontal: 6),
+        badgeColor: Colors.pink.shade500,
+      ),
       badgeContent: Text(
         count.toString(),
         style: const TextStyle(color: Colors.white, fontSize: 16),

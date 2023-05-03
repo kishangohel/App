@@ -18,7 +18,7 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.primary,
+          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
           flexibleSpace: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -29,7 +29,15 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
                   });
                 },
                 labelColor: Theme.of(context).colorScheme.onPrimary,
-                indicatorColor: Theme.of(context).colorScheme.onPrimary,
+                unselectedLabelColor:
+                    Theme.of(context).colorScheme.onPrimaryContainer,
+                indicator: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: const EdgeInsets.only(bottom: 8.0),
+                splashBorderRadius: BorderRadius.circular(8.0),
+                splashFactory: NoSplash.splashFactory,
                 tabs: [
                   Tab(
                     child: Row(

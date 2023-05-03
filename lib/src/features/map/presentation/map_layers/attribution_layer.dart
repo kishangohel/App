@@ -26,12 +26,13 @@ class AttributionLayer extends StatelessWidget {
         Align(
           alignment: Alignment.bottomRight,
           child: Padding(
-            padding: const EdgeInsets.all(4),
+            padding: const EdgeInsets.symmetric(horizontal: 2),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 _linkTo(
+                  context,
                   'Improve this map',
                   'https://www.mapbox.com/map-feedback/',
                 ),
@@ -40,11 +41,13 @@ class AttributionLayer extends StatelessWidget {
                   children: [
                     const Text('© '),
                     _linkTo(
+                      context,
                       'Mapbox',
                       'https://www.mapbox.com/about/maps/',
                     ),
                     const Text(' © '),
                     _linkTo(
+                      context,
                       'OpenStreetMap',
                       'http://www.openstreetmap.org/about/',
                     ),
@@ -58,7 +61,7 @@ class AttributionLayer extends StatelessWidget {
     );
   }
 
-  Widget _linkTo(String name, String url) {
+  Widget _linkTo(BuildContext context, String name, String url) {
     return GestureDetector(
       onTap: () {
         launchUrlString(url);
@@ -66,11 +69,11 @@ class AttributionLayer extends StatelessWidget {
       child: Text(
         name,
         textAlign: TextAlign.end,
-        style: const TextStyle(
-          color: Colors.blue,
-          fontWeight: FontWeight.bold,
-          decoration: TextDecoration.underline,
-        ),
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: Colors.blue,
+              fontWeight: FontWeight.bold,
+              decoration: TextDecoration.underline,
+            ),
       ),
     );
   }

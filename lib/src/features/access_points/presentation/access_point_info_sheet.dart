@@ -5,11 +5,10 @@ import 'package:random_avatar/random_avatar.dart';
 import 'package:verifi/src/common/widgets/shimmer_widget.dart';
 import 'package:verifi/src/features/access_points/application/access_point_connection_controller.dart';
 import 'package:verifi/src/features/access_points/domain/access_point_model.dart';
+import 'package:verifi/src/features/access_points/presentation/connect_button_visibility_controller.dart';
 import 'package:verifi/src/features/access_points/presentation/report_access_point_dialog.dart';
-import 'package:verifi/src/features/map/data/location/location_repository.dart';
 import 'package:verifi/src/features/profile/data/profile_repository.dart';
 import 'package:verifi/src/features/profile/domain/user_profile_model.dart';
-import 'package:verifi/src/utils/geoflutterfire/src/models/point.dart';
 
 class AccessPointInfoSheet extends ConsumerWidget {
   final AccessPoint accessPoint;
@@ -18,23 +17,25 @@ class AccessPointInfoSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.listen<AsyncValue<String?>>(accessPointConnectionControllerProvider,
-        (previous, next) {
-      if (previous?.valueOrNull == null && next.valueOrNull != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          _connectSnackBar(context, next.value!),
-        );
-        context.pop();
-      } else if (next.hasError) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          _connectSnackBar(
-            context,
-            next.error!.toString(),
-          ),
-        );
-        context.pop();
-      }
-    });
+    ref.listen<AsyncValue<String?>>(
+      accessPointConnectionControllerProvider,
+      (previous, next) {
+        if (previous?.valueOrNull == null && next.valueOrNull != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            _connectSnackBar(context, next.value!),
+          );
+          context.pop();
+        } else if (next.hasError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            _connectSnackBar(
+              context,
+              next.error!.toString(),
+            ),
+          );
+          context.pop();
+        }
+      },
+    );
 
     final connectionState = ref.watch(accessPointConnectionControllerProvider);
     final contributorProfile =
@@ -49,12 +50,11 @@ class AccessPointInfoSheet extends ConsumerWidget {
           _networkPassword(),
           _verifiedStatus(),
           _contributor(contributorProfile),
-          if (_isWithinProximityOfAP(ref) && _apAddedByDifferentUser(ref))
-            _connectButton(
-              context,
-              ref,
-              connectionState: connectionState,
-            ),
+          _connectButton(
+            context,
+            ref,
+            connectionState: connectionState,
+          ),
         ],
       ),
     );
@@ -152,7 +152,7 @@ class AccessPointInfoSheet extends ConsumerWidget {
     return Visibility(
       visible: displayName != null,
       child: _detailsRow(
-        leading: randomAvatar(
+        leading: RandomAvatar(
           displayName ?? "Unknown",
           trBackground: true,
           width: 24,
@@ -191,41 +191,52 @@ class AccessPointInfoSheet extends ConsumerWidget {
     WidgetRef ref, {
     required AsyncValue<String?> connectionState,
   }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        vertical: 8.0,
-        horizontal: 8.0,
-      ),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          minimumSize: const Size.fromHeight(45),
+    // Only allow connecting if close enough and not original Contributor
+    return Visibility(
+      visible: ref
+          .watch(connectButtonVisibilityControllerProvider.call(accessPoint))
+          .when<bool>(
+            data: (data) => data,
+            error: (_, __) => false,
+            loading: () => false,
+          ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          vertical: 8.0,
+          horizontal: 8.0,
         ),
-        onPressed: connectionState.isLoading
-            ? null
-            : () {
-                ref
-                    .read(accessPointConnectionControllerProvider.notifier)
-                    .connectOrVerify(accessPoint);
-              },
-        child: Row(mainAxisSize: MainAxisSize.min, children: [
-          if (connectionState.isLoading)
-            Container(
-              padding: const EdgeInsets.only(right: 8),
-              width: 29,
-              height: 22,
-              child: CircularProgressIndicator(
-                color: Theme.of(context).primaryColor.withOpacity(0.5),
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            minimumSize: const Size.fromHeight(45),
+          ),
+          onPressed: connectionState.isLoading
+              ? null
+              : () {
+                  ref
+                      .read(accessPointConnectionControllerProvider.notifier)
+                      .connectOrVerify(accessPoint);
+                },
+          child: Row(mainAxisSize: MainAxisSize.min, children: [
+            if (connectionState.isLoading)
+              Container(
+                padding: const EdgeInsets.only(right: 8),
+                width: 29,
+                height: 22,
+                child: CircularProgressIndicator(
+                  color: Theme.of(context).primaryColor.withOpacity(0.5),
+                ),
               ),
-            ),
-          accessPoint.isVerified
-              ? const Text("Connect")
-              : const Text("Validate"),
-          if (connectionState.isLoading) const SizedBox(width: 29),
-        ]),
+            accessPoint.isVerified
+                ? const Text("Connect")
+                : const Text("Validate"),
+            if (connectionState.isLoading) const SizedBox(width: 29),
+          ]),
+        ),
       ),
     );
   }
 
+  /// Shows the result of the connection attempt.
   SnackBar _connectSnackBar(BuildContext context, String result) {
     return SnackBar(
       backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
@@ -238,28 +249,4 @@ class AccessPointInfoSheet extends ConsumerWidget {
       ),
     );
   }
-
-  bool _isWithinProximityOfAP(WidgetRef ref) {
-    // Get current location
-    final currentLocation =
-        ref.read(locationRepositoryProvider).currentLocation;
-    if (currentLocation == null) return false;
-
-    // Convert current position to LatLng
-    // Convert AP location to GeoPoint so we can use haversineDistance func
-    final apGeoPoint = GeoFirePoint(
-      accessPoint.location.latitude,
-      accessPoint.location.longitude,
-    );
-    // Calculate distance via haversineDistance in km
-    final distanceFromAP = apGeoPoint.haversineDistance(
-      lat: currentLocation.latitude,
-      lng: currentLocation.longitude,
-    );
-    // Return true if within 100m, false otherwise
-    return distanceFromAP < 0.1;
-  }
-
-  bool _apAddedByDifferentUser(WidgetRef ref) =>
-      ref.watch(currentUserProvider).value?.id != accessPoint.submittedBy;
 }

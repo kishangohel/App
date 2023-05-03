@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:auto_connect/auto_connect.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -12,22 +11,15 @@ import 'package:verifi/src/configs/firebase_options_prod.dart';
 /// The entrypoint of the application.
 ///
 void main() async {
-  await initialize();
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDependencies();
   // disable debugPrint in release mode
   if (kReleaseMode) {
     debugPrint = (String? message, {int? wrapWidth}) {};
   }
 
-  // Initialize AutoConnect
-  await AutoConnect.initialize(
-    locationEventCallback: (lat, lon) {},
-    accessPointEventCallback: (accessPointId, ssid, connectionResult) {},
-  );
-
   // Run the app
-  // If release mode or [_signInTestUser] is false, profile will be null and
-  // user will go through standard onboarding process.
-  runApp(VeriFi());
+  runApp(const VeriFi());
 }
 
 /// Initialize various dependencies.
@@ -36,8 +28,8 @@ void main() async {
 ///   * [Firebase]
 ///   * [FirebaseAppCheck]
 ///   * [FirebaseCrashlytics]
-Future<void> initialize() async {
-  WidgetsFlutterBinding.ensureInitialized();
+///
+Future<void> initializeDependencies() async {
   // Initialize Firebase
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,

@@ -8,6 +8,7 @@ class FilterMapButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final mapFilter = ref.watch(mapFilterControllerProvider);
     return ElevatedButton(
+      key: const Key('filter_map_button_elevatedButton'),
       style: ElevatedButton.styleFrom(
         elevation: 4.0,
         padding: const EdgeInsets.all(14),

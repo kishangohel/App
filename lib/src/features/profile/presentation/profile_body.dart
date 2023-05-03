@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:random_avatar/random_avatar.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:verifi/src/common/widgets/shimmer_widget.dart';
@@ -9,7 +10,6 @@ import 'package:verifi/src/features/profile/data/profile_repository.dart';
 import 'package:verifi/src/features/profile/presentation/profile_twitter_connection.dart';
 import 'package:verifi/src/features/profile/presentation/widgets/logout_button.dart';
 import 'package:verifi/src/features/profile/presentation/widgets/veripoints/veripoints_widget.dart';
-import 'package:verifi/src/utils/svg_provider.dart';
 
 class ProfileBody extends ConsumerStatefulWidget {
   @override
@@ -76,14 +76,13 @@ class ProfilePhoto extends ConsumerWidget {
                     child: CircleAvatar(
                       radius: 55,
                       // Show NFT if set, otherwise show Multiavatar
-                      backgroundImage: SvgProvider(
-                        randomAvatarString(
-                          currentUser!.displayName,
+                      backgroundColor: Theme.of(context).colorScheme.surface,
+                      child: SvgPicture.string(
+                        RandomAvatarString(
+                          currentUser?.displayName ?? "",
                           trBackground: true,
                         ),
-                        source: SvgSource.raw,
                       ),
-                      backgroundColor: Theme.of(context).colorScheme.surface,
                     ),
                   ),
                   // info button
@@ -191,9 +190,7 @@ class HideOnMapSwitch extends ConsumerWidget {
       value:
           ref.watch(currentUserProvider).valueOrNull?.profile.hideOnMap == true,
       onChanged: (newValue) {
-        ref
-            .read(profileRepositoryProvider)
-            .updateHideOnMap(hideOnMap: newValue);
+        ref.read(profileRepositoryProvider).updateHideOnMap(newValue);
       },
     );
   }
