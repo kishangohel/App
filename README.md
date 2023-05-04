@@ -1,10 +1,9 @@
 <h1 align="center">
 
-<img src="assets/launcher_icon/verifi_logo_white_transparent.png"
-     alt="VeriFi logo"
-     width="200"/>
-
-VeriFi Mobile App
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/VeriFi_white_transparent.gif">
+  <img alt="Text changing depending on mode. Light: 'So light!' Dark: 'So dark!'" src=".github/VeriFi_black_transparent.gif">
+</picture>
 
 </h1>
 
