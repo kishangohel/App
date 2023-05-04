@@ -30,7 +30,12 @@ void main() async {
       : null;
   bool? testUserLogin = const bool.hasEnvironment('VERIFI_DEV_TEST_USER_LOGIN')
       ? const bool.fromEnvironment('VERIFI_DEV_TEST_USER_LOGIN')
-      : true;
+      : false;
+
+  bool? skipOnboarding = const bool.hasEnvironment('SKIP_ONBOARDING')
+      ? const bool.fromEnvironment('SKIP_ONBOARDING')
+      : false;
+
   // Initialize dependencies
   await initializeDependencies(emulatorEndpoint: localIp);
   // disable debugPrint in release mode
@@ -46,8 +51,11 @@ void main() async {
   // If relevant environment variables are set, log in as test user.
   if (localIp != null && testUserLogin == true) {
     debugPrint("Logging in as test_user");
-    await _skipOnboarding();
     await _logInAsTestUser(emulatorEndpoint: localIp);
+  }
+  // Skip onboarding if relevant environment variable is set
+  if (skipOnboarding) {
+    await _skipOnboarding();
   }
   // Sign out if test user login set to false (iOS tries to auto-login)
   else if (localIp != null && testUserLogin == false) {
