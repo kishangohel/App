@@ -1,11 +1,11 @@
-<h1 align="center">
+<p align="center">
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset=".github/VeriFi_white_transparent.png">
   <img alt="Text changing depending on mode. Light: 'So light!' Dark: 'So dark!'" src=".github/VeriFi_black_transparent.png">
 </picture>
 
-</h1>
+</p>
 
 <h3 align="justify">
 VeriFi is on a mission to maximize positive social connections worldwide by 
