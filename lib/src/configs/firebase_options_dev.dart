@@ -58,7 +58,7 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAyRUwjCV5P1QzZrC3iRFAYBPambklsyWo',
+    apiKey: 'AIzaSyCMWMSWhNUO6-W1OHof-iVbJxtoHGgaUls',
     appId: '1:599936681223:ios:e7d1cc2f27c277078731a2',
     messagingSenderId: '599936681223',
     projectId: 'verifi-dev',

@@ -9,20 +9,26 @@ import 'sms_code_screen_controller.dart';
 import 'widgets/sms_code_submit_button.dart';
 import 'package:verifi/src/utils/async_value_ui.dart';
 
-class SmsCodeScreen extends ConsumerWidget {
-  SmsCodeScreen({Key? key}) : super(key: key);
-
-  final scaffoldKey = GlobalKey<ScaffoldState>();
-  final _unfocusNode = FocusNode();
+class SmsCodeScreen extends ConsumerStatefulWidget {
+  const SmsCodeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SmsCodeScreen> createState() => _SmsCodeScreenState();
+}
+
+class _SmsCodeScreenState extends ConsumerState<SmsCodeScreen> {
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+  final unfocusNode = FocusNode();
+
+  @override
+  Widget build(BuildContext context) {
     final router = GoRouter.of(context);
-    ref.listen<AsyncValue>(
+    // Controller listener
+    ref.listen<AsyncValue<void>>(
       smsCodeScreenControllerProvider,
       (_, state) => state.showSnackbarOnError(context),
     );
-
+    // Firebase auth listener
     ref.watch(firebaseAuthStateChangesProvider).whenData((user) {
       if (user != null) {
         if (user.displayName == null) {
@@ -36,7 +42,7 @@ class SmsCodeScreen extends ConsumerWidget {
         }
       }
     });
-
+    // Widget
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Theme.of(context).colorScheme.background,
@@ -48,7 +54,7 @@ class SmsCodeScreen extends ConsumerWidget {
         padding: const EdgeInsets.all(16.0),
         child: SafeArea(
           child: GestureDetector(
-            onTap: () => FocusScope.of(context).requestFocus(_unfocusNode),
+            onTap: () => FocusScope.of(context).requestFocus(unfocusNode),
             child: Column(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -72,7 +78,7 @@ class SmsCodeScreen extends ConsumerWidget {
                     ),
                   ),
                 ),
-                SmsCodeSubmitButton(),
+                const SmsCodeSubmitButton(),
               ],
             ),
           ),

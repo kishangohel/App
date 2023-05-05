@@ -182,7 +182,8 @@ class AboutProfilePictureDialog extends StatelessWidget {
 class HideOnMapSwitch extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return SwitchListTile(
+    return SwitchListTile.adaptive(
+      activeColor: Theme.of(context).colorScheme.primary,
       title: const Text("Hidden on map"),
       subtitle: const Text(
         "Prevent other users from seeing your profile on the map.",

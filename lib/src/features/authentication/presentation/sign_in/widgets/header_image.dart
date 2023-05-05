@@ -31,8 +31,8 @@ class _AuthHeaderImageState extends State<AuthHeaderImage>
   @override
   Widget build(BuildContext context) {
     final imagePath = (Theme.of(context).brightness == Brightness.light)
-        ? 'assets/VeriFi_white_bg.gif'
-        : 'assets/VeriFi_black_bg.gif';
+        ? 'assets/VeriFi_black_transparent.gif'
+        : 'assets/VeriFi_white_transparent.gif';
     return GifImage(
       controller: controller,
       image: AssetImage(
@@ -40,7 +40,7 @@ class _AuthHeaderImageState extends State<AuthHeaderImage>
       ),
       height: MediaQuery.of(context).size.height * 0.3,
       width: double.infinity,
-      fit: BoxFit.cover,
+      fit: BoxFit.fitWidth,
     );
   }
 }

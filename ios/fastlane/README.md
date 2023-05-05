@@ -29,12 +29,12 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 [bundle exec] fastlane ios incrementIOSBuildNumber
 ```
 
+Increment iOS build number
 
-
-### ios distributeStaging
+### ios distributeIOSStaging
 
 ```sh
-[bundle exec] fastlane ios distributeStaging
+[bundle exec] fastlane ios distributeIOSStaging
 ```
 
 

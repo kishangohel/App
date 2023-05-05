@@ -18,69 +18,71 @@ class SignInScreen extends ConsumerStatefulWidget {
 
 class _SignInScreenState extends ConsumerState<SignInScreen> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     final router = GoRouter.of(context);
+    // Controller listener
     ref.listen<AsyncValue<bool>>(
       signInScreenControllerProvider,
       (previous, current) {
-        current.whenData((value) {
-          if (value) {
-            router.goNamed(AppRoute.smsCode.name);
-          }
-        });
+        current.when(
+          data: (value) {
+            if (value) {
+              router.goNamed(AppRoute.smsCode.name);
+            }
+          },
+          loading: () {},
+          error: (error, stacktrace) {
+            debugPrint(error.toString());
+          },
+        );
       },
     );
+    // Widget
     return Scaffold(
       key: scaffoldKey,
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.background,
         elevation: 0,
       ),
       body: Container(
-        color: Theme.of(context).colorScheme.background,
         padding: const EdgeInsets.all(16.0),
         // Sign in form
         child: SafeArea(
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                // Sign in header image
-                Visibility(
-                  visible: MediaQuery.of(context).viewInsets.bottom == 0,
-                  child: AuthHeaderImage(),
-                ),
-                // Sign in content
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding:
-                            const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 0),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            // Sign in title
-                            SignInTitle(),
-                          ],
-                        ),
+          child: Column(
+            children: [
+              // Sign in header image
+              Visibility(
+                visible: MediaQuery.of(context).viewInsets.bottom == 0,
+                child: AuthHeaderImage(),
+              ),
+              // Sign in content
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding:
+                          const EdgeInsetsDirectional.fromSTEB(20, 16, 20, 0),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // Sign in title
+                          SignInTitle(),
+                        ],
                       ),
-                      // Phone number field
-                      PhoneNumberTextField(),
-                      // Submit button
-                    ],
-                  ),
+                    ),
+                    // Phone number field
+                    PhoneNumberTextField(),
+                  ],
                 ),
-                SignInSubmitButton(
-                  formKey: _formKey,
-                ),
-              ],
-            ),
+              ),
+              // Submit button
+              const SignInSubmitButton(),
+            ],
           ),
         ),
       ),

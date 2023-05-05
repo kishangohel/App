@@ -16,18 +16,20 @@ class SmsCodeScreenController extends _$SmsCodeScreenController {
 
   Future<void> submitSmsCode() async {
     state = const AsyncLoading<void>();
-    if (_smsCode == null) {
+    await Future<void>.delayed(const Duration(seconds: 1));
+    final smsCode = _smsCode;
+    if (smsCode == null) {
       state = AsyncError<void>(
         Exception('SMS code is null'),
         StackTrace.current,
       );
       return;
+    } else {
+      state = await AsyncValue.guard<void>(
+        () async => await ref
+            .read(firebaseAuthRepositoryProvider)
+            .submitSmsCode(smsCode),
+      );
     }
-
-    state = await AsyncValue.guard<void>(
-      () async => await ref
-          .read(firebaseAuthRepositoryProvider)
-          .submitSmsCode(_smsCode!),
-    );
   }
 }

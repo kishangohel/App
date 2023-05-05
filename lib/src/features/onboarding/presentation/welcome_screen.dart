@@ -1,11 +1,10 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:verifi/src/common/widgets/bottom_button.dart';
 import 'package:verifi/src/flutter_flow/flutter_flow_animations.dart';
-import 'package:verifi/src/flutter_flow/flutter_flow_button.dart';
 import 'package:verifi/src/routing/app_router.dart';
 
 class WelcomeScreen extends StatelessWidget {
@@ -81,6 +80,11 @@ class WelcomeScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.background,
         elevation: 0,
+        title: AutoSizeText(
+          'Welcome',
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.displaySmall,
+        ),
       ),
       body: SafeArea(
         child: Padding(
@@ -89,20 +93,6 @@ class WelcomeScreen extends StatelessWidget {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              // Welcome header
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Welcome',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.displayMedium,
-                  ).animateOnPageLoad(
-                    animationsMap['welcomeHeaderAnimation']!,
-                  ),
-                ],
-              ),
               // WiFi rings animation
               Expanded(
                 child: Row(

@@ -51,15 +51,33 @@ class BottomButton extends StatelessWidget {
           kMinInteractiveDimension,
         ),
       ),
-      child: (isLoading) ? const CircularProgressIndicator() : Text(text),
+      child: (isLoading)
+          ? SizedBox(
+              height: 24,
+              width: 24,
+              child: CircularProgressIndicator(
+                color: (MediaQuery.of(context).platformBrightness ==
+                        Brightness.light)
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.primaryContainer,
+              ),
+            )
+          : Text(text),
     );
   }
 
   Widget _iosBuild(BuildContext context) {
     return CupertinoButton.filled(
       onPressed: onPressed,
-      minSize: kMinInteractiveDimensionCupertino,
-      child: (isLoading) ? const CircularProgressIndicator() : Text(text),
+      child: (isLoading)
+          ? SizedBox(
+              height: 24,
+              width: 24,
+              child: CircularProgressIndicator(
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            )
+          : Text(text),
     );
   }
 }

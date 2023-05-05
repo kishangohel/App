@@ -14,61 +14,46 @@ class FeaturesScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.background,
         elevation: 0,
+        title: AutoSizeText(
+          'Features',
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          style: Theme.of(context).textTheme.displaySmall,
+        ),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Features header
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 8),
-                      child: AutoSizeText(
-                        'Features',
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                        style: Theme.of(context).textTheme.displayMedium,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              // Feature cards
-              Expanded(
-                child: Scrollbar(
-                  thumbVisibility: true,
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 8),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          _discoverCard(context),
-                          _connectCard(context),
-                          _contributeCard(context),
-                          _earnCard(context),
-                        ],
-                      ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Feature cards
+            Expanded(
+              child: Scrollbar(
+                thumbVisibility: true,
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 8),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        _discoverCard(context),
+                        _connectCard(context),
+                        _contributeCard(context),
+                        _earnCard(context),
+                      ],
                     ),
                   ),
                 ),
               ),
-              // Bottom button
-              BottomButton(
-                // Navigate to permissions page
-                onPressed: () => GoRouter.of(context).goNamed(
-                  AppRoute.permissions.name,
-                ),
-                text: 'Continue',
+            ),
+            // Bottom button
+            BottomButton(
+              // Navigate to permissions page
+              onPressed: () => GoRouter.of(context).goNamed(
+                AppRoute.permissions.name,
               ),
-            ],
-          ),
+              text: 'Continue',
+            ),
+          ],
         ),
       ),
     );

@@ -9,7 +9,7 @@ import 'package:verifi/src/features/onboarding/data/onboarding_state_provider.da
 import 'package:permission_handler/permission_handler.dart';
 
 class PermissionsScreen extends ConsumerStatefulWidget {
-  const PermissionsScreen({Key? key}) : super(key: key);
+  const PermissionsScreen({super.key});
 
   @override
   ConsumerState<PermissionsScreen> createState() => _PermissionsScreenState();
@@ -49,80 +49,68 @@ class _PermissionsScreenState extends ConsumerState<PermissionsScreen> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.background,
         elevation: 0,
+        title: AutoSizeText(
+          'Permissions',
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          style: Theme.of(context).textTheme.displaySmall,
+        ),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 8),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              // Header
-              Row(
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            // Map animation
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.2,
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Align(
+                      child: Lottie.asset(
+                        'assets/lottie_animations/wifi_map.json',
+                        fit: BoxFit.fitHeight,
+                        animate: true,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Description
+            Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 16),
+              child: Row(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Expanded(
                     child: AutoSizeText(
-                      'Permissions',
+                      'VeriFi requires additional permissions for certain features. '
+                      'Please toggle & approve each permission to unlock those features.',
                       textAlign: TextAlign.center,
-                      maxLines: 1,
-                      style: Theme.of(context).textTheme.headlineLarge,
+                      maxLines: 3,
+                      style: Theme.of(context).textTheme.bodyLarge,
                     ),
                   ),
                 ],
               ),
-              // Map animation
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.2,
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: Align(
-                        child: Lottie.asset(
-                          'assets/lottie_animations/wifi_map.json',
-                          fit: BoxFit.fitHeight,
-                          animate: true,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+            ),
+            // Permission cards
+            _permissionSwitchListTiles(),
+            // Accept & Continue button
+            Visibility(
+              visible: switchState.length == 4,
+              child: BottomButton(
+                onPressed: () async =>
+                    ref.read(onboardingStateProvider.notifier).complete(),
+                text: 'Accept & Continue',
               ),
-              // Description
-              Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 16),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: AutoSizeText(
-                        'VeriFi requires additional permissions for certain features. '
-                        'Please toggle & approve each permission to unlock those features.',
-                        textAlign: TextAlign.center,
-                        maxLines: 3,
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // Permission cards
-              _permissionSwitchListTiles(),
-              // Accept & Continue button
-              Visibility(
-                visible: switchState.length == 4,
-                child: BottomButton(
-                  onPressed: () async =>
-                      ref.read(onboardingStateProvider.notifier).complete(),
-                  text: 'Accept & Continue',
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -133,110 +121,114 @@ class _PermissionsScreenState extends ConsumerState<PermissionsScreen> {
       child: Scrollbar(
         thumbVisibility: true,
         child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // Location switch list tile
-              Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 4),
-                child: SwitchListTile.adaptive(
-                  value: switchState["location"] == true,
-                  onChanged: (switchState['location'] != null)
-                      ? null
-                      : (value) => _requestLocationPermissions(value),
-                  title: const Text(
-                    'Location',
-                  ),
-                  subtitle: const Text(
-                    'View and connect to nearby access points',
-                  ),
-                  activeColor: Theme.of(context).colorScheme.primary,
-                  dense: false,
-                  controlAffinity: ListTileControlAffinity.trailing,
-                  contentPadding:
-                      const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
-              // Background location switch list tile
-              Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 4),
-                child: SwitchListTile.adaptive(
-                  value: switchState["locationBackground"] == true,
-                  onChanged: (switchState["locationBackground"] != null)
-                      ? null
-                      : (value) => _requestLocationBackgroundPermissions(value),
-                  title: const Text(
-                    'Background Location',
-                  ),
-                  subtitle: const Text(
-                    'View and connect to nearby access points when the app is not open',
-                  ),
-                  activeColor: Theme.of(context).colorScheme.primary,
-                  dense: false,
-                  controlAffinity: ListTileControlAffinity.trailing,
-                  contentPadding:
-                      const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+          child: Padding(
+            padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 8),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // Location switch list tile
+                Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 4),
+                  child: SwitchListTile.adaptive(
+                    value: switchState["location"] == true,
+                    onChanged: (switchState['location'] != null)
+                        ? null
+                        : (value) => _requestLocationPermissions(value),
+                    title: const Text(
+                      'Location',
+                    ),
+                    subtitle: const Text(
+                      'View and connect to nearby access points',
+                    ),
+                    activeColor: Theme.of(context).colorScheme.primary,
+                    dense: false,
+                    controlAffinity: ListTileControlAffinity.trailing,
+                    contentPadding:
+                        const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
                 ),
-              ),
-              // Notifications switch list tile
-              Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 4),
-                child: SwitchListTile.adaptive(
-                  value: switchState["notifications"] == true,
-                  onChanged: (switchState["notifications"] != null)
-                      ? null
-                      : (value) => _requestNotificationPermissions(value),
-                  title: const Text(
-                    'Notifications',
-                  ),
-                  subtitle: const Text(
-                    'Know about reward opportunities, earned achievements, and other important information.',
-                  ),
-                  tileColor: Theme.of(context).colorScheme.background,
-                  activeColor: Theme.of(context).colorScheme.primary,
-                  dense: false,
-                  controlAffinity: ListTileControlAffinity.trailing,
-                  contentPadding:
-                      const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
-              // Activity recognition switch list tile
-              Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 4),
-                child: SwitchListTile.adaptive(
-                  value: switchState["activityRecognition"] == true,
-                  onChanged: (switchState["activityRecognition"] != null)
-                      ? null
-                      : (value) =>
-                          _requestActivityRecognitionPermissions(value),
-                  title: const Text(
-                    'Activity Recognition',
-                  ),
-                  subtitle: const Text(
-                    'Conserve battery by only connecting to WiFi when walking, standing, etc.',
-                  ),
-                  tileColor: Theme.of(context).colorScheme.surface,
-                  activeColor: Theme.of(context).colorScheme.primary,
-                  dense: false,
-                  controlAffinity: ListTileControlAffinity.trailing,
-                  contentPadding:
-                      const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                // Background location switch list tile
+                Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 4),
+                  child: SwitchListTile.adaptive(
+                    value: switchState["locationBackground"] == true,
+                    onChanged: (switchState["locationBackground"] != null)
+                        ? null
+                        : (value) =>
+                            _requestLocationBackgroundPermissions(value),
+                    title: const Text(
+                      'Background Location',
+                    ),
+                    subtitle: const Text(
+                      'View and connect to nearby access points when the app is not open',
+                    ),
+                    activeColor: Theme.of(context).colorScheme.primary,
+                    dense: false,
+                    controlAffinity: ListTileControlAffinity.trailing,
+                    contentPadding:
+                        const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
                 ),
-              ),
-            ],
+                // Notifications switch list tile
+                Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 4),
+                  child: SwitchListTile.adaptive(
+                    value: switchState["notifications"] == true,
+                    onChanged: (switchState["notifications"] != null)
+                        ? null
+                        : (value) => _requestNotificationPermissions(value),
+                    title: const Text(
+                      'Notifications',
+                    ),
+                    subtitle: const Text(
+                      'Know about reward opportunities, earned achievements, and other important information.',
+                    ),
+                    tileColor: Theme.of(context).colorScheme.background,
+                    activeColor: Theme.of(context).colorScheme.primary,
+                    dense: false,
+                    controlAffinity: ListTileControlAffinity.trailing,
+                    contentPadding:
+                        const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+                // Activity recognition switch list tile
+                Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 4),
+                  child: SwitchListTile.adaptive(
+                    value: switchState["activityRecognition"] == true,
+                    onChanged: (switchState["activityRecognition"] != null)
+                        ? null
+                        : (value) =>
+                            _requestActivityRecognitionPermissions(value),
+                    title: const Text(
+                      'Activity Recognition',
+                    ),
+                    subtitle: const Text(
+                      'Conserve battery by only connecting to WiFi when walking, standing, etc.',
+                    ),
+                    tileColor: Theme.of(context).colorScheme.surface,
+                    activeColor: Theme.of(context).colorScheme.primary,
+                    dense: false,
+                    controlAffinity: ListTileControlAffinity.trailing,
+                    contentPadding:
+                        const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

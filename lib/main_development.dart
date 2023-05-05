@@ -21,7 +21,6 @@ import 'package:verifi/src/notifications/fcm.dart';
 import 'package:verifi/src/services/network_monitor/network_monitor_service.dart';
 
 /// The entrypoint of the application.
-///
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Process environment variables
@@ -31,14 +30,12 @@ void main() async {
   bool? testUserLogin = const bool.hasEnvironment('VERIFI_DEV_TEST_USER_LOGIN')
       ? const bool.fromEnvironment('VERIFI_DEV_TEST_USER_LOGIN')
       : false;
-
   bool? skipOnboarding = const bool.hasEnvironment('SKIP_ONBOARDING')
       ? const bool.fromEnvironment('SKIP_ONBOARDING')
       : false;
-
   // Initialize dependencies
   await initializeDependencies(emulatorEndpoint: localIp);
-  // disable debugPrint in release mode
+  // Disable debugPrint in release mode
   if (kReleaseMode) {
     debugPrint = (String? message, {int? wrapWidth}) {};
   }
@@ -81,7 +78,6 @@ void main() async {
 /// If [emulatorEndpoint] is set, the app communicates with the Firebase Auth
 /// and Firebase Firestore emulators. Otherwise, it communicates with the
 /// remote Firebase backend.
-///
 Future<void> initializeDependencies({String? emulatorEndpoint}) async {
   // Initialize Firebase
   await Firebase.initializeApp(
@@ -91,9 +87,11 @@ Future<void> initializeDependencies({String? emulatorEndpoint}) async {
   FirebaseFirestore.instance.settings = const Settings(
     persistenceEnabled: false,
   );
-
   // Activate Firebase App Check
-  await FirebaseAppCheck.instance.activate();
+  await FirebaseAppCheck.instance.activate(
+    androidProvider: AndroidProvider.debug,
+    appleProvider: AppleProvider.debug,
+  );
   // Pass all uncaught errors from the framework to Firebase Crashlytics
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
   // Use Firebase local emulator if `emulatorEndpoint` is set
@@ -121,7 +119,6 @@ Future<void> initializeDependencies({String? emulatorEndpoint}) async {
 }
 
 /// Sign in to test_user.
-///
 Future<void> _logInAsTestUser({
   required String emulatorEndpoint,
 }) async {
@@ -153,6 +150,7 @@ Future<void> _logInAsTestUser({
   );
 }
 
+/// Set onboarded flag in shared preferences.
 Future<void> _skipOnboarding() async {
   final prefs = await SharedPreferences.getInstance();
   prefs.setBool("onboarded", true);

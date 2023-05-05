@@ -8,7 +8,7 @@ import 'routing/app_router.dart';
 /// The top-level [Widget] for the VeriFi application.
 /// This should only be built by calling [runApp] in [main].
 class VeriFi extends ConsumerWidget {
-  const VeriFi({Key? key}) : super(key: key);
+  const VeriFi({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
